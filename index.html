@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador Gratis</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            background-color: var(--tg-theme-bg-color, #fff);
+            color: var(--tg-theme-text-color, #000);
+            font-family: sans-serif;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        textarea {
+            width: 100%;
+            height: 80px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--tg-theme-button-color, #3390ec);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        img {
+            margin-top: 20px;
+            max-width: 100%;
+            border-radius: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h3>🎨 Generador Infinito (Gratis)</h3>
+    <textarea id="prompt" placeholder="Escribe aquí: Un robot jugando fútbol..."></textarea>
+    <button id="btn" onclick="generar()">Crear Imagen</button>
+    
+    <p id="estado" style="display:none; color:gray;">Conectando con la IA...</p>
+    <img id="imagen" src="" alt="Resultado">
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        function generar() {
+            const texto = document.getElementById('prompt').value;
+            const btn = document.getElementById('btn');
+            const img = document.getElementById('imagen');
+            const estado = document.getElementById('estado');
+
+            if(texto === "") return;
+
+            // Interfaz de carga
+            btn.disabled = true;
+            btn.innerText = "Generando...";
+            estado.style.display = 'block';
+            img.style.display = 'none';
+
+            // TRUCO: Usamos Pollinations.ai que es gratis por URL
+            // Codificamos el texto para que la URL lo entienda
+            const promptSeguro = encodeURIComponent(texto);
+            
+            // Le agregamos un numero aleatorio al final para que no cachee la imagen vieja
+            const randomSeed = Math.floor(Math.random() * 10000); 
+            
+            const urlFinal = `https://image.pollinations.ai/prompt/${promptSeguro}?width=1024&height=1024&nologo=true&seed=${randomSeed}`;
+
+            // Cuando la imagen cargue, la mostramos
+            img.onload = function() {
+                img.style.display = 'block';
+                estado.style.display = 'none';
+                btn.disabled = false;
+                btn.innerText = "Crear Otra";
+            };
+
+            // Asignamos la URL
+            img.src = urlFinal;
+        }
+    </script>
+</body>
+</html>
