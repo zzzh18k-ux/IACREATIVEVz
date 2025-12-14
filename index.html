@@ -3,11 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Hammer Smash TWA</title>
+    <title>Hammer Smash: El Martillo Destructor</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #242c38; /* Color oscuro similar a Telegram */
+            color: #fff;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; /* Evita barras de desplazamiento */
+        }
+
+        header {
+            padding: 10px;
+            background-color: #17212b;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        #points-display, #energy-display {
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        #energy-bar-container {
+            background-color: #4a4a4a;
+            border-radius: 5px;
+            height: 10px;
+            margin: 0 20px;
+            overflow: hidden;
+        }
+
+        #energy-bar {
+            height: 100%;
+            width: 100%; 
+            background-color: #4CAF50; /* Verde inicial */
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        #game-area {
+            flex-grow: 1;
+            position: relative;
+            cursor: pointer;
+            background-color: #0d1114; /* Fondo de la "pantalla" */
+            transition: opacity 0.5s ease;
+        }
+
+        #crack-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Permite hacer clic a través del canvas */
+            z-index: 5;
+        }
+
+        #hammer-target {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+
+        /* --- Botón de Recarga (El Gancho de AdsGram) --- */
+        #controls {
+            padding: 15px;
+            background-color: #17212b;
+            z-index: 10;
+        }
+
+        #recharge-button {
+            background-color: #FF0000; /* ROJO EXPLOSIVO */
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 90%;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+        }
+
+        #recharge-button:disabled {
+            background-color: #5d0000;
+            cursor: not-allowed;
+            opacity: 0.5;
+            box-shadow: none;
+        }
+
+        /* Animación de pulso para el botón */
+        .pulse {
+            animation: pulse-animation 1s infinite;
+        }
+
+        @keyframes pulse-animation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -18,7 +125,6 @@
 
     <main id="game-area">
         <canvas id="crack-canvas"></canvas>
-        
         <div id="hammer-target">
             <h1>🔨 ¡TOCA PARA ROMPER! 💥</h1>
         </div>
@@ -30,6 +136,171 @@
         </button>
     </footer>
 
-    <script src="app.js"></script>
+    <script>
+        // --- CONFIGURACIÓN GLOBAL ---
+        const ENERGY_COST = 1000;
+        const MAX_ENERGY = 10000;
+        const POINTS_PER_HIT = 1000;
+        
+        let currentEnergy = MAX_ENERGY;
+        let totalPoints = 0;
+
+        // Elementos del DOM
+        const gameArea = document.getElementById('game-area');
+        const pmValue = document.getElementById('pm-value');
+        const energyValue = document.getElementById('energy-value');
+        const energyBar = document.getElementById('energy-bar');
+        const rechargeButton = document.getElementById('recharge-button');
+        const canvas = document.getElementById('crack-canvas');
+        const ctx = canvas.getContext('2d');
+        const hammerTarget = document.getElementById('hammer-target');
+
+        // --- TWA & INICIALIZACIÓN ---
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+            // Ajustar el color de fondo para que coincida con el tema de Telegram
+            document.body.style.backgroundColor = window.Telegram.WebApp.backgroundColor || '#242c38';
+            window.Telegram.WebApp.MainButton.hide(); 
+        }
+
+        function updateUI() {
+            pmValue.textContent = totalPoints.toLocaleString();
+            energyValue.textContent = currentEnergy.toLocaleString();
+            const barWidth = (currentEnergy / MAX_ENERGY) * 100;
+            energyBar.style.width = barWidth + '%';
+
+            // Cambiar color de la barra cuando está baja
+            if (barWidth <= 20) {
+                energyBar.style.backgroundColor = '#FF6347'; // Rojo Naranja
+            } else {
+                energyBar.style.backgroundColor = '#4CAF50'; // Verde
+            }
+
+            // Lógica para Habilitar/Deshabilitar el botón de recarga
+            if (currentEnergy < ENERGY_COST) {
+                rechargeButton.disabled = false;
+                gameArea.style.opacity = 0.5; // Oscurecer el área de juego
+                hammerTarget.style.opacity = 0.2;
+            } else {
+                rechargeButton.disabled = true;
+                gameArea.style.opacity = 1;
+                hammerTarget.style.opacity = 0.8;
+            }
+        }
+
+        // --- LÓGICA DE GOLPE Y GRIETAS ---
+        function handleSmash(event) {
+            if (currentEnergy < ENERGY_COST) {
+                if (window.Telegram.WebApp) {
+                    window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+                }
+                return;
+            }
+
+            // 1. Deducir Energía y Sumar Puntos
+            currentEnergy -= ENERGY_COST;
+            totalPoints += POINTS_PER_HIT;
+            updateUI();
+
+            // 2. Efecto Háptico (Vibración)
+            if (window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.impactOccurred('heavy');
+            }
+            
+            // 3. Efecto Visual de Grieta
+            const rect = gameArea.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            drawCrack(x, y);
+
+            // 4. Feedback de puntos flotante
+            showFloatingPoints(x, y);
+        }
+
+        function drawCrack(x, y) {
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'; 
+            ctx.lineWidth = 2;
+            ctx.shadowBlur = 5;
+            ctx.shadowColor = 'white';
+
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                // Dibujar grietas que se extienden al azar
+                const angle = Math.random() * 2 * Math.PI;
+                const length = Math.random() * 150 + 50;
+                ctx.lineTo(x + Math.cos(angle) * length, y + Math.sin(angle) * length);
+                ctx.stroke();
+            }
+        }
+
+        function showFloatingPoints(x, y) {
+            const span = document.createElement('span');
+            span.textContent = `+${POINTS_PER_HIT}`;
+            span.style.position = 'absolute';
+            span.style.left = `${x}px`;
+            span.style.top = `${y}px`;
+            span.style.color = 'yellow';
+            span.style.fontSize = '2em';
+            span.style.fontWeight = 'bold';
+            span.style.pointerEvents = 'none';
+            span.style.transition = 'all 1s ease-out';
+            span.style.transform = 'translate(-50%, -50%)';
+            span.style.zIndex = 20;
+
+            gameArea.appendChild(span);
+
+            // Animación: subir y desaparecer
+            setTimeout(() => {
+                span.style.transform = 'translate(-50%, -100px)';
+                span.style.opacity = '0';
+            }, 50);
+
+            // Eliminar elemento después de la animación
+            setTimeout(() => {
+                span.remove();
+            }, 1050);
+        }
+
+        // --- LÓGICA DE MONETIZACIÓN (ADSGRAM) ---
+        function handleRecharge() {
+            rechargeButton.disabled = true;
+            
+            // 1. SIMULACIÓN DEL ANUNCIO (Aquí integrarías el SDK de AdsGram real)
+            if (window.Telegram.WebApp) {
+                window.Telegram.WebApp.showAlert('Cargando anuncio de AdsGram... (Simulación de 3s)');
+            }
+            
+            // 2. Simulación de que el video se ve completamente y recarga
+            setTimeout(() => {
+                
+                // 3. Recargar Energía
+                currentEnergy = MAX_ENERGY;
+                updateUI();
+                
+                if (window.Telegram.WebApp) {
+                     window.Telegram.WebApp.showAlert('¡Energía Recargada! ¡A romper de nuevo!');
+                }
+
+                // *CRUCIAL:* Aquí iría el código para notificar a tu servidor que el anuncio fue visto.
+                
+            }, 3000); 
+        }
+
+        // --- ASIGNACIÓN DE EVENTOS ---
+        gameArea.addEventListener('click', handleSmash);
+        rechargeButton.addEventListener('click', handleRecharge);
+
+        // Inicializar el tamaño del Canvas y la Interfaz
+        function initialize() {
+            canvas.width = gameArea.offsetWidth;
+            canvas.height = gameArea.offsetHeight;
+            updateUI();
+        }
+
+        window.addEventListener('load', initialize);
+        window.addEventListener('resize', initialize); 
+    </script>
 </body>
-</html>
+    </html>
