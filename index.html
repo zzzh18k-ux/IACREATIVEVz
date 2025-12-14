@@ -2,305 +2,290 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Hammer Smash: El Martillo Destructor</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Social Feed</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
             margin: 0;
+            padding-bottom: 80px;
+            color: #1c1e21;
+            overscroll-behavior-y: none; /* Evita rebote en scroll */
+        }
+
+        /* HEADER FIJO */
+        .header {
+            background: white;
+            padding: 10px 15px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 50px;
+        }
+        .logo { font-weight: 900; color: #1877f2; font-size: 22px; letter-spacing: -0.5px; }
+        .coins-badge {
+            background: #e7f3ff;
+            color: #1877f2;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* FEED */
+        #feed-container { max-width: 600px; margin: 0 auto; padding-top: 10px; }
+
+        /* ESTILO POST */
+        .post-card {
+            background: white;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .post-header {
+            padding: 12px;
+            display: flex;
+            align-items: center;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+        .user-info { display: flex; flex-direction: column; }
+        .username { font-weight: 600; font-size: 15px; }
+        .time { font-size: 12px; color: #65676b; }
+        
+        .post-caption {
+            padding: 0 12px 10px 12px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .post-media {
+            width: 100%;
+            height: auto;
+            display: block;
+            min-height: 250px;
+            background: #eee;
+            object-fit: cover;
+        }
+
+        .post-actions {
+            padding: 10px;
+            border-top: 1px solid #f0f2f5;
+            display: flex;
+            justify-content: space-around;
+        }
+        .action-btn {
+            color: #65676b;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px 20px;
+            border-radius: 5px;
+            transition: 0.2s;
+        }
+        .action-btn:active { background-color: #f2f2f2; transform: scale(0.95); }
+        .liked { color: #e41e3f !important; }
+
+        /* ESTILO ANUNCIO (Nativo) */
+        .ad-card {
+            background: white;
+            margin-bottom: 12px;
             padding: 0;
-            background-color: #242c38; /* Color oscuro similar a Telegram */
-            color: #fff;
-            text-align: center;
+            border: 2px solid #e7f3ff;
+        }
+        .ad-header {
+            padding: 10px;
+            font-size: 12px;
+            color: #65676b;
+            display: flex;
+            justify-content: space-between;
+        }
+        .ad-content-box {
+            background: #f0f8ff;
+            height: 250px;
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            overflow: hidden; /* Evita barras de desplazamiento */
-        }
-
-        header {
-            padding: 10px;
-            background-color: #17212b;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-            z-index: 10;
-        }
-
-        #points-display, #energy-display {
-            font-size: 1.2em;
-            margin-bottom: 5px;
-        }
-
-        #energy-bar-container {
-            background-color: #4a4a4a;
-            border-radius: 5px;
-            height: 10px;
-            margin: 0 20px;
-            overflow: hidden;
-        }
-
-        #energy-bar {
-            height: 100%;
-            width: 100%; 
-            background-color: #4CAF50; /* Verde inicial */
-            transition: width 0.3s ease, background-color 0.3s ease;
-        }
-
-        #game-area {
-            flex-grow: 1;
-            position: relative;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            background-color: #0d1114; /* Fondo de la "pantalla" */
-            transition: opacity 0.5s ease;
+            text-align: center;
+            padding: 20px;
         }
-
-        #crack-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none; /* Permite hacer clic a través del canvas */
-            z-index: 5;
-        }
-
-        #hammer-target {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0.8;
-            transition: opacity 0.3s ease;
-            z-index: 1;
-        }
-
-        /* --- Botón de Recarga (El Gancho de AdsGram) --- */
-        #controls {
-            padding: 15px;
-            background-color: #17212b;
-            z-index: 10;
-        }
-
-        #recharge-button {
-            background-color: #FF0000; /* ROJO EXPLOSIVO */
+        .cta-button {
+            background: #1877f2;
             color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 1.2em;
+            padding: 10px 20px;
+            border-radius: 6px;
+            margin-top: 15px;
             font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            width: 90%;
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
-        }
-
-        #recharge-button:disabled {
-            background-color: #5d0000;
-            cursor: not-allowed;
-            opacity: 0.5;
-            box-shadow: none;
-        }
-
-        /* Animación de pulso para el botón */
-        .pulse {
-            animation: pulse-animation 1s infinite;
-        }
-
-        @keyframes pulse-animation {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            font-size: 14px;
+            border: none;
         }
     </style>
 </head>
 <body>
-    <header>
-        <div id="points-display">Puntos Martillo: <span id="pm-value">0</span></div>
-        <div id="energy-display">Energía: <span id="energy-value">10000</span> / 10000</div>
-        <div id="energy-bar-container"><div id="energy-bar"></div></div>
-    </header>
 
-    <main id="game-area">
-        <canvas id="crack-canvas"></canvas>
-        <div id="hammer-target">
-            <h1>🔨 ¡TOCA PARA ROMPER! 💥</h1>
+    <div class="header">
+        <div class="logo">SocialApp</div>
+        <div class="coins-badge">
+            <span>💎</span> <span id="coin-display">0</span>
         </div>
-    </main>
+    </div>
 
-    <footer id="controls">
-        <button id="recharge-button" disabled>
-            <span class="pulse">🔴</span> ¡Recarga Energía! (Con Video)
-        </button>
-    </footer>
+    <div id="feed-container"></div>
 
     <script>
-        // --- CONFIGURACIÓN GLOBAL ---
-        const ENERGY_COST = 1000;
-        const MAX_ENERGY = 10000;
-        const POINTS_PER_HIT = 1000;
+        // --- BASE DE DATOS DE POSTS (GENERADA POR IA) ---
+        // Usamos Lorem Picsum para imágenes automáticas que funcionan siempre.
+        const allPosts = [
+            { user: "Sofia_Travels", time: "2 min", text: "¡No puedo creer lo azul que es el agua aquí! 🌊😍 #Vacaciones #Relax", img: "https://picsum.photos/seed/travel1/600/400", avatar: "https://i.pravatar.cc/150?u=sofia" },
+            { user: "Tech_Master", time: "5 min", text: "¿Vieron el nuevo lanzamiento de IA? Es una locura total 🤖💻 #Tecnologia #Futuro", img: "https://picsum.photos/seed/tech1/600/400", avatar: "https://i.pravatar.cc/150?u=tech" },
+            { user: "Gatitos_Oficial", time: "12 min", text: "Etiqueta a un amigo que necesite ver esto 😺😹", img: "https://picsum.photos/seed/cat1/600/600", avatar: "https://i.pravatar.cc/150?u=cat" },
+            { user: "Comida_Deli", time: "30 min", text: "Hoy tocó hamburguesa doble con extra queso 🍔🧀 ¿Quién quiere?", img: "https://picsum.photos/seed/burger/600/500", avatar: "https://i.pravatar.cc/150?u=food" },
+            { user: "Mente_Millonaria", time: "1 h", text: "Trabaja mientras ellos duermen. 💼💵 #Motivacion #Exito", img: "https://picsum.photos/seed/money/600/400", avatar: "https://i.pravatar.cc/150?u=rich" },
+            { user: "Humor_Latino", time: "1 h", text: "Yo tratando de arreglar mi vida un lunes a las 8am 😂", img: "https://picsum.photos/seed/funny1/600/450", avatar: "https://i.pravatar.cc/150?u=humor" },
+            { user: "Fitness_Daily", time: "2 h", text: "Día de pierna completado. ¡No pain no gain! 💪🏋️‍♂️", img: "https://picsum.photos/seed/gym/600/500", avatar: "https://i.pravatar.cc/150?u=fit" },
+            { user: "Curiosidades_X", time: "2 h", text: "¿Sabías que los pulpos tienen 3 corazones? 🐙🤯", img: "https://picsum.photos/seed/octopus/600/400", avatar: "https://i.pravatar.cc/150?u=nerd" },
+            { user: "Arte_Visual", time: "3 h", text: "Mi último dibujo a lápiz. ¿Qué opinan del 1 al 10? 🎨✏️", img: "https://picsum.photos/seed/art/600/600", avatar: "https://i.pravatar.cc/150?u=art" },
+            { user: "Car_Lovers", time: "4 h", text: "Ese motor suena como música para mis oídos 🏎️💨", img: "https://picsum.photos/seed/car/600/400", avatar: "https://i.pravatar.cc/150?u=car" },
+            { user: "Memes_Random", time: "5 h", text: "Cuando te das cuenta que mañana es lunes... 🤡", img: "https://picsum.photos/seed/sad/600/400", avatar: "https://i.pravatar.cc/150?u=meme" },
+            { user: "Naturaleza_Viva", time: "6 h", text: "El atardecer de hoy fue simplemente mágico 🌅🧡", img: "https://picsum.photos/seed/sunset/600/400", avatar: "https://i.pravatar.cc/150?u=nature" },
+            { user: "Gaming_Zone", time: "7 h", text: "¡Por fin conseguí el platino en este juego! 🎮🏆", img: "https://picsum.photos/seed/game/600/400", avatar: "https://i.pravatar.cc/150?u=gamer" },
+            { user: "Cultura_Pop", time: "8 h", text: "¿Quién más está esperando la nueva temporada? 🎬🍿", img: "https://picsum.photos/seed/movie/600/400", avatar: "https://i.pravatar.cc/150?u=pop" },
+            { user: "Crypto_Bro", time: "9 h", text: "El mercado está en verde hoy. ¡Hold! 📈🚀", img: "https://picsum.photos/seed/chart/600/400", avatar: "https://i.pravatar.cc/150?u=btc" },
+            { user: "Dog_Lover", time: "10 h", text: "El mejor amigo del hombre sin duda alguna 🐶❤️", img: "https://picsum.photos/seed/dog/600/500", avatar: "https://i.pravatar.cc/150?u=dog" },
+            { user: "Espacio_Exterior", time: "11 h", text: "Una foto increíble de la nebulosa tomada por el telescopio Hubble 🌌🔭", img: "https://picsum.photos/seed/space/600/400", avatar: "https://i.pravatar.cc/150?u=space" },
+            { user: "Moda_Style", time: "12 h", text: "Outfit del día. ¿Les gusta esta combinación? 👗👠", img: "https://picsum.photos/seed/fashion/600/800", avatar: "https://i.pravatar.cc/150?u=style" },
+            { user: "Coffee_Time", time: "13 h", text: "Sin café no hay paraíso. Buenos días ☕☀️", img: "https://picsum.photos/seed/coffee/600/400", avatar: "https://i.pravatar.cc/150?u=coffee" },
+            { user: "Frases_Sad", time: "14 h", text: "A veces es mejor soltar y dejar ir... 💔🌧️", img: "https://picsum.photos/seed/rain/600/400", avatar: "https://i.pravatar.cc/150?u=sad" }
+        ];
+
+        // --- LÓGICA DE LA APP ---
+        let coins = 0;
+        const feedContainer = document.getElementById('feed-container');
+        const coinDisplay = document.getElementById('coin-display');
         
-        let currentEnergy = MAX_ENERGY;
-        let totalPoints = 0;
+        // Configuración de anuncios: 1 anuncio cada 4 posts
+        const POSTS_PER_AD = 4;
 
-        // Elementos del DOM
-        const gameArea = document.getElementById('game-area');
-        const pmValue = document.getElementById('pm-value');
-        const energyValue = document.getElementById('energy-value');
-        const energyBar = document.getElementById('energy-bar');
-        const rechargeButton = document.getElementById('recharge-button');
-        const canvas = document.getElementById('crack-canvas');
-        const ctx = canvas.getContext('2d');
-        const hammerTarget = document.getElementById('hammer-target');
+        function renderFeed() {
+            let counter = 0;
 
-        // --- TWA & INICIALIZACIÓN ---
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.ready();
-            // Ajustar el color de fondo para que coincida con el tema de Telegram
-            document.body.style.backgroundColor = window.Telegram.WebApp.backgroundColor || '#242c38';
-            window.Telegram.WebApp.MainButton.hide(); 
-        }
+            // Barajar los posts para que cada vez que abras la app el orden sea distinto
+            const shuffledPosts = allPosts.sort(() => Math.random() - 0.5);
 
-        function updateUI() {
-            pmValue.textContent = totalPoints.toLocaleString();
-            energyValue.textContent = currentEnergy.toLocaleString();
-            const barWidth = (currentEnergy / MAX_ENERGY) * 100;
-            energyBar.style.width = barWidth + '%';
+            shuffledPosts.forEach((post) => {
+                createPost(post);
+                counter++;
 
-            // Cambiar color de la barra cuando está baja
-            if (barWidth <= 20) {
-                energyBar.style.backgroundColor = '#FF6347'; // Rojo Naranja
-            } else {
-                energyBar.style.backgroundColor = '#4CAF50'; // Verde
-            }
-
-            // Lógica para Habilitar/Deshabilitar el botón de recarga
-            if (currentEnergy < ENERGY_COST) {
-                rechargeButton.disabled = false;
-                gameArea.style.opacity = 0.5; // Oscurecer el área de juego
-                hammerTarget.style.opacity = 0.2;
-            } else {
-                rechargeButton.disabled = true;
-                gameArea.style.opacity = 1;
-                hammerTarget.style.opacity = 0.8;
-            }
-        }
-
-        // --- LÓGICA DE GOLPE Y GRIETAS ---
-        function handleSmash(event) {
-            if (currentEnergy < ENERGY_COST) {
-                if (window.Telegram.WebApp) {
-                    window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+                if (counter === POSTS_PER_AD) {
+                    createAd();
+                    counter = 0;
                 }
-                return;
-            }
-
-            // 1. Deducir Energía y Sumar Puntos
-            currentEnergy -= ENERGY_COST;
-            totalPoints += POINTS_PER_HIT;
-            updateUI();
-
-            // 2. Efecto Háptico (Vibración)
-            if (window.Telegram.WebApp) {
-                window.Telegram.WebApp.HapticFeedback.impactOccurred('heavy');
-            }
+            });
             
-            // 3. Efecto Visual de Grieta
-            const rect = gameArea.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
-            
-            drawCrack(x, y);
-
-            // 4. Feedback de puntos flotante
-            showFloatingPoints(x, y);
+            // Un anuncio extra al final
+            createAd();
         }
 
-        function drawCrack(x, y) {
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'; 
-            ctx.lineWidth = 2;
-            ctx.shadowBlur = 5;
-            ctx.shadowColor = 'white';
+        function createPost(data) {
+            const div = document.createElement('div');
+            div.className = 'post-card';
+            div.innerHTML = `
+                <div class="post-header">
+                    <img src="${data.avatar}" class="avatar" alt="user">
+                    <div class="user-info">
+                        <span class="username">${data.user}</span>
+                        <span class="time">${data.time}</span>
+                    </div>
+                </div>
+                <div class="post-caption">${data.text}</div>
+                <img src="${data.img}" class="post-media" loading="lazy">
+                <div class="post-actions">
+                    <div class="action-btn" onclick="handleLike(this)">🤍 Me gusta</div>
+                    <div class="action-btn">💬 Comentar</div>
+                    <div class="action-btn">↪️ Compartir</div>
+                </div>
+            `;
+            feedContainer.appendChild(div);
+        }
 
-            for (let i = 0; i < 5; i++) {
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-                // Dibujar grietas que se extienden al azar
-                const angle = Math.random() * 2 * Math.PI;
-                const length = Math.random() * 150 + 50;
-                ctx.lineTo(x + Math.cos(angle) * length, y + Math.sin(angle) * length);
-                ctx.stroke();
+        function createAd() {
+            const div = document.createElement('div');
+            div.className = 'ad-card';
+            // AQUÍ IRÍA EL SCRIPT REAL DE MONETAG
+            div.innerHTML = `
+                <div class="ad-header">
+                    <span>Publicidad Sugerida</span>
+                    <span>ℹ️</span>
+                </div>
+                <div class="ad-content-box" onclick="watchAd()">
+                    <div style="font-size:40px; margin-bottom:10px;">🎁</div>
+                    <strong>Ver Video Patrocinado</strong>
+                    <div style="font-size:12px; margin-top:5px; color:#555;">Gana +50 Diamantes Gratis</div>
+                    <button class="cta-button">VER AHORA</button>
+                </div>
+            `;
+            feedContainer.appendChild(div);
+        }
+
+        function handleLike(btn) {
+            if (btn.classList.contains('liked')) return;
+            
+            btn.innerHTML = "❤️ Me gusta";
+            btn.classList.add('liked');
+            
+            // Feedback visual de ganancia pequeña
+            addCoins(5);
+            
+            // Simulación: Probabilidad del 20% de que salga un anuncio Interstitial al dar like
+            if(Math.random() < 0.2) {
+                console.log("Aquí se lanzaría el Interstitial de AdsGram");
             }
         }
 
-        function showFloatingPoints(x, y) {
-            const span = document.createElement('span');
-            span.textContent = `+${POINTS_PER_HIT}`;
-            span.style.position = 'absolute';
-            span.style.left = `${x}px`;
-            span.style.top = `${y}px`;
-            span.style.color = 'yellow';
-            span.style.fontSize = '2em';
-            span.style.fontWeight = 'bold';
-            span.style.pointerEvents = 'none';
-            span.style.transition = 'all 1s ease-out';
-            span.style.transform = 'translate(-50%, -50%)';
-            span.style.zIndex = 20;
-
-            gameArea.appendChild(span);
-
-            // Animación: subir y desaparecer
+        function watchAd() {
+            // Aquí conectarías con AdsGram / Monetag Video
+            alert("Simulando Video Publicitario... (Espera 3 segundos)");
             setTimeout(() => {
-                span.style.transform = 'translate(-50%, -100px)';
-                span.style.opacity = '0';
-            }, 50);
-
-            // Eliminar elemento después de la animación
-            setTimeout(() => {
-                span.remove();
-            }, 1050);
+                addCoins(50);
+                alert("¡Gracias por ver! +50 Diamantes añadidos.");
+            }, 3000);
         }
 
-        // --- LÓGICA DE MONETIZACIÓN (ADSGRAM) ---
-        function handleRecharge() {
-            rechargeButton.disabled = true;
+        function addCoins(amount) {
+            coins += amount;
+            coinDisplay.innerText = coins;
             
-            // 1. SIMULACIÓN DEL ANUNCIO (Aquí integrarías el SDK de AdsGram real)
-            if (window.Telegram.WebApp) {
-                window.Telegram.WebApp.showAlert('Cargando anuncio de AdsGram... (Simulación de 3s)');
-            }
-            
-            // 2. Simulación de que el video se ve completamente y recarga
-            setTimeout(() => {
-                
-                // 3. Recargar Energía
-                currentEnergy = MAX_ENERGY;
-                updateUI();
-                
-                if (window.Telegram.WebApp) {
-                     window.Telegram.WebApp.showAlert('¡Energía Recargada! ¡A romper de nuevo!');
-                }
-
-                // *CRUCIAL:* Aquí iría el código para notificar a tu servidor que el anuncio fue visto.
-                
-            }, 3000); 
+            // Animación simple del contador
+            coinDisplay.style.transform = "scale(1.5)";
+            setTimeout(() => coinDisplay.style.transform = "scale(1)", 200);
         }
 
-        // --- ASIGNACIÓN DE EVENTOS ---
-        gameArea.addEventListener('click', handleSmash);
-        rechargeButton.addEventListener('click', handleRecharge);
+        // Inicializar Telegram WebApp
+        Telegram.WebApp.ready();
+        Telegram.WebApp.expand();
+        
+        // Renderizar Feed
+        renderFeed();
 
-        // Inicializar el tamaño del Canvas y la Interfaz
-        function initialize() {
-            canvas.width = gameArea.offsetWidth;
-            canvas.height = gameArea.offsetHeight;
-            updateUI();
-        }
-
-        window.addEventListener('load', initialize);
-        window.addEventListener('resize', initialize); 
     </script>
 </body>
-    </html>
+</html>
