@@ -3,225 +3,247 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Social Feed</title>
+    <title>Video Feed</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f0f2f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #000; /* Fondo negro tipo TikTok/Reels */
+            color: white;
             margin: 0;
-            padding-bottom: 80px;
-            color: #1c1e21;
-            overscroll-behavior-y: none; /* Evita rebote en scroll */
+            padding-bottom: 70px;
         }
 
-        /* HEADER FIJO */
+        /* HEADER */
         .header {
-            background: white;
+            background: rgba(0,0,0,0.9);
             padding: 10px 15px;
             position: sticky;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 50px;
+            border-bottom: 1px solid #333;
         }
-        .logo { font-weight: 900; color: #1877f2; font-size: 22px; letter-spacing: -0.5px; }
+        .logo { font-weight: 800; color: #fff; font-size: 20px; }
         .coins-badge {
-            background: #e7f3ff;
-            color: #1877f2;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #000;
             padding: 5px 15px;
             border-radius: 20px;
             font-weight: bold;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            font-size: 13px;
         }
 
         /* FEED */
-        #feed-container { max-width: 600px; margin: 0 auto; padding-top: 10px; }
+        #feed-container { max-width: 500px; margin: 0 auto; }
 
-        /* ESTILO POST */
+        /* POST CARD TIPO VIDEO */
         .post-card {
-            background: white;
-            margin-bottom: 12px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            background: #111;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #222;
+            position: relative;
         }
+
         .post-header {
-            padding: 12px;
+            padding: 10px;
             display: flex;
             align-items: center;
         }
         .avatar {
-            width: 40px;
-            height: 40px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
             margin-right: 10px;
-            object-fit: cover;
+            border: 1px solid #555;
         }
-        .user-info { display: flex; flex-direction: column; }
-        .username { font-weight: 600; font-size: 15px; }
-        .time { font-size: 12px; color: #65676b; }
-        
-        .post-caption {
-            padding: 0 12px 10px 12px;
-            font-size: 14px;
-            line-height: 1.4;
-        }
+        .username { font-weight: 600; font-size: 14px; color: #fff; }
+        .time { font-size: 12px; color: #888; margin-left: 5px; }
 
+        /* CONTENEDOR VISUAL (FOTO QUE PARECE VIDEO) */
+        .media-container {
+            position: relative;
+            width: 100%;
+            height: 400px; /* Altura vertical tipo Reel */
+            background: #000;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
         .post-media {
             width: 100%;
-            height: auto;
-            display: block;
-            min-height: 250px;
-            background: #eee;
+            height: 100%;
             object-fit: cover;
+            opacity: 0.9;
+        }
+
+        /* UI DE VIDEO FALSO */
+        .play-icon {
+            position: absolute;
+            font-size: 50px;
+            color: rgba(255,255,255,0.8);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            pointer-events: none;
+        }
+        .video-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+        }
+        .video-progress {
+            height: 100%;
+            width: 40%;
+            background: red;
+        }
+
+        .post-caption {
+            padding: 12px;
+            font-size: 14px;
+            line-height: 1.4;
+            color: #eee;
         }
 
         .post-actions {
-            padding: 10px;
-            border-top: 1px solid #f0f2f5;
+            padding: 0 10px 15px 10px;
             display: flex;
-            justify-content: space-around;
+            gap: 20px;
         }
-        .action-btn {
-            color: #65676b;
-            font-weight: 600;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-            padding: 5px 20px;
-            border-radius: 5px;
-            transition: 0.2s;
-        }
-        .action-btn:active { background-color: #f2f2f2; transform: scale(0.95); }
-        .liked { color: #e41e3f !important; }
+        .action-icon { font-size: 22px; cursor: pointer; }
 
-        /* ESTILO ANUNCIO (Nativo) */
+        /* ANUNCIO */
         .ad-card {
-            background: white;
-            margin-bottom: 12px;
-            padding: 0;
-            border: 2px solid #e7f3ff;
+            background: #1a1a1a;
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #333;
+            text-align: center;
         }
-        .ad-header {
-            padding: 10px;
-            font-size: 12px;
-            color: #65676b;
-            display: flex;
-            justify-content: space-between;
-        }
-        .ad-content-box {
-            background: #f0f8ff;
-            height: 250px;
+        .ad-box {
+            background: #222;
+            height: 200px;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            color: #aaa;
             cursor: pointer;
-            text-align: center;
-            padding: 20px;
         }
-        .cta-button {
-            background: #1877f2;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 6px;
-            margin-top: 15px;
-            font-weight: bold;
-            font-size: 14px;
+        .btn-claim {
+            margin-top: 10px;
+            background: #007bff;
             border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-weight: bold;
         }
+
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="logo">SocialApp</div>
-        <div class="coins-badge">
-            <span>💎</span> <span id="coin-display">0</span>
-        </div>
+        <div class="logo">ReelsGram</div>
+        <div class="coins-badge">💰 <span id="coin-display">0</span></div>
     </div>
 
     <div id="feed-container"></div>
 
     <script>
-        // --- BASE DE DATOS DE POSTS (GENERADA POR IA) ---
-        // Usamos Lorem Picsum para imágenes automáticas que funcionan siempre.
-        const allPosts = [
-            { user: "Sofia_Travels", time: "2 min", text: "¡No puedo creer lo azul que es el agua aquí! 🌊😍 #Vacaciones #Relax", img: "https://picsum.photos/seed/travel1/600/400", avatar: "https://i.pravatar.cc/150?u=sofia" },
-            { user: "Tech_Master", time: "5 min", text: "¿Vieron el nuevo lanzamiento de IA? Es una locura total 🤖💻 #Tecnologia #Futuro", img: "https://picsum.photos/seed/tech1/600/400", avatar: "https://i.pravatar.cc/150?u=tech" },
-            { user: "Gatitos_Oficial", time: "12 min", text: "Etiqueta a un amigo que necesite ver esto 😺😹", img: "https://picsum.photos/seed/cat1/600/600", avatar: "https://i.pravatar.cc/150?u=cat" },
-            { user: "Comida_Deli", time: "30 min", text: "Hoy tocó hamburguesa doble con extra queso 🍔🧀 ¿Quién quiere?", img: "https://picsum.photos/seed/burger/600/500", avatar: "https://i.pravatar.cc/150?u=food" },
-            { user: "Mente_Millonaria", time: "1 h", text: "Trabaja mientras ellos duermen. 💼💵 #Motivacion #Exito", img: "https://picsum.photos/seed/money/600/400", avatar: "https://i.pravatar.cc/150?u=rich" },
-            { user: "Humor_Latino", time: "1 h", text: "Yo tratando de arreglar mi vida un lunes a las 8am 😂", img: "https://picsum.photos/seed/funny1/600/450", avatar: "https://i.pravatar.cc/150?u=humor" },
-            { user: "Fitness_Daily", time: "2 h", text: "Día de pierna completado. ¡No pain no gain! 💪🏋️‍♂️", img: "https://picsum.photos/seed/gym/600/500", avatar: "https://i.pravatar.cc/150?u=fit" },
-            { user: "Curiosidades_X", time: "2 h", text: "¿Sabías que los pulpos tienen 3 corazones? 🐙🤯", img: "https://picsum.photos/seed/octopus/600/400", avatar: "https://i.pravatar.cc/150?u=nerd" },
-            { user: "Arte_Visual", time: "3 h", text: "Mi último dibujo a lápiz. ¿Qué opinan del 1 al 10? 🎨✏️", img: "https://picsum.photos/seed/art/600/600", avatar: "https://i.pravatar.cc/150?u=art" },
-            { user: "Car_Lovers", time: "4 h", text: "Ese motor suena como música para mis oídos 🏎️💨", img: "https://picsum.photos/seed/car/600/400", avatar: "https://i.pravatar.cc/150?u=car" },
-            { user: "Memes_Random", time: "5 h", text: "Cuando te das cuenta que mañana es lunes... 🤡", img: "https://picsum.photos/seed/sad/600/400", avatar: "https://i.pravatar.cc/150?u=meme" },
-            { user: "Naturaleza_Viva", time: "6 h", text: "El atardecer de hoy fue simplemente mágico 🌅🧡", img: "https://picsum.photos/seed/sunset/600/400", avatar: "https://i.pravatar.cc/150?u=nature" },
-            { user: "Gaming_Zone", time: "7 h", text: "¡Por fin conseguí el platino en este juego! 🎮🏆", img: "https://picsum.photos/seed/game/600/400", avatar: "https://i.pravatar.cc/150?u=gamer" },
-            { user: "Cultura_Pop", time: "8 h", text: "¿Quién más está esperando la nueva temporada? 🎬🍿", img: "https://picsum.photos/seed/movie/600/400", avatar: "https://i.pravatar.cc/150?u=pop" },
-            { user: "Crypto_Bro", time: "9 h", text: "El mercado está en verde hoy. ¡Hold! 📈🚀", img: "https://picsum.photos/seed/chart/600/400", avatar: "https://i.pravatar.cc/150?u=btc" },
-            { user: "Dog_Lover", time: "10 h", text: "El mejor amigo del hombre sin duda alguna 🐶❤️", img: "https://picsum.photos/seed/dog/600/500", avatar: "https://i.pravatar.cc/150?u=dog" },
-            { user: "Espacio_Exterior", time: "11 h", text: "Una foto increíble de la nebulosa tomada por el telescopio Hubble 🌌🔭", img: "https://picsum.photos/seed/space/600/400", avatar: "https://i.pravatar.cc/150?u=space" },
-            { user: "Moda_Style", time: "12 h", text: "Outfit del día. ¿Les gusta esta combinación? 👗👠", img: "https://picsum.photos/seed/fashion/600/800", avatar: "https://i.pravatar.cc/150?u=style" },
-            { user: "Coffee_Time", time: "13 h", text: "Sin café no hay paraíso. Buenos días ☕☀️", img: "https://picsum.photos/seed/coffee/600/400", avatar: "https://i.pravatar.cc/150?u=coffee" },
-            { user: "Frases_Sad", time: "14 h", text: "A veces es mejor soltar y dejar ir... 💔🌧️", img: "https://picsum.photos/seed/rain/600/400", avatar: "https://i.pravatar.cc/150?u=sad" }
+        // --- CONFIGURACIÓN ---
+        let coins = 0;
+        const coinDisplay = document.getElementById('coin-display');
+        const feedContainer = document.getElementById('feed-container');
+
+        // --- BASE DE DATOS MEJORADA (Contexto + Keywords) ---
+        // 'keyword': Usamos esto para buscar la imagen exacta en internet cada vez.
+        const postDatabase = [
+            { user: "Gato_Viral", text: "¡Miren lo que hace mi gato cuando tiene hambre! 🐱😹", keyword: "cat,kitten" },
+            { user: "Burger_King_Fan", text: "Esta hamburguesa doble queso es ilegal de lo rica que está 🍔🤤", keyword: "burger,fastfood" },
+            { user: "Futbol_Total", text: "El estadio está a reventar hoy para la final ⚽🏟️", keyword: "soccer,stadium" },
+            { user: "Travel_Life", text: "Atardecer en la playa, no pido nada más 🌊☀️", keyword: "beach,sunset" },
+            { user: "Gamer_Pro", text: "Mi setup para jugar toda la noche. ¿Qué opinan? 🎮🕹️", keyword: "gaming,pc" },
+            { user: "Fitness_Gym", text: "Día de pesas completado. ¡A romper la dieta! 💪🏋️", keyword: "gym,fitness" },
+            { user: "Autos_Lujo", text: "Escuchen el motor de esta bestia italiana 🏎️💨", keyword: "ferrari,supercar" },
+            { user: "Pizza_Lover", text: "Pizza con extra pepperoni recién salida del horno 🍕🔥", keyword: "pizza" },
+            { user: "Crypto_News", text: "El Bitcoin está subiendo otra vez, ¡miren la gráfica! 📈🚀", keyword: "bitcoin,crypto" },
+            { user: "Humor_Memes", text: "Cuando te das cuenta que mañana es lunes... 🤡😂", keyword: "clown,funny" },
+            { user: "Doggy_Style", time: "5h", text: "Mi perro no me deja trabajar 😂🐶", keyword: "dog,puppy" },
+            { user: "Tech_Review", time: "6h", text: "Probando el nuevo iPhone, la cámara es brutal 📱📸", keyword: "iphone,technology" }
         ];
 
-        // --- LÓGICA DE LA APP ---
-        let coins = 0;
-        const feedContainer = document.getElementById('feed-container');
-        const coinDisplay = document.getElementById('coin-display');
-        
-        // Configuración de anuncios: 1 anuncio cada 4 posts
-        const POSTS_PER_AD = 4;
+        // --- GENERADOR DE IMÁGENES ALEATORIAS ---
+        // Usamos LoremFlickr porque respeta las Keywords mejor que Picsum
+        // Agregamos '?random=' para que SIEMPRE sea una foto nueva al recargar.
+        function getImageUrl(keyword) {
+            const randomID = Math.floor(Math.random() * 10000);
+            return `https://loremflickr.com/500/600/${keyword}?random=${randomID}`;
+        }
 
+        function getAvatarUrl(index) {
+            return `https://i.pravatar.cc/150?img=${index + 10}`;
+        }
+
+        // --- RENDERIZAR FEED ---
         function renderFeed() {
-            let counter = 0;
+            // Barajar el orden de los posts para que no salgan siempre en la misma secuencia
+            const shuffled = postDatabase.sort(() => Math.random() - 0.5);
+            
+            let adCounter = 0;
 
-            // Barajar los posts para que cada vez que abras la app el orden sea distinto
-            const shuffledPosts = allPosts.sort(() => Math.random() - 0.5);
+            shuffled.forEach((data, index) => {
+                createPost(data, index);
+                adCounter++;
 
-            shuffledPosts.forEach((post) => {
-                createPost(post);
-                counter++;
-
-                if (counter === POSTS_PER_AD) {
+                // Poner anuncio cada 3 posts
+                if (adCounter === 3) {
                     createAd();
-                    counter = 0;
+                    adCounter = 0;
                 }
             });
             
-            // Un anuncio extra al final
-            createAd();
+            createAd(); // Uno al final
         }
 
-        function createPost(data) {
+        function createPost(data, index) {
             const div = document.createElement('div');
             div.className = 'post-card';
+            
+            // Generamos la URL fresca basada en la palabra clave
+            const dynamicImage = getImageUrl(data.keyword);
+
             div.innerHTML = `
                 <div class="post-header">
-                    <img src="${data.avatar}" class="avatar" alt="user">
-                    <div class="user-info">
-                        <span class="username">${data.user}</span>
-                        <span class="time">${data.time}</span>
+                    <img src="${getAvatarUrl(index)}" class="avatar">
+                    <div>
+                        <div class="username">${data.user}</div>
+                        <div class="time">Hace un momento</div>
                     </div>
                 </div>
+                
                 <div class="post-caption">${data.text}</div>
-                <img src="${data.img}" class="post-media" loading="lazy">
+
+                <div class="media-container" onclick="playEffect(this)">
+                    <img src="${dynamicImage}" class="post-media">
+                    <div class="play-icon">▶</div>
+                    <div class="video-controls">
+                        <div class="video-progress"></div>
+                    </div>
+                </div>
+
                 <div class="post-actions">
-                    <div class="action-btn" onclick="handleLike(this)">🤍 Me gusta</div>
-                    <div class="action-btn">💬 Comentar</div>
-                    <div class="action-btn">↪️ Compartir</div>
+                    <div class="action-icon" onclick="toggleLike(this)">🤍</div>
+                    <div class="action-icon">💬</div>
+                    <div class="action-icon">↪️</div>
                 </div>
             `;
             feedContainer.appendChild(div);
@@ -230,61 +252,60 @@
         function createAd() {
             const div = document.createElement('div');
             div.className = 'ad-card';
-            // AQUÍ IRÍA EL SCRIPT REAL DE MONETAG
             div.innerHTML = `
-                <div class="ad-header">
-                    <span>Publicidad Sugerida</span>
-                    <span>ℹ️</span>
-                </div>
-                <div class="ad-content-box" onclick="watchAd()">
-                    <div style="font-size:40px; margin-bottom:10px;">🎁</div>
-                    <strong>Ver Video Patrocinado</strong>
-                    <div style="font-size:12px; margin-top:5px; color:#555;">Gana +50 Diamantes Gratis</div>
-                    <button class="cta-button">VER AHORA</button>
+                <div style="font-size:10px; color:#666; margin-bottom:5px;">PUBLICIDAD SUGERIDA</div>
+                <div class="ad-box" onclick="watchAd()">
+                    <span style="font-size:40px;">🎁</span>
+                    <p>Ver Video Reward</p>
+                    <button class="btn-claim">GANAR +100 MONEDAS</button>
                 </div>
             `;
             feedContainer.appendChild(div);
         }
 
-        function handleLike(btn) {
-            if (btn.classList.contains('liked')) return;
-            
-            btn.innerHTML = "❤️ Me gusta";
-            btn.classList.add('liked');
-            
-            // Feedback visual de ganancia pequeña
-            addCoins(5);
-            
-            // Simulación: Probabilidad del 20% de que salga un anuncio Interstitial al dar like
-            if(Math.random() < 0.2) {
-                console.log("Aquí se lanzaría el Interstitial de AdsGram");
+        // --- INTERACCIONES ---
+
+        function toggleLike(btn) {
+            if (btn.innerText === "🤍") {
+                btn.innerText = "❤️";
+                btn.style.color = "red";
+                addCoins(10); // Dar monedas por like
+            } else {
+                btn.innerText = "🤍";
+                btn.style.color = "white";
+            }
+        }
+
+        function playEffect(container) {
+            // Simular que el video se pausa/reproduce
+            const icon = container.querySelector('.play-icon');
+            if (icon.style.display === 'none') {
+                icon.style.display = 'block'; // Pausa
+            } else {
+                icon.style.display = 'none'; // Play
             }
         }
 
         function watchAd() {
-            // Aquí conectarías con AdsGram / Monetag Video
-            alert("Simulando Video Publicitario... (Espera 3 segundos)");
+            // Aquí iría tu código de AdsGram / Monetag
+            alert("Cargando anuncio de video... (Espera)");
             setTimeout(() => {
-                addCoins(50);
-                alert("¡Gracias por ver! +50 Diamantes añadidos.");
-            }, 3000);
+                addCoins(100);
+                alert("¡Recompensa recibida!");
+            }, 1500);
         }
 
         function addCoins(amount) {
             coins += amount;
             coinDisplay.innerText = coins;
-            
-            // Animación simple del contador
-            coinDisplay.style.transform = "scale(1.5)";
-            setTimeout(() => coinDisplay.style.transform = "scale(1)", 200);
+            coinDisplay.parentElement.style.transform = "scale(1.2)";
+            setTimeout(() => coinDisplay.parentElement.style.transform = "scale(1)", 200);
         }
 
-        // Inicializar Telegram WebApp
+        // INICIAR
+        renderFeed();
         Telegram.WebApp.ready();
         Telegram.WebApp.expand();
-        
-        // Renderizar Feed
-        renderFeed();
 
     </script>
 </body>
