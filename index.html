@@ -3,188 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Diamond Rush</title>
+    <title>Diamond Stake PRO</title>
     
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
         :root {
-            --bg: #13151b;
-            --card: #1e2129;
-            --accent: #00e701; /* Verde Neon */
-            --danger: #ff4757;
-            --tile-closed: #2d3442;
-            --text: #ffffff;
+            --bg: #0d1117; /* Fondo oscuro elegante */
+            --card: #161b22;
+            --accent: #2ecc71; /* Verde Dinero */
+            --accent-hover: #27ae60;
+            --danger: #e74c3c;
+            --input-bg: #000000;
+            --text: #e6edf3;
+            --btn-sec: #30363d;
         }
-        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; font-family: 'Poppins', sans-serif; }
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; }
         
         body {
             background-color: var(--bg); color: var(--text);
-            margin: 0; padding: 20px; min-height: 100vh;
+            margin: 0; padding: 15px; min-height: 100vh;
             display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
         }
 
-        /* HEADER */
-        .header { width: 100%; max-width: 400px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .balance-box { background: var(--card); padding: 8px 15px; border-radius: 12px; display: flex; align-items: center; gap: 8px; font-weight: bold; border: 1px solid #333; }
-        .balance-val { font-size: 18px; color: var(--accent); }
+        /* HEADER SALDO */
+        .top-bar {
+            width: 100%; max-width: 400px; display: flex; justify-content: space-between; align-items: center;
+            background: var(--card); padding: 10px 15px; border-radius: 12px; margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 1px solid #30363d;
+        }
+        .balance-label { font-size: 11px; color: #8b949e; font-weight: bold; letter-spacing: 1px; }
+        .balance-amount { font-size: 20px; font-weight: 900; color: var(--text); display: flex; align-items: center; gap: 5px; }
+        .currency-icon { color: #f1c40f; }
 
-        /* TABLERO DE JUEGO */
+        /* TABLERO */
         .game-board {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            width: 100%; max-width: 380px;
-            margin-bottom: 20px;
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+            width: 100%; max-width: 380px; margin-bottom: 20px;
         }
-        
         .tile {
-            aspect-ratio: 1;
-            background: var(--tile-closed);
-            border-radius: 12px;
-            cursor: pointer;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 28px;
-            box-shadow: 0 4px 0 #1b2029;
-            transition: transform 0.1s, background 0.2s;
-            position: relative;
-            overflow: hidden;
+            aspect-ratio: 1; background: #21262d; border-radius: 8px; cursor: pointer;
+            display: flex; justify-content: center; align-items: center; font-size: 24px;
+            box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3); transition: 0.1s;
         }
-        .tile:active { transform: translateY(4px); box-shadow: none; }
-        .tile.revealed-gem { background: #2f3640; border: 2px solid var(--accent); animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .tile.revealed-bomb { background: var(--danger); animation: shake 0.4s; }
+        .tile:active { transform: scale(0.95); }
+        .tile.revealed-gem { background: #238636; border: 1px solid #2ea043; animation: pop 0.3s; box-shadow: 0 0 15px rgba(46, 160, 67, 0.4); }
+        .tile.revealed-bomb { background: #da3633; border: 1px solid #f85149; animation: shake 0.4s; }
         
         @keyframes pop { 0% { transform: scale(0.5); } 100% { transform: scale(1); } }
-        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } 100% { transform: translateX(0); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
-        /* CONTROLES */
-        .controls { width: 100%; max-width: 380px; text-align: center; }
+        /* CONTROLES DE APUESTA */
+        .controls-area { width: 100%; max-width: 380px; background: var(--card); padding: 15px; border-radius: 15px; border: 1px solid #30363d; }
         
-        .current-win-display {
-            font-size: 14px; color: #aaa; margin-bottom: 5px;
-            opacity: 0; transition: opacity 0.3s;
-        }
-        .current-win-val { font-size: 32px; font-weight: 900; color: white; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
-
-        .btn-main {
-            width: 100%; padding: 18px; border: none; border-radius: 15px;
-            font-size: 18px; font-weight: 900; cursor: pointer;
-            text-transform: uppercase; letter-spacing: 1px;
-            transition: 0.2s; margin-top: 10px;
-            background: var(--accent); color: #000;
-            box-shadow: 0 0 20px rgba(0, 231, 1, 0.3);
-        }
-        .btn-main:disabled { background: #333; color: #555; box-shadow: none; cursor: not-allowed; }
+        .bet-input-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+        .bet-label { font-size: 12px; color: #8b949e; display: flex; justify-content: space-between; }
         
-        .btn-cashout { background: #ff9f43; color: #000; display: none; box-shadow: 0 0 20px rgba(255, 159, 67, 0.4); }
+        .bet-input-row { display: flex; gap: 5px; height: 50px; }
+        
+        .bet-display {
+            flex: 2; background: var(--input-bg); border: 1px solid #30363d; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; font-weight: bold; color: white; position: relative;
+        }
+        .bet-display::before { content: '$'; color: var(--accent); position: absolute; left: 15px; font-size: 16px; }
 
-        /* FOOTER DE ENERGÍA/ADS */
-        .footer-actions { display: flex; gap: 10px; width: 100%; max-width: 380px; margin-top: 20px; }
-        .btn-mini { flex: 1; background: var(--card); border: 1px solid #333; color: white; padding: 12px; border-radius: 10px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 5px; cursor: pointer; }
+        .btn-ctrl {
+            flex: 1; background: var(--btn-sec); border: none; border-radius: 8px; color: #c9d1d9;
+            font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s;
+        }
+        .btn-ctrl:active { background: #484f58; transform: translateY(2px); }
+
+        /* BOTÓN PRINCIPAL */
+        .btn-action {
+            width: 100%; padding: 18px; border-radius: 10px; border: none; font-size: 16px; font-weight: 900;
+            cursor: pointer; text-transform: uppercase; transition: 0.2s;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        .btn-bet { background: var(--accent); color: #052e16; box-shadow: 0 4px 0 #238636; }
+        .btn-bet:active { transform: translateY(4px); box-shadow: none; }
+        
+        .btn-cashout { background: #f39c12; color: #3e2723; box-shadow: 0 4px 0 #d35400; display: none; }
+        .btn-cashout:active { transform: translateY(4px); box-shadow: none; }
+
+        /* INFO DE GANANCIA FLOTANTE */
+        .profit-info {
+            text-align: center; margin-bottom: 10px; height: 40px; opacity: 0; transition: opacity 0.3s;
+        }
+        .profit-val { color: var(--accent); font-size: 24px; font-weight: 900; text-shadow: 0 0 10px rgba(46, 204, 113, 0.3); }
+
+        /* BOTONES EXTRA */
+        .footer-btns { display: flex; gap: 10px; width: 100%; max-width: 380px; margin-top: 15px; }
+        .btn-small { flex: 1; padding: 12px; background: #21262d; border: 1px solid #30363d; color: #8b949e; border-radius: 8px; font-size: 12px; font-weight: bold; }
 
         /* MODALES */
-        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:none; justify-content:center; align-items:center; z-index: 100; backdrop-filter: blur(5px); }
-        .modal-card { background: var(--card); padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; border: 1px solid #333; }
-        
-        .bomb-icon { font-size: 60px; margin-bottom: 10px; display:block; }
-        .win-icon { font-size: 60px; margin-bottom: 10px; display:block; }
-
-        .btn-revive { background: #3742fa; color: white; width: 100%; padding: 15px; border:none; border-radius: 10px; font-weight: bold; margin-top: 15px; cursor: pointer; }
-        .btn-close { background: transparent; border: none; color: #777; margin-top: 15px; cursor: pointer; text-decoration: underline; }
-
-        /* RETIRO */
-        .btn-withdraw { width:100%; background: #2f3542; color: #aaa; padding:15px; border-radius:12px; border:none; margin-top:20px; font-weight:bold; }
-        .btn-withdraw.ready { background: linear-gradient(45deg, #00e701, #00b894); color:black; animation: pulse 2s infinite; cursor: pointer; }
-        
-        .confetti { position: fixed; width: 10px; height: 10px; background-color: #f00; animation: fall linear forwards; z-index: 99; }
-        @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
-
+        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:100; display:none; justify-content:center; align-items:center; backdrop-filter: blur(5px); }
+        .modal-box { background: var(--card); padding: 25px; border-radius: 15px; width: 85%; max-width: 320px; text-align: center; border: 1px solid #30363d; }
+        .modal-title { font-size: 24px; margin: 10px 0; font-weight: 900; }
+        .btn-full { width: 100%; padding: 14px; border-radius: 8px; border: none; font-weight: bold; font-size: 16px; margin-top: 15px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div class="balance-box"><i class="fa-solid fa-coins" style="color:#f1c40f"></i> <span id="balance">0</span></div>
-        <div class="balance-box" style="font-size:12px; background:#2c3e50;"><span id="energy">⚡ 100%</span></div>
+    <div class="top-bar">
+        <div>
+            <div class="balance-label">TU SALDO</div>
+            <div class="balance-amount"><i class="fa-solid fa-coins currency-icon"></i> <span id="balanceDisplay">100.00</span></div>
+        </div>
+        <div style="text-align:right;">
+            <div class="balance-label">RETIRO</div>
+            <div style="font-size:12px; color:#2ecc71; font-weight:bold;">$1,000.00</div>
+        </div>
     </div>
 
-    <div style="text-align:center; margin-bottom:15px;">
-        <h2 style="margin:0; font-weight:900; font-style:italic;">DIAMOND RUSH</h2>
-        <p style="margin:5px 0 0 0; font-size:12px; color:#777;">Encuentra diamantes, evita las bombas.</p>
+    <div class="profit-info" id="profitInfo">
+        <span style="font-size:12px; color:#aaa;">GANANCIA ACTUAL</span><br>
+        <span class="profit-val" id="currentProfit">+$0.00</span>
     </div>
 
-    <div class="game-board" id="board">
+    <div class="game-board" id="board"></div>
+
+    <div class="controls-area">
+        <div class="bet-input-group">
+            <div class="bet-label">
+                <span>MONTO DE APUESTA</span>
+                <span>Max: $100</span>
+            </div>
+            <div class="bet-input-row">
+                <button class="btn-ctrl" onclick="adjustBet('half')">½</button>
+                <div class="bet-display" id="betAmount">10.00</div>
+                <button class="btn-ctrl" onclick="adjustBet('double')">x2</button>
+                <button class="btn-ctrl" style="flex:0.5; font-size:10px;" onclick="adjustBet('max')">MAX</button>
+            </div>
         </div>
 
-    <div class="controls">
-        <div class="current-win-display" id="winDisplay">
-            GANANCIA ACTUAL<br>
-            <div class="current-win-val">+<span id="currentWin">0</span></div>
-        </div>
-
-        <button class="btn-main" id="btnStart" onclick="startGame()">JUGAR (Costo: 50 Pts)</button>
-        <button class="btn-main btn-cashout" id="btnCashout" onclick="cashout()">💰 RETIRAR GANANCIA</button>
+        <button class="btn-action btn-bet" id="btnBet" onclick="startGame()">
+            APOSTAR
+        </button>
+        <button class="btn-action btn-cashout" id="btnCashout" onclick="cashout()">
+            RETIRAR GANANCIA
+        </button>
     </div>
 
-    <div class="footer-actions">
-        <button class="btn-mini" onclick="watchAdForPoints()"><i class="fa-solid fa-play"></i> +500 Puntos Gratis</button>
-        <button class="btn-mini" onclick="tg.openTelegramLink('https://t.me/noticebuddy')"><i class="fa-brands fa-telegram"></i> Canal</button>
+    <div class="footer-btns">
+        <button class="btn-small" onclick="watchAdBonus()"><i class="fa-solid fa-play"></i> BONO +$50</button>
+        <button class="btn-small" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')"><i class="fa-solid fa-headset"></i> RETIRAR</button>
     </div>
-
-    <button class="btn-withdraw" id="withdrawBtn" onclick="tryWithdraw()">META: 50,000 Pts ($0.10)</button>
 
     <div class="modal-overlay" id="loseModal">
-        <div class="modal-card">
-            <span class="bomb-icon">💥</span>
-            <h2 style="color:var(--danger); margin:0;">¡BOMBA!</h2>
-            <p style="color:#ccc;">Has pisado una mina y perdiste tus ganancias acumuladas.</p>
-            <button class="btn-revive" onclick="reviveWithAd()">
-                <i class="fa-solid fa-video"></i> REVIVIR Y SEGUIR
+        <div class="modal-box">
+            <div style="font-size:50px;">💥</div>
+            <div class="modal-title" style="color:var(--danger)">¡EXPLOSIÓN!</div>
+            <p style="color:#8b949e; font-size:14px;">La bomba ha detonado y perdiste tu apuesta.</p>
+            <button class="btn-full" style="background:#3742fa; color:white;" onclick="reviveAd()">
+                <i class="fa-solid fa-video"></i> REVIVIR (GRATIS)
             </button>
-            <button class="btn-close" onclick="closeLoseModal()">Aceptar derrota</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="winModal">
-        <div class="modal-card" style="border-color:var(--accent);">
-            <span class="win-icon">💎</span>
-            <h2 style="color:var(--accent); margin:0;">¡EXCELENTE!</h2>
-            <p style="color:#ccc;">Has retirado a tiempo.</p>
-            <h1 style="font-size:40px; margin:10px 0;" id="finalWinAmount">+0</h1>
-            <button class="btn-revive" style="background:var(--accent); color:black;" onclick="document.getElementById('winModal').style.display='none'">CONTINUAR</button>
+            <button style="background:none; border:none; color:#555; margin-top:10px; text-decoration:underline;" onclick="closeModal()">Perder</button>
         </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp; tg.expand();
-        tg.setHeaderColor('#13151b'); tg.setBackgroundColor('#13151b');
+        tg.setHeaderColor('#0d1117'); tg.setBackgroundColor('#0d1117');
 
-        // --- CONFIGURACIÓN ---
+        // CONF
         const ADSGRAM_ID = "18897"; 
-        const KEY = 'diamond_rush_v1';
-        const BOARD_SIZE = 16; // 4x4
-        const BOMB_COUNT = 4;  // 4 Bombas, 12 Diamantes
-        const BET_COST = 50;   // Costo por partida
-        const WITHDRAW_GOAL = 50000;
+        const KEY = 'stake_pro_v2';
+        const WITHDRAW_LIMIT = 1000; // Meta en "Dólares" virtuales para retiro real
 
-        // Estado del usuario
-        let user = { points: 1000, energy: 100 }; // Empezamos con 1000 puntos de regalo
+        let user = { balance: 100.00 }; // Saldo inicial
+        let currentBet = 10.00;
         
-        // Estado de la partida actual
         let gameActive = false;
-        let bombs = []; // Array de índices donde están las bombas
+        let bombs = [];
         let revealedCount = 0;
-        let currentMultiplier = 1.0;
-        let currentWinnings = 0;
-        let tempLostPoints = 0; // Para guardar puntos si quiere revivir
+        let currentWin = 0;
 
-        // Multiplicadores progresivos (mientras más abres, más ganas)
-        const multipliers = [1.2, 1.5, 2.0, 2.8, 4.0, 6.0, 9.0, 15.0, 25.0, 40.0, 60.0, 100.0];
+        // Multiplicadores (Stake style)
+        const mults = [1.13, 1.35, 1.60, 2.00, 3.00, 4.50, 7.00, 11.00, 18.00, 25.00, 35.00, 50.00];
 
         window.onload = function() {
             if(localStorage.getItem(KEY)) {
@@ -194,208 +195,156 @@
             updateUI();
         };
 
-        function save() {
-            localStorage.setItem(KEY, btoa(JSON.stringify(user)));
-            updateUI();
-        }
+        function save() { localStorage.setItem(KEY, btoa(JSON.stringify(user))); updateUI(); }
 
         function updateUI() {
-            document.getElementById('balance').innerText = user.points.toLocaleString();
-            
-            const wBtn = document.getElementById('withdrawBtn');
-            if(user.points >= WITHDRAW_GOAL) {
-                wBtn.classList.add('ready');
-                wBtn.innerText = "¡META ALCANZADA! RETIRAR $0.10";
-            } else {
-                wBtn.classList.remove('ready');
-                wBtn.innerText = `META: ${WITHDRAW_GOAL.toLocaleString()} Pts ($0.10)`;
-            }
+            document.getElementById('balanceDisplay').innerText = user.balance.toFixed(2);
+            document.getElementById('betAmount').innerText = currentBet.toFixed(2);
         }
 
         function createBoard() {
-            const board = document.getElementById('board');
-            board.innerHTML = '';
-            for(let i=0; i<BOARD_SIZE; i++) {
-                let tile = document.createElement('div');
-                tile.className = 'tile';
-                tile.id = 'tile-'+i;
-                tile.onclick = () => clickTile(i);
-                tile.innerHTML = '<i class="fa-solid fa-question" style="font-size:14px; color:#444;"></i>';
-                board.appendChild(tile);
+            const b = document.getElementById('board'); b.innerHTML = '';
+            for(let i=0; i<16; i++){
+                let d = document.createElement('div');
+                d.className = 'tile'; d.id = 't-'+i;
+                d.onclick = () => clickTile(i);
+                b.appendChild(d);
             }
         }
 
+        // --- APUESTAS ---
+        function adjustBet(type) {
+            if(gameActive) return; // No cambiar durante el juego
+            if(type === 'double') currentBet *= 2;
+            if(type === 'half') currentBet /= 2;
+            if(type === 'max') currentBet = user.balance;
+
+            // Límites
+            if(currentBet < 1) currentBet = 1.00;
+            if(currentBet > user.balance) currentBet = user.balance;
+            if(currentBet > 100) currentBet = 100; // Límite por mano
+            
+            updateUI();
+        }
+
         function startGame() {
-            if(user.points < BET_COST) {
-                tg.showAlert("¡No tienes puntos suficientes! Mira un anuncio abajo para recargar.");
+            if(user.balance < currentBet || currentBet <= 0) {
+                tg.showAlert("Saldo insuficiente. Mira el Bono +$50.");
                 return;
             }
 
-            // Cobrar entrada
-            user.points -= BET_COST;
+            user.balance -= currentBet;
             save();
 
-            // Resetear juego
             gameActive = true;
             revealedCount = 0;
-            currentMultiplier = 1.0;
-            currentWinnings = BET_COST; 
+            currentWin = currentBet;
             bombs = [];
-            
-            // Colocar bombas aleatorias
-            while(bombs.length < BOMB_COUNT) {
-                let r = Math.floor(Math.random() * BOARD_SIZE);
-                if(bombs.indexOf(r) === -1) bombs.push(r);
+            while(bombs.length < 4) {
+                let r = Math.floor(Math.random()*16);
+                if(!bombs.includes(r)) bombs.push(r);
             }
 
             // UI Reset
             document.querySelectorAll('.tile').forEach(t => {
-                t.className = 'tile';
-                t.innerHTML = '';
-                t.style.background = 'var(--tile-closed)';
+                t.className = 'tile'; t.innerHTML = ''; t.style.background = '#21262d';
             });
+            document.getElementById('btnBet').style.display = 'none';
+            document.getElementById('btnCashout').style.display = 'flex';
+            document.querySelector('.controls-area').style.borderColor = '#f39c12'; // Alerta visual
             
-            document.getElementById('btnStart').style.display = 'none';
-            document.getElementById('btnCashout').style.display = 'block';
-            document.getElementById('winDisplay').style.opacity = '1';
-            updateWinningsDisplay();
+            document.getElementById('profitInfo').style.opacity = '1';
+            updateProfitDisplay();
         }
 
-        function clickTile(index) {
+        function clickTile(idx) {
             if(!gameActive) return;
-            const tile = document.getElementById('tile-'+index);
-            if(tile.classList.contains('revealed-gem')) return; // Ya clickeado
+            let t = document.getElementById('t-'+idx);
+            if(t.classList.contains('revealed-gem')) return;
 
-            if(bombs.includes(index)) {
-                // 💥 BOOM
-                tile.classList.add('revealed-bomb');
-                tile.innerHTML = '💣';
-                handleGameOver(false);
+            if(bombs.includes(idx)) {
+                // BOMBA
+                t.classList.add('revealed-bomb');
+                t.innerHTML = '💣';
+                gameOver();
             } else {
-                // 💎 GEM
-                tile.classList.add('revealed-gem');
-                tile.innerHTML = '💎';
+                // GEMA
+                t.classList.add('revealed-gem');
+                t.innerHTML = '💎';
+                tg.HapticFeedback.impactOccurred('light');
                 
                 revealedCount++;
-                // Calcular ganancia
-                let mult = multipliers[revealedCount-1] || multipliers[multipliers.length-1];
-                currentWinnings = Math.floor(BET_COST * mult);
+                let m = mults[revealedCount-1] || 50;
+                currentWin = currentBet * m;
+                updateProfitDisplay();
                 
-                updateWinningsDisplay();
-                tg.HapticFeedback.impactOccurred('medium');
-
-                if(revealedCount === (BOARD_SIZE - BOMB_COUNT)) {
-                    cashout(); // Ganó todo el tablero
-                }
+                if(revealedCount === 12) cashout(); // Ganó todo
             }
         }
 
-        function updateWinningsDisplay() {
-            document.getElementById('currentWin').innerText = currentWinnings.toLocaleString();
+        function updateProfitDisplay() {
+            document.getElementById('currentProfit').innerText = "+$" + currentWin.toFixed(2);
+            document.getElementById('btnCashout').innerText = `RETIRAR $${currentWin.toFixed(2)}`;
         }
 
         function cashout() {
             if(!gameActive) return;
             gameActive = false;
             
-            user.points += currentWinnings;
+            user.balance += currentWin;
             save();
             
-            // Efecto visual
-            document.getElementById('finalWinAmount').innerText = "+" + currentWinnings;
-            document.getElementById('winModal').style.display = 'flex';
-            fireConfetti();
             tg.HapticFeedback.notificationOccurred('success');
-
-            resetControls();
+            resetGameUI();
         }
 
-        function handleGameOver(revived) {
+        function gameOver() {
             gameActive = false;
-            tempLostPoints = currentWinnings; // Guardar lo que iba a ganar
-            
-            // Mostrar todas las bombas
+            // Mostrar todas
             bombs.forEach(b => {
-                let t = document.getElementById('tile-'+b);
-                t.classList.add('revealed-bomb');
-                t.innerHTML = '💣';
+                let t = document.getElementById('t-'+b);
+                t.classList.add('revealed-bomb'); t.innerHTML = '💣';
             });
-
-            setTimeout(() => {
-                document.getElementById('loseModal').style.display = 'flex';
-                tg.HapticFeedback.notificationOccurred('error');
-            }, 500);
-            
-            resetControls();
+            setTimeout(() => { document.getElementById('loseModal').style.display = 'flex'; }, 500);
         }
 
-        function resetControls() {
-            document.getElementById('btnStart').style.display = 'block';
+        function resetGameUI() {
+            document.getElementById('btnBet').style.display = 'flex';
             document.getElementById('btnCashout').style.display = 'none';
-            document.getElementById('winDisplay').style.opacity = '0';
+            document.querySelector('.controls-area').style.borderColor = '#30363d';
+            document.getElementById('profitInfo').style.opacity = '0';
         }
 
-        function closeLoseModal() {
+        function closeModal() {
             document.getElementById('loseModal').style.display = 'none';
-            // Pierde oficialmente
+            resetGameUI();
         }
 
-        // --- SISTEMA DE ADS ---
-
-        function watchAdForPoints() {
+        // --- ADS ---
+        function reviveAd() {
             const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
             AdController.show().then(() => {
-                user.points += 500;
+                // Devolvemos la apuesta
+                user.balance += currentBet;
                 save();
-                tg.showPopup({title:"¡Puntos Gratis!", message:"Has recibido 500 puntos."});
-            }).catch(() => {
-                 if (typeof show_10278425 === 'function') {
+                closeModal();
+                tg.showPopup({title:"¡Salvado!", message:"Se te devolvió el monto de la apuesta."});
+            }).catch(()=>{ tg.showAlert("Error al cargar anuncio."); });
+        }
+
+        function watchAdBonus() {
+            const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
+            AdController.show().then(() => {
+                user.balance += 50.00;
+                save();
+                tg.showPopup({title:"¡Bono Recibido!", message:"Has recibido $50.00 de saldo de juego."});
+            }).catch(()=>{ 
+                if (typeof show_10278425 === 'function') {
                     show_10278425().then(()=>{
-                         user.points += 500; save(); tg.showPopup({title:"¡Puntos Gratis!", message:"Recibidos 500 pts"});
+                         user.balance += 50.00; save(); tg.showPopup({title:"Bono", message:"+$50.00"});
                     });
-                } else {
-                    tg.showAlert("No hay anuncios disponibles ahora.");
-                }
+                } else { tg.showAlert("No hay anuncios."); }
             });
-        }
-
-        function reviveWithAd() {
-            // El usuario ve un video para recuperar sus puntos perdidos o seguir jugando
-            const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
-            AdController.show().then(() => {
-                // Recupera su apuesta inicial al menos
-                user.points += BET_COST; 
-                save();
-                document.getElementById('loseModal').style.display = 'none';
-                tg.showAlert("¡Has recuperado el costo de tu apuesta! Inténtalo de nuevo.");
-            }).catch((e) => {
-                tg.showAlert("No pudimos cargar el anuncio de resurrección.");
-            });
-        }
-
-        function tryWithdraw() {
-            if(user.points < WITHDRAW_GOAL) {
-                tg.showAlert(`Necesitas ${WITHDRAW_GOAL.toLocaleString()} puntos. Sigue jugando.`);
-                return;
-            }
-            user.points -= WITHDRAW_GOAL;
-            save();
-            tg.showPopup({
-                title: 'SOLICITUD EXITOSA',
-                message: 'Toma captura de pantalla y envíala al bot para tu pago de $0.10.'
-            });
-        }
-
-        function fireConfetti() {
-            for(let i=0; i<30; i++) {
-                let c = document.createElement('div');
-                c.className = 'confetti';
-                c.style.left = Math.random()*100 + '%';
-                c.style.background = ['#f00','#0f0','#00f','#ff0'][Math.floor(Math.random()*4)];
-                c.style.animationDuration = (Math.random()*2+2)+'s';
-                document.body.appendChild(c);
-                setTimeout(()=>c.remove(), 4000);
-            }
         }
     </script>
 </body>
