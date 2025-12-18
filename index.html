@@ -4,438 +4,352 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Casino 777 Free</title>
-    
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
-    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
     <style>
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: #020617;
-            color: #ffffff;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-            overflow-x: hidden;
-            margin: 0;
-            padding: 0;
-        }
+        body { font-family: 'Montserrat', sans-serif; background-color: #020617; color: white; -webkit-tap-highlight-color: transparent; user-select: none; }
         .font-bebas { font-family: 'Bebas Neue', cursive; }
-        
-        @keyframes bounce-subtle {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-        .animate-bounce { animation: bounce-subtle 2s ease-in-out infinite; }
-        
-        /* Ocultar barra de scroll */
-        ::-webkit-scrollbar { display: none; }
+        .hidden { display: none !important; }
+        /* Animaciones */
+        @keyframes bounce-subtle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        .animate-bounce-custom { animation: bounce-subtle 2s ease-in-out infinite; }
     </style>
 </head>
-<body>
-    <div id="root"></div>
+<body class="bg-slate-950 pb-32">
 
-    <script type="text/babel">
-        // --- CONSTANTES DEL JUEGO (Traídas de types.ts) ---
-        const GAME_CONSTANTS = {
-            SAVE_KEY: 'casino777free_core_v1',
-            WELCOME_BONUS: 0.10,
-            WITHDRAW_THRESHOLD: 0.20,
-            AD_REWARD: 0.0004, 
-            DAILY_BONUS_REWARD: 0.005,
-            MIN_BET: 0.001,
-            COOLDOWN_24H: 24 * 60 * 60 * 1000,
-            TEAM_COMMISSION_PCT: 0.10, 
-        };
+    <div class="p-6 bg-slate-900/80 backdrop-blur-lg sticky top-0 z-50 border-b border-white/5 flex flex-col gap-4 shadow-2xl">
+        <div class="flex justify-between items-center">
+            <div>
+                <p class="text-[10px] text-slate-500 font-black uppercase">Balance USDT</p>
+                <p class="text-3xl font-black text-yellow-500 font-bebas" id="display-balance">$0.1000</p>
+            </div>
+            <button onclick="intentarRetiro()" class="px-4 py-2 rounded-xl font-black text-xs uppercase bg-slate-800 text-slate-500 transition-all" id="btn-withdraw">Retirar</button>
+        </div>
+        <div class="bg-slate-800/50 rounded-full h-6 relative overflow-hidden border border-white/5 p-1">
+            <div id="progress-bar" class="h-full rounded-full bg-gradient-to-r from-orange-500 to-yellow-500 transition-all duration-500" style="width: 50%"></div>
+            <div class="absolute inset-0 flex items-center justify-center text-[9px] font-black uppercase tracking-widest text-white drop-shadow-md">
+                Meta: $<span id="prog-val">0.10</span> / $0.20
+            </div>
+        </div>
+    </div>
+    <div class="px-6 py-4 max-w-md mx-auto">
+        <div id="game-msg" class="hidden p-4 rounded-2xl text-center font-black mb-4 border-2 animate-pulse bg-emerald-500/10 border-emerald-500 text-emerald-400">
+            ¡Ganaste!
+        </div>
 
-        // --- MOTOR DE SONIDO ---
-        const playSound = (type, muted) => {
-            if (muted) return;
-            // Verificar soporte de AudioContext
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (!AudioContext) return;
+        <div id="view-menu" class="space-y-4">
+            <button onclick="claimDailyBonus()" id="btn-daily" class="w-full p-6 rounded-3xl flex items-center justify-between border-2 shadow-2xl bg-gradient-to-r from-yellow-500 to-orange-500 border-yellow-400">
+                <div>
+                    <p class="font-black uppercase text-sm text-slate-950">Bono Diario</p>
+                    <p class="font-bebas text-3xl text-white" id="daily-text">$0.005 USDT</p>
+                </div>
+                <div class="text-5xl">🎁</div>
+            </button>
+
+            <h2 class="font-bebas text-2xl text-slate-400 tracking-widest pt-4">JUEGOS</h2>
             
-            const audioCtx = new AudioContext();
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
+            <button onclick="openGame('mines')" class="w-full h-32 bg-gradient-to-br from-red-500 to-orange-600 rounded-3xl flex items-center justify-between px-8 shadow-xl active:scale-95 transition-transform">
+                <div class="text-left"><p class="font-bebas text-5xl">MINAS</p><p class="text-[10px] font-bold opacity-70 uppercase">Multiplicador</p></div>
+                <span class="text-6xl">💣</span>
+            </button>
+            
+            <button onclick="openGame('coin')" class="w-full h-32 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-between px-8 shadow-xl active:scale-95 transition-transform">
+                <div class="text-left"><p class="font-bebas text-5xl">MONEDA</p><p class="text-[10px] font-bold opacity-70 uppercase">Doble o Nada</p></div>
+                <span class="text-6xl">🪙</span>
+            </button>
+        </div>
 
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
+        <div id="view-mines" class="hidden space-y-6">
+            <div class="flex justify-between items-center">
+                <button onclick="showMenu()" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center"><i class="fas fa-arrow-left"></i></button>
+                <p class="font-bebas text-3xl text-yellow-500 tracking-widest">MINAS</p>
+                <div class="w-10"></div>
+            </div>
+            
+            <div class="grid grid-cols-5 gap-2 w-full max-w-[320px] mx-auto" id="mines-grid">
+                </div>
 
-            const now = audioCtx.currentTime;
+            <div id="mines-controls" class="space-y-4">
+                <div class="bg-slate-900 p-4 rounded-2xl border border-white/5">
+                    <span class="text-[10px] font-black text-slate-500 uppercase">Bombas: <span id="bomb-count-display">3</span></span>
+                    <input type="range" min="1" max="24" value="3" class="w-full h-2 bg-slate-800 rounded-lg appearance-none accent-yellow-500" oninput="updateMinesCount(this.value)">
+                </div>
+                <button onclick="startGameMines()" class="w-full py-5 bg-yellow-500 text-slate-950 rounded-3xl font-black text-xl shadow-xl active:scale-95">JUGAR</button>
+            </div>
+            <button id="mines-cashout" onclick="cashOutMines()" class="hidden w-full py-5 bg-emerald-500 rounded-3xl font-black text-xl shadow-lg active:scale-95">RETIRAR</button>
+        </div>
 
-            switch (type) {
-                case 'click':
-                    oscillator.type = 'sine';
-                    oscillator.frequency.setValueAtTime(400, now);
-                    oscillator.frequency.exponentialRampToValueAtTime(100, now + 0.1);
-                    gainNode.gain.setValueAtTime(0.1, now);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-                    oscillator.start(now);
-                    oscillator.stop(now + 0.1);
-                    break;
-                case 'diamond':
-                    oscillator.type = 'triangle';
-                    oscillator.frequency.setValueAtTime(800, now);
-                    oscillator.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
-                    gainNode.gain.setValueAtTime(0.1, now);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-                    oscillator.start(now);
-                    oscillator.stop(now + 0.2);
-                    break;
-                case 'bomb':
-                    oscillator.type = 'sawtooth';
-                    oscillator.frequency.setValueAtTime(100, now);
-                    oscillator.frequency.linearRampToValueAtTime(40, now + 0.3);
-                    gainNode.gain.setValueAtTime(0.2, now);
-                    gainNode.gain.linearRampToValueAtTime(0.01, now + 0.3);
-                    oscillator.start(now);
-                    oscillator.stop(now + 0.3);
-                    break;
-                case 'win':
-                    oscillator.type = 'sine';
-                    oscillator.frequency.setValueAtTime(523.25, now);
-                    oscillator.frequency.setValueAtTime(659.25, now + 0.1);
-                    oscillator.frequency.setValueAtTime(783.99, now + 0.2);
-                    oscillator.frequency.setValueAtTime(1046.50, now + 0.3);
-                    gainNode.gain.setValueAtTime(0.1, now);
-                    gainNode.gain.linearRampToValueAtTime(0.1, now + 0.4);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
-                    oscillator.start(now);
-                    oscillator.stop(now + 0.6);
-                    break;
-                case 'lose':
-                    oscillator.type = 'square';
-                    oscillator.frequency.setValueAtTime(150, now);
-                    oscillator.frequency.linearRampToValueAtTime(70, now + 0.4);
-                    gainNode.gain.setValueAtTime(0.1, now);
-                    gainNode.gain.linearRampToValueAtTime(0.01, now + 0.4);
-                    oscillator.start(now);
-                    oscillator.stop(now + 0.4);
-                    break;
-                case 'flip':
-                    oscillator.type = 'sine';
-                    oscillator.frequency.setValueAtTime(300, now);
-                    oscillator.frequency.exponentialRampToValueAtTime(600, now + 0.1);
-                    gainNode.gain.setValueAtTime(0.05, now);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-                    oscillator.start(now);
-                    oscillator.stop(now + 0.1);
-                    break;
-                case 'cash':
-                    oscillator.type = 'sine';
-                    oscillator.frequency.setValueAtTime(900, now);
-                    oscillator.frequency.exponentialRampToValueAtTime(1500, now + 0.2);
-                    gainNode.gain.setValueAtTime(0.1, now);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-                    oscillator.start(now);
-                    oscillator.stop(now + 0.3);
-                    break;
+        <div id="view-coin" class="hidden space-y-6 text-center">
+             <div class="flex justify-between items-center mb-10">
+                <button onclick="showMenu()" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center"><i class="fas fa-arrow-left"></i></button>
+                <p class="font-bebas text-3xl text-yellow-500 tracking-widest">MONEDA</p>
+                <div class="w-10"></div>
+            </div>
+            <div id="coin-display" class="text-9xl transition-all duration-500">🪙</div>
+            <div class="flex gap-4 w-full pt-10">
+                <button onclick="playCoin('CARA')" class="flex-1 py-5 bg-blue-600 rounded-3xl font-black text-lg active:scale-95 shadow-lg">CARA</button>
+                <button onclick="playCoin('SOL')" class="flex-1 py-5 bg-orange-600 rounded-3xl font-black text-lg active:scale-95 shadow-lg">SOL</button>
+            </div>
+        </div>
+
+        <div id="bet-controls" class="hidden bg-slate-900 p-6 rounded-3xl border border-white/5 space-y-4 shadow-xl mt-6">
+            <div class="flex justify-between items-end px-2">
+                <span class="text-[10px] font-black text-slate-500 uppercase">Apuesta</span>
+                <span class="text-2xl font-bebas text-white" id="bet-display">$0.0010</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+                <button onclick="setBet('min')" class="py-3 bg-slate-800 rounded-xl font-bold text-[10px] uppercase">MIN</button>
+                <button onclick="setBet('x2')" class="py-3 bg-slate-800 rounded-xl font-bold text-[10px] uppercase text-yellow-500">X2</button>
+                <button onclick="setBet('half')" class="py-3 bg-slate-800 rounded-xl font-bold text-[10px] uppercase">1/2</button>
+            </div>
+        </div>
+                    </div>
+                    <script>
+    // --- VARIABLES Y DATOS ---
+    let user = { balance: 0.10, lastDaily: 0 };
+    const CONSTANTS = { MIN_BET: 0.001, WITHDRAW_LIMIT: 0.20, DAILY_REWARD: 0.005 };
+    let currentBet = 0.001;
+    let minesCount = 3;
+    let isPlaying = false;
+    let minesGrid = []; // Array para el juego
+    let multiplier = 1.0;
+
+    // Inicializar App
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+    loadData();
+    renderUI();
+
+    // --- FUNCIONES DE INTERFAZ ---
+    function showMenu() {
+        document.getElementById('view-menu').classList.remove('hidden');
+        document.getElementById('view-mines').classList.add('hidden');
+        document.getElementById('view-coin').classList.add('hidden');
+        document.getElementById('bet-controls').classList.add('hidden');
+        document.getElementById('game-msg').classList.add('hidden');
+    }
+
+    function openGame(game) {
+        document.getElementById('view-menu').classList.add('hidden');
+        document.getElementById('bet-controls').classList.remove('hidden');
+        document.getElementById('game-msg').classList.add('hidden');
+        
+        if(game === 'mines') {
+            document.getElementById('view-mines').classList.remove('hidden');
+            initMinesGrid(); // Dibuja la cuadrícula vacía
+        } else {
+            document.getElementById('view-coin').classList.remove('hidden');
+        }
+    }
+
+    function renderUI() {
+        // Actualizar textos
+        document.getElementById('display-balance').innerText = '$' + user.balance.toFixed(4);
+        document.getElementById('prog-val').innerText = user.balance.toFixed(2);
+        document.getElementById('bet-display').innerText = '$' + currentBet.toFixed(4);
+        
+        // Barra de progreso
+        let pct = (user.balance / CONSTANTS.WITHDRAW_LIMIT) * 100;
+        if(pct > 100) pct = 100;
+        document.getElementById('progress-bar').style.width = pct + '%';
+        
+        // Botón retiro
+        const btnW = document.getElementById('btn-withdraw');
+        if(user.balance >= CONSTANTS.WITHDRAW_LIMIT) {
+            btnW.classList.remove('bg-slate-800', 'text-slate-500');
+            btnW.classList.add('bg-emerald-500', 'text-white', 'animate-pulse');
+        }
+
+        // Timer Bono Diario
+        const now = Date.now();
+        const diff = (user.lastDaily + 86400000) - now;
+        const btnD = document.getElementById('btn-daily');
+        const txtD = document.getElementById('daily-text');
+        
+        if(diff > 0) {
+            let h = Math.floor(diff/3600000);
+            let m = Math.floor((diff%3600000)/60000);
+            txtD.innerText = `Espera ${h}h ${m}m`;
+            txtD.classList.add('text-slate-500');
+            btnD.classList.add('opacity-50', 'pointer-events-none');
+            btnD.classList.remove('animate-pulse');
+        } else {
+            txtD.innerText = `$${CONSTANTS.DAILY_REWARD} USDT`;
+            txtD.classList.remove('text-slate-500');
+            btnD.classList.remove('opacity-50', 'pointer-events-none');
+            btnD.classList.add('animate-pulse');
+        }
+    }
+
+    // --- LÓGICA DEL JUEGO ---
+    function setBet(type) {
+        if(type === 'min') currentBet = CONSTANTS.MIN_BET;
+        if(type === 'x2') currentBet = Math.min(user.balance, currentBet * 2);
+        if(type === 'half') currentBet = Math.max(CONSTANTS.MIN_BET, currentBet / 2);
+        renderUI();
+    }
+
+    // JUEGO: MINAS
+    function updateMinesCount(val) {
+        minesCount = parseInt(val);
+        document.getElementById('bomb-count-display').innerText = minesCount;
+    }
+
+    function initMinesGrid() {
+        const grid = document.getElementById('mines-grid');
+        grid.innerHTML = '';
+        minesGrid = Array(25).fill('empty'); // Reiniciar lógica
+        document.getElementById('mines-controls').classList.remove('hidden');
+        document.getElementById('mines-cashout').classList.add('hidden');
+        
+        for(let i=0; i<25; i++) {
+            const tile = document.createElement('div');
+            tile.className = "aspect-square bg-slate-700 rounded-xl flex items-center justify-center text-2xl shadow-lg border border-white/5 cursor-pointer active:scale-95 transition-all";
+            tile.id = `tile-${i}`;
+            tile.onclick = () => clickTile(i);
+            grid.appendChild(tile);
+        }
+    }
+
+    function startGameMines() {
+        if(user.balance < currentBet) return alert("Saldo insuficiente");
+        
+        user.balance -= currentBet;
+        isPlaying = true;
+        multiplier = 1.0;
+        
+        // Colocar bombas aleatorias
+        minesGrid.fill('gem');
+        let placed = 0;
+        while(placed < minesCount) {
+            let r = Math.floor(Math.random() * 25);
+            if(minesGrid[r] !== 'bomb') {
+                minesGrid[r] = 'bomb';
+                placed++;
             }
-        };
+        }
 
-        // --- COMPONENTE PRINCIPAL (App.tsx convertido) ---
-        const { useState, useEffect, useCallback, useRef, useMemo } = React;
+        document.getElementById('mines-controls').classList.add('hidden');
+        document.getElementById('mines-cashout').classList.remove('hidden');
+        saveData();
+        renderUI();
+    }
 
-        const App = () => {
-            const tg = window.Telegram?.WebApp;
-            
-            const userId = useMemo(() => {
-                const telegramId = tg?.initDataUnsafe?.user?.id;
-                if (telegramId) return telegramId.toString();
-                
-                const savedId = localStorage.getItem('casino777_stable_id');
-                if (savedId) return savedId;
-                
-                const newId = 'user_' + Math.random().toString(36).substr(2, 9);
-                localStorage.setItem('casino777_stable_id', newId);
-                return newId;
-            }, [tg]);
+    function clickTile(idx) {
+        if(!isPlaying) return;
+        const tile = document.getElementById(`tile-${idx}`);
+        
+        if(tile.classList.contains('bg-slate-800')) return; // Ya revelado
 
-            const [user, setUser] = useState(() => {
-                const saved = localStorage.getItem(GAME_CONSTANTS.SAVE_KEY);
-                if (saved) {
-                try {
-                    const data = JSON.parse(atob(saved));
-                    return {
-                    balance: data.balance ?? GAME_CONSTANTS.WELCOME_BONUS,
-                    withdrawals: data.withdrawals ?? [],
-                    betHistory: data.betHistory ?? [],
-                    lastVideoClaims: data.lastVideoClaims ?? {},
-                    lastDailyBonus: data.lastDailyBonus ?? 0,
-                    teamEarnings: data.teamEarnings ?? 0,
-                    totalTeamEarnings: data.totalTeamEarnings ?? 0,
-                    referralCount: data.referralCount ?? 0
-                    };
-                } catch (e) { console.error("Error loading save:", e); }
-                }
-                return { 
-                balance: GAME_CONSTANTS.WELCOME_BONUS, 
-                withdrawals: [],
-                betHistory: [],
-                lastVideoClaims: {},
-                lastDailyBonus: 0,
-                teamEarnings: 0,
-                totalTeamEarnings: 0,
-                referralCount: 0
-                };
-            });
+        if(minesGrid[idx] === 'bomb') {
+            // PERDISTE
+            tile.innerHTML = '💣';
+            tile.classList.replace('bg-slate-700', 'bg-red-500');
+            gameOver(false, "¡BOOM! Perdiste");
+        } else {
+            // GANASTE GEMA
+            tile.innerHTML = '💎';
+            tile.classList.replace('bg-slate-700', 'bg-slate-800');
+            // Calcular nuevo multiplicador (simplificado)
+            multiplier += 0.2; 
+            document.getElementById('mines-cashout').innerText = `RETIRAR $${(currentBet * multiplier).toFixed(4)}`;
+        }
+    }
 
-            const [currentGame, setCurrentGame] = useState(null);
-            const [currentBet, setCurrentBet] = useState(GAME_CONSTANTS.MIN_BET);
-            const [isSpinning, setIsSpinning] = useState(false);
-            const [showWithdrawModal, setShowWithdrawModal] = useState(false);
-            const [showWithdrawHistory, setShowWithdrawHistory] = useState(false);
-            const [showBetHistory, setShowBetHistory] = useState(false);
-            const [showTeamModal, setShowTeamModal] = useState(false);
-            const [gameResult, setGameResult] = useState(null);
-            const [videoTimers, setVideoTimers] = useState({});
-            const [dailyBonusTimer, setDailyBonusTimer] = useState("");
-            const [isAdLoading, setIsAdLoading] = useState(false);
-            const [isMuted, setIsMuted] = useState(() => localStorage.getItem('casino_muted') === 'true');
+    function cashOutMines() {
+        if(!isPlaying) return;
+        const winAmount = currentBet * multiplier;
+        user.balance += winAmount;
+        gameOver(true, `Ganaste $${winAmount.toFixed(4)}`);
+    }
 
-            // Estado para Minas
-            const [minesCount, setMinesCount] = useState(3);
-            const [minesGrid, setMinesGrid] = useState(Array(25).fill(null));
-            const [bombPositions, setBombPositions] = useState([]);
-            const [minesGameOver, setMinesGameOver] = useState(false);
-            const [revealedCount, setRevealedCount] = useState(0);
-            const [multiplier, setMultiplier] = useState(1);
+    // JUEGO: MONEDA
+    function playCoin(choice) {
+        if(user.balance < currentBet) return alert("Saldo insuficiente");
+        user.balance -= currentBet;
+        renderUI();
 
-            const withdrawProgress = useMemo(() => {
-                const progress = (user.balance / GAME_CONSTANTS.WITHDRAW_THRESHOLD) * 100;
-                return Math.min(progress, 100);
-            }, [user.balance]);
+        const display = document.getElementById('coin-display');
+        display.classList.add('animate-bounce-custom');
+        display.innerText = '❓';
 
-            useEffect(() => {
-                localStorage.setItem(GAME_CONSTANTS.SAVE_KEY, btoa(JSON.stringify(user)));
-            }, [user]);
+        setTimeout(() => {
+            const isHeads = Math.random() > 0.5;
+            const result = isHeads ? 'CARA' : 'SOL';
+            display.classList.remove('animate-bounce-custom');
+            display.innerText = result === 'CARA' ? '🪙' : '☀️';
 
-            useEffect(() => {
-                localStorage.setItem('casino_muted', isMuted.toString());
-            }, [isMuted]);
+            if(choice === result) {
+                const win = currentBet * 1.95;
+                user.balance += win;
+                gameOver(true, `¡${result}! Ganaste $${win.toFixed(4)}`);
+            } else {
+                gameOver(false, `¡${result}! Perdiste`);
+            }
+        }, 1000);
+    }
 
-            useEffect(() => {
-                const updateTimers = () => {
-                const now = Date.now();
-                const vTimers = {};
-                [1, 2, 3, 4, 5, 6, 7].forEach(id => {
-                    const last = user.lastVideoClaims?.[id];
-                    if (last) {
-                    const diff = (last + GAME_CONSTANTS.COOLDOWN_24H) - now;
-                    if (diff > 0) {
-                        const h = Math.floor(diff / 3600000);
-                        const m = Math.floor((diff % 3600000) / 60000);
-                        vTimers[id] = `${h}h ${m}m`;
-                    }
-                    }
-                });
-                setVideoTimers(vTimers);
+    // SISTEMA GENERAL
+    function gameOver(win, msg) {
+        isPlaying = false;
+        saveData();
+        renderUI();
+        const el = document.getElementById('game-msg');
+        el.innerText = msg;
+        el.classList.remove('hidden');
+        if(win) {
+            el.className = "p-4 rounded-2xl text-center font-black mb-4 border-2 bg-emerald-500/10 border-emerald-500 text-emerald-400";
+            if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+        } else {
+            el.className = "p-4 rounded-2xl text-center font-black mb-4 border-2 bg-red-500/10 border-red-500 text-red-400";
+            if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+            // Mostrar grid completo en minas
+            if(minesGrid.length > 0) {
+                 minesGrid.forEach((val, i) => {
+                     if(val === 'bomb') document.getElementById(`tile-${i}`).innerHTML = '💣';
+                 });
+            }
+        }
+        
+        // Resetear UI de Minas
+        document.getElementById('mines-cashout').classList.add('hidden');
+        // Esperar un poco y mostrar controles de nuevo
+        setTimeout(() => {
+            if(!document.getElementById('view-mines').classList.contains('hidden')) {
+                document.getElementById('mines-controls').classList.remove('hidden');
+            }
+        }, 1500);
+    }
 
-                if (user.lastDailyBonus) {
-                    const diff = (user.lastDailyBonus + GAME_CONSTANTS.COOLDOWN_24H) - now;
-                    if (diff > 0) {
-                    const h = Math.floor(diff / 3600000);
-                    const m = Math.floor((diff % 3600000) / 60000);
-                    const s = Math.floor((diff % 60000) / 1000);
-                    setDailyBonusTimer(`${h}h ${m}m ${s}s`);
-                    } else {
-                    setDailyBonusTimer("");
-                    }
-                }
-                };
-                const t = setInterval(updateTimers, 1000);
-                updateTimers();
-                return () => clearInterval(t);
-            }, [user.lastVideoClaims, user.lastDailyBonus]);
+    function claimDailyBonus() {
+        // Simular anuncio y recompensa
+        user.balance += CONSTANTS.DAILY_REWARD;
+        user.lastDaily = Date.now();
+        saveData();
+        renderUI();
+        alert("¡Bono Diario Recibido!");
+    }
 
-            useEffect(() => {
-                if (tg) {
-                tg.ready();
-                tg.expand();
-                if (tg.isVersionAtLeast && tg.isVersionAtLeast('6.1')) {
-                    tg.setHeaderColor('#020617');
-                    tg.setBackgroundColor('#020617');
-                }
-                }
-            }, [tg]);
+    function intentarRetiro() {
+        if(user.balance >= CONSTANTS.WITHDRAW_LIMIT) {
+            alert("¡Felicidades! Captura esta pantalla y envíala al soporte para tu pago.");
+            // Aquí podrías redirigir al bot
+        } else {
+            alert(`Necesitas llegar a $${CONSTANTS.WITHDRAW_LIMIT} USDT`);
+        }
+    }
 
-            const triggerHaptic = (type = 'light') => {
-                if (tg?.HapticFeedback && tg.isVersionAtLeast && tg.isVersionAtLeast('6.0')) {
-                try {
-                    if (type === 'success') tg.HapticFeedback.notificationOccurred('success');
-                    else if (type === 'error') tg.HapticFeedback.notificationOccurred('error');
-                    else tg.HapticFeedback.impactOccurred('medium');
-                } catch (e) { console.warn("Haptic failed", e); }
-                }
-            };
-
-            const getInviteLink = () => {
-                return `https://t.me/Casino777free/play?startapp=${userId}`;
-            };
-
-            const handleShare = (text) => {
-                playSound('click', isMuted);
-                const shareText = text || `¡Únete a mi equipo en Casino 777 Free y gana USDT conmigo! 🔥💰 Mi balance es de $${user.balance.toFixed(4)} USDT.`;
-                const shareUrl = getInviteLink();
-
-                if (tg?.isVersionAtLeast && tg.isVersionAtLeast('6.0')) {
-                tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`);
-                } else {
-                copyToClipboard(`${shareText} ${shareUrl}`);
-                }
-            };
-
-            const copyToClipboard = (text) => {
-                const el = document.createElement('textarea');
-                el.value = text;
-                document.body.appendChild(el);
-                el.select();
-                document.execCommand('copy');
-                document.body.removeChild(el);
-                tg?.showAlert("¡Enlace copiado al portapapeles!");
-            };
-
-            const handleDailyBonus = async () => {
-                if (dailyBonusTimer) return tg?.showAlert(`Espera ${dailyBonusTimer} para tu próximo bono.`);
-                playSound('click', isMuted);
-                setIsAdLoading(true);
-                try {
-                if (window.show_10278425) {
-                    await window.show_10278425();
-                    setUser(prev => ({
-                    ...prev,
-                    balance: prev.balance + GAME_CONSTANTS.DAILY_BONUS_REWARD,
-                    lastDailyBonus: Date.now()
-                    }));
-                    playSound('win', isMuted);
-                    tg?.showAlert(`¡Bono Diario de $${GAME_CONSTANTS.DAILY_BONUS_REWARD.toFixed(4)} USDT reclamado!`);
-                } else {
-                    tg?.showAlert("Anuncios no disponibles actualmente.");
-                }
-                } catch(e) { console.error("Daily Bonus Error:", e); } finally { setIsAdLoading(false); }
-            };
-
-            const handleVideo = async (id) => {
-                if (videoTimers[id]) return tg?.showAlert("Espera a que termine el tiempo");
-                playSound('click', isMuted);
-                setIsAdLoading(true);
-                try {
-                if (window.show_10278425) {
-                    await window.show_10278425();
-                    setUser(prev => ({
-                    ...prev,
-                    balance: prev.balance + GAME_CONSTANTS.AD_REWARD,
-                    lastVideoClaims: { ...prev.lastVideoClaims, [id]: Date.now() }
-                    }));
-                    playSound('win', isMuted);
-                    tg?.showAlert(`+$${GAME_CONSTANTS.AD_REWARD} USDT añadidos`);
-                }
-                } catch(e) { console.error("Video error:", e); } finally { setIsAdLoading(false); }
-            };
-
-            const addBetRecord = (game, bet, profit, win) => {
-                const record = {
-                id: Math.random().toString(36).substr(2, 9),
-                game, bet, profit, win,
-                date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                };
-                setUser(prev => ({ ...prev, betHistory: [record, ...prev.betHistory].slice(0, 50) }));
-            };
-
-            const startMines = () => {
-                if (user.balance < currentBet) return tg?.showAlert("Saldo insuficiente");
-                playSound('click', isMuted);
-                setUser(prev => ({ ...prev, balance: prev.balance - currentBet }));
-                const bombs = [];
-                while(bombs.length < minesCount) {
-                const p = Math.floor(Math.random() * 25);
-                if(!bombs.includes(p)) bombs.push(p);
-                }
-                setBombPositions(bombs);
-                setMinesGrid(Array(25).fill(null));
-                setMinesGameOver(false);
-                setRevealedCount(0);
-                setMultiplier(1);
-                setIsSpinning(true);
-                setGameResult(null);
-            };
-
-            const revealTile = (i) => {
-                if (!isSpinning || minesGameOver || minesGrid[i]) return;
-                if (bombPositions.includes(i)) {
-                playSound('bomb', isMuted);
-                const g = [...minesGrid];
-                bombPositions.forEach(b => g[b] = '💣');
-                setMinesGrid(g);
-                setMinesGameOver(true);
-                setIsSpinning(false);
-                setGameResult({ msg: "BOOM! Perdiste", win: false });
-                addBetRecord("Minas", currentBet, -currentBet, false);
-                triggerHaptic('error');
-                } else {
-                playSound('diamond', isMuted);
-                const g = [...minesGrid];
-                g[i] = '💎';
-                setMinesGrid(g);
-                
-                const currentRevealed = revealedCount;
-                const totalTiles = 25;
-                const remainingTiles = totalTiles - currentRevealed;
-                const safeTilesRemaining = (totalTiles - minesCount) - currentRevealed;
-                
-                const stepMultiplier = remainingTiles / safeTilesRemaining;
-                const newMultiplier = multiplier * stepMultiplier;
-                
-                setMultiplier(newMultiplier);
-                setRevealedCount(currentRevealed + 1);
-                triggerHaptic('light');
-                }
-            };
-
-            const cashOutMines = () => {
-                playSound('win', isMuted);
-                const win = currentBet * multiplier;
-                const profit = win - currentBet;
-                const commission = profit > 0 ? profit * GAME_CONSTANTS.TEAM_COMMISSION_PCT : 0;
-                
-                setUser(prev => ({ 
-                ...prev, 
-                balance: prev.balance + win,
-                teamEarnings: prev.teamEarnings + commission
-                }));
-                
-                addBetRecord("Minas", currentBet, profit, true);
-                setMinesGameOver(true);
-                setIsSpinning(false);
-                setGameResult({ msg: `Ganaste $${win.toFixed(4)}`, win: true });
-                triggerHaptic('success');
-            };
-
-            const getNextMinesMultiplier = () => {
-                const totalTiles = 25;
-                const currentRevealed = revealedCount;
-                const remainingTiles = totalTiles - currentRevealed;
-                const safeTilesRemaining = (totalTiles - minesCount) - currentRevealed;
-                if (safeTilesRemaining <= 0) return multiplier;
-                const stepMultiplier = remainingTiles / safeTilesRemaining;
-                return multiplier * stepMultiplier;
-            };
-
-            const playCoin = (choice) => {
-                if (user.balance < currentBet) return tg?.showAlert("Saldo insuficiente");
-                playSound('click', isMuted);
-                setIsSpinning(true);
-                setUser(prev => ({ ...prev, balance: prev.balance - currentBet }));
-                
-                setTimeout(() => {
-                const isHeads = Math.random() > 0.5;
-            
+    // Guardado local
+    function loadData() {
+        const saved = localStorage.getItem('casino777_v2');
+        if(saved) user = JSON.parse(saved);
+    }
+    function saveData() {
+        localStorage.setItem('casino777_v2', JSON.stringify(user));
+    }
+</script>
+</body>
+</html>
