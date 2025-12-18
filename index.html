@@ -2,682 +2,398 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
-    <title>Gold Miner Classic</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Gold Miner ELITE</title>
+    
+    <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght=700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
     <style>
+        /* TEMA MINERO (Oro/Tierra) */
+        :root { 
+            --bg: #2c3e50; /* Fondo oscuro */
+            --gold: #f1c40f; /* Amarillo Oro */
+            --energy: #e74c3c; /* Rojo Energético */
+            --green: #27ae60; /* Verde Dinero */
+            --text: #ecf0f1; /* Texto Claro */
+            --ground-top: #8B4513;
+            --ground-bottom: #4A2509;
+        }
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
         body {
-            margin: 0;
-            padding: 0;
-            background-color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: white;
-            font-family: 'Press Start 2P', cursive; /* Fuente estilo arcade */
-            overflow: hidden;
-            touch-action: none; /* Evita zoom y scroll en móviles */
+            background-color: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif;
+            min-height: 100vh; display: flex; flex-direction: column; align-items: center; 
+            padding: 20px; padding-bottom: 120px; 
+            overflow-y: auto; margin: 0;
         }
 
-        #ui-bar {
+        #banScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2f3542; z-index: 99999; 
+            display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white;
+        }
+
+        .app-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; }
+
+        /* HEADER & SCORE (Adaptado al tema oscuro) */
+        .score-board {
+            background: #34495e; padding: 15px 25px; border-radius: 20px; border-bottom: 4px solid #2c3e50;
+            display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); color: var(--text);
+        }
+        .score-title { font-size: 12px; color: #bdc3c7; font-weight: 800; letter-spacing: 1px; }
+        .score-val { font-family: 'Fredoka One', cursive; font-size: 45px; color: var(--gold); line-height: 1; margin-bottom: 10px; text-shadow: 2px 2px 0 #2c3e50; }
+
+        /* BARRA DE PROGRESO DE META */
+        .goal-container { width: 100%; margin-top: 5px; }
+        .goal-bar-bg { width: 100%; height: 12px; background: #2c3e50; border-radius: 10px; overflow: hidden; border: 1px solid #1a252f; }
+        .goal-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--green), #2ecc71); transition: width 0.3s; }
+        .goal-text { font-size: 11px; color: #bdc3c7; margin-top: 4px; display: flex; justify-content: space-between; font-weight: bold; }
+
+        /* ZONA DE JUEGO (NUEVO: CANVAS) */
+        .game-wrapper {
             width: 100%;
-            max-width: 500px;
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 20px;
-            background: #222;
-            box-sizing: border-box;
-            font-size: 12px;
-            border-bottom: 2px solid #555;
-        }
-
-        #game-container {
+            height: 350px; /* Altura del área de juego */
             position: relative;
-            width: 100%;
-            max-width: 500px;
-            height: 80vh; /* Altura del área de juego */
-            background: linear-gradient(to bottom, #87CEEB 15%, #8B4513 15%); /* Cielo y Tierra */
+            border-radius: 20px;
             overflow: hidden;
-            border-bottom: 2px solid #555;
-        }
-
-        /* El área donde se dibuja el juego */
-        canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            border: 4px solid #34495e;
+            /* Fondo de cielo y tierra */
+            background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 20%, var(--ground-top) 20%, var(--ground-bottom) 100%);
             cursor: crosshair;
         }
 
-        /* Mensajes flotantes (cuando ganas dinero) */
-        .float-score {
-            position: absolute;
-            color: #FFD700;
-            font-weight: bold;
-            pointer-events: none;
-            animation: floatUp 1s ease-out forwards;
-            font-size: 16px;
-            text-shadow: 2px 2px 0 #000;
+        canvas { display: block; width: 100%; height: 100%; }
+        
+        /* EFECTOS FLOTANTES (Adaptados) */
+        .float-plus { 
+            position: absolute; font-weight: 900; font-size: 24px; 
+            color: var(--gold); pointer-events: none; 
+            animation: floatUp 1s forwards; 
+            text-shadow: 2px 2px 0 #000; z-index: 20;
+        }
+        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-60px) scale(1.2); opacity: 0; } }
+
+        /* BARRA DE ENERGÍA */
+        .energy-container { width: 100%; background: #34495e; padding: 12px 15px; border-radius: 15px; border-bottom: 4px solid #2c3e50; text-align: center; color: var(--text); }
+        .energy-track { width: 100%; height: 10px; background: #2c3e50; border-radius: 10px; overflow: hidden; margin: 5px 0; }
+        .energy-fill { height: 100%; width: 100%; background: var(--energy); transition: width 0.2s; }
+        .energy-text { font-size: 11px; font-weight: bold; color: #bdc3c7; display: flex; justify-content: space-between; }
+
+        /* RECARGA OVERLAY */
+        .refill-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(44, 62, 80, 0.95); z-index: 30; /* Mayor z-index para cubrir el canvas */
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            border-radius: 16px;
+        }
+        .btn-refill {
+            background: var(--energy); color: white; padding: 12px 25px; border-radius: 50px;
+            border: none; font-weight: 900; font-size: 16px; cursor: pointer;
+            box-shadow: 0 5px 20px rgba(231, 76, 60, 0.4); animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        /* BONUS & FOOTER */
+        .bonus-row { display: flex; gap: 8px; width: 100%; margin-top: 5px; }
+        .btn-bonus {
+            flex: 1; padding: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; color: white; font-size: 11px;
+            box-shadow: 0 3px 0 rgba(0,0,0,0.3); transition: transform 0.1s;
+        }
+        .btn-bonus:active { transform: translateY(3px); box-shadow: none; }
+        .b-adsgram { background: #3742fa; }
+        .b-monetag { background: #f39c12; }
+
+        .btn-withdraw { 
+            background: #34495e; color: #bdc3c7; width: 100%; padding: 15px; border: none; 
+            border-radius: 12px; font-weight: 900; font-size: 16px; margin-top: 15px; 
+            cursor: pointer; box-shadow: 0 4px 0 #2c3e50; transition: 0.3s;
+        }
+        .btn-withdraw.ready {
+            background: linear-gradient(45deg, var(--green), #2ecc71); color: white;
+            box-shadow: 0 0 20px rgba(39, 174, 96, 0.6);
+            animation: pulse 1.5s infinite; text-shadow: 0 2px 0 rgba(0,0,0,0.2);
+        }
+        .btn-withdraw:active { transform: translateY(4px); box-shadow: none; }
+
+        .mini-menu { display: flex; gap: 8px; width: 100%; margin-top: 10px; }
+        .btn-mini {
+            flex: 1; background: #34495e; border: 2px solid #2c3e50; color: #bdc3c7;
+            padding: 8px; border-radius: 10px; font-size: 11px; font-weight: 800;
+            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px;
         }
 
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-50px); }
-        }
+        /* MODAL */
+        #modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:100; }
+        .modal-card { background: #ecf0f1; padding: 25px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; color: #2c3e50; }
+        .btn-green { background: var(--green); color: white; width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: bold; font-size: 16px; margin-top: 10px; cursor: pointer; box-shadow: 0 4px 0 #218c74; }
     </style>
 </head>
 <body>
 
-    <div id="ui-bar">
-        <div>DINERO: $<span id="score">0</span></div>
+    <div id="banScreen"><h2>Acceso Denegado</h2><p>Dispositivo vinculado.</p></div>
+
+    <div class="app-container" id="appContent">
+        
+        <div class="score-board">
+            <div class="score-title">ORO RECOLECTADO</div>
+            <div class="score-val" id="score">0</div>
+            <div class="goal-container">
+                <div class="goal-bar-bg"><div class="goal-bar-fill" id="goalBar"></div></div>
+                <div class="goal-text"><span>PROGRESO</span><span style="color:var(--green);">META: $0.10 USD</span></div>
+            </div>
+        </div>
+
+        <div class="game-wrapper" id="gameWrapper">
+            <canvas id="gameCanvas"></canvas>
+            
+            <div class="refill-overlay" id="refillOverlay">
+                <div style="font-size:50px; margin-bottom:10px;">⚡</div>
+                <h3 style="color:white; margin-bottom:5px;">SIN ENERGÍA</h3>
+                <p style="color:#bdc3c7; margin-bottom:20px; font-size:14px;">Recarga para seguir minando.</p>
+                <button class="btn-refill" onclick="refillEnergy()">
+                    <i class="fa-solid fa-play"></i> VER VIDEO (+50⚡)
+                </button>
+            </div>
+        </div>
+        <p style="font-size: 10px; color: #bdc3c7; margin-top: -5px;">Toca la pantalla para lanzar el gancho</p>
+
+        <div class="energy-container">
+            <div class="energy-text"><span>ENERGÍA</span><span id="energyText">100/100</span></div>
+            <div class="energy-track"><div class="energy-fill" id="energyBar"></div></div>
+        </div>
+
+        <div class="bonus-row">
+            <button class="btn-bonus b-adsgram" onclick="watchEnergyBonus('adsgram')">
+                <i class="fa-solid fa-bolt" style="margin-bottom:3px;"></i><span>+15 ENERGÍA</span>
+            </button>
+            <button class="btn-bonus b-monetag" onclick="watchEnergyBonus('monetag')">
+                <i class="fa-solid fa-battery-full" style="margin-bottom:3px;"></i><span>+10 ENERGÍA</span>
+            </button>
+        </div>
+
+        <button class="btn-withdraw" id="withdrawBtn" onclick="retirar()">
+            <i class="fa-solid fa-lock"></i> META NO ALCANZADA
+        </button>
+
+        <div class="mini-menu">
+            <button class="btn-mini" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')"><i class="fa-solid fa-headset"></i> Soporte</button>
+            <button class="btn-mini" onclick="tg.openTelegramLink('https://t.me/noticebuddy')"><i class="fa-brands fa-telegram"></i> Canal</button>
+        </div>
     </div>
 
-    <div id="game-container">
-        <canvas id="gameCanvas"></canvas>
+    <div id="modal">
+        <div class="modal-card">
+            <h2 style="color:var(--green); margin-bottom:10px;">✅ ¡META ALCANZADA!</h2>
+            <p style="color:#7f8c8d; font-size:13px; margin-bottom:15px;">Envía esta captura para tu pago.</p>
+            <div style="background:#bdc3c7; padding:15px; border-radius:10px; margin-bottom:15px; text-align:left; font-size:12px; color:#2c3e50; border: 2px dashed #7f8c8d;">
+                <div><b>USUARIO:</b> <span id="recUser">...</span></div>
+                <div><b>FECHA:</b> <span id="recDate">...</span></div>
+                <div style="margin-top:5px; font-size:16px; color:#27ae60;"><b>TOTAL:</b> $0.10 USD</div>
+            </div>
+            <button class="btn-green" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">📩 ENVIAR CAPTURA</button>
+            <button style="background:none; border:none; color:#7f8c8d; margin-top:15px; cursor:pointer;" onclick="location.reload()">Cerrar Ventana</button>
+        </div>
     </div>
-    <p style="font-size: 10px; color: #aaa; margin-top: 5px;">TOCA LA PANTALLA PARA LANZAR EL GANCHO</p>
 
     <script>
-        // Inicializar Telegram (opcional, para que se vea bien en la app)
-        const tg = window.Telegram.WebApp; 
-        tg.expand();
+        const tg = window.Telegram.WebApp; tg.expand();
+        tg.setHeaderColor('#2c3e50'); tg.setBackgroundColor('#2c3e50');
 
+        const ADSGRAM_ID = "18897"; 
+        const KEY = 'goldminer_v1_prod'; // Nueva llave para el nuevo juego
+        const META = 20000; 
+        let user = { pts: 0, energy: 100 };
+
+        // --- LÓGICA DEL JUEGO DEL MINERO ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        const scoreEl = document.getElementById('score');
-        const container = document.getElementById('game-container');
-
-        // Ajustar el tamaño del canvas a la resolución real de la pantalla
+        const gameWrapper = document.getElementById('gameWrapper');
+        
+        // Ajustar canvas al tamaño del contenedor
         function resizeCanvas() {
-            canvas.width = container.clientWidth;
-            canvas.height = container.clientHeight;
+            canvas.width = gameWrapper.clientWidth;
+            canvas.height = gameWrapper.clientHeight;
         }
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        // --- VARIABLES DEL JUEGO ---
-        let score = 0;
-        let gameState = 'AIMING'; // Estados: AIMING (apuntando), FIRING (disparando), RETURNING (recogiendo)
-        const groundLevel = canvas.height * 0.15; // Donde empieza la tierra
-
-        // --- EL GANCHÓ (MINERO) ---
-        const miner = {
-            x: canvas.width / 2,
-            y: groundLevel - 20,
-            draw: function() {
-                ctx.font = "40px Arial";
-                ctx.textAlign = "center";
-                ctx.fillText("👷‍♂️", this.x, this.y);
-            }
-        };
-
+        // Configuración del juego
+        let gameState = 'SWING'; // Estados: SWING (oscilando), FIRE (disparando), RETRACT (recogiendo)
         const hook = {
-            x: canvas.width / 2,
-            y: groundLevel - 10, // Punto de pivote
-            length: 30,
-            minLength: 30,
-            maxLength: canvas.height + 50,
-            angle: Math.PI / 2, // Empieza apuntando abajo (90 grados)
-            swingSpeed: 0.03,
-            swingDir: 1,
-            baseSpeed: 8, // Velocidad normal de disparo
-            currentSpeed: 8,
-            caughtItem: null,
-            
-            update: function() {
-                // Lógica de movimiento según el estado
-                if (gameState === 'AIMING') {
-                    // Oscilación tipo péndulo
-                    this.angle += this.swingSpeed * this.swingDir;
-                    if (this.angle > Math.PI - 0.2 || this.angle < 0.2) {
-                        this.swingDir *= -1;
-                    }
-                    this.length = this.minLength;
-
-                } else if (gameState === 'FIRING') {
-                    // Bajando
-                    this.length += this.currentSpeed;
-                    // Si llega al límite o toca los bordes, regresa
-                    let tipX = this.x + Math.cos(this.angle) * this.length;
-                    let tipY = this.y + Math.sin(this.angle) * this.length;
-                    
-                    if (this.length >= this.maxLength || tipX < 0 || tipX > canvas.width || tipY > canvas.height) {
-                        gameState = 'RETURNING';
-                    }
-
-                } else if (gameState === 'RETURNING') {
-                    // Subiendo
-                    this.length -= this.currentSpeed;
-                    if (this.length <= this.minLength) {
-                        this.length = this.minLength;
-                        gameState = 'AIMING';
-                        
-                        // Procesar objeto atrapado al llegar arriba
-                        if (this.caughtItem) {
-                            score += this.caughtItem.value;
-                            scoreEl.innerText = score;
-                            showFloatText(`+$${this.caughtItem.value}`, this.x, this.y);
-                            // Eliminar el objeto del juego
-                            items = items.filter(i => i !== this.caughtItem);
-                            this.caughtItem = null;
-                            this.currentSpeed = this.baseSpeed; // Resetear velocidad
-                        }
-                    }
-                }
-            },
-
-            draw: function() {
-                ctx.beginPath();
-                ctx.moveTo(this.x, this.y);
-                // Calcular la punta del gancho
-                let tipX = this.x + Math.cos(this.angle) * this.length;
-                let tipY = this.y + Math.sin(this.angle) * this.length;
-                ctx.lineTo(tipX, tipY);
-                ctx.strokeStyle = '#555';
-                ctx.lineWidth = 3;
-                ctx.stroke();
-
-                // Dibujar el ancla en la punta
-                ctx.save();
-                ctx.translate(tipX, tipY);
-                ctx.rotate(this.angle - Math.PI/2); // Rotar el emoji para que apunte bien
-                ctx.font = "30px Arial";
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle";
-                ctx.fillText("🪝", 0, 0);
-                ctx.restore();
-
-                // Si trae algo, dibujarlo en la punta
-                if(this.caughtItem && gameState === 'RETURNING') {
-                    this.caughtItem.x = tipX;
-                    this.caughtItem.y = tipY + this.caughtItem.radius/2;
-                    this.caughtItem.draw();
-                }
-            },
-            
-            reset: function() {
-                gameState = 'AIMING';
-                this.length = this.minLength;
-                this.caughtItem = null;
-                this.currentSpeed = this.baseSpeed;
-            }
+            x: canvas.width / 2, y: 60, // Punto de origen (donde está el minero)
+            length: 40, minLength: 40, maxLength: canvas.height + 50,
+            angle: Math.PI / 2, // Empieza mirando abajo
+            swingSpeed: 0.03, swingDir: 1,
+            fireSpeed: 10, retractSpeed: 10, baseRetractSpeed: 10,
+            caughtItem: null
         };
+        
+        let items = []; // Array para guardar los objetos del suelo
 
-        // --- OBJETOS (CLASE) ---
+        // Clase para los objetos (Oro, Piedra, Bomba)
         class Item {
             constructor(type, x, y) {
-                this.type = type;
-                this.x = x;
-                this.y = y;
+                this.type = type; this.x = x; this.y = y;
                 this.caught = false;
-
-                // Configuración según el tipo
                 switch(type) {
-                    case 'gold_big':
-                        this.emoji = '💰'; this.radius = 35; this.value = 500; this.weight = 5; break;
-                    case 'gold_small':
-                        this.emoji = '🌕'; this.radius = 15; this.value = 100; this.weight = 1; break;
-                    case 'rock_big':
-                        this.emoji = '🪨'; this.radius = 30; this.value = 10; this.weight = 7; break;
-                    case 'rock_small':
-                        this.emoji = '🪨'; this.radius = 15; this.value = 5; this.weight = 3; break;
-                    case 'bomb':
-                        this.emoji = '💣'; this.radius = 20; this.value = -200; this.weight = 0; break;
+                    case 'gold_big':   this.emoji = '💰'; this.r = 30; this.val = 50; this.weight = 6; break;
+                    case 'gold_small': this.emoji = '🌕'; this.r = 15; this.val = 10; this.weight = 2; break;
+                    case 'rock':       this.emoji = '🪨'; this.r = 22; this.val = 2;  this.weight = 8; break;
+                    case 'bomb':       this.emoji = '💣'; this.r = 18; this.val = 0;  this.weight = 0; break;
                 }
             }
-
             draw() {
-                if(this.caught) return; // Si ya lo trae el gancho, no lo dibujamos aquí
-                ctx.font = `${this.radius * 2}px Arial`;
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle";
+                if(this.caught) return;
+                ctx.font = `${this.r * 2}px Arial`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
                 ctx.fillText(this.emoji, this.x, this.y);
-                
-                // (Opcional) Dibujar círculo de colisión para depurar
-                // ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2); ctx.stroke();
             }
         }
 
-        let items = [];
-
-        function generateLevel() {
+        // Generar nivel
+        function spawnItems() {
             items = [];
-            // Generar objetos aleatorios en la zona de tierra
-            for(let i=0; i<15; i++) {
-                let types = ['gold_big', 'gold_small', 'gold_small', 'rock_big', 'rock_small', 'rock_small', 'bomb'];
-                let type = types[Math.floor(Math.random() * types.length)];
-                let x = Math.random() * (canvas.width - 60) + 30;
-                let y = groundLevel + 50 + Math.random() * (canvas.height - groundLevel - 100);
+            const groundY = canvas.height * 0.25; // Donde empieza la tierra
+            for(let i=0; i<12; i++) {
+                let types = ['gold_big', 'gold_small', 'gold_small', 'rock', 'rock', 'bomb'];
+                let type = types[Math.floor(Math.random()*types.length)];
+                let x = 40 + Math.random() * (canvas.width - 80);
+                let y = groundY + 40 + Math.random() * (canvas.height - groundY - 80);
                 items.push(new Item(type, x, y));
             }
         }
 
-        // --- CONTROL PRINCIPAL (LANZAR) ---
-        canvas.addEventListener('pointerdown', () => { // pointerdown funciona mejor en móviles
-            if (gameState === 'AIMING') {
-                gameState = 'FIRING';
-                hook.currentSpeed = hook.baseSpeed;
-            }
-        });
+        // Bucle principal del juego (Animación)
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar canvas
 
-        // --- COLISIONES ---
-        function checkCollisions() {
-            if (gameState !== 'FIRING') return;
+            // Dibujar al minero
+            ctx.font = "40px Arial"; ctx.textAlign = "center";
+            ctx.fillText("👷‍♂️", canvas.width / 2, 40);
 
-            let tipX = hook.x + Math.cos(hook.angle) * hook.length;
-            let tipY = hook.y + Math.sin(hook.angle) * hook.length;
-
-            for (let item of items) {
-                if (item.caught) continue;
-
-                // Distancia simple entre dos puntos
-                let dx = tipX - item.x;
-                let dy = tipY - item.y;
-                let distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < item.radius + 5) { // +5 margen para el gancho
-                    // ¡IMPACTO!
-                    
-                    if(item.type === 'bomb') {
-                        // Lógica de bomba
-                        gameState = 'RETURNING';
-                        hook.currentSpeed = hook.baseSpeed * 2; // Regresa rápido
-                        score += item.value; // Resta puntos
-                        if(score < 0) score = 0;
-                        scoreEl.innerText = score;
-                        showFloatText("💥 BOMBA! -$200", tipX, tipY, 'red');
-                        // Eliminar bomba y objetos cercanos
-                        items = items.filter(i => i !== item && Math.sqrt((i.x-item.x)**2 + (i.y-item.y)**2) > 100);
-
-                    } else {
-                        // Agarrar objeto
-                        gameState = 'RETURNING';
-                        hook.caughtItem = item;
-                        item.caught = true;
-                        // Calcular velocidad de retorno según peso (más peso, menos velocidad)
-                        hook.currentSpeed = Math.max(1.5, hook.baseSpeed - item.weight);
-                    }
-                    break; // Solo agarra uno a la vez
+            // Lógica del gancho
+            if(gameState === 'SWING') {
+                hook.angle += hook.swingSpeed * hook.swingDir;
+                if(hook.angle > Math.PI - 0.2 || hook.angle < 0.2) hook.swingDir *= -1;
+                hook.length = hook.minLength;
+            } 
+            else if(gameState === 'FIRE') {
+                hook.length += hook.fireSpeed;
+                checkCollisions(); // Comprobar si tocó algo
+                // Si llega al límite, recoger
+                if(hook.length >= hook.maxLength || hook.x + Math.cos(hook.angle)*hook.length < 0 || hook.x + Math.cos(hook.angle)*hook.length > canvas.width) {
+                    gameState = 'RETRACT'; hook.retractSpeed = hook.baseRetractSpeed;
                 }
             }
-        }
-
-        function showFloatText(text, x, y, color = '#FFD700') {
-            let el = document.createElement('div');
-            el.className = 'float-score';
-            el.innerText = text;
-            el.style.left = (container.offsetLeft + x) + 'px';
-            el.style.top = (container.offsetTop + y) + 'px';
-            el.style.color = color;
-            document.body.appendChild(el);
-            setTimeout(() => el.remove(), 1000);
-        }
-
-        // --- BUCLE PRINCIPAL DEL JUEGO ---
-        function gameLoop() {
-            // 1. Limpiar pantalla
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // 2. Actualizar lógica
-            hook.update();
-            checkCollisions();
-
-            // 3. Dibujar todo
-            miner.draw();
-            for(let item of items) {
-                item.draw();
-            }
-            hook.draw();
-
-            requestAnimationFrame(gameLoop);
-        }
-
-        // INICIAR
-        generateLevel();
-        gameLoop();
-
-    </script>
-</body>
-            </html><!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
-    <title>Gold Miner Classic</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: white;
-            font-family: 'Press Start 2P', cursive; /* Fuente estilo arcade */
-            overflow: hidden;
-            touch-action: none; /* Evita zoom y scroll en móviles */
-        }
-
-        #ui-bar {
-            width: 100%;
-            max-width: 500px;
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 20px;
-            background: #222;
-            box-sizing: border-box;
-            font-size: 12px;
-            border-bottom: 2px solid #555;
-        }
-
-        #game-container {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-            height: 80vh; /* Altura del área de juego */
-            background: linear-gradient(to bottom, #87CEEB 15%, #8B4513 15%); /* Cielo y Tierra */
-            overflow: hidden;
-            border-bottom: 2px solid #555;
-        }
-
-        /* El área donde se dibuja el juego */
-        canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-            cursor: crosshair;
-        }
-
-        /* Mensajes flotantes (cuando ganas dinero) */
-        .float-score {
-            position: absolute;
-            color: #FFD700;
-            font-weight: bold;
-            pointer-events: none;
-            animation: floatUp 1s ease-out forwards;
-            font-size: 16px;
-            text-shadow: 2px 2px 0 #000;
-        }
-
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-50px); }
-        }
-    </style>
-</head>
-<body>
-
-    <div id="ui-bar">
-        <div>DINERO: $<span id="score">0</span></div>
-    </div>
-
-    <div id="game-container">
-        <canvas id="gameCanvas"></canvas>
-    </div>
-    <p style="font-size: 10px; color: #aaa; margin-top: 5px;">TOCA LA PANTALLA PARA LANZAR EL GANCHO</p>
-
-    <script>
-        // Inicializar Telegram (opcional, para que se vea bien en la app)
-        const tg = window.Telegram.WebApp; 
-        tg.expand();
-
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const scoreEl = document.getElementById('score');
-        const container = document.getElementById('game-container');
-
-        // Ajustar el tamaño del canvas a la resolución real de la pantalla
-        function resizeCanvas() {
-            canvas.width = container.clientWidth;
-            canvas.height = container.clientHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        // --- VARIABLES DEL JUEGO ---
-        let score = 0;
-        let gameState = 'AIMING'; // Estados: AIMING (apuntando), FIRING (disparando), RETURNING (recogiendo)
-        const groundLevel = canvas.height * 0.15; // Donde empieza la tierra
-
-        // --- EL GANCHÓ (MINERO) ---
-        const miner = {
-            x: canvas.width / 2,
-            y: groundLevel - 20,
-            draw: function() {
-                ctx.font = "40px Arial";
-                ctx.textAlign = "center";
-                ctx.fillText("👷‍♂️", this.x, this.y);
-            }
-        };
-
-        const hook = {
-            x: canvas.width / 2,
-            y: groundLevel - 10, // Punto de pivote
-            length: 30,
-            minLength: 30,
-            maxLength: canvas.height + 50,
-            angle: Math.PI / 2, // Empieza apuntando abajo (90 grados)
-            swingSpeed: 0.03,
-            swingDir: 1,
-            baseSpeed: 8, // Velocidad normal de disparo
-            currentSpeed: 8,
-            caughtItem: null,
-            
-            update: function() {
-                // Lógica de movimiento según el estado
-                if (gameState === 'AIMING') {
-                    // Oscilación tipo péndulo
-                    this.angle += this.swingSpeed * this.swingDir;
-                    if (this.angle > Math.PI - 0.2 || this.angle < 0.2) {
-                        this.swingDir *= -1;
-                    }
-                    this.length = this.minLength;
-
-                } else if (gameState === 'FIRING') {
-                    // Bajando
-                    this.length += this.currentSpeed;
-                    // Si llega al límite o toca los bordes, regresa
-                    let tipX = this.x + Math.cos(this.angle) * this.length;
-                    let tipY = this.y + Math.sin(this.angle) * this.length;
-                    
-                    if (this.length >= this.maxLength || tipX < 0 || tipX > canvas.width || tipY > canvas.height) {
-                        gameState = 'RETURNING';
-                    }
-
-                } else if (gameState === 'RETURNING') {
-                    // Subiendo
-                    this.length -= this.currentSpeed;
-                    if (this.length <= this.minLength) {
-                        this.length = this.minLength;
-                        gameState = 'AIMING';
-                        
-                        // Procesar objeto atrapado al llegar arriba
-                        if (this.caughtItem) {
-                            score += this.caughtItem.value;
-                            scoreEl.innerText = score;
-                            showFloatText(`+$${this.caughtItem.value}`, this.x, this.y);
-                            // Eliminar el objeto del juego
-                            items = items.filter(i => i !== this.caughtItem);
-                            this.caughtItem = null;
-                            this.currentSpeed = this.baseSpeed; // Resetear velocidad
+            else if(gameState === 'RETRACT') {
+                hook.length -= hook.retractSpeed;
+                if(hook.length <= hook.minLength) {
+                    hook.length = hook.minLength;
+                    gameState = 'SWING';
+                    // Si traía algo, sumar puntos
+                    if(hook.caughtItem) {
+                        if(hook.caughtItem.val > 0) {
+                            user.pts += hook.caughtItem.val;
+                            save();
+                            showFloatingText(`+${hook.caughtItem.val}`, hook.x, hook.y);
+                            playSfx('success');
                         }
+                        // Eliminar objeto capturado
+                        items = items.filter(i => i !== hook.caughtItem);
+                        hook.caughtItem = null;
+                        // Si quedan pocos objetos, regenerar
+                        if(items.length < 3) spawnItems();
                     }
                 }
-            },
-
-            draw: function() {
-                ctx.beginPath();
-                ctx.moveTo(this.x, this.y);
-                // Calcular la punta del gancho
-                let tipX = this.x + Math.cos(this.angle) * this.length;
-                let tipY = this.y + Math.sin(this.angle) * this.length;
-                ctx.lineTo(tipX, tipY);
-                ctx.strokeStyle = '#555';
-                ctx.lineWidth = 3;
-                ctx.stroke();
-
-                // Dibujar el ancla en la punta
-                ctx.save();
-                ctx.translate(tipX, tipY);
-                ctx.rotate(this.angle - Math.PI/2); // Rotar el emoji para que apunte bien
-                ctx.font = "30px Arial";
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle";
-                ctx.fillText("🪝", 0, 0);
-                ctx.restore();
-
-                // Si trae algo, dibujarlo en la punta
-                if(this.caughtItem && gameState === 'RETURNING') {
-                    this.caughtItem.x = tipX;
-                    this.caughtItem.y = tipY + this.caughtItem.radius/2;
-                    this.caughtItem.draw();
-                }
-            },
-            
-            reset: function() {
-                gameState = 'AIMING';
-                this.length = this.minLength;
-                this.caughtItem = null;
-                this.currentSpeed = this.baseSpeed;
-            }
-        };
-
-        // --- OBJETOS (CLASE) ---
-        class Item {
-            constructor(type, x, y) {
-                this.type = type;
-                this.x = x;
-                this.y = y;
-                this.caught = false;
-
-                // Configuración según el tipo
-                switch(type) {
-                    case 'gold_big':
-                        this.emoji = '💰'; this.radius = 35; this.value = 500; this.weight = 5; break;
-                    case 'gold_small':
-                        this.emoji = '🌕'; this.radius = 15; this.value = 100; this.weight = 1; break;
-                    case 'rock_big':
-                        this.emoji = '🪨'; this.radius = 30; this.value = 10; this.weight = 7; break;
-                    case 'rock_small':
-                        this.emoji = '🪨'; this.radius = 15; this.value = 5; this.weight = 3; break;
-                    case 'bomb':
-                        this.emoji = '💣'; this.radius = 20; this.value = -200; this.weight = 0; break;
-                }
             }
 
-            draw() {
-                if(this.caught) return; // Si ya lo trae el gancho, no lo dibujamos aquí
-                ctx.font = `${this.radius * 2}px Arial`;
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle";
-                ctx.fillText(this.emoji, this.x, this.y);
-                
-                // (Opcional) Dibujar círculo de colisión para depurar
-                // ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2); ctx.stroke();
-            }
-        }
-
-        let items = [];
-
-        function generateLevel() {
-            items = [];
-            // Generar objetos aleatorios en la zona de tierra
-            for(let i=0; i<15; i++) {
-                let types = ['gold_big', 'gold_small', 'gold_small', 'rock_big', 'rock_small', 'rock_small', 'bomb'];
-                let type = types[Math.floor(Math.random() * types.length)];
-                let x = Math.random() * (canvas.width - 60) + 30;
-                let y = groundLevel + 50 + Math.random() * (canvas.height - groundLevel - 100);
-                items.push(new Item(type, x, y));
-            }
-        }
-
-        // --- CONTROL PRINCIPAL (LANZAR) ---
-        canvas.addEventListener('pointerdown', () => { // pointerdown funciona mejor en móviles
-            if (gameState === 'AIMING') {
-                gameState = 'FIRING';
-                hook.currentSpeed = hook.baseSpeed;
-            }
-        });
-
-        // --- COLISIONES ---
-        function checkCollisions() {
-            if (gameState !== 'FIRING') return;
-
+            // Dibujar la línea del gancho
             let tipX = hook.x + Math.cos(hook.angle) * hook.length;
             let tipY = hook.y + Math.sin(hook.angle) * hook.length;
+            ctx.beginPath(); ctx.moveTo(hook.x, hook.y); ctx.lineTo(tipX, tipY);
+            ctx.strokeStyle = '#555'; ctx.lineWidth = 3; ctx.stroke();
 
-            for (let item of items) {
-                if (item.caught) continue;
+            // Dibujar el ancla/gancho en la punta
+            ctx.save(); ctx.translate(tipX, tipY); ctx.rotate(hook.angle - Math.PI/2);
+            ctx.font = "30px Arial"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            ctx.fillText("🪝", 0, 0); ctx.restore();
 
-                // Distancia simple entre dos puntos
-                let dx = tipX - item.x;
-                let dy = tipY - item.y;
-                let distance = Math.sqrt(dx * dx + dy * dy);
+            // Dibujar objetos del suelo
+            for(let item of items) item.draw();
 
-                if (distance < item.radius + 5) { // +5 margen para el gancho
-                    // ¡IMPACTO!
-                    
-                    if(item.type === 'bomb') {
-                        // Lógica de bomba
-                        gameState = 'RETURNING';
-                        hook.currentSpeed = hook.baseSpeed * 2; // Regresa rápido
-                        score += item.value; // Resta puntos
-                        if(score < 0) score = 0;
-                        scoreEl.innerText = score;
-                        showFloatText("💥 BOMBA! -$200", tipX, tipY, 'red');
-                        // Eliminar bomba y objetos cercanos
-                        items = items.filter(i => i !== item && Math.sqrt((i.x-item.x)**2 + (i.y-item.y)**2) > 100);
-
-                    } else {
-                        // Agarrar objeto
-                        gameState = 'RETURNING';
-                        hook.caughtItem = item;
-                        item.caught = true;
-                        // Calcular velocidad de retorno según peso (más peso, menos velocidad)
-                        hook.currentSpeed = Math.max(1.5, hook.baseSpeed - item.weight);
-                    }
-                    break; // Solo agarra uno a la vez
-                }
+            // Si el gancho trae algo, dibujarlo en la punta
+            if(hook.caughtItem && gameState === 'RETRACT') {
+                hook.caughtItem.x = tipX; hook.caughtItem.y = tipY + hook.caughtItem.r/2;
+                hook.caughtItem.draw();
             }
-        }
-
-        function showFloatText(text, x, y, color = '#FFD700') {
-            let el = document.createElement('div');
-            el.className = 'float-score';
-            el.innerText = text;
-            el.style.left = (container.offsetLeft + x) + 'px';
-            el.style.top = (container.offsetTop + y) + 'px';
-            el.style.color = color;
-            document.body.appendChild(el);
-            setTimeout(() => el.remove(), 1000);
-        }
-
-        // --- BUCLE PRINCIPAL DEL JUEGO ---
-        function gameLoop() {
-            // 1. Limpiar pantalla
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // 2. Actualizar lógica
-            hook.update();
-            checkCollisions();
-
-            // 3. Dibujar todo
-            miner.draw();
-            for(let item of items) {
-                item.draw();
-            }
-            hook.draw();
 
             requestAnimationFrame(gameLoop);
         }
 
-        // INICIAR
-        generateLevel();
-        gameLoop();
+        // Detectar colisiones
+        function checkCollisions() {
+            let tipX = hook.x + Math.cos(hook.angle) * hook.length;
+            let tipY = hook.y + Math.sin(hook.angle) * hook.length;
 
-    </script>
-</body>
-        </html>
+            for(let item of items) {
+                if(item.caught) continue;
+                let dx = tipX - item.x; let dy = tipY - item.y;
+                let dist = Math.sqrt(dx*dx + dy*dy);
+                if(dist < item.r + 10) { // Margen de colisión
+                    if(item.type === 'bomb') {
+                        // Bomba: Recoger rápido, sin puntos, pequeña explosión visual
+                        gameState = 'RETRACT'; hook.retractSpeed = hook.baseRetractSpeed * 2;
+                        items = items.filter(i => i !== item); // Eliminar bomba
+                        playSfx('tap'); // Sonido simple
+                    } else {
+                        // Agarrar objeto
+                        gameState = 'RETRACT';
+                        hook.caughtItem = item; item.caught = true;
+                        // Velocidad depende del peso (más peso = más lento)
+                        hook.retractSpeed = Math.max(2, hook.baseRetractSpeed - item.weight);
+                    }
+                    break; 
+                }
+            }
+        }
+
+        // Lanzar gancho al tocar el canvas
+        gameWrapper.addEventListener('click', (e) => {
+            // Evitar clic si es en el overlay de recarga o si ya está lanzando
+            if(e.target.closest('.refill-overlay') || gameState !== 'SWING') return;
+            
+            if(user.energy > 0) {
+                user.energy--;
+                save();
+                gameState = 'FIRE';
+                playSfx('tap');
+                tg.HapticFeedback.impactOccurred('light');
+            } else {
+                // Si no hay energía, el updateUI mostrará el overlay
+                updateUI();
+            }
+        });
+
+        function showFloatingText(text, x, y) {
+            const el = document.createElement('div');
+            el.className = 'float-plus';
+            el.innerText = text;
+            // Ajustar posición relativa al contenedor del juego
+            let rect = gameWrapper.getBoundingClientRect();
+            el.style.left = (x + rect.left) + 'px';
+            el.style.top = (y + rect.top) + 'px';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1000);
+        }
+
+        // --- FIN LÓGICA DEL JUEGO ---
+
+        // Efectos de sonido (Mantenido del original)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+       
