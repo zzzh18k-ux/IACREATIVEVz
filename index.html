@@ -2,386 +2,209 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Social App</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Apple Tree Farm</title>
+    
+    <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght=700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* --- ESTÉTICA FACEBOOK / INSTAGRAM --- */
-        :root {
-            --primary: #1877F2; /* Azul Facebook */
-            --bg: #F0F2F5;
-            --white: #ffffff;
-            --text: #050505;
-            --gray: #65676B;
-            --like-color: #ED4956;
+        :root { 
+            --bg: #e8f5e9; 
+            --fruit: #ff4757; 
+            --energy: #ff4757; 
+            --green: #2ed573; 
+            --text: #2f3542;
+            --trunk: #8d6e63;
         }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg);
-            margin: 0;
-            padding-bottom: 70px; /* Espacio para menú abajo */
-            color: var(--text);
-            -webkit-tap-highlight-color: transparent; /* Quita el cuadro azul al tocar en Android */
-        }
-
-        /* HEADER FIJO */
-        .header {
-            background: var(--white);
-            padding: 10px 15px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo { 
-            color: var(--primary); 
-            font-weight: 800; 
-            font-size: 24px; 
-            letter-spacing: -1px;
-        }
-        .wallet-badge {
-            background: #E7F3FF;
-            color: var(--primary);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        /* CONTENEDOR DE POSTS */
-        #feed { max-width: 600px; margin: 0 auto; }
-
-        /* TARJETA DE POST */
-        .post {
-            background: var(--white);
-            margin-top: 10px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-
-        .post-header {
-            padding: 12px;
-            display: flex;
-            align-items: center;
-        }
-        .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-            background: #ddd;
-            object-fit: cover;
-        }
-        .user-col { display: flex; flex-direction: column; }
-        .username { font-weight: 600; font-size: 15px; }
-        .time { color: var(--gray); font-size: 12px; }
-
-        .post-text {
-            padding: 0 12px 10px 12px;
-            font-size: 15px;
-            line-height: 1.4;
-        }
-
-        .post-img {
-            width: 100%;
-            height: auto;
-            display: block;
-            min-height: 300px;
-            background: #eee;
-            object-fit: cover;
-        }
-
-        /* BOTONES QUE COBREN VIDA */
-        .actions {
-            padding: 5px;
-            display: flex;
-            border-top: 1px solid #eee;
-            justify-content: space-around;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            color: var(--gray);
-            font-weight: 600;
-            font-size: 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.1s ease; /* La magia de la animación suave */
-            user-select: none;
-        }
-
-        /* Animación al tocar (Active) */
-        .btn:active {
-            background-color: #f2f2f2;
-            transform: scale(0.95); /* Se encoge un poquito */
-        }
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
         
-        /* Estado Liked (Corazón Rojo con animación) */
-        .btn.liked {
-            color: var(--like-color);
-            animation: bounce 0.4s; /* Efecto rebote */
-        }
-        .btn.liked .material-icons {
-            font-variation-settings: 'FILL' 1;
+        body {
+            background-color: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif;
+            min-height: 100vh; display: flex; flex-direction: column; align-items: center; 
+            padding: 20px; padding-bottom: 120px; overflow-x: hidden;
+            background-image: linear-gradient(to bottom, #a1c4fd 0%, #c2e9fb 100%);
         }
 
-        @keyframes bounce {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.3); }
-            100% { transform: scale(1); }
+        .app-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; }
+
+        /* HEADER & SCORE */
+        .score-board {
+            background: white; padding: 15px 25px; border-radius: 20px; border-bottom: 4px solid #e1e1e1;
+            display: flex; flex-direction: column; align-items: center; width: 100%; z-index: 10;
+        }
+        .score-val { font-family: 'Fredoka One', cursive; font-size: 45px; color: var(--text); line-height: 1; }
+
+        /* ZONA DEL ÁRBOL */
+        .game-area { width: 100%; height: 350px; position: relative; display: flex; justify-content: center; align-items: flex-end; margin-top: 20px; }
+        
+        .tree { position: relative; width: 220px; height: 300px; }
+        .tree-trunk { width: 40px; height: 100px; background: var(--trunk); position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); border-radius: 5px; }
+        .tree-leaves { 
+            width: 200px; height: 200px; background: #4caf50; position: absolute; top: 0; left: 50%; 
+            transform: translateX(-50%); border-radius: 50%; 
+            box-shadow: inset -20px -20px 0 rgba(0,0,0,0.1), 0 10px 20px rgba(0,0,0,0.1);
         }
 
-        /* ANUNCIO NATIVO (Disfrazado de Post) */
-        .ad-native {
-            background: #fff;
-            margin-top: 10px;
-            border: 1px solid #e1e1e1;
+        /* MANZANAS */
+        .apple {
+            position: absolute; font-size: 35px; cursor: pointer;
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.2));
+            animation: grow 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            z-index: 5; transition: transform 0.1s;
         }
-        .ad-header {
-            padding: 10px;
-            color: var(--gray);
-            font-size: 12px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .ad-body {
-            background: #f0f8ff;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-        }
-        .ad-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-weight: bold;
-            margin-top: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        .ad-btn:active { transform: translateY(2px); }
+        @keyframes grow { from { transform: scale(0); } to { transform: scale(1); } }
 
-        /* TOAST (Notificación flotante estilo App) */
-        #toast {
-            visibility: hidden;
-            min-width: 250px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 50px;
-            padding: 12px;
-            position: fixed;
-            z-index: 1000;
-            left: 50%;
-            bottom: 30px;
-            transform: translateX(-50%);
-            font-size: 14px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            opacity: 0;
-            transition: opacity 0.3s, bottom 0.3s;
-        }
-        #toast.show {
-            visibility: visible;
-            opacity: 1;
-            bottom: 50px;
-        }
+        /* BARRA DE ENERGÍA */
+        .energy-container { width: 100%; background: white; padding: 12px 15px; border-radius: 15px; border-bottom: 4px solid #e1e1e1; }
+        .energy-track { width: 100%; height: 10px; background: #dfe4ea; border-radius: 10px; overflow: hidden; margin: 5px 0; }
+        .energy-fill { height: 100%; width: 100%; background: var(--energy); transition: width 0.2s; }
 
+        /* BOTÓN DE RETIRO */
+        .btn-withdraw { 
+            background: #2f3542; color: white; width: 100%; padding: 15px; border: none; 
+            border-radius: 12px; font-weight: 900; font-size: 16px; margin-top: 15px; cursor: pointer;
+        }
+        .btn-withdraw.ready { background: var(--green); box-shadow: 0 0 20px rgba(46, 213, 115, 0.6); }
+
+        .refill-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9); z-index: 20; border-radius: 20px;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+        }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div class="logo">SocialApp</div>
-        <div class="wallet-badge">
-            <span class="material-icons" style="font-size:16px">monetization_on</span>
-            <span id="coins">0</span>
+    <div class="app-container">
+        <div class="score-board">
+            <div class="score-val" id="score">0</div>
+            <div style="font-size: 11px; color: #747d8c;">MANZANAS RECOLECTADAS</div>
         </div>
+
+        <div class="game-area">
+            <div class="tree">
+                <div class="tree-trunk"></div>
+                <div class="tree-leaves" id="treeLeaves"></div>
+            </div>
+            
+            <div class="refill-overlay" id="refillOverlay">
+                <h3 style="margin-bottom:15px;">⚡ SIN ENERGÍA</h3>
+                <button style="background:var(--energy); color:white; border:none; padding:12px 25px; border-radius:50px; font-weight:bold;" onclick="refillEnergy()">VER VIDEO (+50⚡)</button>
+            </div>
+        </div>
+
+        <div class="energy-container">
+            <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:bold;">
+                <span>ENERGÍA</span><span id="energyText">100/100</span>
+            </div>
+            <div class="energy-track"><div class="energy-fill" id="energyBar"></div></div>
+        </div>
+
+        <button class="btn-withdraw" id="withdrawBtn" onclick="retirar()">META NO ALCANZADA</button>
     </div>
 
-    <div id="feed">
-        </div>
-
-    <div id="toast">Notificación</div>
-
     <script>
-        // --- DATOS (Ahora con Textos Diferentes y Categorías) ---
-        const database = [
-            { user: "Carlos_Fit", text: "Terminando la rutina de hoy. ¡El esfuerzo vale la pena! 💪🔥 #Gym #NoPainNoGain", type: "gym" },
-            { user: "Maria_Travels", text: "Nunca había visto un agua tan cristalina. El paraíso existe 🌊✈️", type: "beach" },
-            { user: "Tech_Review", text: "Probando el nuevo procesador. La velocidad es increíble 🖥️⚡", type: "technology" },
-            { user: "El_Comelón", text: "No hay nada como una buena hamburguesa doble un viernes por la noche 🍔🍟", type: "burger" },
-            { user: "Meme_Lord", text: "Yo cuando suena la alarma el lunes por la mañana... 🤡💤", type: "clown" },
-            { user: "Amo_Gatos", text: "Mirad cómo duerme mi pequeño. ¿No es adorable? 🐱❤️", type: "cat" },
-            { user: "Crypto_King", text: "El mercado está volátil hoy. ¡Aprovechen las bajadas! 📉📈", type: "chart" },
-            { user: "Car_Lover", text: "El sonido de este motor V8 es música para mis oídos 🏎️💨", type: "sportscar" },
-            { user: "Pizza_Fan", text: "La piña SI va en la pizza. Vengan de a uno 🍕🍍", type: "pizza" },
-            { user: "Gamer_Pro", text: "Por fin conseguí el platino en este juego. 100 horas bien invertidas 🎮🏆", type: "gaming" },
-            { user: "Cafe_Adicto", text: "Necesito 3 tazas más para funcionar hoy. Buenos días ☕☀️", type: "coffee" },
-            { user: "Sunset_Chaser", text: "Los colores del cielo hoy son irreales. Sin filtro 🌅🧡", type: "sunset" }
-        ];
+        const tg = window.Telegram.WebApp;
+        tg.expand();
 
-        let coins = 0;
-        const feed = document.getElementById('feed');
-        const coinDisplay = document.getElementById('coins');
+        const KEY = 'apple_farm_v1';
+        const META = 20000;
+        let user = { pts: 0, energy: 100 };
 
-        // --- GENERAR FEED ---
-        function renderFeed() {
-            // Barajar posts para que salgan en orden diferente cada vez
-            const shuffled = database.sort(() => 0.5 - Math.random());
+        window.onload = function() {
+            if(localStorage.getItem(KEY)) {
+                let decoded = atob(localStorage.getItem(KEY));
+                user = JSON.parse(decoded);
+            }
+            updateUI();
+            startFruitCycle();
+        };
+
+        function updateUI() {
+            document.getElementById('score').innerText = user.pts;
+            document.getElementById('energyText').innerText = `${user.energy}/100`;
+            document.getElementById('energyBar').style.width = `${user.energy}%`;
             
-            let postCount = 0;
+            const wBtn = document.getElementById('withdrawBtn');
+            if (user.pts >= META) {
+                wBtn.classList.add('ready');
+                wBtn.innerText = '¡RETIRAR PREMIO!';
+            } else {
+                wBtn.classList.remove('ready');
+                wBtn.innerText = 'META NO ALCANZADA';
+            }
 
-            shuffled.forEach(data => {
-                createPost(data);
-                postCount++;
+            document.getElementById('refillOverlay').style.display = user.energy <= 0 ? 'flex' : 'none';
+        }
 
-                // Meter anuncio cada 3 posts
-                if(postCount % 3 === 0) {
-                    createAd();
+        function save() {
+            localStorage.setItem(KEY, btoa(JSON.stringify(user)));
+            updateUI();
+        }
+
+        // --- LÓGICA DEL ÁRBOL ---
+        function startFruitCycle() {
+            // Crea una manzana cada 3 segundos si hay energía
+            setInterval(() => {
+                if (user.energy > 0) {
+                    createApple();
                 }
-            });
+            }, 3000);
         }
 
-        // --- CREAR POST ÚNICO ---
-        function createPost(data) {
-            // TRUCO: Añadimos un número aleatorio al final de la URL (?r=...)
-            // Esto obliga al navegador a buscar una imagen NUEVA cada vez.
-            const randomId = Math.floor(Math.random() * 99999);
-            const imageUrl = `https://loremflickr.com/600/400/${data.type}?lock=${randomId}`;
-            const avatarUrl = `https://i.pravatar.cc/150?u=${randomId}`;
-
-            const article = document.createElement('article');
-            article.className = 'post';
-            article.innerHTML = `
-                <div class="post-header">
-                    <img src="${avatarUrl}" class="avatar">
-                    <div class="user-col">
-                        <span class="username">${data.user}</span>
-                        <span class="time">Hace un momento · 🌍</span>
-                    </div>
-                </div>
-                <div class="post-text">${data.text}</div>
-                <img src="${imageUrl}" class="post-img" loading="lazy" onclick="imageClick()">
-                <div class="actions">
-                    <div class="btn" onclick="toggleLike(this)">
-                        <span class="material-icons">favorite_border</span>
-                        <span>Me gusta</span>
-                    </div>
-                    <div class="btn" onclick="showToast('Abrir comentarios...')">
-                        <span class="material-icons">chat_bubble_outline</span>
-                        <span>Comentar</span>
-                    </div>
-                    <div class="btn" onclick="sharePost()">
-                        <span class="material-icons">share</span>
-                        <span>Compartir</span>
-                    </div>
-                </div>
-            `;
-            feed.appendChild(article);
-        }
-
-        // --- CREAR ANUNCIO ---
-        function createAd() {
-            const div = document.createElement('div');
-            div.className = 'ad-native';
-            div.innerHTML = `
-                <div class="ad-header">
-                    <strong>Publicidad Sugerida</strong>
-                    <span class="material-icons" style="font-size:14px">more_horiz</span>
-                </div>
-                <div class="ad-body" onclick="watchAd()">
-                    <span style="font-size:40px">🎁</span>
-                    <h3>Gana 50 Monedas</h3>
-                    <p>Mira un video corto para recargar tu billetera.</p>
-                    <button class="ad-btn">VER VIDEO AHORA</button>
-                </div>
-            `;
-            feed.appendChild(div);
-        }
-
-        // --- INTERACCIONES VIVAS ---
-        
-        function toggleLike(btn) {
-            const icon = btn.querySelector('.material-icons');
+        function createApple() {
+            const leaves = document.getElementById('treeLeaves');
+            const apple = document.createElement('div');
+            apple.className = 'apple';
+            apple.innerHTML = '🍎';
             
-            if (btn.classList.contains('liked')) {
-                // Quitar Like
-                btn.classList.remove('liked');
-                icon.textContent = "favorite_border";
-                btn.style.color = "var(--gray)";
-            } else {
-                // Dar Like (Con Animación)
-                btn.classList.add('liked');
-                icon.textContent = "favorite";
-                
-                // Vibración táctil (Solo funciona en Android)
-                if (navigator.vibrate) navigator.vibrate(50);
-                
-                addCoins(5);
-                showToast("❤️ Te gusta esto (+5 monedas)");
+            // Posición aleatoria dentro de las hojas (leaves)
+            const x = Math.random() * 140 + 30; 
+            const y = Math.random() * 140 + 30;
+            
+            apple.style.left = x + 'px';
+            apple.style.top = y + 'px';
+
+            apple.onclick = function(e) {
+                collectApple(apple, e);
+            };
+
+            leaves.appendChild(apple);
+        }
+
+        function collectApple(el, event) {
+            if (user.energy <= 0) return;
+
+            user.pts += 1;
+            user.energy -= 1;
+            
+            // Eliminar manzana
+            el.remove();
+            
+            // Vibración
+            tg.HapticFeedback.impactOccurred('medium');
+            
+            save();
+        }
+
+        function refillEnergy() {
+            // Simulación de anuncio para recarga
+            user.energy = 50;
+            save();
+        }
+
+        function retirar() {
+            if(user.pts < META) {
+                tg.showAlert(`Faltan ${META - user.pts} manzanas.`);
+                return;
             }
+            tg.showAlert("¡Felicidades! Captura esta pantalla y envíala al bot.");
         }
-
-        function watchAd() {
-            showToast("🎬 Cargando anuncio...");
-            // Aquí iría el código real de AdsGram/Monetag
-            setTimeout(() => {
-                addCoins(50);
-                showToast("✅ ¡Recompensa recibida!");
-                if (navigator.vibrate) navigator.vibrate([100, 50, 100]); // Doble vibración
-            }, 2000);
-        }
-
-        function sharePost() {
-            // Usa el menú de compartir nativo del celular
-            if (navigator.share) {
-                navigator.share({
-                    title: 'SocialApp',
-                    text: '¡Mira este post increíble!',
-                    url: window.location.href
-                });
-            } else {
-                showToast("Enlace copiado al portapapeles");
-            }
-        }
-
-        function imageClick() {
-            showToast("Tocaste la imagen 📸");
-        }
-
-        function addCoins(amount) {
-            coins += amount;
-            coinDisplay.innerText = coins;
-            // Animación del contador de monedas
-            const badge = document.querySelector('.wallet-badge');
-            badge.style.transform = "scale(1.2)";
-            setTimeout(() => badge.style.transform = "scale(1)", 200);
-        }
-
-        // Notificación Toast Personalizada
-        function showToast(message) {
-            const toast = document.getElementById("toast");
-            toast.innerText = message;
-            toast.className = "show";
-            setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
-        }
-
-        // Iniciar
-        renderFeed();
-
     </script>
 </body>
     </html>
