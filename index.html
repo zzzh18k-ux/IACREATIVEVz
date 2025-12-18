@@ -3,397 +3,439 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Gold Miner ELITE</title>
+    <title>Casino 777 Free</title>
     
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght=700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
     <style>
-        /* TEMA MINERO (Oro/Tierra) */
-        :root { 
-            --bg: #2c3e50; /* Fondo oscuro */
-            --gold: #f1c40f; /* Amarillo Oro */
-            --energy: #e74c3c; /* Rojo Energético */
-            --green: #27ae60; /* Verde Dinero */
-            --text: #ecf0f1; /* Texto Claro */
-            --ground-top: #8B4513;
-            --ground-bottom: #4A2509;
-        }
-        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
-        
         body {
-            background-color: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif;
-            min-height: 100vh; display: flex; flex-direction: column; align-items: center; 
-            padding: 20px; padding-bottom: 120px; 
-            overflow-y: auto; margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #020617;
+            color: #ffffff;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
         }
-
-        #banScreen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2f3542; z-index: 99999; 
-            display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white;
-        }
-
-        .app-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; }
-
-        /* HEADER & SCORE (Adaptado al tema oscuro) */
-        .score-board {
-            background: #34495e; padding: 15px 25px; border-radius: 20px; border-bottom: 4px solid #2c3e50;
-            display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2); color: var(--text);
-        }
-        .score-title { font-size: 12px; color: #bdc3c7; font-weight: 800; letter-spacing: 1px; }
-        .score-val { font-family: 'Fredoka One', cursive; font-size: 45px; color: var(--gold); line-height: 1; margin-bottom: 10px; text-shadow: 2px 2px 0 #2c3e50; }
-
-        /* BARRA DE PROGRESO DE META */
-        .goal-container { width: 100%; margin-top: 5px; }
-        .goal-bar-bg { width: 100%; height: 12px; background: #2c3e50; border-radius: 10px; overflow: hidden; border: 1px solid #1a252f; }
-        .goal-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--green), #2ecc71); transition: width 0.3s; }
-        .goal-text { font-size: 11px; color: #bdc3c7; margin-top: 4px; display: flex; justify-content: space-between; font-weight: bold; }
-
-        /* ZONA DE JUEGO (NUEVO: CANVAS) */
-        .game-wrapper {
-            width: 100%;
-            height: 350px; /* Altura del área de juego */
-            position: relative;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            border: 4px solid #34495e;
-            /* Fondo de cielo y tierra */
-            background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 20%, var(--ground-top) 20%, var(--ground-bottom) 100%);
-            cursor: crosshair;
-        }
-
-        canvas { display: block; width: 100%; height: 100%; }
+        .font-bebas { font-family: 'Bebas Neue', cursive; }
         
-        /* EFECTOS FLOTANTES (Adaptados) */
-        .float-plus { 
-            position: absolute; font-weight: 900; font-size: 24px; 
-            color: var(--gold); pointer-events: none; 
-            animation: floatUp 1s forwards; 
-            text-shadow: 2px 2px 0 #000; z-index: 20;
+        @keyframes bounce-subtle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
         }
-        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-60px) scale(1.2); opacity: 0; } }
-
-        /* BARRA DE ENERGÍA */
-        .energy-container { width: 100%; background: #34495e; padding: 12px 15px; border-radius: 15px; border-bottom: 4px solid #2c3e50; text-align: center; color: var(--text); }
-        .energy-track { width: 100%; height: 10px; background: #2c3e50; border-radius: 10px; overflow: hidden; margin: 5px 0; }
-        .energy-fill { height: 100%; width: 100%; background: var(--energy); transition: width 0.2s; }
-        .energy-text { font-size: 11px; font-weight: bold; color: #bdc3c7; display: flex; justify-content: space-between; }
-
-        /* RECARGA OVERLAY */
-        .refill-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(44, 62, 80, 0.95); z-index: 30; /* Mayor z-index para cubrir el canvas */
-            display: none; flex-direction: column; justify-content: center; align-items: center;
-            border-radius: 16px;
-        }
-        .btn-refill {
-            background: var(--energy); color: white; padding: 12px 25px; border-radius: 50px;
-            border: none; font-weight: 900; font-size: 16px; cursor: pointer;
-            box-shadow: 0 5px 20px rgba(231, 76, 60, 0.4); animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-
-        /* BONUS & FOOTER */
-        .bonus-row { display: flex; gap: 8px; width: 100%; margin-top: 5px; }
-        .btn-bonus {
-            flex: 1; padding: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer;
-            display: flex; flex-direction: column; align-items: center; color: white; font-size: 11px;
-            box-shadow: 0 3px 0 rgba(0,0,0,0.3); transition: transform 0.1s;
-        }
-        .btn-bonus:active { transform: translateY(3px); box-shadow: none; }
-        .b-adsgram { background: #3742fa; }
-        .b-monetag { background: #f39c12; }
-
-        .btn-withdraw { 
-            background: #34495e; color: #bdc3c7; width: 100%; padding: 15px; border: none; 
-            border-radius: 12px; font-weight: 900; font-size: 16px; margin-top: 15px; 
-            cursor: pointer; box-shadow: 0 4px 0 #2c3e50; transition: 0.3s;
-        }
-        .btn-withdraw.ready {
-            background: linear-gradient(45deg, var(--green), #2ecc71); color: white;
-            box-shadow: 0 0 20px rgba(39, 174, 96, 0.6);
-            animation: pulse 1.5s infinite; text-shadow: 0 2px 0 rgba(0,0,0,0.2);
-        }
-        .btn-withdraw:active { transform: translateY(4px); box-shadow: none; }
-
-        .mini-menu { display: flex; gap: 8px; width: 100%; margin-top: 10px; }
-        .btn-mini {
-            flex: 1; background: #34495e; border: 2px solid #2c3e50; color: #bdc3c7;
-            padding: 8px; border-radius: 10px; font-size: 11px; font-weight: 800;
-            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px;
-        }
-
-        /* MODAL */
-        #modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:100; }
-        .modal-card { background: #ecf0f1; padding: 25px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; color: #2c3e50; }
-        .btn-green { background: var(--green); color: white; width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: bold; font-size: 16px; margin-top: 10px; cursor: pointer; box-shadow: 0 4px 0 #218c74; }
+        .animate-bounce { animation: bounce-subtle 2s ease-in-out infinite; }
+        
+        /* Ocultar barra de scroll */
+        ::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body>
+    <div id="root"></div>
 
-    <div id="banScreen"><h2>Acceso Denegado</h2><p>Dispositivo vinculado.</p></div>
-
-    <div class="app-container" id="appContent">
-        
-        <div class="score-board">
-            <div class="score-title">ORO RECOLECTADO</div>
-            <div class="score-val" id="score">0</div>
-            <div class="goal-container">
-                <div class="goal-bar-bg"><div class="goal-bar-fill" id="goalBar"></div></div>
-                <div class="goal-text"><span>PROGRESO</span><span style="color:var(--green);">META: $0.10 USD</span></div>
-            </div>
-        </div>
-
-        <div class="game-wrapper" id="gameWrapper">
-            <canvas id="gameCanvas"></canvas>
-            
-            <div class="refill-overlay" id="refillOverlay">
-                <div style="font-size:50px; margin-bottom:10px;">⚡</div>
-                <h3 style="color:white; margin-bottom:5px;">SIN ENERGÍA</h3>
-                <p style="color:#bdc3c7; margin-bottom:20px; font-size:14px;">Recarga para seguir minando.</p>
-                <button class="btn-refill" onclick="refillEnergy()">
-                    <i class="fa-solid fa-play"></i> VER VIDEO (+50⚡)
-                </button>
-            </div>
-        </div>
-        <p style="font-size: 10px; color: #bdc3c7; margin-top: -5px;">Toca la pantalla para lanzar el gancho</p>
-
-        <div class="energy-container">
-            <div class="energy-text"><span>ENERGÍA</span><span id="energyText">100/100</span></div>
-            <div class="energy-track"><div class="energy-fill" id="energyBar"></div></div>
-        </div>
-
-        <div class="bonus-row">
-            <button class="btn-bonus b-adsgram" onclick="watchEnergyBonus('adsgram')">
-                <i class="fa-solid fa-bolt" style="margin-bottom:3px;"></i><span>+15 ENERGÍA</span>
-            </button>
-            <button class="btn-bonus b-monetag" onclick="watchEnergyBonus('monetag')">
-                <i class="fa-solid fa-battery-full" style="margin-bottom:3px;"></i><span>+10 ENERGÍA</span>
-            </button>
-        </div>
-
-        <button class="btn-withdraw" id="withdrawBtn" onclick="retirar()">
-            <i class="fa-solid fa-lock"></i> META NO ALCANZADA
-        </button>
-
-        <div class="mini-menu">
-            <button class="btn-mini" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')"><i class="fa-solid fa-headset"></i> Soporte</button>
-            <button class="btn-mini" onclick="tg.openTelegramLink('https://t.me/noticebuddy')"><i class="fa-brands fa-telegram"></i> Canal</button>
-        </div>
-    </div>
-
-    <div id="modal">
-        <div class="modal-card">
-            <h2 style="color:var(--green); margin-bottom:10px;">✅ ¡META ALCANZADA!</h2>
-            <p style="color:#7f8c8d; font-size:13px; margin-bottom:15px;">Envía esta captura para tu pago.</p>
-            <div style="background:#bdc3c7; padding:15px; border-radius:10px; margin-bottom:15px; text-align:left; font-size:12px; color:#2c3e50; border: 2px dashed #7f8c8d;">
-                <div><b>USUARIO:</b> <span id="recUser">...</span></div>
-                <div><b>FECHA:</b> <span id="recDate">...</span></div>
-                <div style="margin-top:5px; font-size:16px; color:#27ae60;"><b>TOTAL:</b> $0.10 USD</div>
-            </div>
-            <button class="btn-green" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">📩 ENVIAR CAPTURA</button>
-            <button style="background:none; border:none; color:#7f8c8d; margin-top:15px; cursor:pointer;" onclick="location.reload()">Cerrar Ventana</button>
-        </div>
-    </div>
-
-    <script>
-        const tg = window.Telegram.WebApp; tg.expand();
-        tg.setHeaderColor('#2c3e50'); tg.setBackgroundColor('#2c3e50');
-
-        const ADSGRAM_ID = "18897"; 
-        const KEY = 'goldminer_v1_prod'; // Nueva llave para el nuevo juego
-        const META = 20000; 
-        let user = { pts: 0, energy: 100 };
-
-        // --- LÓGICA DEL JUEGO DEL MINERO ---
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const gameWrapper = document.getElementById('gameWrapper');
-        
-        // Ajustar canvas al tamaño del contenedor
-        function resizeCanvas() {
-            canvas.width = gameWrapper.clientWidth;
-            canvas.height = gameWrapper.clientHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        // Configuración del juego
-        let gameState = 'SWING'; // Estados: SWING (oscilando), FIRE (disparando), RETRACT (recogiendo)
-        const hook = {
-            x: canvas.width / 2, y: 60, // Punto de origen (donde está el minero)
-            length: 40, minLength: 40, maxLength: canvas.height + 50,
-            angle: Math.PI / 2, // Empieza mirando abajo
-            swingSpeed: 0.03, swingDir: 1,
-            fireSpeed: 10, retractSpeed: 10, baseRetractSpeed: 10,
-            caughtItem: null
+    <script type="text/babel">
+        // --- CONSTANTES DEL JUEGO (Traídas de types.ts) ---
+        const GAME_CONSTANTS = {
+            SAVE_KEY: 'casino777free_core_v1',
+            WELCOME_BONUS: 0.10,
+            WITHDRAW_THRESHOLD: 0.20,
+            AD_REWARD: 0.0004, 
+            DAILY_BONUS_REWARD: 0.005,
+            MIN_BET: 0.001,
+            COOLDOWN_24H: 24 * 60 * 60 * 1000,
+            TEAM_COMMISSION_PCT: 0.10, 
         };
-        
-        let items = []; // Array para guardar los objetos del suelo
 
-        // Clase para los objetos (Oro, Piedra, Bomba)
-        class Item {
-            constructor(type, x, y) {
-                this.type = type; this.x = x; this.y = y;
-                this.caught = false;
-                switch(type) {
-                    case 'gold_big':   this.emoji = '💰'; this.r = 30; this.val = 50; this.weight = 6; break;
-                    case 'gold_small': this.emoji = '🌕'; this.r = 15; this.val = 10; this.weight = 2; break;
-                    case 'rock':       this.emoji = '🪨'; this.r = 22; this.val = 2;  this.weight = 8; break;
-                    case 'bomb':       this.emoji = '💣'; this.r = 18; this.val = 0;  this.weight = 0; break;
-                }
-            }
-            draw() {
-                if(this.caught) return;
-                ctx.font = `${this.r * 2}px Arial`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-                ctx.fillText(this.emoji, this.x, this.y);
-            }
-        }
-
-        // Generar nivel
-        function spawnItems() {
-            items = [];
-            const groundY = canvas.height * 0.25; // Donde empieza la tierra
-            for(let i=0; i<12; i++) {
-                let types = ['gold_big', 'gold_small', 'gold_small', 'rock', 'rock', 'bomb'];
-                let type = types[Math.floor(Math.random()*types.length)];
-                let x = 40 + Math.random() * (canvas.width - 80);
-                let y = groundY + 40 + Math.random() * (canvas.height - groundY - 80);
-                items.push(new Item(type, x, y));
-            }
-        }
-
-        // Bucle principal del juego (Animación)
-        function gameLoop() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar canvas
-
-            // Dibujar al minero
-            ctx.font = "40px Arial"; ctx.textAlign = "center";
-            ctx.fillText("👷‍♂️", canvas.width / 2, 40);
-
-            // Lógica del gancho
-            if(gameState === 'SWING') {
-                hook.angle += hook.swingSpeed * hook.swingDir;
-                if(hook.angle > Math.PI - 0.2 || hook.angle < 0.2) hook.swingDir *= -1;
-                hook.length = hook.minLength;
-            } 
-            else if(gameState === 'FIRE') {
-                hook.length += hook.fireSpeed;
-                checkCollisions(); // Comprobar si tocó algo
-                // Si llega al límite, recoger
-                if(hook.length >= hook.maxLength || hook.x + Math.cos(hook.angle)*hook.length < 0 || hook.x + Math.cos(hook.angle)*hook.length > canvas.width) {
-                    gameState = 'RETRACT'; hook.retractSpeed = hook.baseRetractSpeed;
-                }
-            }
-            else if(gameState === 'RETRACT') {
-                hook.length -= hook.retractSpeed;
-                if(hook.length <= hook.minLength) {
-                    hook.length = hook.minLength;
-                    gameState = 'SWING';
-                    // Si traía algo, sumar puntos
-                    if(hook.caughtItem) {
-                        if(hook.caughtItem.val > 0) {
-                            user.pts += hook.caughtItem.val;
-                            save();
-                            showFloatingText(`+${hook.caughtItem.val}`, hook.x, hook.y);
-                            playSfx('success');
-                        }
-                        // Eliminar objeto capturado
-                        items = items.filter(i => i !== hook.caughtItem);
-                        hook.caughtItem = null;
-                        // Si quedan pocos objetos, regenerar
-                        if(items.length < 3) spawnItems();
-                    }
-                }
-            }
-
-            // Dibujar la línea del gancho
-            let tipX = hook.x + Math.cos(hook.angle) * hook.length;
-            let tipY = hook.y + Math.sin(hook.angle) * hook.length;
-            ctx.beginPath(); ctx.moveTo(hook.x, hook.y); ctx.lineTo(tipX, tipY);
-            ctx.strokeStyle = '#555'; ctx.lineWidth = 3; ctx.stroke();
-
-            // Dibujar el ancla/gancho en la punta
-            ctx.save(); ctx.translate(tipX, tipY); ctx.rotate(hook.angle - Math.PI/2);
-            ctx.font = "30px Arial"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-            ctx.fillText("🪝", 0, 0); ctx.restore();
-
-            // Dibujar objetos del suelo
-            for(let item of items) item.draw();
-
-            // Si el gancho trae algo, dibujarlo en la punta
-            if(hook.caughtItem && gameState === 'RETRACT') {
-                hook.caughtItem.x = tipX; hook.caughtItem.y = tipY + hook.caughtItem.r/2;
-                hook.caughtItem.draw();
-            }
-
-            requestAnimationFrame(gameLoop);
-        }
-
-        // Detectar colisiones
-        function checkCollisions() {
-            let tipX = hook.x + Math.cos(hook.angle) * hook.length;
-            let tipY = hook.y + Math.sin(hook.angle) * hook.length;
-
-            for(let item of items) {
-                if(item.caught) continue;
-                let dx = tipX - item.x; let dy = tipY - item.y;
-                let dist = Math.sqrt(dx*dx + dy*dy);
-                if(dist < item.r + 10) { // Margen de colisión
-                    if(item.type === 'bomb') {
-                        // Bomba: Recoger rápido, sin puntos, pequeña explosión visual
-                        gameState = 'RETRACT'; hook.retractSpeed = hook.baseRetractSpeed * 2;
-                        items = items.filter(i => i !== item); // Eliminar bomba
-                        playSfx('tap'); // Sonido simple
-                    } else {
-                        // Agarrar objeto
-                        gameState = 'RETRACT';
-                        hook.caughtItem = item; item.caught = true;
-                        // Velocidad depende del peso (más peso = más lento)
-                        hook.retractSpeed = Math.max(2, hook.baseRetractSpeed - item.weight);
-                    }
-                    break; 
-                }
-            }
-        }
-
-        // Lanzar gancho al tocar el canvas
-        gameWrapper.addEventListener('click', (e) => {
-            // Evitar clic si es en el overlay de recarga o si ya está lanzando
-            if(e.target.closest('.refill-overlay') || gameState !== 'SWING') return;
+        // --- MOTOR DE SONIDO ---
+        const playSound = (type, muted) => {
+            if (muted) return;
+            // Verificar soporte de AudioContext
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
             
-            if(user.energy > 0) {
-                user.energy--;
-                save();
-                gameState = 'FIRE';
-                playSfx('tap');
-                tg.HapticFeedback.impactOccurred('light');
-            } else {
-                // Si no hay energía, el updateUI mostrará el overlay
-                updateUI();
+            const audioCtx = new AudioContext();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            switch (type) {
+                case 'click':
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(400, now);
+                    oscillator.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+                    gainNode.gain.setValueAtTime(0.1, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.1);
+                    break;
+                case 'diamond':
+                    oscillator.type = 'triangle';
+                    oscillator.frequency.setValueAtTime(800, now);
+                    oscillator.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+                    gainNode.gain.setValueAtTime(0.1, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.2);
+                    break;
+                case 'bomb':
+                    oscillator.type = 'sawtooth';
+                    oscillator.frequency.setValueAtTime(100, now);
+                    oscillator.frequency.linearRampToValueAtTime(40, now + 0.3);
+                    gainNode.gain.setValueAtTime(0.2, now);
+                    gainNode.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.3);
+                    break;
+                case 'win':
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(523.25, now);
+                    oscillator.frequency.setValueAtTime(659.25, now + 0.1);
+                    oscillator.frequency.setValueAtTime(783.99, now + 0.2);
+                    oscillator.frequency.setValueAtTime(1046.50, now + 0.3);
+                    gainNode.gain.setValueAtTime(0.1, now);
+                    gainNode.gain.linearRampToValueAtTime(0.1, now + 0.4);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.6);
+                    break;
+                case 'lose':
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(150, now);
+                    oscillator.frequency.linearRampToValueAtTime(70, now + 0.4);
+                    gainNode.gain.setValueAtTime(0.1, now);
+                    gainNode.gain.linearRampToValueAtTime(0.01, now + 0.4);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.4);
+                    break;
+                case 'flip':
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(300, now);
+                    oscillator.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+                    gainNode.gain.setValueAtTime(0.05, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.1);
+                    break;
+                case 'cash':
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(900, now);
+                    oscillator.frequency.exponentialRampToValueAtTime(1500, now + 0.2);
+                    gainNode.gain.setValueAtTime(0.1, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.3);
+                    break;
             }
-        });
+        };
 
-        function showFloatingText(text, x, y) {
-            const el = document.createElement('div');
-            el.className = 'float-plus';
-            el.innerText = text;
-            // Ajustar posición relativa al contenedor del juego
-            let rect = gameWrapper.getBoundingClientRect();
-            el.style.left = (x + rect.left) + 'px';
-            el.style.top = (y + rect.top) + 'px';
-            document.body.appendChild(el);
-            setTimeout(() => el.remove(), 1000);
-        }
+        // --- COMPONENTE PRINCIPAL (App.tsx convertido) ---
+        const { useState, useEffect, useCallback, useRef, useMemo } = React;
 
-        // --- FIN LÓGICA DEL JUEGO ---
+        const App = () => {
+            const tg = window.Telegram?.WebApp;
+            
+            const userId = useMemo(() => {
+                const telegramId = tg?.initDataUnsafe?.user?.id;
+                if (telegramId) return telegramId.toString();
+                
+                const savedId = localStorage.getItem('casino777_stable_id');
+                if (savedId) return savedId;
+                
+                const newId = 'user_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('casino777_stable_id', newId);
+                return newId;
+            }, [tg]);
 
-        // Efectos de sonido (Mantenido del original)
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-       
+            const [user, setUser] = useState(() => {
+                const saved = localStorage.getItem(GAME_CONSTANTS.SAVE_KEY);
+                if (saved) {
+                try {
+                    const data = JSON.parse(atob(saved));
+                    return {
+                    balance: data.balance ?? GAME_CONSTANTS.WELCOME_BONUS,
+                    withdrawals: data.withdrawals ?? [],
+                    betHistory: data.betHistory ?? [],
+                    lastVideoClaims: data.lastVideoClaims ?? {},
+                    lastDailyBonus: data.lastDailyBonus ?? 0,
+                    teamEarnings: data.teamEarnings ?? 0,
+                    totalTeamEarnings: data.totalTeamEarnings ?? 0,
+                    referralCount: data.referralCount ?? 0
+                    };
+                } catch (e) { console.error("Error loading save:", e); }
+                }
+                return { 
+                balance: GAME_CONSTANTS.WELCOME_BONUS, 
+                withdrawals: [],
+                betHistory: [],
+                lastVideoClaims: {},
+                lastDailyBonus: 0,
+                teamEarnings: 0,
+                totalTeamEarnings: 0,
+                referralCount: 0
+                };
+            });
+
+            const [currentGame, setCurrentGame] = useState(null);
+            const [currentBet, setCurrentBet] = useState(GAME_CONSTANTS.MIN_BET);
+            const [isSpinning, setIsSpinning] = useState(false);
+            const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+            const [showWithdrawHistory, setShowWithdrawHistory] = useState(false);
+            const [showBetHistory, setShowBetHistory] = useState(false);
+            const [showTeamModal, setShowTeamModal] = useState(false);
+            const [gameResult, setGameResult] = useState(null);
+            const [videoTimers, setVideoTimers] = useState({});
+            const [dailyBonusTimer, setDailyBonusTimer] = useState("");
+            const [isAdLoading, setIsAdLoading] = useState(false);
+            const [isMuted, setIsMuted] = useState(() => localStorage.getItem('casino_muted') === 'true');
+
+            // Estado para Minas
+            const [minesCount, setMinesCount] = useState(3);
+            const [minesGrid, setMinesGrid] = useState(Array(25).fill(null));
+            const [bombPositions, setBombPositions] = useState([]);
+            const [minesGameOver, setMinesGameOver] = useState(false);
+            const [revealedCount, setRevealedCount] = useState(0);
+            const [multiplier, setMultiplier] = useState(1);
+
+            const withdrawProgress = useMemo(() => {
+                const progress = (user.balance / GAME_CONSTANTS.WITHDRAW_THRESHOLD) * 100;
+                return Math.min(progress, 100);
+            }, [user.balance]);
+
+            useEffect(() => {
+                localStorage.setItem(GAME_CONSTANTS.SAVE_KEY, btoa(JSON.stringify(user)));
+            }, [user]);
+
+            useEffect(() => {
+                localStorage.setItem('casino_muted', isMuted.toString());
+            }, [isMuted]);
+
+            useEffect(() => {
+                const updateTimers = () => {
+                const now = Date.now();
+                const vTimers = {};
+                [1, 2, 3, 4, 5, 6, 7].forEach(id => {
+                    const last = user.lastVideoClaims?.[id];
+                    if (last) {
+                    const diff = (last + GAME_CONSTANTS.COOLDOWN_24H) - now;
+                    if (diff > 0) {
+                        const h = Math.floor(diff / 3600000);
+                        const m = Math.floor((diff % 3600000) / 60000);
+                        vTimers[id] = `${h}h ${m}m`;
+                    }
+                    }
+                });
+                setVideoTimers(vTimers);
+
+                if (user.lastDailyBonus) {
+                    const diff = (user.lastDailyBonus + GAME_CONSTANTS.COOLDOWN_24H) - now;
+                    if (diff > 0) {
+                    const h = Math.floor(diff / 3600000);
+                    const m = Math.floor((diff % 3600000) / 60000);
+                    const s = Math.floor((diff % 60000) / 1000);
+                    setDailyBonusTimer(`${h}h ${m}m ${s}s`);
+                    } else {
+                    setDailyBonusTimer("");
+                    }
+                }
+                };
+                const t = setInterval(updateTimers, 1000);
+                updateTimers();
+                return () => clearInterval(t);
+            }, [user.lastVideoClaims, user.lastDailyBonus]);
+
+            useEffect(() => {
+                if (tg) {
+                tg.ready();
+                tg.expand();
+                if (tg.isVersionAtLeast && tg.isVersionAtLeast('6.1')) {
+                    tg.setHeaderColor('#020617');
+                    tg.setBackgroundColor('#020617');
+                }
+                }
+            }, [tg]);
+
+            const triggerHaptic = (type = 'light') => {
+                if (tg?.HapticFeedback && tg.isVersionAtLeast && tg.isVersionAtLeast('6.0')) {
+                try {
+                    if (type === 'success') tg.HapticFeedback.notificationOccurred('success');
+                    else if (type === 'error') tg.HapticFeedback.notificationOccurred('error');
+                    else tg.HapticFeedback.impactOccurred('medium');
+                } catch (e) { console.warn("Haptic failed", e); }
+                }
+            };
+
+            const getInviteLink = () => {
+                return `https://t.me/Casino777free/play?startapp=${userId}`;
+            };
+
+            const handleShare = (text) => {
+                playSound('click', isMuted);
+                const shareText = text || `¡Únete a mi equipo en Casino 777 Free y gana USDT conmigo! 🔥💰 Mi balance es de $${user.balance.toFixed(4)} USDT.`;
+                const shareUrl = getInviteLink();
+
+                if (tg?.isVersionAtLeast && tg.isVersionAtLeast('6.0')) {
+                tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`);
+                } else {
+                copyToClipboard(`${shareText} ${shareUrl}`);
+                }
+            };
+
+            const copyToClipboard = (text) => {
+                const el = document.createElement('textarea');
+                el.value = text;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+                tg?.showAlert("¡Enlace copiado al portapapeles!");
+            };
+
+            const handleDailyBonus = async () => {
+                if (dailyBonusTimer) return tg?.showAlert(`Espera ${dailyBonusTimer} para tu próximo bono.`);
+                playSound('click', isMuted);
+                setIsAdLoading(true);
+                try {
+                if (window.show_10278425) {
+                    await window.show_10278425();
+                    setUser(prev => ({
+                    ...prev,
+                    balance: prev.balance + GAME_CONSTANTS.DAILY_BONUS_REWARD,
+                    lastDailyBonus: Date.now()
+                    }));
+                    playSound('win', isMuted);
+                    tg?.showAlert(`¡Bono Diario de $${GAME_CONSTANTS.DAILY_BONUS_REWARD.toFixed(4)} USDT reclamado!`);
+                } else {
+                    tg?.showAlert("Anuncios no disponibles actualmente.");
+                }
+                } catch(e) { console.error("Daily Bonus Error:", e); } finally { setIsAdLoading(false); }
+            };
+
+            const handleVideo = async (id) => {
+                if (videoTimers[id]) return tg?.showAlert("Espera a que termine el tiempo");
+                playSound('click', isMuted);
+                setIsAdLoading(true);
+                try {
+                if (window.show_10278425) {
+                    await window.show_10278425();
+                    setUser(prev => ({
+                    ...prev,
+                    balance: prev.balance + GAME_CONSTANTS.AD_REWARD,
+                    lastVideoClaims: { ...prev.lastVideoClaims, [id]: Date.now() }
+                    }));
+                    playSound('win', isMuted);
+                    tg?.showAlert(`+$${GAME_CONSTANTS.AD_REWARD} USDT añadidos`);
+                }
+                } catch(e) { console.error("Video error:", e); } finally { setIsAdLoading(false); }
+            };
+
+            const addBetRecord = (game, bet, profit, win) => {
+                const record = {
+                id: Math.random().toString(36).substr(2, 9),
+                game, bet, profit, win,
+                date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                };
+                setUser(prev => ({ ...prev, betHistory: [record, ...prev.betHistory].slice(0, 50) }));
+            };
+
+            const startMines = () => {
+                if (user.balance < currentBet) return tg?.showAlert("Saldo insuficiente");
+                playSound('click', isMuted);
+                setUser(prev => ({ ...prev, balance: prev.balance - currentBet }));
+                const bombs = [];
+                while(bombs.length < minesCount) {
+                const p = Math.floor(Math.random() * 25);
+                if(!bombs.includes(p)) bombs.push(p);
+                }
+                setBombPositions(bombs);
+                setMinesGrid(Array(25).fill(null));
+                setMinesGameOver(false);
+                setRevealedCount(0);
+                setMultiplier(1);
+                setIsSpinning(true);
+                setGameResult(null);
+            };
+
+            const revealTile = (i) => {
+                if (!isSpinning || minesGameOver || minesGrid[i]) return;
+                if (bombPositions.includes(i)) {
+                playSound('bomb', isMuted);
+                const g = [...minesGrid];
+                bombPositions.forEach(b => g[b] = '💣');
+                setMinesGrid(g);
+                setMinesGameOver(true);
+                setIsSpinning(false);
+                setGameResult({ msg: "BOOM! Perdiste", win: false });
+                addBetRecord("Minas", currentBet, -currentBet, false);
+                triggerHaptic('error');
+                } else {
+                playSound('diamond', isMuted);
+                const g = [...minesGrid];
+                g[i] = '💎';
+                setMinesGrid(g);
+                
+                const currentRevealed = revealedCount;
+                const totalTiles = 25;
+                const remainingTiles = totalTiles - currentRevealed;
+                const safeTilesRemaining = (totalTiles - minesCount) - currentRevealed;
+                
+                const stepMultiplier = remainingTiles / safeTilesRemaining;
+                const newMultiplier = multiplier * stepMultiplier;
+                
+                setMultiplier(newMultiplier);
+                setRevealedCount(currentRevealed + 1);
+                triggerHaptic('light');
+                }
+            };
+
+            const cashOutMines = () => {
+                playSound('win', isMuted);
+                const win = currentBet * multiplier;
+                const profit = win - currentBet;
+                const commission = profit > 0 ? profit * GAME_CONSTANTS.TEAM_COMMISSION_PCT : 0;
+                
+                setUser(prev => ({ 
+                ...prev, 
+                balance: prev.balance + win,
+                teamEarnings: prev.teamEarnings + commission
+                }));
+                
+                addBetRecord("Minas", currentBet, profit, true);
+                setMinesGameOver(true);
+                setIsSpinning(false);
+                setGameResult({ msg: `Ganaste $${win.toFixed(4)}`, win: true });
+                triggerHaptic('success');
+            };
+
+            const getNextMinesMultiplier = () => {
+                const totalTiles = 25;
+                const currentRevealed = revealedCount;
+                const remainingTiles = totalTiles - currentRevealed;
+                const safeTilesRemaining = (totalTiles - minesCount) - currentRevealed;
+                if (safeTilesRemaining <= 0) return multiplier;
+                const stepMultiplier = remainingTiles / safeTilesRemaining;
+                return multiplier * stepMultiplier;
+            };
+
+            const playCoin = (choice) => {
+                if (user.balance < currentBet) return tg?.showAlert("Saldo insuficiente");
+                playSound('click', isMuted);
+                setIsSpinning(true);
+                setUser(prev => ({ ...prev, balance: prev.balance - currentBet }));
+                
+                setTimeout(() => {
+                const isHeads = Math.random() > 0.5;
+            
