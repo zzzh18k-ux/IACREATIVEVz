@@ -4,18 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Casino 777 Free</title>
+    
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
     <style>
         body { font-family: 'Montserrat', sans-serif; background-color: #020617; color: white; -webkit-tap-highlight-color: transparent; user-select: none; }
         .font-bebas { font-family: 'Bebas Neue', cursive; }
         .hidden { display: none !important; }
-        /* Animaciones */
-        @keyframes bounce-subtle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-        .animate-bounce-custom { animation: bounce-subtle 2s ease-in-out infinite; }
+        /* Animación Moneda */
+        @keyframes bounce-custom { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        .animate-bounce-custom { animation: bounce-custom 0.5s ease-in-out infinite; }
     </style>
 </head>
 <body class="bg-slate-950 pb-32">
@@ -34,22 +37,22 @@
                 Meta: $<span id="prog-val">0.10</span> / $0.20
             </div>
         </div>
-    </div>
-    <div class="px-6 py-4 max-w-md mx-auto">
+        </div>
+        <div class="px-6 py-4 max-w-md mx-auto">
         <div id="game-msg" class="hidden p-4 rounded-2xl text-center font-black mb-4 border-2 animate-pulse bg-emerald-500/10 border-emerald-500 text-emerald-400">
             ¡Ganaste!
         </div>
 
         <div id="view-menu" class="space-y-4">
-            <button onclick="claimDailyBonus()" id="btn-daily" class="w-full p-6 rounded-3xl flex items-center justify-between border-2 shadow-2xl bg-gradient-to-r from-yellow-500 to-orange-500 border-yellow-400">
-                <div>
-                    <p class="font-black uppercase text-sm text-slate-950">Bono Diario</p>
-                    <p class="font-bebas text-3xl text-white" id="daily-text">$0.005 USDT</p>
+            <button onclick="claimDailyBonus()" id="btn-daily" class="w-full p-6 rounded-3xl flex items-center justify-between border-2 shadow-2xl bg-slate-900 border-white/5 transition-all">
+                <div class="text-left">
+                    <p class="font-black uppercase text-sm text-slate-500" id="daily-label">Bono Diario</p>
+                    <p class="font-bebas text-3xl text-white" id="daily-text">Cargando...</p>
                 </div>
-                <div class="text-5xl">🎁</div>
+                <div class="text-5xl" id="daily-icon">🎁</div>
             </button>
 
-            <h2 class="font-bebas text-2xl text-slate-400 tracking-widest pt-4">JUEGOS</h2>
+            <h2 class="font-bebas text-2xl text-slate-400 tracking-widest pt-4">SALÓN DE JUEGOS</h2>
             
             <button onclick="openGame('mines')" class="w-full h-32 bg-gradient-to-br from-red-500 to-orange-600 rounded-3xl flex items-center justify-between px-8 shadow-xl active:scale-95 transition-transform">
                 <div class="text-left"><p class="font-bebas text-5xl">MINAS</p><p class="text-[10px] font-bold opacity-70 uppercase">Multiplicador</p></div>
@@ -60,6 +63,12 @@
                 <div class="text-left"><p class="font-bebas text-5xl">MONEDA</p><p class="text-[10px] font-bold opacity-70 uppercase">Doble o Nada</p></div>
                 <span class="text-6xl">🪙</span>
             </button>
+
+            <div class="bg-slate-900/50 p-6 rounded-[2.5rem] border border-white/5 mt-8">
+                <p class="text-[10px] text-slate-500 font-black uppercase text-center mb-1 tracking-widest">VIDEOS RECOMPENSADOS (+$0.0004)</p>
+                <div class="grid grid-cols-2 gap-2 mt-4" id="video-grid">
+                    </div>
+            </div>
         </div>
 
         <div id="view-mines" class="hidden space-y-6">
@@ -68,10 +77,7 @@
                 <p class="font-bebas text-3xl text-yellow-500 tracking-widest">MINAS</p>
                 <div class="w-10"></div>
             </div>
-            
-            <div class="grid grid-cols-5 gap-2 w-full max-w-[320px] mx-auto" id="mines-grid">
-                </div>
-
+            <div class="grid grid-cols-5 gap-2 w-full max-w-[320px] mx-auto" id="mines-grid"></div>
             <div id="mines-controls" class="space-y-4">
                 <div class="bg-slate-900 p-4 rounded-2xl border border-white/5">
                     <span class="text-[10px] font-black text-slate-500 uppercase">Bombas: <span id="bomb-count-display">3</span></span>
@@ -106,250 +112,274 @@
                 <button onclick="setBet('half')" class="py-3 bg-slate-800 rounded-xl font-bold text-[10px] uppercase">1/2</button>
             </div>
         </div>
-                    </div>
-                    <script>
-    // --- VARIABLES Y DATOS ---
-    let user = { balance: 0.10, lastDaily: 0 };
-    const CONSTANTS = { MIN_BET: 0.001, WITHDRAW_LIMIT: 0.20, DAILY_REWARD: 0.005 };
+                                                                                            </div>
+                                                                                            <script>
+    // --- DATOS Y VARIABLES ---
+    let user = { 
+        balance: 0.10, 
+        lastDaily: 0, 
+        videoClaims: {} // Historial de los 7 videos
+    };
+    
+    const C = { 
+        MIN_BET: 0.001, 
+        WITHDRAW: 0.20, 
+        DAILY_REWARD: 0.005,
+        VIDEO_REWARD: 0.0004,
+        COOLDOWN: 24 * 60 * 60 * 1000 // 24 Horas
+    };
+    
     let currentBet = 0.001;
     let minesCount = 3;
     let isPlaying = false;
-    let minesGrid = []; // Array para el juego
+    let minesGrid = []; 
     let multiplier = 1.0;
+    let isAdPlaying = false;
 
-    // Inicializar App
+    // INICIAR
     const tg = window.Telegram.WebApp;
     tg.expand();
     loadData();
     renderUI();
+    renderVideoButtons();
+    setInterval(updateTimers, 1000); // Reloj global
+    updateTimers();
 
-    // --- FUNCIONES DE INTERFAZ ---
-    function showMenu() {
-        document.getElementById('view-menu').classList.remove('hidden');
-        document.getElementById('view-mines').classList.add('hidden');
-        document.getElementById('view-coin').classList.add('hidden');
-        document.getElementById('bet-controls').classList.add('hidden');
-        document.getElementById('game-msg').classList.add('hidden');
+    // --- SISTEMA DE ANUNCIOS ---
+    async function showAd() {
+        if(isAdPlaying) return Promise.reject("Cargando anuncio...");
+        isAdPlaying = true;
+        return new Promise((resolve) => {
+            if (window.show_10278425) {
+                window.show_10278425().then(() => {
+                    isAdPlaying = false; resolve(true);
+                }).catch(() => {
+                    isAdPlaying = false; resolve(true); // En caso de error, damos premio igual (para no frustrar)
+                });
+            } else {
+                isAdPlaying = false;
+                alert("Simulación: Anuncio visto (SDK no detectado)");
+                resolve(true);
+            }
+        });
     }
 
-    function openGame(game) {
+    // --- RECOMPENSAS ---
+    async function claimDailyBonus() {
+        const now = Date.now();
+        if ((now - user.lastDaily) < C.COOLDOWN) return;
+        
+        try {
+            await showAd();
+            user.balance += C.DAILY_REWARD;
+            user.lastDaily = Date.now();
+            saveData();
+            renderUI();
+            updateTimers();
+            alert("¡Bono Diario Recibido!");
+        } catch(e) {}
+    }
+
+    async function watchVideo(id) {
+        const now = Date.now();
+        const last = user.videoClaims[id] || 0;
+        if ((now - last) < C.COOLDOWN) return;
+
+        try {
+            await showAd();
+            user.balance += C.VIDEO_REWARD;
+            user.videoClaims[id] = Date.now();
+            saveData();
+            renderUI();
+            updateTimers();
+            alert(`¡Recompensa Video #${id} recibida!`);
+        } catch(e) {}
+    }
+
+    // --- TEMPORIZADORES ---
+    function updateTimers() {
+        const now = Date.now();
+
+        // Bono Diario
+        const dailyBtn = document.getElementById('btn-daily');
+        const diffDaily = (user.lastDaily + C.COOLDOWN) - now;
+        
+        if (diffDaily > 0) {
+            const h = Math.floor(diffDaily/3600000);
+            const m = Math.floor((diffDaily%3600000)/60000);
+            document.getElementById('daily-text').innerText = `${h}h ${m}m`;
+            document.getElementById('daily-text').className = "font-bebas text-3xl text-slate-500";
+            dailyBtn.className = "w-full p-6 rounded-3xl flex items-center justify-between border-2 bg-slate-900 border-white/5 opacity-75";
+            document.getElementById('daily-label').innerText = "Disponible en:";
+        } else {
+            document.getElementById('daily-text').innerText = `$${C.DAILY_REWARD} USDT`;
+            document.getElementById('daily-text').className = "font-bebas text-3xl text-white";
+            dailyBtn.className = "w-full p-6 rounded-3xl flex items-center justify-between border-2 shadow-2xl bg-gradient-to-r from-yellow-500 to-orange-500 border-yellow-400 animate-pulse";
+            document.getElementById('daily-label').innerText = "¡RECLAMAR AHORA!";
+        }
+
+        // 7 Videos
+        for(let i=1; i<=7; i++) {
+            const btn = document.getElementById(`vid-btn-${i}`);
+            if(!btn) continue;
+            const last = user.videoClaims[i] || 0;
+            const diff = (last + C.COOLDOWN) - now;
+            
+            if(diff > 0) {
+                const h = Math.floor(diff/3600000);
+                const m = Math.floor((diff%3600000)/60000);
+                btn.innerText = `⏳ ${h}h ${m}m`;
+                btn.className = "py-3 rounded-xl font-bold text-[10px] border bg-slate-950 text-slate-600";
+                btn.disabled = true;
+            } else {
+                btn.innerText = `VIDEO #${i} ▷`;
+                btn.className = "py-3 rounded-xl font-bold text-[10px] border bg-blue-500/10 border-blue-500/20 text-blue-400 active:scale-95";
+                btn.disabled = false;
+            }
+        }
+    }
+
+    // --- GENERADOR DE BOTONES ---
+    function renderVideoButtons() {
+        const grid = document.getElementById('video-grid');
+        grid.innerHTML = '';
+        for(let i=1; i<=7; i++) {
+            const btn = document.createElement('button');
+            btn.id = `vid-btn-${i}`;
+            btn.onclick = () => watchVideo(i);
+            grid.appendChild(btn);
+        }
+    }
+
+    // --- UI Y NAVEGACIÓN ---
+    function renderUI() {
+        document.getElementById('display-balance').innerText = '$' + user.balance.toFixed(4);
+        document.getElementById('prog-val').innerText = user.balance.toFixed(2);
+        document.getElementById('bet-display').innerText = '$' + currentBet.toFixed(4);
+        
+        let pct = (user.balance / C.WITHDRAW) * 100;
+        if(pct > 100) pct = 100;
+        document.getElementById('progress-bar').style.width = pct + '%';
+
+        const btnW = document.getElementById('btn-withdraw');
+        if(user.balance >= C.WITHDRAW) {
+            btnW.classList.replace('bg-slate-800', 'bg-emerald-500');
+            btnW.classList.replace('text-slate-500', 'text-white');
+            btnW.classList.add('animate-pulse');
+        }
+    }
+
+    function showMenu() {
+        ['view-mines','view-coin','bet-controls','game-msg'].forEach(id => document.getElementById(id).classList.add('hidden'));
+        document.getElementById('view-menu').classList.remove('hidden');
+    }
+    
+    function openGame(g) {
         document.getElementById('view-menu').classList.add('hidden');
         document.getElementById('bet-controls').classList.remove('hidden');
-        document.getElementById('game-msg').classList.add('hidden');
-        
-        if(game === 'mines') {
+        if(g === 'mines') {
             document.getElementById('view-mines').classList.remove('hidden');
-            initMinesGrid(); // Dibuja la cuadrícula vacía
+            initMinesGrid();
         } else {
             document.getElementById('view-coin').classList.remove('hidden');
         }
     }
 
-    function renderUI() {
-        // Actualizar textos
-        document.getElementById('display-balance').innerText = '$' + user.balance.toFixed(4);
-        document.getElementById('prog-val').innerText = user.balance.toFixed(2);
-        document.getElementById('bet-display').innerText = '$' + currentBet.toFixed(4);
-        
-        // Barra de progreso
-        let pct = (user.balance / CONSTANTS.WITHDRAW_LIMIT) * 100;
-        if(pct > 100) pct = 100;
-        document.getElementById('progress-bar').style.width = pct + '%';
-        
-        // Botón retiro
-        const btnW = document.getElementById('btn-withdraw');
-        if(user.balance >= CONSTANTS.WITHDRAW_LIMIT) {
-            btnW.classList.remove('bg-slate-800', 'text-slate-500');
-            btnW.classList.add('bg-emerald-500', 'text-white', 'animate-pulse');
-        }
-
-        // Timer Bono Diario
-        const now = Date.now();
-        const diff = (user.lastDaily + 86400000) - now;
-        const btnD = document.getElementById('btn-daily');
-        const txtD = document.getElementById('daily-text');
-        
-        if(diff > 0) {
-            let h = Math.floor(diff/3600000);
-            let m = Math.floor((diff%3600000)/60000);
-            txtD.innerText = `Espera ${h}h ${m}m`;
-            txtD.classList.add('text-slate-500');
-            btnD.classList.add('opacity-50', 'pointer-events-none');
-            btnD.classList.remove('animate-pulse');
-        } else {
-            txtD.innerText = `$${CONSTANTS.DAILY_REWARD} USDT`;
-            txtD.classList.remove('text-slate-500');
-            btnD.classList.remove('opacity-50', 'pointer-events-none');
-            btnD.classList.add('animate-pulse');
-        }
-    }
-
-    // --- LÓGICA DEL JUEGO ---
-    function setBet(type) {
-        if(type === 'min') currentBet = CONSTANTS.MIN_BET;
-        if(type === 'x2') currentBet = Math.min(user.balance, currentBet * 2);
-        if(type === 'half') currentBet = Math.max(CONSTANTS.MIN_BET, currentBet / 2);
-        renderUI();
-    }
-
-    // JUEGO: MINAS
-    function updateMinesCount(val) {
-        minesCount = parseInt(val);
-        document.getElementById('bomb-count-display').innerText = minesCount;
-    }
-
+    // --- LÓGICA MINAS ---
+    function updateMinesCount(v) { minesCount = parseInt(v); document.getElementById('bomb-count-display').innerText = minesCount; }
+    
     function initMinesGrid() {
         const grid = document.getElementById('mines-grid');
         grid.innerHTML = '';
-        minesGrid = Array(25).fill('empty'); // Reiniciar lógica
+        minesGrid = Array(25).fill('empty');
         document.getElementById('mines-controls').classList.remove('hidden');
         document.getElementById('mines-cashout').classList.add('hidden');
-        
         for(let i=0; i<25; i++) {
-            const tile = document.createElement('div');
-            tile.className = "aspect-square bg-slate-700 rounded-xl flex items-center justify-center text-2xl shadow-lg border border-white/5 cursor-pointer active:scale-95 transition-all";
-            tile.id = `tile-${i}`;
-            tile.onclick = () => clickTile(i);
-            grid.appendChild(tile);
+            const t = document.createElement('div');
+            t.className = "aspect-square bg-slate-700 rounded-xl flex items-center justify-center text-2xl border border-white/5 active:scale-95 transition-all";
+            t.id = `tile-${i}`;
+            t.onclick = () => clickTile(i);
+            grid.appendChild(t);
         }
     }
 
     function startGameMines() {
         if(user.balance < currentBet) return alert("Saldo insuficiente");
-        
         user.balance -= currentBet;
-        isPlaying = true;
-        multiplier = 1.0;
-        
-        // Colocar bombas aleatorias
+        isPlaying = true; multiplier = 1.0;
         minesGrid.fill('gem');
-        let placed = 0;
-        while(placed < minesCount) {
-            let r = Math.floor(Math.random() * 25);
-            if(minesGrid[r] !== 'bomb') {
-                minesGrid[r] = 'bomb';
-                placed++;
-            }
-        }
-
+        let p = 0;
+        while(p < minesCount) { let r = Math.floor(Math.random()*25); if(minesGrid[r]!=='bomb'){ minesGrid[r]='bomb'; p++; } }
         document.getElementById('mines-controls').classList.add('hidden');
         document.getElementById('mines-cashout').classList.remove('hidden');
-        saveData();
-        renderUI();
+        saveData(); renderUI();
     }
 
-    function clickTile(idx) {
+    function clickTile(i) {
         if(!isPlaying) return;
-        const tile = document.getElementById(`tile-${idx}`);
-        
-        if(tile.classList.contains('bg-slate-800')) return; // Ya revelado
+        const t = document.getElementById(`tile-${i}`);
+        if(t.classList.contains('bg-slate-800')) return;
 
-        if(minesGrid[idx] === 'bomb') {
-            // PERDISTE
-            tile.innerHTML = '💣';
-            tile.classList.replace('bg-slate-700', 'bg-red-500');
+        if(minesGrid[i] === 'bomb') {
+            t.innerHTML = '💣'; t.className = t.className.replace('bg-slate-700','bg-red-500');
             gameOver(false, "¡BOOM! Perdiste");
         } else {
-            // GANASTE GEMA
-            tile.innerHTML = '💎';
-            tile.classList.replace('bg-slate-700', 'bg-slate-800');
-            // Calcular nuevo multiplicador (simplificado)
+            t.innerHTML = '💎'; t.className = t.className.replace('bg-slate-700','bg-slate-800');
             multiplier += 0.2; 
-            document.getElementById('mines-cashout').innerText = `RETIRAR $${(currentBet * multiplier).toFixed(4)}`;
+            document.getElementById('mines-cashout').innerText = `RETIRAR $${(currentBet*multiplier).toFixed(4)}`;
         }
     }
 
     function cashOutMines() {
         if(!isPlaying) return;
-        const winAmount = currentBet * multiplier;
-        user.balance += winAmount;
-        gameOver(true, `Ganaste $${winAmount.toFixed(4)}`);
+        const w = currentBet * multiplier;
+        user.balance += w;
+        gameOver(true, `Ganaste $${w.toFixed(4)}`);
     }
 
-    // JUEGO: MONEDA
+    // --- LÓGICA MONEDA ---
     function playCoin(choice) {
         if(user.balance < currentBet) return alert("Saldo insuficiente");
-        user.balance -= currentBet;
-        renderUI();
-
-        const display = document.getElementById('coin-display');
-        display.classList.add('animate-bounce-custom');
-        display.innerText = '❓';
-
+        user.balance -= currentBet; renderUI();
+        const d = document.getElementById('coin-display');
+        d.classList.add('animate-bounce-custom'); d.innerText = '❓';
         setTimeout(() => {
-            const isHeads = Math.random() > 0.5;
-            const result = isHeads ? 'CARA' : 'SOL';
-            display.classList.remove('animate-bounce-custom');
-            display.innerText = result === 'CARA' ? '🪙' : '☀️';
-
-            if(choice === result) {
-                const win = currentBet * 1.95;
-                user.balance += win;
-                gameOver(true, `¡${result}! Ganaste $${win.toFixed(4)}`);
-            } else {
-                gameOver(false, `¡${result}! Perdiste`);
-            }
+            const res = Math.random()>0.5 ? 'CARA' : 'SOL';
+            d.classList.remove('animate-bounce-custom'); d.innerText = res==='CARA'?'🪙':'☀️';
+            if(choice===res) {
+                const w = currentBet * 1.95; user.balance += w;
+                gameOver(true, `¡${res}! Ganaste $${w.toFixed(4)}`);
+            } else gameOver(false, `¡${res}! Perdiste`);
         }, 1000);
     }
 
-    // SISTEMA GENERAL
-    function gameOver(win, msg) {
-        isPlaying = false;
-        saveData();
+    function setBet(t) {
+        if(t==='min') currentBet = C.MIN_BET;
+        if(t==='x2') currentBet = Math.min(user.balance, currentBet*2);
+        if(t==='half') currentBet = Math.max(C.MIN_BET, currentBet/2);
         renderUI();
-        const el = document.getElementById('game-msg');
-        el.innerText = msg;
-        el.classList.remove('hidden');
-        if(win) {
-            el.className = "p-4 rounded-2xl text-center font-black mb-4 border-2 bg-emerald-500/10 border-emerald-500 text-emerald-400";
-            if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-        } else {
-            el.className = "p-4 rounded-2xl text-center font-black mb-4 border-2 bg-red-500/10 border-red-500 text-red-400";
-            if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
-            // Mostrar grid completo en minas
-            if(minesGrid.length > 0) {
-                 minesGrid.forEach((val, i) => {
-                     if(val === 'bomb') document.getElementById(`tile-${i}`).innerHTML = '💣';
-                 });
-            }
-        }
-        
-        // Resetear UI de Minas
-        document.getElementById('mines-cashout').classList.add('hidden');
-        // Esperar un poco y mostrar controles de nuevo
-        setTimeout(() => {
-            if(!document.getElementById('view-mines').classList.contains('hidden')) {
-                document.getElementById('mines-controls').classList.remove('hidden');
-            }
-        }, 1500);
     }
 
-    function claimDailyBonus() {
-        // Simular anuncio y recompensa
-        user.balance += CONSTANTS.DAILY_REWARD;
-        user.lastDaily = Date.now();
-        saveData();
-        renderUI();
-        alert("¡Bono Diario Recibido!");
+    function gameOver(win, msg) {
+        isPlaying = false; saveData(); renderUI();
+        const el = document.getElementById('game-msg');
+        el.innerText = msg; el.classList.remove('hidden');
+        el.className = win ? "p-4 rounded-2xl text-center font-black mb-4 border-2 bg-emerald-500/10 border-emerald-500 text-emerald-400" : "p-4 rounded-2xl text-center font-black mb-4 border-2 bg-red-500/10 border-red-500 text-red-400";
+        if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred(win?'success':'error');
+        if(!win && minesGrid.length>0) minesGrid.forEach((v,i)=>{ if(v==='bomb') document.getElementById(`tile-${i}`).innerHTML='💣'; });
+        setTimeout(() => { if(!document.getElementById('view-mines').classList.contains('hidden')) document.getElementById('mines-controls').classList.remove('hidden'); }, 1500);
     }
 
     function intentarRetiro() {
-        if(user.balance >= CONSTANTS.WITHDRAW_LIMIT) {
-            alert("¡Felicidades! Captura esta pantalla y envíala al soporte para tu pago.");
-            // Aquí podrías redirigir al bot
-        } else {
-            alert(`Necesitas llegar a $${CONSTANTS.WITHDRAW_LIMIT} USDT`);
-        }
+        if(user.balance >= C.WITHDRAW) alert("¡Felicidades! Captura esta pantalla y envíala al soporte.");
+        else alert(`Falta poco. Meta: $${C.WITHDRAW} USDT`);
     }
 
-    // Guardado local
     function loadData() {
-        const saved = localStorage.getItem('casino777_v2');
-        if(saved) user = JSON.parse(saved);
+        const s = localStorage.getItem('casino777_final');
+        if(s) { const d = JSON.parse(s); user.balance=d.balance||0.10; user.lastDaily=d.lastDaily||0; user.videoClaims=d.videoClaims||{}; }
     }
-    function saveData() {
-        localStorage.setItem('casino777_v2', JSON.stringify(user));
-    }
+    function saveData() { localStorage.setItem('casino777_final', JSON.stringify(user)); }
 </script>
 </body>
 </html>
