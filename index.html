@@ -328,4 +328,285 @@
                         tile.innerHTML = '<i class="fas fa-bomb text-red-500 opacity-50"></i>';
                         tile.classList.remove('active:scale-95', 'cursor-pointer');
                     }
+                    function showMenu() {
+        ['view-team', 'view-mines', 'view-coin', 'bet-controls'].forEach(id => document.getElementById(id).classList.add('hidden'));
+        document.getElementById('view-menu').classList.remove('hidden');
+        document.getElementById('game-msg').classList.add('hidden');
+        isPlaying = false;
+    }
+
+    function showScreen(id) {
+        document.getElementById('view-menu').classList.add('hidden');
+        document.getElementById(id).classList.remove('hidden');
+        if(id === 'view-mines' || id === 'view-coin') {
+            document.getElementById('bet-controls').classList.remove('hidden');
+        }
+    }
+
+    function updateTeamUI() {
+        document.getElementById('invite-link').innerText = `https://t.me/${BOT_USERNAME}?start=ref_${user.id}`;
+        document.getElementById('team-balance').innerText = '$' + user.teamEarnings.toFixed(4);
+    }
+
+    function renderVideoButtons() {
+        const grid = document.getElementById('video-grid');
+        grid.innerHTML = '';
+        for(let i=1; i<=8; i++) {
+            const btn = document.createElement('button');
+            // Verificar si ya vio el video hoy
+            const key = `v_${i}_${new Date().toDateString()}`;
+            const isDone = user.videoClaims[key];
+
+            btn.className = `h-10 rounded-lg font-bold text-[10px] flex items-center justify-center border ${isDone ? 'bg-slate-800 text-slate-600 border-transparent' : 'bg-slate-700 text-white border-white/10 hover:bg-blue-600'}`;
+            btn.innerHTML = isDone ? '<i class="fas fa-check"></i>' : `<i class="fas fa-play"></i> #${i}`;
+            btn.onclick = () => watchVideo(i, key, btn);
+            if(isDone) btn.disabled = true;
+            grid.appendChild(btn);
+        }
+    }
+
+    function watchVideo(id, key, btn) {
+        if(isAdPlaying) return;
+        isAdPlaying = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
         
+        // Simular llamada a Monetag (show_88_tag)
+        if(typeof show_88_tag !== 'undefined') {
+            show_88_tag().then(() => {
+                finishVideo(key);
+            }).catch(() => {
+                // Si falla o no carga, simulamos espera
+                setTimeout(() => finishVideo(key), 3000);
+            });
+        } else {
+             setTimeout(() => finishVideo(key), 2000);
+        }
+    }
+
+    function finishVideo(key) {
+        user.balance += C.VIDEO_REWARD;
+        user.videoClaims[key] = true;
+        saveData();
+        renderUI();
+        renderVideoButtons();
+        isAdPlaying = false;
+        showMsg(`¡Ganaste $${C.VIDEO_REWARD}!`, 'success');
+    }
+                    function claimDailyBonus() {
+        const now = Date.now();
+        if(now - user.lastDaily < C.COOLDOWN) {
+            showMsg("Vuelve mañana", 'error');
+            return;
+        }
+        user.balance += C.DAILY_REWARD;
+        user.lastDaily = now;
+        saveData();
+        renderUI();
+        showMsg(`¡Bono de $${C.DAILY_REWARD} recibido!`, 'success');
+        
+        // Animación de confeti
+        if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    }
+
+    function updateTimers() {
+        const now = Date.now();
+        const diff = C.COOLDOWN - (now - user.lastDaily);
+        const btn = document.getElementById('btn-daily');
+        const txt = document.getElementById('daily-text');
+        const icon = document.getElementById('daily-icon');
+        
+        if(diff <= 0) {
+            txt.innerText = "¡RECLAMAR!";
+            txt.classList.add('text-yellow-400');
+            icon.classList.add('animate-bounce');
+        } else {
+            const h = Math.floor(diff / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+            txt.innerText = `${h}h ${m}m ${s}s`;
+            txt.classList.remove('text-yellow-400');
+            icon.classList.remove('animate-bounce');
+        }
+    }
+
+    function setBet(type) {
+        if(isPlaying) return;
+        if(type === 'min') currentBet = C.MIN_BET;
+        if(type === 'x2') currentBet *= 2;
+        if(type === 'half') currentBet /= 2;
+        
+        if(currentBet < C.MIN_BET) currentBet = C.MIN_BET;
+        if(currentBet > user.balance) currentBet = user.balance;
+        
+        renderUI();
+    }
+
+    function saveData() {
+        localStorage.setItem('casino777_pro_final_v3', JSON.stringify(user));
+    }
+
+    function renderUI() {
+        document.getElementById('display-balance').innerText = '$' + user.balance.toFixed(4);
+        document.getElementById('bet-display').innerText = '$' + currentBet.toFixed(4);
+        
+        // Barra de progreso
+        let pct = (user.balance / C.WITHDRAW) * 100;
+        if(pct > 100) pct = 100;
+        document.getElementById('progress-bar').style.width = pct + '%';
+        document.getElementById('prog-val').innerText = user.balance.toFixed(2);
+    }
+    
+    function showMsg(text, type) {
+        const el = document.getElementById('game-msg');
+        el.innerText = text;
+        el.className = `p-3 rounded-xl text-center font-bold text-sm mb-2 border animate-pulse flex items-center justify-center gap-2 ${type === 'error' ? 'bg-red-900/50 border-red-500 text-red-200' : 'bg-emerald-900/50 border-emerald-500 text-emerald-200'}`;
+        el.classList.remove('hidden');
+        setTimeout(() => el.classList.add('hidden'), 3000);
+    }
+                    // --- LÓGICA DE JUEGO: MINAS ---
+    function updateMinesCount(val) {
+        if(isPlaying) return;
+        minesCount = parseInt(val);
+        document.getElementById('bomb-count-display').innerText = minesCount;
+    }
+
+    function startGameMines() {
+        if(user.balance < currentBet) return showMsg("Saldo insuficiente", 'error');
+        
+        user.balance -= currentBet;
+        isPlaying = true;
+        multiplier = 1.0;
+        
+        // Generar tablero
+        minesGrid = Array(25).fill('safe');
+        let placed = 0;
+        while(placed < minesCount) {
+            let idx = Math.floor(Math.random() * 25);
+            if(minesGrid[idx] === 'safe') {
+                minesGrid[idx] = 'mine';
+                placed++;
+            }
+        }
+        
+        renderMinesGrid(false);
+        document.getElementById('mines-controls').classList.add('hidden');
+        document.getElementById('mines-cashout').classList.remove('hidden');
+        saveData(); renderUI();
+    }
+
+    function renderMinesGrid(reveal) {
+        const grid = document.getElementById('mines-grid');
+        grid.innerHTML = '';
+        minesGrid.forEach((val, i) => {
+            const btn = document.createElement('button');
+            btn.className = "w-12 h-12 bg-slate-800 rounded-lg flex items-center justify-center border border-white/5 active:scale-95 transition-all shadow-md";
+            
+            if(reveal) {
+                if(val === 'mine') btn.innerHTML = '<i class="fas fa-bomb text-red-500"></i>';
+                else btn.innerHTML = '<i class="fas fa-gem text-emerald-400 opacity-30"></i>';
+            } else if (val === 'clicked') {
+                btn.className = "w-12 h-12 bg-emerald-900/50 rounded-lg flex items-center justify-center border border-emerald-500/50 shadow-[0_0_10px_rgba(16,185,129,0.4)]";
+                btn.innerHTML = '<i class="fas fa-gem text-emerald-400 text-xl icon-glow"></i>';
+            } else {
+                btn.onclick = () => clickMine(i);
+            }
+            grid.appendChild(btn);
+        });
+    }
+
+    function clickMine(idx) {
+        if(!isPlaying || minesGrid[idx] === 'clicked') return;
+        
+        if(minesGrid[idx] === 'mine') {
+            // PERDISTE
+            renderMinesGrid(true);
+            gameOver(false);
+        } else {
+            // GANASTE GEMAS
+            minesGrid[idx] = 'clicked';
+            multiplier += (minesCount * 0.05); // Aumenta multiplicador
+            renderMinesGrid(false);
+            document.getElementById('mines-cashout').innerText = `RETIRAR $${(currentBet * multiplier).toFixed(4)}`;
+            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+    }
+
+    function cashOutMines() {
+        if(!isPlaying) return;
+        const win = currentBet * multiplier;
+        user.balance += win;
+        showMsg(`¡Ganaste $${win.toFixed(4)}!`, 'success');
+        gameOver(true);
+    }
+
+    function gameOver(win) {
+        isPlaying = false;
+        saveData(); renderUI();
+        document.getElementById('mines-controls').classList.remove('hidden');
+        document.getElementById('mines-cashout').classList.add('hidden');
+        if(win && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        if(!win && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+    }
+
+    // --- LÓGICA DE JUEGO: MONEDA ---
+    function playCoin(choice) {
+        if(isPlaying) return; // Evitar doble clic
+        if(user.balance < currentBet) return showMsg("Saldo insuficiente", 'error');
+
+        user.balance -= currentBet;
+        isPlaying = true;
+        renderUI();
+
+        const display = document.getElementById('coin-display');
+        display.innerHTML = '<i class="fas fa-coins text-5xl text-yellow-500 animate-flip"></i>';
+
+        setTimeout(() => {
+            const result = Math.random() > 0.5 ? 'CARA' : 'SOL';
+            const win = (choice === result);
+            
+            if(result === 'CARA') display.innerHTML = '<i class="fas fa-circle text-5xl text-blue-500 icon-glow"></i>';
+            else display.innerHTML = '<i class="fas fa-sun text-5xl text-orange-500 icon-glow"></i>';
+            
+            if(win) {
+                const prize = currentBet * 1.95; // Casa gana 5%
+                user.balance += prize;
+                showMsg(`¡Ganaste $${prize.toFixed(4)}!`, 'success');
+                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                showMsg("Perdiste...", 'error');
+                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+            }
+            
+            isPlaying = false;
+            saveData(); renderUI();
+        }, 1500);
+    }
+    
+    // Función extra de retiro
+    function intentarRetiro() {
+        if(user.balance >= C.WITHDRAW) {
+            tg.showAlert("¡Solicitud enviada! Contacta al soporte.");
+        } else {
+            tg.showAlert(`Falta poco. Mínimo: $${C.WITHDRAW}`);
+        }
+    }
+    
+    function claimTeamEarnings() {
+        if(user.teamEarnings > 0) {
+            user.balance += user.teamEarnings;
+            user.teamEarnings = 0;
+            saveData(); renderUI(); updateTeamUI();
+            tg.showAlert("Ganancias reclamadas al saldo principal.");
+        } else {
+            tg.showAlert("No tienes ganancias de equipo por reclamar.");
+        }
+    }
+    
+    function copyInvite() {
+        navigator.clipboard.writeText(`https://t.me/${BOT_USERNAME}?start=ref_${user.id}`);
+        tg.showAlert("Enlace copiado");
+    }
+
+</script>
+</body>
+</html>
