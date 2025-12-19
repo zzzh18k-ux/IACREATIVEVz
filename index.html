@@ -1,10 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Casino 777 Free</title>
-    
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -19,6 +19,23 @@
         .icon-glow { filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5)); }
         @keyframes flip-coin { 0% { transform: rotateY(0); } 100% { transform: rotateY(720deg); } }
         .animate-flip { animation: flip-coin 0.6s ease-out; }
+        .btn-back-bottom { width: 100%; padding: 12px; margin-top: 20px; border-radius: 10px; background: #1e293b; color: #94a3b8; font-weight: bold; font-size: 10px; text-transform: uppercase; border: 1px solid #334155; }
+
+        /* ESTILO DE LA NUEVA VENTANA DE AVISO (POPUP) */
+        #custom-alert {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 100;
+            display: flex; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .alert-box {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 2px solid #fbbf24; /* Borde Dorado */
+            padding: 25px; border-radius: 20px; width: 85%; max-width: 320px;
+            text-align: center; box-shadow: 0 0 30px rgba(251, 191, 36, 0.2);
+            transform: scale(1); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body class="bg-slate-950 pb-20">
@@ -44,12 +61,11 @@
             <div id="progress-bar" class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-500" style="width: 0%"></div>
         </div>
         <div class="text-center text-[8px] text-slate-500 uppercase font-bold">
-            Mínimo para retirar: $<span id="min-withdraw-display">0.50</span>
+            Mínimo: $<span id="min-withdraw-display">0.50</span>
         </div>
     </div>
     <div class="px-4 py-4 max-w-md mx-auto space-y-4">
-        <div id="game-msg" class="hidden p-3 rounded-xl text-center font-bold text-sm mb-2 border animate-pulse flex items-center justify-center gap-2"></div>
-
+        
         <div id="view-menu" class="space-y-3">
             <button onclick="claimDailyBonus()" id="btn-daily" class="w-full p-4 rounded-2xl flex items-center justify-between border border-white/5 bg-gradient-to-r from-slate-900 to-slate-800 shadow-md active:scale-[0.98] transition-all">
                 <div class="flex items-center gap-3">
@@ -61,15 +77,24 @@
                         <p class="font-bebas text-xl text-white" id="daily-text">Cargando...</p>
                     </div>
                 </div>
-                <i class="fas fa-chevron-right text-xs text-slate-600"></i>
+                <i class="fas fa-play text-xs text-yellow-500"></i>
             </button>
 
-            <button onclick="openTeam()" class="w-full py-3 px-4 rounded-xl bg-slate-800/50 border border-white/5 text-slate-300 font-bold text-[10px] uppercase flex items-center justify-between active:bg-slate-800">
+            <div class="grid grid-cols-2 gap-2 mt-2">
+                <button onclick="visitLink(1)" class="p-3 bg-blue-900/40 border border-blue-500/30 rounded-xl text-[10px] font-bold uppercase hover:bg-blue-800 transition-all">
+                    <i class="fas fa-globe mb-1 text-lg block text-blue-400"></i> Visitar Link 1
+                </button>
+                <button onclick="visitLink(2)" id="btn-link-2" class="p-3 bg-purple-900/40 border border-purple-500/30 rounded-xl text-[10px] font-bold uppercase hover:bg-purple-800 transition-all">
+                    <i class="fas fa-clock mb-1 text-lg block text-purple-400"></i> Link 2 (1h)
+                </button>
+            </div>
+
+            <button onclick="openTeam()" class="w-full py-3 px-4 rounded-xl bg-slate-800/50 border border-white/5 text-slate-300 font-bold text-[10px] uppercase flex items-center justify-between active:bg-slate-800 mt-2">
                 <span class="flex items-center gap-2"><i class="fas fa-users text-blue-400"></i> Equipo (10% Ganancia)</span>
                 <i class="fas fa-arrow-right text-slate-600"></i>
             </button>
 
-            <h2 class="font-bebas text-lg text-slate-500 tracking-widest pl-1 mt-4">CASINO</h2>
+            <h2 class="font-bebas text-lg text-slate-500 tracking-widest pl-1 mt-4">JUEGOS</h2>
             <div class="grid grid-cols-2 gap-3">
                 <button onclick="openGame('mines')" class="h-28 bg-gradient-to-br from-red-600/90 to-red-800/90 rounded-2xl p-4 flex flex-col justify-between border border-white/10 shadow-lg relative overflow-hidden active:scale-[0.98] transition-all">
                     <i class="fas fa-bomb text-4xl text-white/20 absolute -bottom-2 -right-2"></i>
@@ -85,24 +110,25 @@
 
             <div class="bg-slate-900/50 p-4 rounded-2xl border border-white/5 mt-4">
                 <div class="flex items-center gap-2 mb-3 justify-center text-slate-500">
-                    <i class="fas fa-play-circle text-xs"></i><p class="text-[9px] font-black uppercase tracking-widest">VIDEOS (+0.0020)</p>
+                    <i class="fas fa-play-circle text-xs"></i><p class="text-[9px] font-black uppercase tracking-widest">VER ANUNCIOS (+0.0015)</p>
                 </div>
                 <div class="grid grid-cols-4 gap-2" id="video-grid"></div>
-                <p class="text-[8px] text-slate-600 text-center mt-2">Se reinician a las 24 horas.</p>
+                <p class="text-[8px] text-slate-600 text-center mt-2">Se reinician cada 24h.</p>
             </div>
         </div>
         <div id="view-team" class="hidden space-y-4">
             <div class="flex items-center gap-3"><button onclick="showMenu()" class="w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center text-slate-400"><i class="fas fa-arrow-left text-xs"></i></button><p class="font-bebas text-2xl text-white">TU EQUIPO</p></div>
-            <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-2xl border border-white/5 text-center relative">
-                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Comisiones Acumuladas</p>
+            <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-2xl border border-white/5 text-center">
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Comisiones</p>
                 <p class="text-4xl font-bebas text-yellow-400 gold-glow mb-4" id="team-balance">$0.0000</p>
-                <button onclick="claimTeamEarnings()" class="w-full py-3 rounded-xl font-black text-[10px] uppercase bg-slate-700 text-slate-500 transition-all">PASAR AL SALDO PRINCIPAL</button>
+                <button onclick="claimTeamEarnings()" class="w-full py-3 rounded-xl font-black text-[10px] uppercase bg-slate-700 text-slate-500 transition-all">PASAR AL SALDO</button>
             </div>
             <div class="bg-slate-900 p-4 rounded-2xl border border-white/5 space-y-3">
-                <p class="text-[9px] font-bold text-slate-500 uppercase text-center">Tu Enlace de Referido</p>
+                <p class="text-[9px] font-bold text-slate-500 uppercase text-center">Tu Enlace</p>
                 <div class="bg-black/30 p-2 rounded-lg border border-white/5"><p class="text-[9px] text-blue-400 font-mono truncate" id="invite-link">Cargando...</p></div>
                 <button onclick="copyInvite()" class="w-full bg-blue-600/20 text-blue-400 border border-blue-500/30 py-2 rounded-lg font-bold text-[9px] uppercase">COPIAR ENLACE</button>
             </div>
+            <button onclick="showMenu()" class="btn-back-bottom">⬅ Volver al Menú</button>
         </div>
 
         <div id="view-mines" class="hidden space-y-4">
@@ -110,12 +136,13 @@
             <div class="grid grid-cols-5 gap-2 w-full max-w-[280px] mx-auto p-2 bg-slate-900/50 rounded-2xl border border-white/5" id="mines-grid"></div>
             <div id="mines-controls" class="space-y-3">
                 <div class="bg-slate-900 px-4 py-3 rounded-xl border border-white/5 flex items-center justify-between">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase">Minas</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Bombas</span>
                     <div class="flex items-center gap-3"><span class="font-bebas text-xl text-white w-4 text-center" id="bomb-count-display">3</span><input type="range" min="1" max="20" value="3" class="w-24 h-1 bg-slate-700 rounded-lg appearance-none accent-red-500" oninput="updateMinesCount(this.value)"></div>
                 </div>
                 <button onclick="startGameMines()" class="w-full py-4 bg-yellow-500 hover:bg-yellow-400 text-slate-900 rounded-xl font-black text-sm uppercase shadow-[0_0_15px_rgba(234,179,8,0.3)]">JUGAR</button>
             </div>
             <button id="mines-cashout" onclick="cashOutMines()" class="hidden w-full py-4 bg-emerald-500 text-white rounded-xl font-black text-sm uppercase shadow-[0_0_15px_rgba(16,185,129,0.3)]">RETIRAR GANANCIA</button>
+            <button onclick="showMenu()" class="btn-back-bottom">⬅ Volver al Menú</button>
         </div>
 
         <div id="view-coin" class="hidden space-y-6 text-center pt-8">
@@ -125,6 +152,7 @@
                 <button onclick="playCoin('CARA')" class="py-4 bg-blue-600/20 border border-blue-500/50 text-blue-400 rounded-2xl font-black text-sm">CARA</button>
                 <button onclick="playCoin('SOL')" class="py-4 bg-orange-600/20 border border-orange-500/50 text-orange-400 rounded-2xl font-black text-sm">SOL</button>
             </div>
+            <button onclick="showMenu()" class="btn-back-bottom">⬅ Volver al Menú</button>
         </div>
 
         <div id="bet-controls" class="hidden bg-slate-900 p-4 rounded-2xl border border-white/5 space-y-3 shadow-xl">
@@ -135,137 +163,126 @@
                 <button onclick="setBet('half')" class="py-2 bg-slate-800 rounded-lg font-bold text-[9px] text-slate-400 uppercase">1/2</button>
             </div>
         </div>
-            </div>
-            <script>
-    // --- DATOS DEL DUEÑO Y CONFIGURACIÓN ---
-    const BOT_USERNAME = "FreCasino777_bot"; 
-    const OWNER_USERNAME = "Aronleal"; // <--- AQUÍ ESTÁ TU USUARIO PARA QUE TE LLEGUEN LOS MENSAJES
+    </div>
 
-    // Configuración para NO PERDER DINERO
+    <div id="custom-alert" class="hidden">
+        <div class="alert-box">
+            <i id="alert-icon" class="fas fa-trophy text-4xl text-yellow-400 mb-3 drop-shadow-[0_0_10px_rgba(250,204,21,0.5)]"></i>
+            <h3 id="alert-title" class="text-xl font-bebas text-white tracking-wider mb-1">¡GANASTE!</h3>
+            <p id="alert-msg" class="text-xs text-slate-300 font-semibold mb-4 leading-relaxed">Mensaje aquí</p>
+            <button onclick="closeAlert()" class="w-full py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-xl font-black text-slate-900 text-xs uppercase shadow-lg">ENTENDIDO</button>
+        </div>
+    </div>
+    <script>
+    const BOT_USERNAME = "FreCasino777_bot"; 
+    const OWNER_USERNAME = "Aronleal"; 
+
+    // --- ECONOMÍA BLINDADA (PARA NO PERDER) ---
     const C = { 
-        MIN_WITHDRAW: 0.50, // Mínimo para retirar
-        DAILY_REWARD: 0.01, // Bono diario
-        VIDEO_REWARD: 0.002, // Lo que pagas por video
-        COOLDOWN: 24*60*60*1000, // 24 horas exactas
-        HOUSE_EDGE: 0.60 // La casa gana el 60% de las veces (Imposible perder dinero)
+        MIN_WITHDRAW: 0.50, 
+        DAILY_REWARD: 0.005, // Bajamos el bono diario para cuidar tu bolsillo
+        VIDEO_REWARD: 0.0015, // Bajamos un poco el pago por video (Más seguro para ti)
+        COOLDOWN: 24*60*60*1000, 
+        HOUSE_EDGE: 0.60 
     };
 
-    // --- VARIABLES DE USUARIO ---
-    let savedData = localStorage.getItem('casino_biz_pro_v2');
+    let savedData = localStorage.getItem('casino_biz_safe_v1');
     let parsedData = savedData ? JSON.parse(savedData) : {};
     let user = { 
         balance: parsedData.balance || 0.00, 
         teamEarnings: parsedData.teamEarnings || 0, 
         lastDaily: parsedData.lastDaily || 0, 
+        lastLink2: parsedData.lastLink2 || 0, 
         videoTimers: parsedData.videoTimers || {}, 
         id: parsedData.id || 'ID' + Math.floor(Math.random() * 900000 + 100000)
     };
-
-    // Detección Básica de Multicuentas
-    if(localStorage.getItem('casino_biz_pro_v2') && JSON.parse(localStorage.getItem('casino_biz_pro_v2')).id !== user.id) {
-        alert("⚠️ Multicuenta detectada. Se bloqueará el retiro.");
-    }
 
     let currentBet = 0.001, minesCount = 3, isPlaying = false, minesGrid = [], multiplier = 1.0;
     const tg = window.Telegram.WebApp; tg.expand(); tg.setHeaderColor('#0f172a');
     saveData(); renderUI(); renderVideoButtons(); setInterval(updateTimers, 1000); updateTimers();
 
-    // --- SONIDOS ---
-    function playSound(t) {
-        const s = { 'click': document.getElementById('snd-click'), 'win': document.getElementById('snd-win'), 'coin': document.getElementById('snd-coin') };
-        if(s[t]) { s[t].currentTime = 0; s[t].play().catch(e=>{}); }
-        if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred(t==='win'?'heavy':'light');
+    // --- NUEVA FUNCIÓN DE ALERTA BONITA ---
+    function showAlert(title, msg, type) {
+        const modal = document.getElementById('custom-alert');
+        const icon = document.getElementById('alert-icon');
+        const t = document.getElementById('alert-title');
+        const m = document.getElementById('alert-msg');
+        
+        t.innerText = title; m.innerText = msg;
+        
+        if(type === 'win') { icon.className = "fas fa-trophy text-4xl text-yellow-400 mb-3"; t.className = "text-xl font-bebas text-yellow-400"; playSound('win'); }
+        else if(type === 'loss') { icon.className = "fas fa-heart-crack text-4xl text-slate-500 mb-3"; t.className = "text-xl font-bebas text-slate-400"; }
+        else if(type === 'error') { icon.className = "fas fa-circle-exclamation text-4xl text-red-500 mb-3"; t.className = "text-xl font-bebas text-red-400"; }
+        else { icon.className = "fas fa-bell text-4xl text-blue-400 mb-3"; t.className = "text-xl font-bebas text-white"; }
+        
+        modal.classList.remove('hidden');
+        if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred(type === 'win' ? 'success' : 'warning');
     }
+    function closeAlert() { document.getElementById('custom-alert').classList.add('hidden'); }
 
-    // --- LÓGICA DE RETIRO (TICKET) ---
+    // --- SONIDOS ---
+    function playSound(t) { const s = { 'click': document.getElementById('snd-click'), 'win': document.getElementById('snd-win'), 'coin': document.getElementById('snd-coin') }; if(s[t]) { s[t].currentTime = 0; s[t].play().catch(e=>{}); } }
+
+    // --- ADS & LINKS ---
+    function showAd(cb) {
+        if(typeof show_10278425 !== 'undefined') { show_10278425().then(cb).catch(() => setTimeout(cb, 2000)); } 
+        else setTimeout(cb, 1500);
+    }
+    function visitLink(n) {
+        playSound('click');
+        if(n===1) tg.openLink('https://otieu.com/4/10274047');
+        else if(n===2) { if(Date.now()-user.lastLink2 < 3600000) return showAlert("ESPERA", "Link 2 disponible cada 1 hora.", 'error'); user.lastLink2 = Date.now(); saveData(); tg.openLink('https://otieu.com/4/10180875'); }
+    }
+    function watchVideo(id) { playSound('click'); tg.showConfirm("¿Ver anuncio?", (ok) => { if(ok) showAd(() => finishVideo(id)); }); }
+    function finishVideo(id) { user.balance += C.VIDEO_REWARD; user.videoTimers[`v${id}`] = Date.now(); saveData(); renderUI(); renderVideoButtons(); showAlert("¡ÉXITO!", `Ganaste $${C.VIDEO_REWARD}`, 'win'); }
+    function claimDailyBonus() { const now = Date.now(); if(now - user.lastDaily < C.COOLDOWN) return showAlert("UPS", "Vuelve mañana.", 'error'); tg.showConfirm("¿Ver anuncio para bono?", (ok) => { if(ok) showAd(() => { user.balance += C.DAILY_REWARD; user.lastDaily = now; saveData(); renderUI(); showAlert("¡REGALO!", `Bono de $${C.DAILY_REWARD} recibido.`, 'win'); }); }); }
+
+    // --- RETIRO ---
     function intentarRetiro() {
         playSound('click');
         if(user.balance >= C.MIN_WITHDRAW) {
-            const now = new Date();
-            const ticket = `🎫 TICKET DE RETIRO\n` +
-                           `📅 Fecha: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}\n` +
-                           `👤 Usuario ID: ${user.id}\n` +
-                           `💰 Monto Retirado: $${user.balance.toFixed(4)}\n` +
-                           `✅ Estado: Verificando (Enviar Captura)`;
-            
-            tg.showConfirm("Se abrirá el chat con @Aronleal. Envía la captura del ticket. ¿Continuar?", (ok) => {
-                if(ok) {
-                    user.balance = 0; // RESETEAR SALDO A 0
-                    saveData(); renderUI();
-                    const url = `https://t.me/${OWNER_USERNAME}?start=withdrawal&text=${encodeURIComponent(ticket)}`;
-                    tg.openTelegramLink(url);
-                }
-            });
-        } else {
-            tg.showAlert(`❌ Saldo insuficiente.\nMínimo: $${C.MIN_WITHDRAW.toFixed(2)}`);
-        }
+            const ticket = `🎫 TICKET RETIRO\n👤 ID: ${user.id}\n💰 $${user.balance.toFixed(4)}`;
+            tg.showConfirm("Enviar captura a @Aronleal?", (ok) => { if(ok) { user.balance = 0; saveData(); renderUI(); tg.openTelegramLink(`https://t.me/${OWNER_USERNAME}?start=withdrawal&text=${encodeURIComponent(ticket)}`); } });
+        } else showAlert("FALTA SALDO", `Mínimo: $${C.MIN_WITHDRAW.toFixed(2)}`, 'error');
     }
 
-    // --- LÓGICA DE JUEGOS (MODO ANTI-PÉRDIDA) ---
-    function playCoin(choice) {
-        if(isPlaying) return; if(user.balance < currentBet) return tg.showAlert("Saldo insuficiente");
+    // --- JUEGOS ---
+    function playCoin(c) {
+        if(isPlaying) return; if(user.balance < currentBet) return showAlert("SIN SALDO", "Recarga viendo videos.", 'error');
         playSound('click'); user.balance -= currentBet; isPlaying = true; renderUI(); 
         const d = document.getElementById('coin-display'); d.innerHTML = '<i class="fas fa-coins text-5xl text-yellow-500 animate-flip"></i>';
-        
         setTimeout(() => {
-            let result;
-            const rand = Math.random();
-            // TRUCO: La casa gana si rand < 0.60 (60% de las veces pierden)
-            const houseWins = rand < C.HOUSE_EDGE; 
-            
-            if(houseWins) result = (choice === 'CARA' ? 'SOL' : 'CARA'); // Forzar pérdida
-            else result = choice; // Dejar ganar (40% probabilidad)
-
-            d.innerHTML = result === 'CARA' ? '<i class="fas fa-circle text-5xl text-blue-500 icon-glow"></i>' : '<i class="fas fa-sun text-5xl text-orange-500 icon-glow"></i>';
-            if(choice === result) { 
-                const prize = currentBet * 1.80; // Paga 1.8x (Tú te quedas el 20% extra)
-                user.balance += prize; playSound('win'); tg.showAlert(`🏆 ¡GANASTE $${prize.toFixed(4)}!`);
-            } else { tg.showAlert("❌ Perdiste..."); }
+            const houseWins = Math.random() < C.HOUSE_EDGE; 
+            const res = houseWins ? (c === 'CARA' ? 'SOL' : 'CARA') : c; // La casa gana 60% veces
+            d.innerHTML = res === 'CARA' ? '<i class="fas fa-circle text-5xl text-blue-500 icon-glow"></i>' : '<i class="fas fa-sun text-5xl text-orange-500 icon-glow"></i>';
+            if(c === res) { const p = currentBet * 1.80; user.balance += p; showAlert("¡GANASTE!", `+$${p.toFixed(4)}`, 'win'); } 
+            else { showAlert("PERDISTE", "Intenta de nuevo.", 'loss'); }
             isPlaying = false; saveData(); renderUI();
         }, 1500);
     }
-
-    function clickMine(idx) {
-        if(!isPlaying || minesGrid[idx] === 'clicked') return; playSound('click');
-        if(minesGrid[idx] === 'mine') { renderMinesGrid(true); gameOver(false); } 
-        else { 
-            minesGrid[idx] = 'clicked'; 
-            multiplier += (minesCount * 0.02); // Multiplicador bajo para proteger tu dinero
-            renderMinesGrid(false); document.getElementById('mines-cashout').innerText = `RETIRAR $${(currentBet * multiplier).toFixed(4)}`; 
-        }
+    function clickMine(i) {
+        if(!isPlaying || minesGrid[i] === 'clicked') return; playSound('click');
+        if(minesGrid[i] === 'mine') { renderMinesGrid(true); gameOver(false); } 
+        else { minesGrid[i] = 'clicked'; multiplier += (minesCount * 0.02); renderMinesGrid(false); document.getElementById('mines-cashout').innerText = `RETIRAR $${(currentBet * multiplier).toFixed(4)}`; }
     }
+    function startGameMines() { if(user.balance < currentBet) return showAlert("SIN SALDO", "Recarga viendo videos.", 'error'); playSound('click'); user.balance -= currentBet; isPlaying = true; multiplier = 1.0; minesGrid = Array(25).fill('safe'); let p = 0; while(p < minesCount) { let x = Math.floor(Math.random() * 25); if(minesGrid[x] === 'safe') { minesGrid[x] = 'mine'; p++; } } renderMinesGrid(false); document.getElementById('mines-controls').classList.add('hidden'); document.getElementById('mines-cashout').classList.remove('hidden'); saveData(); renderUI(); }
+    function cashOutMines() { if(!isPlaying) return; const w = currentBet * multiplier; user.balance += w; showAlert("¡EXCELENTE!", `Retiraste $${w.toFixed(4)}`, 'win'); gameOver(true); }
+    function gameOver(w) { if(!w) showAlert("BOOM", "Explotó una mina.", 'loss'); isPlaying = false; saveData(); renderUI(); document.getElementById('mines-controls').classList.remove('hidden'); document.getElementById('mines-cashout').classList.add('hidden'); }
+    function renderMinesGrid(rev) { const g = document.getElementById('mines-grid'); g.innerHTML = ''; minesGrid.forEach((v, i) => { const b = document.createElement('button'); b.className = "w-12 h-12 bg-slate-800 rounded-lg flex items-center justify-center border border-white/5 active:scale-95 transition-all shadow-md"; if(rev) { b.innerHTML = (v === 'mine') ? '<i class="fas fa-bomb text-red-500"></i>' : '<i class="fas fa-gem text-emerald-400 opacity-30"></i>'; } else if (v === 'clicked') { b.className = "w-12 h-12 bg-emerald-900/50 rounded-lg border-emerald-500/50"; b.innerHTML = '<i class="fas fa-gem text-emerald-400 text-xl icon-glow"></i>'; } else { b.onclick = () => clickMine(i); } g.appendChild(b); }); }
 
-    // --- FUNCIONES CORE ---
-    function renderVideoButtons() {
-        const g = document.getElementById('video-grid'); g.innerHTML = ''; const now = Date.now();
-        for(let i=1; i<=8; i++) {
-            const btn = document.createElement('button');
-            const lastView = user.videoTimers[`v${i}`] || 0; const diff = C.COOLDOWN - (now - lastView); const isLocked = diff > 0;
-            btn.className = `h-10 rounded-lg font-bold text-[10px] flex items-center justify-center border transition-all ${isLocked ? 'bg-slate-800 text-slate-500 border-transparent locked' : 'bg-slate-700 text-white border-white/10 hover:bg-blue-600'}`;
-            if(isLocked) { const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000); btn.innerHTML = `<i class="fas fa-lock"></i> ${h}h ${m}m`; } 
-            else { btn.innerHTML = `<i class="fas fa-play"></i> VIDEO ${i}`; btn.onclick = () => watchVideo(i); } g.appendChild(btn);
-        }
-    }
-    function watchVideo(id) { playSound('click'); if(typeof show_88_tag !== 'undefined') { show_88_tag().then(() => finishVideo(id)).catch(() => finishVideo(id)); } else setTimeout(() => finishVideo(id), 1500); }
-    function finishVideo(id) { playSound('coin'); user.balance += C.VIDEO_REWARD; user.videoTimers[`v${id}`] = Date.now(); saveData(); renderUI(); renderVideoButtons(); tg.showAlert(`✅ ¡Ganaste $${C.VIDEO_REWARD}!`); }
-    function claimDailyBonus() { const now = Date.now(); if(now - user.lastDaily < C.COOLDOWN) return tg.showAlert("Vuelve mañana"); user.balance += C.DAILY_REWARD; user.lastDaily = now; saveData(); renderUI(); playSound('coin'); tg.showAlert("Bono Recibido"); }
-    
-    // Core Game & UI
+    // --- CORE ---
+    function renderVideoButtons() { const g = document.getElementById('video-grid'); g.innerHTML = ''; const now = Date.now(); for(let i=1; i<=8; i++) { const btn = document.createElement('button'); const diff = C.COOLDOWN - (now - (user.videoTimers[`v${i}`]||0)); const locked = diff > 0; btn.className = `h-10 rounded-lg font-bold text-[10px] flex items-center justify-center border transition-all ${locked ? 'bg-slate-800 text-slate-500 border-transparent locked' : 'bg-slate-700 text-white border-white/10 hover:bg-blue-600'}`; if(locked) { const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000); btn.innerHTML = `<i class="fas fa-lock"></i> ${h}h`; } else { btn.innerHTML = `<i class="fas fa-play"></i> #${i}`; btn.onclick = () => watchVideo(i); } g.appendChild(btn); } }
     function openGame(g) { showScreen(g === 'mines' ? 'view-mines' : 'view-coin'); setBet('min'); }
     function openTeam() { showScreen('view-team'); updateTeamUI(); }
     function showMenu() { ['view-team', 'view-mines', 'view-coin', 'bet-controls'].forEach(id => document.getElementById(id).classList.add('hidden')); document.getElementById('view-menu').classList.remove('hidden'); isPlaying = false; }
     function showScreen(id) { document.getElementById('view-menu').classList.add('hidden'); document.getElementById(id).classList.remove('hidden'); if(id.includes('mines') || id.includes('coin')) document.getElementById('bet-controls').classList.remove('hidden'); }
     function updateMinesCount(v) { if(!isPlaying) { minesCount = parseInt(v); document.getElementById('bomb-count-display').innerText = minesCount; } }
-    function startGameMines() { if(user.balance < currentBet) return tg.showAlert("Saldo insuficiente"); playSound('click'); user.balance -= currentBet; isPlaying = true; multiplier = 1.0; minesGrid = Array(25).fill('safe'); let placed = 0; while(placed < minesCount) { let idx = Math.floor(Math.random() * 25); if(minesGrid[idx] === 'safe') { minesGrid[idx] = 'mine'; placed++; } } renderMinesGrid(false); document.getElementById('mines-controls').classList.add('hidden'); document.getElementById('mines-cashout').classList.remove('hidden'); saveData(); renderUI(); }
-    function renderMinesGrid(rev) { const g = document.getElementById('mines-grid'); g.innerHTML = ''; minesGrid.forEach((v, i) => { const b = document.createElement('button'); b.className = "w-12 h-12 bg-slate-800 rounded-lg flex items-center justify-center border border-white/5 active:scale-95 transition-all shadow-md"; if(rev) { b.innerHTML = (v === 'mine') ? '<i class="fas fa-bomb text-red-500"></i>' : '<i class="fas fa-gem text-emerald-400 opacity-30"></i>'; } else if (v === 'clicked') { b.className = "w-12 h-12 bg-emerald-900/50 rounded-lg border-emerald-500/50"; b.innerHTML = '<i class="fas fa-gem text-emerald-400 text-xl icon-glow"></i>'; } else { b.onclick = () => clickMine(i); } g.appendChild(b); }); }
-    function cashOutMines() { if(!isPlaying) return; const win = currentBet * multiplier; user.balance += win; playSound('win'); tg.showAlert(`Ganaste $${win.toFixed(4)}`); gameOver(true); }
-    function gameOver(w) { isPlaying = false; saveData(); renderUI(); document.getElementById('mines-controls').classList.remove('hidden'); document.getElementById('mines-cashout').classList.add('hidden'); }
     function updateTeamUI() { document.getElementById('invite-link').innerText = `https://t.me/${BOT_USERNAME}?start=ref_${user.id}`; document.getElementById('team-balance').innerText = '$' + user.teamEarnings.toFixed(4); }
-    function claimTeamEarnings() { if(user.teamEarnings > 0) { user.balance += user.teamEarnings; user.teamEarnings = 0; saveData(); renderUI(); updateTeamUI(); playSound('coin'); } else tg.showAlert("No tienes ganancias."); }
-    function copyInvite() { navigator.clipboard.writeText(`https://t.me/${BOT_USERNAME}?start=ref_${user.id}`); tg.showAlert("Enlace copiado"); }
-    function updateTimers() { const diff = C.COOLDOWN - (Date.now() - user.lastDaily); const txt = document.getElementById('daily-text'); if(diff <= 0) { txt.innerText = "¡DISPONIBLE!"; txt.classList.add('text-yellow-400'); } else { const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000); txt.innerText = `${h}h ${m}m`; txt.classList.remove('text-yellow-400'); } if(Date.now() % 5000 < 1000) renderVideoButtons(); }
+    function claimTeamEarnings() { if(user.teamEarnings > 0) { user.balance += user.teamEarnings; user.teamEarnings = 0; saveData(); renderUI(); updateTeamUI(); showAlert("¡COMISIÓN!", "Saldo agregado.", 'win'); } else showAlert("VACÍO", "No hay ganancias.", 'loss'); }
+    function copyInvite() { navigator.clipboard.writeText(`https://t.me/${BOT_USERNAME}?start=ref_${user.id}`); showAlert("LISTO", "Enlace copiado.", 'win'); }
+    function updateTimers() { const diff = C.COOLDOWN - (Date.now() - user.lastDaily); const txt = document.getElementById('daily-text'); if(diff <= 0) { txt.innerText = "¡DISPONIBLE!"; txt.classList.add('text-yellow-400'); } else { const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000); txt.innerText = `${h}h ${m}m`; txt.classList.remove('text-yellow-400'); } const l2 = document.getElementById('btn-link-2'); const d2 = 3600000 - (Date.now() - user.lastLink2); if(d2>0) { l2.innerHTML=`<i class="fas fa-lock mb-1 text-lg block text-slate-500"></i> ${Math.floor(d2/60000)}m`; l2.classList.add('opacity-50', 'pointer-events-none'); } else { l2.innerHTML=`<i class="fas fa-clock mb-1 text-lg block text-purple-400"></i> Link 2 (1h)`; l2.classList.remove('opacity-50', 'pointer-events-none'); } if(Date.now()%5000<1000) renderVideoButtons(); }
     function setBet(t) { if(isPlaying) return; playSound('click'); if(t==='min') currentBet=0.001; if(t==='x2') currentBet*=2; if(t==='half') currentBet/=2; if(currentBet>user.balance) currentBet=user.balance; renderUI(); }
-    function saveData() { localStorage.setItem('casino_biz_pro_v2', JSON.stringify(user)); }
+    function saveData() { localStorage.setItem('casino_biz_safe_v1', JSON.stringify(user)); }
     function renderUI() { document.getElementById('display-balance').innerText = '$' + user.balance.toFixed(4); document.getElementById('bet-display').innerText = '$' + currentBet.toFixed(4); let pct = (user.balance/C.MIN_WITHDRAW)*100; if(pct>100)pct=100; document.getElementById('progress-bar').style.width = pct+'%'; document.getElementById('min-withdraw-display').innerText = C.MIN_WITHDRAW.toFixed(2); }
 </script>
 </body>
