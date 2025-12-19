@@ -29,6 +29,7 @@
 
     <audio id="snd-pop" src="https://cdn.pixabay.com/audio/2022/03/10/audio_c8c8a73467.mp3" preload="auto"></audio>
     <audio id="snd-cash" src="https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3" preload="auto"></audio>
+
     <div class="px-5 py-4 bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-green-200 shadow-sm rounded-b-3xl">
         <div class="flex justify-between items-center">
             <div class="flex flex-col">
@@ -100,7 +101,9 @@
                     </button>
                 </div>
             </div>
-            <div id="view-team" class="hidden space-y-4">
+        </div>
+
+        <div id="view-team" class="hidden space-y-4">
             <div class="bg-white p-6 rounded-3xl shadow-lg border border-purple-100 text-center relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-2 bg-purple-500"></div>
                 <h2 class="text-xl font-black text-purple-800 mb-1">Cooperativa</h2>
@@ -137,12 +140,12 @@
                 YA VÍ EL ANUNCIO
             </button>
         </div>
-    </div>
-        <script>
+            </div>
+            <script>
     const BOT_USERNAME = "FreCasino777_bot"; 
     const OWNER_USERNAME = "Aronleal"; 
 
-    // --- CONFIGURACIÓN DE PRECIOS SEGURA ---
+    // --- CONFIGURACIÓN ---
     const C = { 
         MIN_WITHDRAW: 0.50,    
         HARVEST_REWARD: 0.0003,
@@ -152,140 +155,13 @@
         COFFEE_TIME: 60*60*1000 
     };
 
-    let savedData = localStorage.getItem('farm_biz_profit_v1'); 
-    let user = savedData ? JSON.parse(savedData) : { 
-        balance: 0.00, teamEarnings: 0, lastDaily: 0, lastLink1: 0, lastLink2: 0, 
-        lastHarvest: 0, videoTimers: {}, id: 'GRANJERO_' + Math.floor(Math.random() * 99999) 
-    };
-
-    let tempLinkStart = 0;
-    let tempCurrentLinkID = 0;
-
-    const tg = window.Telegram.WebApp; tg.expand();
-    saveData(); renderUI(); setInterval(updateUI, 1000);
-
-    function playSound(t) { 
-        const s = { 'pop': document.getElementById('snd-pop'), 'cash': document.getElementById('snd-cash') }; 
-        if(s[t]) { s[t].currentTime=0; s[t].play().catch(()=>{}); } 
-    }
-
-    // --- AQUÍ ESTÁ LA FUNCIÓN DE RETIRO CON SEGURIDAD ---
-    function intentarRetiro() {
-        playSound('pop');
-        
-        // 1. EL CANDADO ANTI-MULTICUENTA
-        const huellaDispositivo = localStorage.getItem('dispositivo_registrado_por');
-
-        if (huellaDispositivo && huellaDispositivo !== user.id) {
-            showAlert("⛔ ERROR", "Multicuenta detectada. Dispositivo en uso por otro ID.", "error");
-            return; 
-        }
-
-        if(user.balance >= C.MIN_WITHDRAW) {
-            
-            // 2. EL RECIBO CON FECHA Y HORA
-            const fechaAhora = new Date();
-            const fechaBonita = fechaAhora.toLocaleString(); 
-
-            const mensaje = `🚨 SOLICITUD DE RETIRO\n` +
-                            `-------------------\n` +
-                            `👤 Usuario: ${user.id}\n` +
-                            `📅 Fecha: ${fechaBonita}\n` +
-                            `💰 Monto: $${user.balance.toFixed(4)}\n` +
-                            `🛡️ Seguridad: Verificado\n` +
-                            `-------------------`;
-
-            tg.showConfirm("¿Enviar solicitud de retiro?", (ok) => {
-                if(ok) {
-                    // 3. BORRÓN Y CUENTA NUEVA
-                    user.balance = 0; 
-                    
-                    // 4. MARCAR EL TELÉFONO
-                    localStorage.setItem('dispositivo_registrado_por', user.id);
-                    
-                    saveData();
-                    renderUI();
-                    
-                    tg.openTelegramLink(`https://t.me/${OWNER_USERNAME}?start=withdrawal&text=${encodeURIComponent(mensaje)}`);
-                }
-            });
-        } else {
-            showAlert("FALTA DINERO", `El mínimo es $${C.MIN_WITHDRAW}`, "error");
-        }
-    }
-
-    // --- LÓGICA DEL DETECTIVE (PROTECCIÓN DE LINKS) ---
-    function visitLink(n) {
-        const now = Date.now();
-        const lastTime = (n === 1) ? user.lastLink1 : user.lastLink2;
-        if(now - lastTime < 3600000) return showAlert("EN PAUSA", "Este link descansa 1 hora.", "wait");
-
-        tempCurrentLinkID = n;
-        tempLinkStart = now;
-        playSound('pop');
-        
-        const url = (n === 1) ? 'https://otieu.com/4/10274047' : 'https://otieu.com/4/10180875';
-        tg.openLink(url);
-        openVerifyModal(false); 
-    }
-
-    function checkVisitTime() {
-        const timeSpent = Date.now() - tempLinkStart;
-        if(timeSpent < 15000) { 
-            openVerifyModal(true); 
-        } else {
-            if(tempCurrentLinkID === 1) user.lastLink1 = Date.now();
-            if(tempCurrentLinkID === 2) user.lastLink2 = Date.now();
-            user.balance += C.LINK_REWARD;
-            saveData(); renderUI(); playSound('cash');
-            document.getElementById('verify-modal').classList.add('hidden');
-            showAlert("¡EXCELENTE!", `Visita válida. Ganaste $${C.LINK_REWARD}`, "win");
-        }
-    }
-
-    function openVerifyModal(isError) {
-        const m = document.getElementById('verify-modal');
-        const tit = document.getElementById('verify-title');
-        const msg = document.getElementById('verify-msg');
-        const icon = document.getElementById('verify-icon');
-        const btn = document.getElementById('btn-check-visit');
-
-        m.classList.remove('hidden');
-
-        if(isError) {
-            icon.className = "fas fa-hand-paper text-5xl text-red-500 mb-4";
-            tit.innerText = "¡MUY RÁPIDO!";
-            tit.className = "text-xl font-black text-red-600 mb-1";
-            msg.innerText = "No completaste la visita. Inténtalo de nuevo.";
-            btn.innerText = "INTENTAR DE NUEVO";
-            btn.className = "w-full py-4 bg-red-500 hover:bg-red-400 rounded-xl font-black text-white text-sm shadow-lg mb-2";
-            btn.onclick = function() { m.classList.add('hidden'); showAlert("ATENCIÓN", "Toca el link de nuevo y espera 15 segundos.", "wait"); };
-        } else {
-            icon.className = "fas fa-search text-5xl text-yellow-500 mb-4 animate-bounce";
-            tit.innerText = "VERIFICANDO...";
-<script>
-    const BOT_USERNAME = "FreCasino777_bot"; 
-    const OWNER_USERNAME = "Aronleal"; 
-
-    // --- CONFIGURACIÓN DE PRECIOS SEGURA ---
-    const C = { 
-        MIN_WITHDRAW: 0.50,    
-        HARVEST_REWARD: 0.0003,
-        BOOST_REWARD: 0.0008,
-        DAILY_REWARD: 0.0020,
-        LINK_REWARD: 0.0005,
-        COFFEE_TIME: 60*60*1000 
-    };
-
-    // --- CORRECCIÓN DE MEMORIA (Aquí estaba el fallo) ---
-    // 1. Cargamos lo que el teléfono recuerda
+    // --- CORRECCIÓN DE MEMORIA ---
     let savedData = localStorage.getItem('farm_biz_profit_v1'); 
     let memoriaVieja = savedData ? JSON.parse(savedData) : {};
 
-    // 2. Definimos cómo debe ser un usuario nuevo y completo
     let usuarioCompleto = { 
         balance: 0.00, 
-        teamEarnings: 0, // Esto es lo que le faltaba a su memoria vieja
+        teamEarnings: 0, 
         lastDaily: 0, 
         lastLink1: 0, 
         lastLink2: 0, 
@@ -294,11 +170,8 @@
         id: 'GRANJERO_' + Math.floor(Math.random() * 99999) 
     };
 
-    // 3. MEZCLA INTELIGENTE: Usamos sus datos viejos, pero rellenamos los huecos con lo nuevo
-    // Así no pierde su saldo, pero gana la función de equipo.
+    // Fusionar datos viejos con nuevos
     let user = { ...usuarioCompleto, ...memoriaVieja };
-    
-    // Aseguramos que teamEarnings exista sí o sí (Doble seguridad)
     if(typeof user.teamEarnings === 'undefined') user.teamEarnings = 0;
 
     let tempLinkStart = 0;
@@ -312,7 +185,7 @@
         if(s[t]) { s[t].currentTime=0; s[t].play().catch(()=>{}); } 
     }
 
-    // --- FUNCIÓN DE RETIRO CON SEGURIDAD ---
+    // --- RETIRO SEGURO ---
     function intentarRetiro() {
         playSound('pop');
         
@@ -349,7 +222,7 @@
         }
     }
 
-    // --- LÓGICA DEL DETECTIVE (LINKS) ---
+    // --- DETECTIVE DE LINKS ---
     function visitLink(n) {
         const now = Date.now();
         const lastTime = (n === 1) ? user.lastLink1 : user.lastLink2;
@@ -416,7 +289,6 @@
     function renderUI() { document.getElementById('display-balance').innerText='$'+user.balance.toFixed(4); let pct=(user.balance/C.MIN_WITHDRAW)*100; if(pct>100)pct=100; document.getElementById('progress-bar').style.width=pct+'%'; document.getElementById('min-withdraw-display').innerText=C.MIN_WITHDRAW.toFixed(2); }
     function updateUI() { const diff=C.COFFEE_TIME-(Date.now()-user.lastHarvest); const l=document.getElementById('coffee-status'); const i=document.getElementById('img-coffee'); if(diff<=0){l.innerText="¡LISTO!";l.className="text-xs bg-green-500 text-white px-2 py-1 rounded-lg font-bold animate-pulse";i.className="fas fa-mug-hot text-6xl text-amber-700 drop-shadow-lg cursor-pointer";}else{const m=Math.ceil(diff/60000);l.innerText=`Faltan ${m}m`;l.className="text-xs bg-gray-200 text-gray-500 px-2 py-1 rounded-lg font-bold";i.className="fas fa-seedling text-6xl text-green-300 drop-shadow-lg locked";} 
     const d2=3600000-(Date.now()-user.lastLink2); const b2=document.getElementById('btn-link-2'); if(d2>0){ b2.innerHTML=`<div class="flex items-center gap-2"><i class="fas fa-lock text-gray-400"></i><div class="text-left"><p class="text-xs font-bold text-gray-500">Link 2 (1h)</p><p class="text-[9px] text-gray-400">Espera ${Math.ceil(d2/60000)}m</p></div></div>`; b2.className="w-full py-3 bg-gray-100 rounded-xl border border-gray-200 flex items-center justify-between px-3 cursor-not-allowed opacity-70"; } else { b2.innerHTML=`<div class="flex items-center gap-2"><i class="fas fa-clock text-purple-400"></i><div class="text-left"><p class="text-xs font-bold text-gray-700">Link 2 (1h)</p><p class="text-[9px] text-gray-400">Disponible</p></div></div><span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded">+$0.0005</span>`; b2.className="w-full py-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-between px-3 active:bg-gray-100 cursor-pointer"; } }
-    
     function saveData() { localStorage.setItem('farm_biz_profit_v1', JSON.stringify(user)); }
     function showFarm() { document.getElementById('view-team').classList.add('hidden'); document.getElementById('view-farm').classList.remove('hidden'); }
     function openTeam() { document.getElementById('view-farm').classList.add('hidden'); document.getElementById('view-team').classList.remove('hidden'); updateTeamUI(); }
