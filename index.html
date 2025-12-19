@@ -18,7 +18,7 @@
         .btn-farm:active { transform: translateY(4px); border-bottom: 0; }
         .locked { filter: grayscale(1); opacity: 0.7; }
         
-        /* Animación de Cosecha */
+        /* Animación Flotante */
         @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-50px); opacity: 0; } }
         .float-anim { position: absolute; color: #eab308; font-weight: bold; font-size: 20px; animation: floatUp 1s forwards; pointer-events: none; }
 
@@ -49,8 +49,8 @@
             <div id="progress-bar" class="h-full bg-green-500 transition-all duration-500" style="width: 0%"></div>
         </div>
         <p class="text-center text-[9px] text-green-600 mt-1 font-bold">Meta: $<span id="min-withdraw-display">0.50</span></p>
-                </div>
-                <div class="px-4 py-4 max-w-md mx-auto space-y-6">
+    </div>
+    <div class="px-4 py-4 max-w-md mx-auto space-y-6">
         
         <div id="view-farm" class="space-y-4">
             
@@ -60,16 +60,12 @@
                     <span class="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-lg font-bold" id="coffee-status">Lista</span>
                 </div>
                 <div class="flex items-center justify-between">
-                    <div onclick="harvest('coffee')" class="cursor-pointer active:scale-95 transition-transform">
+                    <div onclick="harvest()" class="cursor-pointer active:scale-95 transition-transform">
                         <i class="fas fa-seedling text-6xl text-green-600 drop-shadow-lg" id="img-coffee"></i>
                     </div>
                     <div class="flex flex-col gap-2 w-1/2">
-                        <button onclick="harvest('coffee')" class="btn-farm py-2 text-xs font-bold w-full">
-                            COSECHAR
-                        </button>
-                        <button onclick="fertilize('coffee')" class="py-2 bg-yellow-100 text-yellow-700 rounded-xl text-xs font-bold border border-yellow-200 w-full">
-                            <i class="fas fa-bolt"></i> ACELERAR (Ver Video)
-                        </button>
+                        <button onclick="harvest()" class="btn-farm py-2 text-xs font-bold w-full">COSECHAR</button>
+                        <button onclick="fertilize()" class="py-2 bg-yellow-100 text-yellow-700 rounded-xl text-xs font-bold border border-yellow-200 w-full"><i class="fas fa-bolt"></i> ACELERAR (Video)</button>
                     </div>
                 </div>
                 <p class="text-[10px] text-center text-gray-400 mt-2">Cosecha cada 1 hora o acelera con video.</p>
@@ -80,99 +76,86 @@
                     <div class="absolute right-[-10px] top-[-10px] bg-blue-200 w-10 h-10 rounded-full opacity-50"></div>
                     <i class="fas fa-gift text-2xl text-blue-500 mb-1"></i>
                     <p class="text-xs font-bold text-blue-800">Regalo Diario</p>
-                    <p class="text-[10px] text-blue-500">+$0.005</p>
                 </button>
-
                 <button onclick="openTeam()" class="bg-purple-50 p-4 rounded-2xl border border-purple-100 shadow-sm active:scale-95 text-left relative overflow-hidden">
                     <div class="absolute right-[-10px] top-[-10px] bg-purple-200 w-10 h-10 rounded-full opacity-50"></div>
                     <i class="fas fa-users text-2xl text-purple-500 mb-1"></i>
                     <p class="text-xs font-bold text-purple-800">Mi Equipo</p>
-                    <p class="text-[10px] text-purple-500">10% Ganancia</p>
                 </button>
             </div>
 
             <div class="bg-white p-4 rounded-3xl shadow-sm border border-green-100">
-                <h3 class="font-bold text-green-800 mb-3 text-sm"><i class="fas fa-clipboard-check text-green-600"></i> Tareas del Granjero</h3>
-                
+                <h3 class="font-bold text-green-800 mb-3 text-sm"><i class="fas fa-clipboard-check text-green-600"></i> Visitar Mercado</h3>
                 <div class="space-y-2">
                     <button onclick="visitLink(1)" class="w-full py-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-between px-3 active:bg-gray-100">
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-globe text-blue-400"></i>
-                            <div class="text-left">
-                                <p class="text-xs font-bold text-gray-700">Visitar Mercado</p>
-                                <p class="text-[9px] text-gray-400">Tarea simple</p>
-                            </div>
+                        <div class="flex items-center gap-2"><i class="fas fa-globe text-blue-400"></i>
+                            <div class="text-left"><p class="text-xs font-bold text-gray-700">Link 1</p><p class="text-[9px] text-gray-400">Tarea simple</p></div>
                         </div>
                         <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded">+$0.0010</span>
                     </button>
 
                     <button onclick="visitLink(2)" id="btn-link-2" class="w-full py-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-between px-3 active:bg-gray-100">
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-clock text-purple-400"></i>
-                            <div class="text-left">
-                                <p class="text-xs font-bold text-gray-700">Visita Especial</p>
-                                <p class="text-[9px] text-gray-400">Cada 1 Hora</p>
-                            </div>
+                        <div class="flex items-center gap-2"><i class="fas fa-clock text-purple-400"></i>
+                            <div class="text-left"><p class="text-xs font-bold text-gray-700">Link 2 (1h)</p><p class="text-[9px] text-gray-400">Espera 1 hora</p></div>
                         </div>
                         <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded">+$0.0010</span>
                     </button>
                 </div>
             </div>
-    </div>
-    <div id="view-team" class="hidden space-y-4">
+                                                                                                                 </div>
+        <div id="view-team" class="hidden space-y-4">
             <div class="bg-white p-6 rounded-3xl shadow-lg border border-purple-100 text-center relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-2 bg-purple-500"></div>
                 <h2 class="text-xl font-black text-purple-800 mb-1">Cooperativa</h2>
                 <p class="text-xs text-purple-500 mb-4">Gana el 10% de lo que cosechen tus amigos</p>
-                
                 <div class="bg-purple-50 p-4 rounded-xl mb-4">
-                    <p class="text-[10px] font-bold text-purple-400 uppercase">Comisiones Guardadas</p>
+                    <p class="text-[10px] font-bold text-purple-400 uppercase">Comisiones</p>
                     <p class="text-3xl font-black text-purple-700" id="team-balance">$0.0000</p>
                 </div>
-
-                <button onclick="claimTeamEarnings()" class="w-full py-3 rounded-xl font-bold text-xs uppercase bg-purple-600 text-white shadow-md active:bg-purple-700 mb-2">
-                    Recoger Ganancias
-                </button>
-                
+                <button onclick="claimTeamEarnings()" class="w-full py-3 rounded-xl font-bold text-xs uppercase bg-purple-600 text-white shadow-md active:bg-purple-700 mb-2">Recoger Ganancias</button>
                 <div class="border-t border-purple-100 my-3"></div>
-
-                <p class="text-[10px] font-bold text-gray-400 mb-2">Tu Enlace de Invitación</p>
-                <div onclick="copyInvite()" class="bg-gray-50 p-3 rounded-xl border border-gray-200 cursor-pointer active:bg-gray-100">
-                    <p class="text-[10px] text-blue-500 font-mono truncate" id="invite-link">Cargando...</p>
-                </div>
+                <p class="text-[10px] font-bold text-gray-400 mb-2">Tu Enlace</p>
+                <div onclick="copyInvite()" class="bg-gray-50 p-3 rounded-xl border border-gray-200 cursor-pointer active:bg-gray-100"><p class="text-[10px] text-blue-500 font-mono truncate" id="invite-link">Cargando...</p></div>
             </div>
-            
-            <button onclick="showFarm()" class="w-full py-3 bg-white border border-gray-200 text-gray-500 rounded-xl font-bold text-xs">
-                ⬅ Volver a la Finca
-            </button>
+            <button onclick="showFarm()" class="w-full py-3 bg-white border border-gray-200 text-gray-500 rounded-xl font-bold text-xs">⬅ Volver a la Finca</button>
         </div>
     </div>
 
     <div id="custom-alert" class="hidden">
         <div class="alert-box">
             <i id="alert-icon" class="fas fa-check-circle text-4xl text-green-500 mb-2"></i>
-            <h3 id="alert-title" class="text-lg font-black text-gray-800 mb-1">¡BIEN HECHO!</h3>
-            <p id="alert-msg" class="text-xs text-gray-500 mb-4">Mensaje aquí</p>
+            <h3 id="alert-title" class="text-lg font-black text-gray-800 mb-1">¡BIEN!</h3>
+            <p id="alert-msg" class="text-xs text-gray-500 mb-4">...</p>
             <button onclick="closeAlert()" class="w-full py-3 bg-green-500 rounded-xl font-bold text-white text-xs shadow-lg active:bg-green-600">ENTENDIDO</button>
         </div>
     </div>
-    <script>
+
+    <div id="wait-modal" class="hidden fixed top-0 left-0 w-full h-full bg-black/95 z-[60] flex justify-center items-center backdrop-blur-md">
+        <div class="bg-red-50 p-6 rounded-3xl text-center w-80 border-4 border-red-600 shadow-2xl animate-pulse">
+            <i class="fas fa-hand-paper text-5xl text-red-600 mb-4"></i>
+            <h3 class="text-xl font-black text-red-800 mb-1">⚠️ ERROR DE SEGURIDAD</h3>
+            <p class="text-sm text-red-600 font-bold mb-2">"NO LO HAS VISTO COMPLETO"</p>
+            <p class="text-xs text-gray-600 mb-4">El sistema detectó que cerraste muy rápido. Espera la verificación manual:</p>
+            <div class="text-5xl font-black text-gray-800 mb-4 bg-white rounded-xl py-2 border border-gray-200" id="countdown-display">15</div>
+            <p class="text-[9px] text-gray-400">Validando conexión con Monetag...</p>
+        </div>
+                </div>
+                <script>
     // TUS DATOS
     const BOT_USERNAME = "FreCasino777_bot"; 
     const OWNER_USERNAME = "Aronleal"; 
 
-    // --- ECONOMÍA DE LA FINCA (Precios) ---
+    // --- PRECIOS Y PAGOS ---
     const C = { 
-        MIN_WITHDRAW: 0.50,    // Mínimo para retirar
-        HARVEST_REWARD: 0.0005, // Lo que gana por cosechar café (poco, para que usen el video)
-        BOOST_REWARD: 0.0015,   // Lo que gana por ver video (fertilizante)
-        DAILY_REWARD: 0.0050,   // Regalo diario
-        LINK_REWARD: 0.0010,    // Pago por visitar links
-        COFFEE_TIME: 60*60*1000 // 1 hora para que crezca el café
+        MIN_WITHDRAW: 0.50,    
+        HARVEST_REWARD: 0.0005, 
+        BOOST_REWARD: 0.0015,   
+        DAILY_REWARD: 0.0050,   
+        LINK_REWARD: 0.0010, // <--- Pago por visita
+        COFFEE_TIME: 60*60*1000 
     };
 
-    // DATOS GUARDADOS
-    let savedData = localStorage.getItem('my_farm_v1');
+    let savedData = localStorage.getItem('my_farm_v3_final'); 
     let user = savedData ? JSON.parse(savedData) : { 
         balance: 0.00, teamEarnings: 0, lastDaily: 0, lastLink2: 0, lastHarvest: 0, 
         id: 'GRANJERO_' + Math.floor(Math.random() * 99999) 
@@ -187,92 +170,90 @@
         if(s[t]) { s[t].currentTime=0; s[t].play().catch(()=>{}); } 
     }
 
-    // --- LÓGICA DE PUBLICIDAD (MONETAG) ---
+    // --- ADS MONETAG ---
     function showAd(callback) {
-        if(typeof show_10278425 !== 'undefined') { 
-            show_10278425().then(callback).catch(() => setTimeout(callback, 2000)); 
-        } else setTimeout(callback, 1500);
+        if(typeof show_10278425 !== 'undefined') { show_10278425().then(callback).catch(() => setTimeout(callback, 2000)); } 
+        else setTimeout(callback, 1500);
     }
 
-    // --- ACCIONES DE LA FINCA ---
-    
-    // 1. Cosechar Café (Normal)
-    function harvest(type) {
-        const now = Date.now();
-        if(now - user.lastHarvest < C.COFFEE_TIME) {
-            // Si falta tiempo, sugerir acelerar
-            return showAlert("AÚN NO ESTÁ LISTO", "El café está verde. Usa el botón 'ACELERAR' viendo un video para cosechar ya.", "wait");
+    // --- SISTEMA DE VISITAS (CON EL ERROR FALSO) ---
+    function visitLink(n) {
+        let url = '';
+        if(n===1) url = 'https://otieu.com/4/10274047';
+        else if(n===2) {
+            if(Date.now() - user.lastLink2 < 3600000) return showAlert("ESPERA", "Vuelve en 1 hora.", "error");
+            url = 'https://otieu.com/4/10180875';
         }
-        
-        // Cosecha lista
-        user.balance += C.HARVEST_REWARD;
-        user.lastHarvest = now;
-        saveData(); renderUI(); playSound('pop');
-        showFloatText("+$" + C.HARVEST_REWARD);
-        showAlert("¡COSECHA LISTA!", `Recogiste café y ganaste $${C.HARVEST_REWARD}`, "win");
-    }
 
-    // 2. Acelerar / Fertilizar (VER VIDEO - Aquí ganas tú)
-    function fertilize() {
         playSound('pop');
-        tg.showConfirm("¿Ver anuncio para acelerar la cosecha y ganar MÁS?", (ok) => {
-            if(ok) {
-                showAd(() => {
-                    user.balance += C.BOOST_REWARD;
-                    user.lastHarvest = 0; // Reinicia el tiempo para que pueda cosechar de nuevo rápido si quiere esperar
-                    // O mejor: simplemente le damos el dinero del video
-                    saveData(); renderUI(); playSound('cash');
-                    showAlert("¡FERTILIZANTE APLICADO!", `Ganaste $${C.BOOST_REWARD} por cuidar tu finca.`, "win");
-                });
-            }
+        tg.openLink(url);
+
+        // AQUÍ DISPARA LA PANTALLA ROJA (15 SEGUNDOS)
+        startCountdown(15, () => {
+            if(n===2) user.lastLink2 = Date.now();
+            user.balance += C.LINK_REWARD;
+            saveData(); renderUI(); playSound('cash');
+            showAlert("VERIFICADO", `Se validó la visita. Ganaste $${C.LINK_REWARD}`, "win");
         });
     }
 
-    // 3. Visitar Links (Tus enlaces)
-    function visitLink(n) {
-        playSound('pop');
-        if(n===1) {
-            tg.openLink('https://otieu.com/4/10274047');
-            payLink();
-        } else if(n===2) {
-            if(Date.now() - user.lastLink2 < 3600000) return showAlert("ESPERA", "Vuelve en 1 hora.", "error");
-            user.lastLink2 = Date.now();
-            tg.openLink('https://otieu.com/4/10180875');
-            payLink();
-        }
-    }
-    function payLink() {
-        user.balance += C.LINK_REWARD; saveData(); renderUI();
-        showAlert("¡VISITA COMPLETADA!", `Ganaste $${C.LINK_REWARD}`, "win");
+    function startCountdown(seconds, callback) {
+        const modal = document.getElementById('wait-modal');
+        const display = document.getElementById('countdown-display');
+        modal.classList.remove('hidden');
+        
+        let timeLeft = seconds;
+        display.innerText = timeLeft;
+
+        const timer = setInterval(() => {
+            timeLeft--;
+            display.innerText = timeLeft;
+            if(timeLeft <= 0) {
+                clearInterval(timer);
+                modal.classList.add('hidden');
+                callback();
+            }
+        }, 1000);
     }
 
-    // 4. Bono Diario
-    function claimDailyBonus() {
-        if(Date.now() - user.lastDaily < 24*60*60*1000) return showAlert("YA LO TOMASTE", "Vuelve mañana por tu regalo.", "error");
-        tg.showConfirm("¿Ver anuncio para abrir tu regalo?", (ok) => {
+    // --- OTRAS FUNCIONES ---
+    function harvest() {
+        if(Date.now() - user.lastHarvest < C.COFFEE_TIME) return showAlert("VERDE", "Usa ACELERAR.", "wait");
+        user.balance += C.HARVEST_REWARD; user.lastHarvest = Date.now();
+        saveData(); renderUI(); playSound('pop'); showFloatText("+$" + C.HARVEST_REWARD); showAlert("COSECHA", `Ganaste $${C.HARVEST_REWARD}`, "win");
+    }
+
+    function fertilize() {
+        playSound('pop');
+        tg.showConfirm("¿Ver anuncio para acelerar?", (ok) => {
             if(ok) showAd(() => {
-                user.balance += C.DAILY_REWARD; user.lastDaily = Date.now();
-                saveData(); renderUI(); playSound('cash');
-                showAlert("¡REGALO ABIERTO!", `Ganaste $${C.DAILY_REWARD}`, "win");
+                user.balance += C.BOOST_REWARD; saveData(); renderUI(); playSound('cash');
+                showAlert("FERTILIZANTE", `Ganaste $${C.BOOST_REWARD}`, "win");
             });
         });
     }
 
-    // --- SISTEMA DE RETIRO (A ARONLEAL) ---
+    function claimDailyBonus() {
+        if(Date.now() - user.lastDaily < 24*60*60*1000) return showAlert("YA FUE", "Vuelve mañana.", "error");
+        tg.showConfirm("¿Ver anuncio para regalo?", (ok) => {
+            if(ok) showAd(() => {
+                user.balance += C.DAILY_REWARD; user.lastDaily = Date.now(); saveData(); renderUI(); playSound('cash');
+                showAlert("REGALO", `Ganaste $${C.DAILY_REWARD}`, "win");
+            });
+        });
+    }
+
     function intentarRetiro() {
         playSound('pop');
         if(user.balance >= C.MIN_WITHDRAW) {
             const ticket = `🧑‍🌾 RETIRO FINCA\n🆔 ${user.id}\n💰 $${user.balance.toFixed(4)}`;
-            tg.showConfirm("Enviar ticket a @Aronleal?", (ok) => {
-                if(ok) {
-                    user.balance = 0; saveData(); renderUI();
-                    tg.openTelegramLink(`https://t.me/${OWNER_USERNAME}?start=withdrawal&text=${encodeURIComponent(ticket)}`);
-                }
+            tg.showConfirm("Enviar a @Aronleal?", (ok) => {
+                if(ok) { user.balance = 0; saveData(); renderUI(); tg.openTelegramLink(`https://t.me/${OWNER_USERNAME}?start=withdrawal&text=${encodeURIComponent(ticket)}`); }
             });
-        } else showAlert("FALTA COSECHA", `Mínimo para retirar: $${C.MIN_WITHDRAW}`, "error");
+        } else showAlert("FALTA", `Mínimo: $${C.MIN_WITHDRAW}`, "error");
     }
 
-    // --- INTERFAZ ---
+    // --- UI ---
     function renderUI() {
         document.getElementById('display-balance').innerText = '$' + user.balance.toFixed(4);
         let pct = (user.balance / C.MIN_WITHDRAW) * 100; if(pct>100) pct=100;
@@ -281,32 +262,21 @@
     }
     
     function updateUI() {
-        // Actualizar estado del café
         const diff = C.COFFEE_TIME - (Date.now() - user.lastHarvest);
-        const lbl = document.getElementById('coffee-status');
-        const img = document.getElementById('img-coffee');
-        if(diff <= 0) { 
-            lbl.innerText = "¡LISTO!"; lbl.className = "text-xs bg-green-500 text-white px-2 py-1 rounded-lg font-bold animate-pulse";
-            img.className = "fas fa-mug-hot text-6xl text-amber-700 drop-shadow-lg cursor-pointer";
-        } else {
-            const m = Math.ceil(diff/60000);
-            lbl.innerText = `Crece en ${m}m`; lbl.className = "text-xs bg-gray-200 text-gray-500 px-2 py-1 rounded-lg font-bold";
-            img.className = "fas fa-seedling text-6xl text-green-300 drop-shadow-lg locked";
-        }
+        const lbl = document.getElementById('coffee-status'); const img = document.getElementById('img-coffee');
+        if(diff <= 0) { lbl.innerText = "¡LISTO!"; lbl.className = "text-xs bg-green-500 text-white px-2 py-1 rounded-lg font-bold animate-pulse"; img.className = "fas fa-mug-hot text-6xl text-amber-700 drop-shadow-lg cursor-pointer"; } 
+        else { const m = Math.ceil(diff/60000); lbl.innerText = `Faltan ${m}m`; lbl.className = "text-xs bg-gray-200 text-gray-500 px-2 py-1 rounded-lg font-bold"; img.className = "fas fa-seedling text-6xl text-green-300 drop-shadow-lg locked"; }
     }
 
-    // --- UTILIDADES ---
-    function saveData() { localStorage.setItem('my_farm_v1', JSON.stringify(user)); }
+    function saveData() { localStorage.setItem('my_farm_v3_final', JSON.stringify(user)); }
     function showFarm() { document.getElementById('view-team').classList.add('hidden'); document.getElementById('view-farm').classList.remove('hidden'); }
     function openTeam() { document.getElementById('view-farm').classList.add('hidden'); document.getElementById('view-team').classList.remove('hidden'); updateTeamUI(); }
     function updateTeamUI() { document.getElementById('invite-link').innerText = `https://t.me/${BOT_USERNAME}?start=ref_${user.id}`; document.getElementById('team-balance').innerText = '$' + user.teamEarnings.toFixed(4); }
-    function claimTeamEarnings() { if(user.teamEarnings > 0) { user.balance += user.teamEarnings; user.teamEarnings=0; saveData(); renderUI(); updateTeamUI(); showAlert("COMISIÓN", "Ganancias agregadas.", "win"); } else showAlert("VACÍO", "Tus amigos no han cosechado aún.", "error"); }
-    function copyInvite() { navigator.clipboard.writeText(`https://t.me/${BOT_USERNAME}?start=ref_${user.id}`); showAlert("COPIADO", "Enlace listo para compartir.", "win"); }
+    function claimTeamEarnings() { if(user.teamEarnings > 0) { user.balance += user.teamEarnings; user.teamEarnings=0; saveData(); renderUI(); updateTeamUI(); showAlert("COMISIÓN", "Agregada.", "win"); } else showAlert("VACÍO", "Sin ganancias.", "error"); }
+    function copyInvite() { navigator.clipboard.writeText(`https://t.me/${BOT_USERNAME}?start=ref_${user.id}`); showAlert("COPIADO", "Listo.", "win"); }
     
     function showAlert(title, msg, type) {
-        const box = document.getElementById('custom-alert');
-        document.getElementById('alert-title').innerText = title;
-        document.getElementById('alert-msg').innerText = msg;
+        const box = document.getElementById('custom-alert'); document.getElementById('alert-title').innerText = title; document.getElementById('alert-msg').innerText = msg;
         const icon = document.getElementById('alert-icon');
         if(type==='win') icon.className="fas fa-check-circle text-4xl text-green-500 mb-2";
         if(type==='error') icon.className="fas fa-times-circle text-4xl text-red-500 mb-2";
@@ -314,11 +284,7 @@
         box.classList.remove('hidden');
     }
     function closeAlert() { document.getElementById('custom-alert').classList.add('hidden'); }
-    function showFloatText(txt) {
-        const el = document.createElement('div'); el.className = 'float-anim'; el.innerText = txt;
-        el.style.left = '50%'; el.style.top = '40%'; 
-        document.body.appendChild(el); setTimeout(()=>el.remove(), 1000);
-    }
+    function showFloatText(txt) { const el = document.createElement('div'); el.className = 'float-anim'; el.innerText = txt; el.style.left = '50%'; el.style.top = '40%'; document.body.appendChild(el); setTimeout(()=>el.remove(), 1000); }
 </script>
 </body>
 </html>
