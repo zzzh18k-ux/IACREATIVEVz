@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -177,16 +176,17 @@
     const BOT_USERNAME = "FreCasino777_bot"; 
     const OWNER_USERNAME = "Aronleal"; 
 
-    // --- ECONOMÍA BLINDADA (PARA NO PERDER) ---
+    // --- ECONOMÍA BLINDADA ---
     const C = { 
         MIN_WITHDRAW: 0.50, 
-        DAILY_REWARD: 0.005, // Bajamos el bono diario para cuidar tu bolsillo
-        VIDEO_REWARD: 0.0015, // Bajamos un poco el pago por video (Más seguro para ti)
+        DAILY_REWARD: 0.005, 
+        VIDEO_REWARD: 0.0015,
+        LINK_REWARD: 0.0010, // <--- ESTO ES LO QUE PAGA POR VISITAR LINK
         COOLDOWN: 24*60*60*1000, 
         HOUSE_EDGE: 0.60 
     };
 
-    let savedData = localStorage.getItem('casino_biz_safe_v1');
+    let savedData = localStorage.getItem('casino_biz_final_v4');
     let parsedData = savedData ? JSON.parse(savedData) : {};
     let user = { 
         balance: parsedData.balance || 0.00, 
@@ -201,20 +201,17 @@
     const tg = window.Telegram.WebApp; tg.expand(); tg.setHeaderColor('#0f172a');
     saveData(); renderUI(); renderVideoButtons(); setInterval(updateTimers, 1000); updateTimers();
 
-    // --- NUEVA FUNCIÓN DE ALERTA BONITA ---
+    // --- ALERTA BONITA ---
     function showAlert(title, msg, type) {
         const modal = document.getElementById('custom-alert');
         const icon = document.getElementById('alert-icon');
         const t = document.getElementById('alert-title');
         const m = document.getElementById('alert-msg');
-        
         t.innerText = title; m.innerText = msg;
-        
         if(type === 'win') { icon.className = "fas fa-trophy text-4xl text-yellow-400 mb-3"; t.className = "text-xl font-bebas text-yellow-400"; playSound('win'); }
         else if(type === 'loss') { icon.className = "fas fa-heart-crack text-4xl text-slate-500 mb-3"; t.className = "text-xl font-bebas text-slate-400"; }
         else if(type === 'error') { icon.className = "fas fa-circle-exclamation text-4xl text-red-500 mb-3"; t.className = "text-xl font-bebas text-red-400"; }
         else { icon.className = "fas fa-bell text-4xl text-blue-400 mb-3"; t.className = "text-xl font-bebas text-white"; }
-        
         modal.classList.remove('hidden');
         if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred(type === 'win' ? 'success' : 'warning');
     }
@@ -223,15 +220,31 @@
     // --- SONIDOS ---
     function playSound(t) { const s = { 'click': document.getElementById('snd-click'), 'win': document.getElementById('snd-win'), 'coin': document.getElementById('snd-coin') }; if(s[t]) { s[t].currentTime = 0; s[t].play().catch(e=>{}); } }
 
-    // --- ADS & LINKS ---
+    // --- FUNCIONES DE VISITA (AQUI ESTÁ EL PAGO) ---
+    function visitLink(n) {
+        playSound('click');
+        if(n===1) {
+            tg.openLink('https://otieu.com/4/10274047');
+            // Pagar recompensa
+            user.balance += C.LINK_REWARD;
+            saveData(); renderUI();
+            showAlert("¡VISITA!", `Ganaste $${C.LINK_REWARD.toFixed(4)}`, 'win');
+        }
+        else if(n===2) {
+            if(Date.now()-user.lastLink2 < 3600000) return showAlert("ESPERA", "Link 2 disponible cada 1 hora.", 'error');
+            user.lastLink2 = Date.now();
+            tg.openLink('https://otieu.com/4/10180875');
+            // Pagar recompensa
+            user.balance += C.LINK_REWARD;
+            saveData(); renderUI();
+            showAlert("¡VISITA!", `Ganaste $${C.LINK_REWARD.toFixed(4)}`, 'win');
+        }
+    }
+
+    // --- ADS & VIDEOS ---
     function showAd(cb) {
         if(typeof show_10278425 !== 'undefined') { show_10278425().then(cb).catch(() => setTimeout(cb, 2000)); } 
         else setTimeout(cb, 1500);
-    }
-    function visitLink(n) {
-        playSound('click');
-        if(n===1) tg.openLink('https://otieu.com/4/10274047');
-        else if(n===2) { if(Date.now()-user.lastLink2 < 3600000) return showAlert("ESPERA", "Link 2 disponible cada 1 hora.", 'error'); user.lastLink2 = Date.now(); saveData(); tg.openLink('https://otieu.com/4/10180875'); }
     }
     function watchVideo(id) { playSound('click'); tg.showConfirm("¿Ver anuncio?", (ok) => { if(ok) showAd(() => finishVideo(id)); }); }
     function finishVideo(id) { user.balance += C.VIDEO_REWARD; user.videoTimers[`v${id}`] = Date.now(); saveData(); renderUI(); renderVideoButtons(); showAlert("¡ÉXITO!", `Ganaste $${C.VIDEO_REWARD}`, 'win'); }
@@ -253,7 +266,7 @@
         const d = document.getElementById('coin-display'); d.innerHTML = '<i class="fas fa-coins text-5xl text-yellow-500 animate-flip"></i>';
         setTimeout(() => {
             const houseWins = Math.random() < C.HOUSE_EDGE; 
-            const res = houseWins ? (c === 'CARA' ? 'SOL' : 'CARA') : c; // La casa gana 60% veces
+            const res = houseWins ? (c === 'CARA' ? 'SOL' : 'CARA') : c; 
             d.innerHTML = res === 'CARA' ? '<i class="fas fa-circle text-5xl text-blue-500 icon-glow"></i>' : '<i class="fas fa-sun text-5xl text-orange-500 icon-glow"></i>';
             if(c === res) { const p = currentBet * 1.80; user.balance += p; showAlert("¡GANASTE!", `+$${p.toFixed(4)}`, 'win'); } 
             else { showAlert("PERDISTE", "Intenta de nuevo.", 'loss'); }
@@ -282,7 +295,7 @@
     function copyInvite() { navigator.clipboard.writeText(`https://t.me/${BOT_USERNAME}?start=ref_${user.id}`); showAlert("LISTO", "Enlace copiado.", 'win'); }
     function updateTimers() { const diff = C.COOLDOWN - (Date.now() - user.lastDaily); const txt = document.getElementById('daily-text'); if(diff <= 0) { txt.innerText = "¡DISPONIBLE!"; txt.classList.add('text-yellow-400'); } else { const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000); txt.innerText = `${h}h ${m}m`; txt.classList.remove('text-yellow-400'); } const l2 = document.getElementById('btn-link-2'); const d2 = 3600000 - (Date.now() - user.lastLink2); if(d2>0) { l2.innerHTML=`<i class="fas fa-lock mb-1 text-lg block text-slate-500"></i> ${Math.floor(d2/60000)}m`; l2.classList.add('opacity-50', 'pointer-events-none'); } else { l2.innerHTML=`<i class="fas fa-clock mb-1 text-lg block text-purple-400"></i> Link 2 (1h)`; l2.classList.remove('opacity-50', 'pointer-events-none'); } if(Date.now()%5000<1000) renderVideoButtons(); }
     function setBet(t) { if(isPlaying) return; playSound('click'); if(t==='min') currentBet=0.001; if(t==='x2') currentBet*=2; if(t==='half') currentBet/=2; if(currentBet>user.balance) currentBet=user.balance; renderUI(); }
-    function saveData() { localStorage.setItem('casino_biz_safe_v1', JSON.stringify(user)); }
+    function saveData() { localStorage.setItem('casino_biz_final_v4', JSON.stringify(user)); }
     function renderUI() { document.getElementById('display-balance').innerText = '$' + user.balance.toFixed(4); document.getElementById('bet-display').innerText = '$' + currentBet.toFixed(4); let pct = (user.balance/C.MIN_WITHDRAW)*100; if(pct>100)pct=100; document.getElementById('progress-bar').style.width = pct+'%'; document.getElementById('min-withdraw-display').innerText = C.MIN_WITHDRAW.toFixed(2); }
 </script>
 </body>
