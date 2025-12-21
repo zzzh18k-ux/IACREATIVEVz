@@ -2,147 +2,292 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Mi Primera Marioneta</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Botonera Viral 20 Opciones</title>
     <style>
-        /* ESTILOS (La decoración y la coreografía) */
-        
+        /* --- ESTILOS VISUALES (Negro y Moderno) --- */
         body {
+            margin: 0;
+            background-color: #121212;
+            color: white;
             font-family: sans-serif;
-            text-align: center;
-            background-color: #f0f0f0; /* Fondo gris suave */
-            padding: 20px;
-        }
-
-        /* El contenedor de nuestra marioneta */
-        .escenario {
-            background-color: white;
-            width: 300px;
-            height: 300px;
-            margin: 0 auto; /* Centrar en pantalla */
-            border: 5px solid #333;
-            border-radius: 10px;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column;
+            height: 100vh;
             overflow: hidden;
         }
 
-        /* Nuestra marioneta (un dibujo SVG simple) */
-        #marioneta {
-            width: 150px;
-            height: 150px;
-            transition: all 0.5s ease; /* Para que los movimientos sean suaves */
+        /* 1. EL ESCENARIO (Arriba) */
+        .escenario-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle, #2a2a2a 0%, #000 100%);
+            border-bottom: 4px solid #ff0055;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* --- LAS ANIMACIONES (Los pasos de baile) --- */
-        
-        /* Baile 1: Saltar */
-        @keyframes salto {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-50px); } /* Sube */
-            100% { transform: translateY(0); } /* Baja */
-        }
-        .bailando-salto {
-            animation: salto 0.6s infinite; /* Repite el salto infinitamente */
+        /* La imagen del meme */
+        #meme-activo {
+            max-width: 90%;
+            max-height: 80%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 15px rgba(255, 0, 85, 0.6));
+            display: none;
+            border-radius: 10px;
         }
 
-        /* Baile 2: Girar */
-        @keyframes giro {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); } /* Da la vuelta completa */
-        }
-        .bailando-giro {
-            animation: giro 1s infinite linear;
+        .texto-instruccion {
+            color: #888;
+            font-style: italic;
+            animation: parpadeo 2s infinite;
         }
 
-        /* Baile 3: Tambalearse (Lado a lado) */
-        @keyframes ladoalado {
-            0% { transform: rotate(-20deg); }
-            50% { transform: rotate(20deg); }
-            100% { transform: rotate(-20deg); }
-        }
-        .bailando-lado {
-            animation: ladoalado 1s infinite ease-in-out;
+        @keyframes parpadeo { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
+
+        /* Título del meme activo */
+        #titulo-meme {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 24px;
+            text-shadow: 2px 2px 4px black;
+            z-index: 10;
+            margin: 0;
+            padding: 5px;
+            background: rgba(0,0,0,0.5);
         }
 
-        /* --- BOTONES --- */
-        .botonera {
-            margin-top: 20px;
+        /* 2. LA ZONA DE BOTONES (Abajo) */
+        .controles-container {
+            height: 50%; /* Mitad de la pantalla */
+            background-color: #181818;
+            padding: 10px;
+            overflow-y: auto; /* Scroll para ver los 20 botones */
         }
 
-        button {
-            padding: 15px 20px;
-            font-size: 16px;
+        .parrilla-memes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 8px;
+            padding-bottom: 40px;
+        }
+
+        /* Estilo de cada botón */
+        .meme-btn {
+            background-color: #333;
+            border: 2px solid #444;
+            border-radius: 10px;
+            padding: 8px;
             cursor: pointer;
-            margin: 5px;
-            background-color: #007bff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            height: 70px;
+            justify-content: center;
+            transition: all 0.1s;
+        }
+
+        .meme-btn:active {
+            transform: scale(0.9);
+            background-color: #ffcc00;
+            color: black;
+            border-color: white;
+        }
+
+        .btn-icono { font-size: 24px; margin-bottom: 4px; }
+        .btn-texto { font-size: 11px; font-weight: bold; line-height: 1.1; }
+
+        /* Botón ROJO de Parar */
+        .btn-parar {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #d32f2f, #b71c1c);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 4px 0 #7f0000;
         }
-        button:hover {
-            background-color: #0056b3; /* Color más oscuro al pasar el ratón */
-        }
-        
-        button.parar {
-            background-color: #dc3545; /* Botón rojo para parar */
-        }
+        .btn-parar:active { transform: translateY(4px); box-shadow: none; }
 
     </style>
 </head>
 <body>
 
-    <h1>La Marioneta Bailarina</h1>
-    <p>Presione un botón para darle una orden al muñeco.</p>
-
-    <div class="escenario">
-        <svg id="marioneta" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="30" r="20" fill="#FFCC00" stroke="black" stroke-width="2"/>
-            <circle cx="43" cy="25" r="3" fill="black"/>
-            <circle cx="57" cy="25" r="3" fill="black"/>
-            <path d="M 40 40 Q 50 50 60 40" stroke="black" stroke-width="2" fill="none"/>
-            <line x1="50" y1="50" x2="50" y2="80" stroke="black" stroke-width="4"/>
-            <line x1="20" y1="60" x2="80" y2="60" stroke="black" stroke-width="4"/>
-            <line x1="50" y1="80" x2="30" y2="100" stroke="black" stroke-width="4"/>
-            <line x1="50" y1="80" x2="70" y2="100" stroke="black" stroke-width="4"/>
-        </svg>
+    <div class="escenario-container">
+        <h2 id="titulo-meme"></h2>
+        <img id="meme-activo" src="" alt="Meme">
+        <h3 class="texto-instruccion" id="placeholder-texto">👇 Toca un botón abajo 👇</h3>
     </div>
 
-    <div class="botonera">
-        <button onclick="bailar('salto')">¡Salta!</button>
-        <button onclick="bailar('giro')">¡Gira!</button>
-        <button onclick="bailar('lado')">¡Lado a Lado!</button>
-        <br><br>
-        <button class="parar" onclick="detener()">Detenerse</button>
+    <div class="controles-container">
+        <button class="btn-parar" onclick="detenerTodo()">🛑 PARAR SONIDO</button>
+        <div class="parrilla-memes" id="contenedor-botones"></div>
     </div>
+
+    <audio id="audio-player"></audio>
 
     <script>
-        // Aquí es donde ocurre la magia lógica
-        
-        function bailar(tipoDeBaile) {
-            // 1. Buscamos al muñeco en la página
-            var muneco = document.getElementById("marioneta");
-
-            // 2. Le quitamos cualquier baile que tuviera antes (limpiamos)
-            muneco.className.baseVal = ""; 
-            // Nota técnica: en SVG se usa className.baseVal en lugar de className solo.
-
-            // 3. Dependiendo del botón que pulsó, le ponemos el "traje" (clase) correcto
-            if (tipoDeBaile === 'salto') {
-                muneco.classList.add("bailando-salto");
-            } else if (tipoDeBaile === 'giro') {
-                muneco.classList.add("bailando-giro");
-            } else if (tipoDeBaile === 'lado') {
-                muneco.classList.add("bailando-lado");
+        // ==========================================
+        // LISTA DE 20 MEMES PRE-CARGADOS
+        // ==========================================
+        const listaDeMemes = [
+            {
+                icono: "🐀", nombre: "Rata Viral",
+                gif: "https://media.tenor.com/M6gZ4Hh2bXQAAAAi/rat-spinning.gif",
+                audio: "https://www.myinstants.com/media/sounds/free-bird-solo.mp3"
+            },
+            {
+                icono: "🐕", nombre: "Perro Bonk",
+                gif: "https://media.tenor.com/kZiBqT1hD5IAAAAi/bonk-doge.gif",
+                audio: "https://www.myinstants.com/media/sounds/bonk_sound_effect.mp3"
+            },
+            {
+                icono: "⚰️", nombre: "Ataúd Dance",
+                gif: "https://media.tenor.com/Bde9yEa8d1QAAAAi/coffin-dance-ghana.gif",
+                audio: "https://www.myinstants.com/media/sounds/astronomia-coffin-dance.mp3"
+            },
+            {
+                icono: "😿", nombre: "Gato Llorón",
+                gif: "https://media.tenor.com/8p2u3a3XgTUAAAAi/crying-cat.gif",
+                audio: "https://www.myinstants.com/media/sounds/crying-cat.mp3"
+            },
+            {
+                icono: "🎻", nombre: "Violín Triste",
+                gif: "https://media.tenor.com/13_u8k9K22kAAAAi/mr-krabs-playing-smallest-violin.gif",
+                audio: "https://www.myinstants.com/media/sounds/sad-violin-spongebob.mp3"
+            },
+            {
+                icono: "👮", nombre: "FBI Open Up",
+                gif: "https://media.tenor.com/3252684877709320253/fbi-raid-swat.gif",
+                audio: "https://www.myinstants.com/media/sounds/fbi-open-up-sfx.mp3"
+            },
+            {
+                icono: "🦗", nombre: "Grillos (Cri Cri)",
+                gif: "https://media.tenor.com/Fw8Lg0eDqGgAAAAi/cricket-jiminy-cricket.gif",
+                audio: "https://www.myinstants.com/media/sounds/cricket-sound.mp3"
+            },
+            {
+                icono: "🎺", nombre: "Trompeta Fail",
+                gif: "https://media.tenor.com/N2s10q2b88EAAAAi/spongebob-disappointed.gif",
+                audio: "https://www.myinstants.com/media/sounds/spongebob-fail.mp3"
+            },
+            {
+                icono: "👁️", nombre: "Illuminati",
+                gif: "https://media.tenor.com/uR47-1aA9lUAAAAi/illuminati-pyramid.gif",
+                audio: "https://www.myinstants.com/media/sounds/x-files-theme.mp3"
+            },
+            {
+                icono: "📢", nombre: "Bocina Aire",
+                gif: "https://media.tenor.com/O61jR6uUqHAAAAAi/mlg-airhorn.gif",
+                audio: "https://www.myinstants.com/media/sounds/mlg-airhorn.mp3"
+            },
+            {
+                icono: "🎬", nombre: "Créditos Finales",
+                gif: "https://media.tenor.com/Tr2xL5o9Q1AAAAAi/directed-by-robert-b-weide.gif",
+                audio: "https://www.myinstants.com/media/sounds/directed-by-robert.mp3"
+            },
+            {
+                icono: "🌈", nombre: "Nyan Cat",
+                gif: "https://media.tenor.com/2U5hKJ9UfC4AAAAi/nyan-cat-rainbow.gif",
+                audio: "https://www.myinstants.com/media/sounds/nyan-cat.mp3"
+            },
+            {
+                icono: "😎", nombre: "Thug Life",
+                gif: "https://media.tenor.com/yF__gZ5vNl4AAAAi/thug-life-glasses.gif",
+                audio: "https://www.myinstants.com/media/sounds/thug-life-snoop.mp3"
+            },
+            {
+                icono: "🤨", nombre: "The Rock",
+                gif: "https://media.tenor.com/z4_6mU60vCoAAAAi/the-rock-sus.gif",
+                audio: "https://www.myinstants.com/media/sounds/vine-boom.mp3"
+            },
+            {
+                icono: "😱", nombre: "OMG Wow",
+                gif: "https://media.tenor.com/l5_u4J34ZMQAAAAi/wow-oh-my-god.gif",
+                audio: "https://www.myinstants.com/media/sounds/anime-wow-sound-effect.mp3"
+            },
+            {
+                icono: "👻", nombre: "Susto",
+                gif: "https://media.tenor.com/13X1Q3v6dGgAAAAi/scary-face.gif",
+                audio: "https://www.myinstants.com/media/sounds/jumpscare.mp3"
+            },
+            {
+                icono: "💻", nombre: "Windows Error",
+                gif: "https://media.tenor.com/b2A6qf8Y86QAAAAi/windows-xp-error.gif",
+                audio: "https://www.myinstants.com/media/sounds/windows-xp-error.mp3"
+            },
+            {
+                icono: "🍄", nombre: "Mario Salto",
+                gif: "https://media.tenor.com/y2A6E941v1AAAAAi/mario-jump.gif",
+                audio: "https://www.myinstants.com/media/sounds/mario-jump.mp3"
+            },
+            {
+                icono: "🚫", nombre: "NOPE",
+                gif: "https://media.tenor.com/tH3-yI2Q0eAAAAAi/nope-engineer.gif",
+                audio: "https://www.myinstants.com/media/sounds/nope-tf2.mp3"
+            },
+            {
+                icono: "🥊", nombre: "John Cena",
+                gif: "https://media.tenor.com/pZq81X4qI6EAAAAi/john-cena-wwe.gif",
+                audio: "https://www.myinstants.com/media/sounds/and-his-name-is-john-cena-1.mp3"
             }
+        ];
+
+        // ==========================================
+        // LÓGICA DE FUNCIONAMIENTO
+        // ==========================================
+        const escenarioImg = document.getElementById('meme-activo');
+        const placeholderTxt = document.getElementById('placeholder-texto');
+        const audioPlayer = document.getElementById('audio-player');
+        const tituloMemeBtn = document.getElementById('titulo-meme');
+        const contenedorBotones = document.getElementById('contenedor-botones');
+
+        function generarBotones() {
+            listaDeMemes.forEach((meme, index) => {
+                const boton = document.createElement('div');
+                boton.classList.add('meme-btn');
+                boton.innerHTML = `
+                    <span class="btn-icono">${meme.icono}</span>
+                    <span class="btn-texto">${meme.nombre}</span>
+                `;
+                boton.onclick = () => activarMeme(index);
+                contenedorBotones.appendChild(boton);
+            });
         }
 
-        function detener() {
-            var muneco = document.getElementById("marioneta");
-            // Le quitamos todas las clases de baile para que se quede quieto
-            muneco.setAttribute("class", "");
+        function activarMeme(index) {
+            const memeElegido = listaDeMemes[index];
+            placeholderTxt.style.display = 'none';
+            
+            // Cargar imagen
+            escenarioImg.src = memeElegido.gif;
+            escenarioImg.style.display = 'block';
+            tituloMemeBtn.innerText = memeElegido.nombre;
+
+            // Cargar y tocar audio
+            audioPlayer.src = memeElegido.audio;
+            audioPlayer.volume = 1.0; 
+            audioPlayer.play().catch(e => console.log("Error de audio: " + e));
         }
+
+        function detenerTodo() {
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0;
+            escenarioImg.style.display = 'none';
+            placeholderTxt.style.display = 'block';
+            tituloMemeBtn.innerText = "";
+        }
+
+        // Iniciar
+        generarBotones();
     </script>
-
 </body>
     </html>
