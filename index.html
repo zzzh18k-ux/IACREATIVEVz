@@ -2,302 +2,147 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Mi Finca Digital</title>
-    
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
+    <title>Mi Primera Marioneta</title>
     <style>
-        body { font-family: 'Fredoka', sans-serif; background-color: #ecfccb; color: #365314; -webkit-tap-highlight-color: transparent; user-select: none; }
-        .hidden { display: none !important; }
-        .btn-farm { background: #65a30d; color: white; border-bottom: 4px solid #3f6212; border-radius: 15px; transition: all 0.1s; }
-        .btn-farm:active { transform: translateY(4px); border-bottom: 0; }
-        .locked { filter: grayscale(1); opacity: 0.7; }
+        /* ESTILOS (La decoración y la coreografía) */
         
-        @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-50px); opacity: 0; } }
-        .float-anim { position: absolute; color: #eab308; font-weight: bold; font-size: 20px; animation: floatUp 1s forwards; pointer-events: none; }
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            background-color: #f0f0f0; /* Fondo gris suave */
+            padding: 20px;
+        }
 
-        #custom-alert { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(3px); }
-        .alert-box { background: #fff; border: 4px solid #65a30d; padding: 20px; border-radius: 20px; width: 85%; max-width: 300px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        /* El contenedor de nuestra marioneta */
+        .escenario {
+            background-color: white;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto; /* Centrar en pantalla */
+            border: 5px solid #333;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Nuestra marioneta (un dibujo SVG simple) */
+        #marioneta {
+            width: 150px;
+            height: 150px;
+            transition: all 0.5s ease; /* Para que los movimientos sean suaves */
+        }
+
+        /* --- LAS ANIMACIONES (Los pasos de baile) --- */
+        
+        /* Baile 1: Saltar */
+        @keyframes salto {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-50px); } /* Sube */
+            100% { transform: translateY(0); } /* Baja */
+        }
+        .bailando-salto {
+            animation: salto 0.6s infinite; /* Repite el salto infinitamente */
+        }
+
+        /* Baile 2: Girar */
+        @keyframes giro {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); } /* Da la vuelta completa */
+        }
+        .bailando-giro {
+            animation: giro 1s infinite linear;
+        }
+
+        /* Baile 3: Tambalearse (Lado a lado) */
+        @keyframes ladoalado {
+            0% { transform: rotate(-20deg); }
+            50% { transform: rotate(20deg); }
+            100% { transform: rotate(-20deg); }
+        }
+        .bailando-lado {
+            animation: ladoalado 1s infinite ease-in-out;
+        }
+
+        /* --- BOTONES --- */
+        .botonera {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 15px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3; /* Color más oscuro al pasar el ratón */
+        }
+        
+        button.parar {
+            background-color: #dc3545; /* Botón rojo para parar */
+        }
+
     </style>
 </head>
-<body class="pb-24 bg-gradient-to-b from-blue-100 to-green-100">
+<body>
 
-    <audio id="snd-pop" src="https://cdn.pixabay.com/audio/2022/03/10/audio_c8c8a73467.mp3" preload="auto"></audio>
-    <audio id="snd-cash" src="https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3" preload="auto"></audio>
+    <h1>La Marioneta Bailarina</h1>
+    <p>Presione un botón para darle una orden al muñeco.</p>
 
-    <div class="px-5 py-4 bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-green-200 shadow-sm rounded-b-3xl">
-        <div class="flex justify-between items-center">
-            <div class="flex flex-col">
-                <span class="text-[10px] text-green-700 font-bold uppercase">Tu Cosecha</span>
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-sack-dollar text-yellow-500 text-xl"></i>
-                    <span class="text-3xl font-black text-green-800" id="display-balance">$0.0000</span>
-                </div>
-            </div>
-            <button onclick="intentarRetiro()" class="px-4 py-2 rounded-xl font-bold text-[10px] uppercase bg-green-100 text-green-700 border border-green-300 active:bg-green-200">
-                Retirar
-            </button>
-        </div>
-        <div class="w-full bg-gray-200 rounded-full h-2 mt-2 overflow-hidden">
-            <div id="progress-bar" class="h-full bg-green-500 transition-all duration-500" style="width: 0%"></div>
-        </div>
-        <p class="text-center text-[9px] text-green-600 mt-1 font-bold">Meta: $<span id="min-withdraw-display">0.50</span></p>
+    <div class="escenario">
+        <svg id="marioneta" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="30" r="20" fill="#FFCC00" stroke="black" stroke-width="2"/>
+            <circle cx="43" cy="25" r="3" fill="black"/>
+            <circle cx="57" cy="25" r="3" fill="black"/>
+            <path d="M 40 40 Q 50 50 60 40" stroke="black" stroke-width="2" fill="none"/>
+            <line x1="50" y1="50" x2="50" y2="80" stroke="black" stroke-width="4"/>
+            <line x1="20" y1="60" x2="80" y2="60" stroke="black" stroke-width="4"/>
+            <line x1="50" y1="80" x2="30" y2="100" stroke="black" stroke-width="4"/>
+            <line x1="50" y1="80" x2="70" y2="100" stroke="black" stroke-width="4"/>
+        </svg>
     </div>
 
-    <div class="px-4 py-4 max-w-md mx-auto space-y-6">
-        
-        <div id="view-farm" class="space-y-4">
-            
-            <div class="bg-white p-4 rounded-3xl shadow-sm border border-green-100 relative overflow-hidden">
-                <div class="flex justify-between items-center mb-2">
-                    <h3 class="font-bold text-green-800"><i class="fas fa-mug-hot text-amber-700"></i> Planta de Café</h3>
-                    <span class="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-lg font-bold" id="coffee-status">Lista</span>
-                </div>
-                <div class="flex items-center justify-between">
-                    <div onclick="harvest()" class="cursor-pointer active:scale-95 transition-transform">
-                        <i class="fas fa-seedling text-6xl text-green-600 drop-shadow-lg" id="img-coffee"></i>
-                    </div>
-                    <div class="flex flex-col gap-2 w-1/2">
-                        <button onclick="harvest()" class="btn-farm py-2 text-xs font-bold w-full">COSECHAR</button>
-                        <button onclick="fertilize()" class="py-2 bg-yellow-100 text-yellow-700 rounded-xl text-xs font-bold border border-yellow-200 w-full"><i class="fas fa-bolt"></i> ACELERAR</button>
-                    </div>
-                </div>
-                <p class="text-[10px] text-center text-gray-400 mt-2">Cosecha cada 1 hora o acelera con video.</p>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="claimDailyBonus()" class="bg-blue-50 p-4 rounded-2xl border border-blue-100 shadow-sm active:scale-95 text-left relative overflow-hidden">
-                    <div class="absolute right-[-10px] top-[-10px] bg-blue-200 w-10 h-10 rounded-full opacity-50"></div>
-                    <i class="fas fa-gift text-2xl text-blue-500 mb-1"></i>
-                    <p class="text-xs font-bold text-blue-800">Regalo Diario</p>
-                </button>
-                <button onclick="openTeam()" class="bg-purple-50 p-4 rounded-2xl border border-purple-100 shadow-sm active:scale-95 text-left relative overflow-hidden">
-                    <div class="absolute right-[-10px] top-[-10px] bg-purple-200 w-10 h-10 rounded-full opacity-50"></div>
-                    <i class="fas fa-users text-2xl text-purple-500 mb-1"></i>
-                    <p class="text-xs font-bold text-purple-800">Mi Equipo</p>
-                </button>
-            </div>
-
-            <div class="bg-white p-4 rounded-3xl shadow-sm border border-green-100">
-                <h3 class="font-bold text-green-800 mb-3 text-sm"><i class="fas fa-clipboard-check text-green-600"></i> Visitas Pagadas</h3>
-                <div class="space-y-2">
-                    <button onclick="visitLink(1)" class="w-full py-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-between px-3 active:bg-gray-100">
-                        <div class="flex items-center gap-2"><i class="fas fa-globe text-blue-400"></i>
-                            <div class="text-left"><p class="text-xs font-bold text-gray-700">Link 1</p><p class="text-[9px] text-gray-400">Tarea simple</p></div>
-                        </div>
-                        <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded">+$0.0005</span>
-                    </button>
-
-                    <button onclick="visitLink(2)" id="btn-link-2" class="w-full py-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-between px-3 active:bg-gray-100">
-                        <div class="flex items-center gap-2"><i class="fas fa-clock text-purple-400"></i>
-                            <div class="text-left"><p class="text-xs font-bold text-gray-700">Link 2 (1h)</p><p class="text-[9px] text-gray-400">Espera 1 hora</p></div>
-                        </div>
-                        <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded">+$0.0005</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div id="view-team" class="hidden space-y-4">
-            <div class="bg-white p-6 rounded-3xl shadow-lg border border-purple-100 text-center relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-2 bg-purple-500"></div>
-                <h2 class="text-xl font-black text-purple-800 mb-1">Cooperativa</h2>
-                <p class="text-xs text-purple-500 mb-4">Gana el 10% de tus amigos</p>
-                <div class="bg-purple-50 p-4 rounded-xl mb-4">
-                    <p class="text-[10px] font-bold text-purple-400 uppercase">Comisiones</p>
-                    <p class="text-3xl font-black text-purple-700" id="team-balance">$0.0000</p>
-                </div>
-                <button onclick="claimTeamEarnings()" class="w-full py-3 rounded-xl font-bold text-xs uppercase bg-purple-600 text-white shadow-md active:bg-purple-700 mb-2">Recoger Ganancias</button>
-                <div class="border-t border-purple-100 my-3"></div>
-                <p class="text-[10px] font-bold text-gray-400 mb-2">Tu Enlace</p>
-                <div onclick="copyInvite()" class="bg-gray-50 p-3 rounded-xl border border-gray-200 cursor-pointer active:bg-gray-100"><p class="text-[10px] text-blue-500 font-mono truncate" id="invite-link">Cargando...</p></div>
-            </div>
-            <button onclick="showFarm()" class="w-full py-3 bg-white border border-gray-200 text-gray-500 rounded-xl font-bold text-xs">⬅ Volver a la Finca</button>
-        </div>
+    <div class="botonera">
+        <button onclick="bailar('salto')">¡Salta!</button>
+        <button onclick="bailar('giro')">¡Gira!</button>
+        <button onclick="bailar('lado')">¡Lado a Lado!</button>
+        <br><br>
+        <button class="parar" onclick="detener()">Detenerse</button>
     </div>
 
-    <div id="custom-alert" class="hidden">
-        <div class="alert-box">
-            <i id="alert-icon" class="fas fa-check-circle text-4xl text-green-500 mb-2"></i>
-            <h3 id="alert-title" class="text-lg font-black text-gray-800 mb-1">...</h3>
-            <p id="alert-msg" class="text-xs text-gray-500 mb-4">...</p>
-            <button onclick="closeAlert()" class="w-full py-3 bg-green-500 rounded-xl font-bold text-white text-xs shadow-lg active:bg-green-600">ENTENDIDO</button>
-        </div>
-    </div>
-
-    <div id="verify-modal" class="hidden fixed top-0 left-0 w-full h-full bg-black/90 z-[60] flex justify-center items-center backdrop-blur-sm">
-        <div class="bg-white p-6 rounded-3xl text-center w-80 border-4 border-yellow-400 shadow-2xl">
-            <i id="verify-icon" class="fas fa-search text-5xl text-yellow-500 mb-4 animate-bounce"></i>
-            <h3 id="verify-title" class="text-xl font-black text-gray-800 mb-1">VERIFICANDO...</h3>
-            <p id="verify-msg" class="text-sm text-gray-500 mb-6">Revisando tu visita.</p>
-            
-            <button id="btn-check-visit" onclick="checkVisitTime()" class="w-full py-4 bg-yellow-500 hover:bg-yellow-400 rounded-xl font-black text-white text-sm shadow-lg mb-2">
-                YA VÍ EL ANUNCIO
-            </button>
-        </div>
-            </div>
-            <script>
-    const BOT_USERNAME = "FarmFoodGramBot"; 
-    const OWNER_USERNAME = "Aronleal"; 
-
-    // --- CONFIGURACIÓN ---
-    const C = { 
-        MIN_WITHDRAW: 0.50,    
-        HARVEST_REWARD: 0.0003,
-        BOOST_REWARD: 0.0008,
-        DAILY_REWARD: 0.0020,
-        LINK_REWARD: 0.0005,
-        COFFEE_TIME: 60*60*1000 
-    };
-
-    // --- CORRECCIÓN DE MEMORIA ---
-    let savedData = localStorage.getItem('farm_biz_profit_v1'); 
-    let memoriaVieja = savedData ? JSON.parse(savedData) : {};
-
-    let usuarioCompleto = { 
-        balance: 0.00, 
-        teamEarnings: 0, 
-        lastDaily: 0, 
-        lastLink1: 0, 
-        lastLink2: 0, 
-        lastHarvest: 0, 
-        videoTimers: {}, 
-        id: 'GRANJERO_' + Math.floor(Math.random() * 99999) 
-    };
-
-    // Fusionar datos viejos con nuevos
-    let user = { ...usuarioCompleto, ...memoriaVieja };
-    if(typeof user.teamEarnings === 'undefined') user.teamEarnings = 0;
-
-    let tempLinkStart = 0;
-    let tempCurrentLinkID = 0;
-
-    const tg = window.Telegram.WebApp; tg.expand();
-    saveData(); renderUI(); setInterval(updateUI, 1000);
-
-    function playSound(t) { 
-        const s = { 'pop': document.getElementById('snd-pop'), 'cash': document.getElementById('snd-cash') }; 
-        if(s[t]) { s[t].currentTime=0; s[t].play().catch(()=>{}); } 
-    }
-
-    // --- RETIRO SEGURO ---
-    function intentarRetiro() {
-        playSound('pop');
+    <script>
+        // Aquí es donde ocurre la magia lógica
         
-        const huellaDispositivo = localStorage.getItem('dispositivo_registrado_por');
+        function bailar(tipoDeBaile) {
+            // 1. Buscamos al muñeco en la página
+            var muneco = document.getElementById("marioneta");
 
-        if (huellaDispositivo && huellaDispositivo !== user.id) {
-            showAlert("⛔ ERROR", "Multicuenta detectada. Dispositivo en uso por otro ID.", "error");
-            return; 
+            // 2. Le quitamos cualquier baile que tuviera antes (limpiamos)
+            muneco.className.baseVal = ""; 
+            // Nota técnica: en SVG se usa className.baseVal en lugar de className solo.
+
+            // 3. Dependiendo del botón que pulsó, le ponemos el "traje" (clase) correcto
+            if (tipoDeBaile === 'salto') {
+                muneco.classList.add("bailando-salto");
+            } else if (tipoDeBaile === 'giro') {
+                muneco.classList.add("bailando-giro");
+            } else if (tipoDeBaile === 'lado') {
+                muneco.classList.add("bailando-lado");
+            }
         }
 
-        if(user.balance >= C.MIN_WITHDRAW) {
-            const fechaAhora = new Date();
-            const fechaBonita = fechaAhora.toLocaleString(); 
-
-            const mensaje = `🚨 SOLICITUD DE RETIRO\n` +
-                            `-------------------\n` +
-                            `👤 Usuario: ${user.id}\n` +
-                            `📅 Fecha: ${fechaBonita}\n` +
-                            `💰 Monto: $${user.balance.toFixed(4)}\n` +
-                            `🛡️ Seguridad: Verificado\n` +
-                            `-------------------`;
-
-            tg.showConfirm("¿Enviar solicitud de retiro?", (ok) => {
-                if(ok) {
-                    user.balance = 0; 
-                    localStorage.setItem('dispositivo_registrado_por', user.id);
-                    saveData();
-                    renderUI();
-                    tg.openTelegramLink(`https://t.me/${OWNER_USERNAME}?start=withdrawal&text=${encodeURIComponent(mensaje)}`);
-                }
-            });
-        } else {
-            showAlert("FALTA DINERO", `El mínimo es $${C.MIN_WITHDRAW}`, "error");
+        function detener() {
+            var muneco = document.getElementById("marioneta");
+            // Le quitamos todas las clases de baile para que se quede quieto
+            muneco.setAttribute("class", "");
         }
-    }
+    </script>
 
-    // --- DETECTIVE DE LINKS ---
-    function visitLink(n) {
-        const now = Date.now();
-        const lastTime = (n === 1) ? user.lastLink1 : user.lastLink2;
-        if(now - lastTime < 3600000) return showAlert("EN PAUSA", "Este link descansa 1 hora.", "wait");
-
-        tempCurrentLinkID = n;
-        tempLinkStart = now;
-        playSound('pop');
-        
-        const url = (n === 1) ? 'https://otieu.com/4/10274047' : 'https://otieu.com/4/10180875';
-        tg.openLink(url);
-        openVerifyModal(false); 
-    }
-
-    function checkVisitTime() {
-        const timeSpent = Date.now() - tempLinkStart;
-        if(timeSpent < 15000) { 
-            openVerifyModal(true); 
-        } else {
-            if(tempCurrentLinkID === 1) user.lastLink1 = Date.now();
-            if(tempCurrentLinkID === 2) user.lastLink2 = Date.now();
-            user.balance += C.LINK_REWARD;
-            saveData(); renderUI(); playSound('cash');
-            document.getElementById('verify-modal').classList.add('hidden');
-            showAlert("¡EXCELENTE!", `Visita válida. Ganaste $${C.LINK_REWARD}`, "win");
-        }
-    }
-
-    function openVerifyModal(isError) {
-        const m = document.getElementById('verify-modal');
-        const tit = document.getElementById('verify-title');
-        const msg = document.getElementById('verify-msg');
-        const icon = document.getElementById('verify-icon');
-        const btn = document.getElementById('btn-check-visit');
-
-        m.classList.remove('hidden');
-
-        if(isError) {
-            icon.className = "fas fa-hand-paper text-5xl text-red-500 mb-4";
-            tit.innerText = "¡MUY RÁPIDO!";
-            tit.className = "text-xl font-black text-red-600 mb-1";
-            msg.innerText = "No completaste la visita. Inténtalo de nuevo.";
-            btn.innerText = "INTENTAR DE NUEVO";
-            btn.className = "w-full py-4 bg-red-500 hover:bg-red-400 rounded-xl font-black text-white text-sm shadow-lg mb-2";
-            btn.onclick = function() { m.classList.add('hidden'); showAlert("ATENCIÓN", "Toca el link de nuevo y espera 15 segundos.", "wait"); };
-        } else {
-            icon.className = "fas fa-search text-5xl text-yellow-500 mb-4 animate-bounce";
-            tit.innerText = "VERIFICANDO...";
-            tit.className = "text-xl font-black text-gray-800 mb-1";
-            msg.innerText = "Si ya viste el anuncio, toca el botón.";
-            btn.innerText = "YA VÍ EL ANUNCIO";
-            btn.className = "w-full py-4 bg-yellow-500 hover:bg-yellow-400 rounded-xl font-black text-white text-sm shadow-lg mb-2";
-            btn.onclick = checkVisitTime;
-        }
-    }
-
-    // --- FUNCIONES EXTRA ---
-    function showAd(cb) { if(typeof show_10278425!=='undefined'){show_10278425().then(cb).catch(()=>setTimeout(cb,2000));}else setTimeout(cb,1500); }
-    function harvest() { if(Date.now()-user.lastHarvest<C.COFFEE_TIME)return showAlert("VERDE","Usa ACELERAR.","wait"); user.balance+=C.HARVEST_REWARD; user.lastHarvest=Date.now(); saveData(); renderUI(); playSound('pop'); showFloatText("+$"+C.HARVEST_REWARD); showAlert("COSECHA",`Ganaste $${C.HARVEST_REWARD}`,"win"); }
-    function fertilize() { playSound('pop'); tg.showConfirm("¿Ver anuncio?",(ok)=>{if(ok)showAd(()=>{user.balance+=C.BOOST_REWARD;saveData();renderUI();playSound('cash');showAlert("FERTILIZANTE",`Ganaste $${C.BOOST_REWARD}`,"win");});}); }
-    function claimDailyBonus() { if(Date.now()-user.lastDaily<24*60*60*1000)return showAlert("YA FUE","Mañana más.","error"); tg.showConfirm("¿Regalo?",(ok)=>{if(ok)showAd(()=>{user.balance+=C.DAILY_REWARD;user.lastDaily=Date.now();saveData();renderUI();playSound('cash');showAlert("REGALO",`Ganaste $${C.DAILY_REWARD}`,"win");});}); }
-    
-    // UI
-    function renderUI() { document.getElementById('display-balance').innerText='$'+user.balance.toFixed(4); let pct=(user.balance/C.MIN_WITHDRAW)*100; if(pct>100)pct=100; document.getElementById('progress-bar').style.width=pct+'%'; document.getElementById('min-withdraw-display').innerText=C.MIN_WITHDRAW.toFixed(2); }
-    function updateUI() { const diff=C.COFFEE_TIME-(Date.now()-user.lastHarvest); const l=document.getElementById('coffee-status'); const i=document.getElementById('img-coffee'); if(diff<=0){l.innerText="¡LISTO!";l.className="text-xs bg-green-500 text-white px-2 py-1 rounded-lg font-bold animate-pulse";i.className="fas fa-mug-hot text-6xl text-amber-700 drop-shadow-lg cursor-pointer";}else{const m=Math.ceil(diff/60000);l.innerText=`Faltan ${m}m`;l.className="text-xs bg-gray-200 text-gray-500 px-2 py-1 rounded-lg font-bold";i.className="fas fa-seedling text-6xl text-green-300 drop-shadow-lg locked";} 
-    const d2=3600000-(Date.now()-user.lastLink2); const b2=document.getElementById('btn-link-2'); if(d2>0){ b2.innerHTML=`<div class="flex items-center gap-2"><i class="fas fa-lock text-gray-400"></i><div class="text-left"><p class="text-xs font-bold text-gray-500">Link 2 (1h)</p><p class="text-[9px] text-gray-400">Espera ${Math.ceil(d2/60000)}m</p></div></div>`; b2.className="w-full py-3 bg-gray-100 rounded-xl border border-gray-200 flex items-center justify-between px-3 cursor-not-allowed opacity-70"; } else { b2.innerHTML=`<div class="flex items-center gap-2"><i class="fas fa-clock text-purple-400"></i><div class="text-left"><p class="text-xs font-bold text-gray-700">Link 2 (1h)</p><p class="text-[9px] text-gray-400">Disponible</p></div></div><span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded">+$0.0005</span>`; b2.className="w-full py-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-between px-3 active:bg-gray-100 cursor-pointer"; } }
-    function saveData() { localStorage.setItem('farm_biz_profit_v1', JSON.stringify(user)); }
-    function showFarm() { document.getElementById('view-team').classList.add('hidden'); document.getElementById('view-farm').classList.remove('hidden'); }
-    function openTeam() { document.getElementById('view-farm').classList.add('hidden'); document.getElementById('view-team').classList.remove('hidden'); updateTeamUI(); }
-    function updateTeamUI() { document.getElementById('invite-link').innerText = `https://t.me/${BOT_USERNAME}?start=ref_${user.id}`; document.getElementById('team-balance').innerText = '$' + user.teamEarnings.toFixed(4); }
-    function claimTeamEarnings() { if(user.teamEarnings > 0) { user.balance += user.teamEarnings; user.teamEarnings=0; saveData(); renderUI(); updateTeamUI(); showAlert("COMISIÓN", "Agregada.", "win"); } else showAlert("VACÍO", "Sin ganancias.", "error"); }
-    function copyInvite() { navigator.clipboard.writeText(`https://t.me/${BOT_USERNAME}?start=ref_${user.id}`); showAlert("COPIADO", "Listo.", "win"); }
-    function showAlert(t, m, type) { const b=document.getElementById('custom-alert'); document.getElementById('alert-title').innerText=t; document.getElementById('alert-msg').innerText=m; const i=document.getElementById('alert-icon'); if(type==='win')i.className="fas fa-check-circle text-4xl text-green-500 mb-2"; if(type==='error')i.className="fas fa-times-circle text-4xl text-red-500 mb-2"; if(type==='wait')i.className="fas fa-clock text-4xl text-orange-500 mb-2"; b.classList.remove('hidden'); }
-    function closeAlert() { document.getElementById('custom-alert').classList.add('hidden'); }
-    function showFloatText(t) { const el=document.createElement('div'); el.className='float-anim'; el.innerText=t; el.style.left='50%'; el.style.top='40%'; document.body.appendChild(el); setTimeout(()=>el.remove(),1000); }
-</script>
 </body>
-</html>
+    </html>
