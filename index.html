@@ -3,487 +3,391 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Moon Miner App</title>
+    <title>Moonbix Space Miner</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        /* FUENTE DE LETRA MODERNA (Como la de la App) */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
 
-        /* --- ESTILOS GENERALES (Modo Oscuro) --- */
         body {
-            margin: 0;
-            padding: 0;
             background-color: #000;
             color: white;
             font-family: 'Roboto', sans-serif;
-            overflow: hidden; /* Para que parezca una app */
+            margin: 0;
+            padding: 0;
             height: 100vh;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
         }
 
-        /* --- PANTALLA DE INICIO (HOME) --- */
-        #homeScreen {
+        /* FONDO DE ESTRELLAS */
+        .stars {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000 url('https://www.transparenttextures.com/patterns/stardust.png');
+            opacity: 0.5;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* CONTENEDOR PRINCIPAL */
+        .app-container {
+            z-index: 1;
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 20px;
-            background: radial-gradient(circle at top, #1e1e2f 0%, #000 80%);
-            position: relative;
-            z-index: 2;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #000000 100%);
         }
 
-        .header {
+        /* BARRA SUPERIOR (Puntos) */
+        .top-bar {
             width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-top: 10px;
+            padding: 0 10px;
+            box-sizing: border-box;
         }
-
-        .user-info {
+        .points-box {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 10px;
+            width: 100%;
+        }
+        .points-label {
+            color: #888;
             font-size: 14px;
-            color: #ccc;
+            margin-bottom: 5px;
+        }
+        .points-value {
+            font-size: 42px;
+            font-weight: 700;
+            color: #fff;
         }
 
-        /* Título Grande estilo Moonbix */
-        .logo-area {
-            margin-top: 20px;
-            text-align: center;
-        }
-        .logo-text {
-            font-size: 38px;
-            font-weight: 900;
-            color: #1e1e1e; /* Color oscuro de fondo */
-            -webkit-text-stroke: 1px #FCD535; /* Borde amarillo */
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-        .mascot {
-            font-size: 60px;
-            margin: -10px 0 20px 0;
-            display: block;
-        }
-
-        /* Botón Principal de Jugar */
-        .play-btn-container {
-            margin-bottom: 30px;
-            text-align: center;
+        /* IMAGEN CENTRAL (EL PLANETA AMARILLO Y EL ASTRONAUTA) */
+        .hero-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
             width: 100%;
         }
 
-        .btn-main {
-            background-color: #FCD535; /* Amarillo Binance */
-            color: #000;
-            font-size: 20px;
-            font-weight: bold;
-            padding: 15px 60px;
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(252, 213, 53, 0.4);
-            width: 80%;
-            max-width: 300px;
-            transition: transform 0.1s;
+        /* Círculo Amarillo Gigante (Simulando el planeta de Binance) */
+        .planet-circle {
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle at 30% 30%, #ffd700, #f57f17);
+            border-radius: 50%;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            margin-bottom: 30px;
+            border: 4px solid #bcaaa4; /* Borde tipo cráter */
         }
-        .btn-main:active { transform: scale(0.95); }
         
-        .btn-disabled {
-            background-color: #555;
-            color: #aaa;
-            box-shadow: none;
-            cursor: not-allowed;
+        /* Logo estilo Binance en el centro */
+        .planet-logo {
+            width: 80px;
+            height: 80px;
+            border: 8px solid #333;
+            transform: rotate(45deg);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+        }
+        .logo-part { background-color: #333; }
+
+        /* El Astronauta (Emoji grande por ahora para no usar imágenes externas rotas) */
+        .astronaut {
+            font-size: 60px;
+            position: absolute;
+            top: -50px;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
         }
 
-        .energy-text {
-            margin-top: 10px;
+        /* BARRA DE PROGRESO / TEXTO */
+        .loading-bar-area {
+            width: 80%;
+            text-align: center;
             color: #888;
             font-size: 14px;
+            margin-bottom: 20px;
         }
 
-        /* Lista de Botones (Grupo, Historial) */
-        .menu-list {
+        /* BOTONES PRINCIPALES */
+        .action-area {
             width: 100%;
             max-width: 350px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 15px;
+            margin-bottom: 20px;
         }
 
-        .menu-item {
-            background-color: #1E2329;
+        .btn-yellow {
+            background-color: #FCD535; /* El amarillo exacto de Binance */
+            color: #000;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 18px;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(252, 213, 53, 0.3);
+            text-transform: uppercase;
+        }
+        .btn-yellow:active { transform: scale(0.98); }
+
+        .btn-dark {
+            background-color: #1e2329;
+            color: white;
             padding: 15px;
             border-radius: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            cursor: pointer;
             border: 1px solid #333;
-        }
-        .menu-item:active { background-color: #2b313a; }
-        
-        .menu-icon { margin-right: 10px; }
-        .arrow { color: #666; }
-
-        /* Barra de Navegación Inferior (Decorativa) */
-        .bottom-nav {
-            height: 70px;
-            background-color: #1E2329;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            border-top: 1px solid #333;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 10px;
-            color: #666;
-            gap: 5px;
-        }
-        .nav-item.active { color: #FCD535; }
-        .nav-icon { font-size: 20px; }
-
-        /* --- PANTALLA DEL JUEGO (Oculta al inicio) --- */
-        #gameScreen {
-            display: none; /* Oculto por defecto */
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: #000;
-            z-index: 10;
-        }
-        canvas { display: block; width: 100%; height: 100%; }
-
-        /* Botón volver en el juego */
-        .back-btn {
-            position: absolute;
-            top: 20px; left: 20px;
-            background: rgba(0,0,0,0.5);
-            color: white;
-            border: 1px solid white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            z-index: 20;
             cursor: pointer;
         }
+        .btn-dark span { font-size: 14px; font-weight: 500; }
+        .icon { margin-right: 10px; }
 
-        /* Popups */
-        .popup {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: #2b313a; padding: 20px; border-radius: 15px;
-            border: 1px solid #444; text-align: center; z-index: 100;
-            display: none; width: 80%;
+        /* BOTÓN BLOQUEADO (GRIS) */
+        .btn-disabled {
+            background-color: #444 !important;
+            color: #888 !important;
+            box-shadow: none !important;
+            cursor: not-allowed;
         }
-        .popup h3 { color: #FCD535; margin-top: 0;}
+
+        /* MENSAJE DE TIEMPO */
+        .timer-msg {
+            color: #ff4444;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* PANTALLA DE JUEGO (OCULTA) */
+        #gameScreen {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 100;
+        }
+        .close-game {
+            position: absolute; top: 20px; right: 20px;
+            color: white; font-size: 30px; font-weight: bold;
+            cursor: pointer; z-index: 101; background: rgba(0,0,0,0.5);
+            padding: 5px 15px; border-radius: 50%;
+        }
+
     </style>
 </head>
 <body>
 
-    <div id="homeScreen">
-        <div class="header">
-            <div class="user-info">
-                <span>👤 Usuario123</span>
-            </div>
-            <div style="font-weight: bold;">
-                <span style="color:#FCD535">●</span> 80.550 Puntos
+    <div class="stars"></div>
+
+    <div class="app-container" id="menuScreen">
+        
+        <div class="top-bar">
+            <div class="points-box">
+                <span class="points-label">Puntos disponibles</span>
+                <span class="points-value">80.550</span>
             </div>
         </div>
 
-        <div class="logo-area">
-            <div class="logo-text">SPACE MINER</div>
-            <div class="mascot">👨‍🚀</div> </div>
+        <div class="hero-section">
+            <div class="planet-circle">
+                <div class="planet-logo"></div> 
+                <div class="astronaut">👨‍🚀</div>
+            </div>
+            <div class="loading-bar-area">
+                Juegos restantes: <span id="livesCount" style="color: #FCD535; font-weight:bold;">10</span>/10
+                <div class="timer-msg" id="timerDisplay">Recarga en: 29:59</div>
+            </div>
+        </div>
 
-        <div class="play-btn-container">
-            <button id="btnJugar" class="btn-main" onclick="intentarJugar()">
-                JUGAR AHORA
+        <div class="action-area">
+            <button class="btn-yellow" id="btnJugar" onclick="checkPlay()">
+                JUGAR AL JUEGO
             </button>
-            <div class="energy-text" id="energyText">Juegos disponibles: 10/10</div>
-            <div class="energy-text" id="timerText" style="display:none; color: #ff4444;">
-                Próxima recarga en: 30:00
-            </div>
-        </div>
 
-        <div class="menu-list">
-            <div class="menu-item" onclick="mostrarAlerta('Abriendo Telegram...')">
-                <div>📢 Unirse al Grupo Oficial</div>
-                <div class="arrow">></div>
+            <div class="btn-dark" onclick="alert('Abriendo Telegram Oficial...')">
+                <div style="display:flex; align-items:center;">
+                    <span class="icon">📢</span>
+                    <span>Únete al grupo oficial</span>
+                </div>
+                <span style="color:#FCD535">+ 500</span>
             </div>
-            <div class="menu-item" onclick="mostrarAlerta('Historial de Ganancias: Vacío')">
-                <div>💰 Historial de Ganancias</div>
-                <div class="arrow">></div>
-            </div>
-            <div class="menu-item" onclick="mostrarAlerta('Historial de Retiros: Sin retiros')">
-                <div>🏦 Historial de Retiros</div>
-                <div class="arrow">></div>
-            </div>
-        </div>
-    </div>
 
-    <div class="bottom-nav">
-        <div class="nav-item active">
-            <span class="nav-icon">🏠</span> Inicio
-        </div>
-        <div class="nav-item">
-            <span class="nav-icon">📊</span> Ranking
-        </div>
-        <div class="nav-item">
-            <span class="nav-icon">⛏️</span> Minería
-        </div>
-        <div class="nav-item">
-            <span class="nav-icon">🎁</span> Sorpresa
+            <div class="btn-dark" onclick="alert('Mostrando Historial de Ganancias...')">
+                <div style="display:flex; align-items:center;">
+                    <span class="icon">💰</span>
+                    <span>Historial de Ganancia</span>
+                </div>
+                <span>></span>
+            </div>
+
+            <div class="btn-dark" onclick="alert('Mostrando Historial de Retiros...')">
+                <div style="display:flex; align-items:center;">
+                    <span class="icon">🏦</span>
+                    <span>Historial de Retiro</span>
+                </div>
+                <span>></span>
+            </div>
         </div>
     </div>
 
     <div id="gameScreen">
-        <button class="back-btn" onclick="salirDelJuego()">x Salir</button>
-        <canvas id="gameCanvas"></canvas>
+        <div class="close-game" onclick="finishGame()">X</div>
+        <canvas id="canvas" style="display:block; width:100%; height:100%;"></canvas>
     </div>
 
-    <div id="infoPopup" class="popup">
-        <h3 id="popupTitle">Información</h3>
-        <p id="popupMsg">Mensaje</p>
-        <button onclick="cerrarPopup()" style="padding: 10px 30px; background:#FCD535; border:none; border-radius:5px; font-weight:bold;">OK</button>
-    </div>
-
-<script>
-    // --- LÓGICA DE ENERGÍA Y TIEMPO (LO IMPORTANTE) ---
-    
-    // Configuración
-    const MAX_GAMES = 10;
-    const COOLDOWN_MINUTES = 30;
-    
-    // Estado (Variables de memoria)
-    let gamesLeft = 10;
-    let cooldownEndTime = null; // Guardará la hora en que termina el bloqueo
-    let timerInterval = null;
-
-    // Elementos del DOM
-    const btnJugar = document.getElementById('btnJugar');
-    const energyText = document.getElementById('energyText');
-    const timerText = document.getElementById('timerText');
-    const homeScreen = document.getElementById('homeScreen');
-    const gameScreen = document.getElementById('gameScreen');
-
-    // Función 1: Intentar entrar al juego
-    function intentarJugar() {
-        // Verificar si hay bloqueo de tiempo
-        if (cooldownEndTime && new Date() < cooldownEndTime) {
-            mostrarAlerta("¡Descansa un poco! Espera a que termine el tiempo.");
-            return;
-        }
-
-        // Verificar si quedan vidas
-        if (gamesLeft > 0) {
-            iniciarJuegoReal(); // Lanza el juego
-        } else {
-            // Si llega aquí es porque gamesLeft es 0 pero no hay fecha de bloqueo (raro, pero prevenimos)
-            iniciarBloqueo();
-        }
-    }
-
-    // Función 2: Cuando termina un juego (Game Over)
-    function juegoTerminado() {
-        gamesLeft--; // Quitar una vida
-        actualizarInterfazHome();
-        salirDelJuego(); // Volver al menú
-
-        if (gamesLeft <= 0) {
-            iniciarBloqueo();
-        }
-    }
-
-    // Función 3: Activar el bloqueo de 30 minutos
-    function iniciarBloqueo() {
-        const ahora = new Date();
-        // Sumar 30 minutos a la hora actual
-        cooldownEndTime = new Date(ahora.getTime() + COOLDOWN_MINUTES * 60000);
+    <script>
+        // CONFIGURACIÓN SENCILLA
+        let vidas = 10;
+        let bloqueado = false;
+        let tiempoBloqueo = null;
         
-        actualizarInterfazHome();
-        
-        // Arrancar el reloj visual
-        if (timerInterval) clearInterval(timerInterval);
-        timerInterval = setInterval(actualizarReloj, 1000);
-    }
+        const btnJugar = document.getElementById('btnJugar');
+        const livesCount = document.getElementById('livesCount');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const menuScreen = document.getElementById('menuScreen');
+        const gameScreen = document.getElementById('gameScreen');
 
-    // Función 4: Actualizar textos y botones del menú
-    function actualizarInterfazHome() {
-        // Texto de vidas
-        energyText.innerText = `Juegos disponibles: ${gamesLeft}/${MAX_GAMES}`;
+        // AL INICIAR: Chequear si hay un bloqueo guardado
+        if(localStorage.getItem('bloqueoHasta')) {
+            let fin = new Date(localStorage.getItem('bloqueoHasta'));
+            if(new Date() < fin) {
+                bloqueado = true;
+                tiempoBloqueo = fin;
+                activarBloqueoVisual();
+                arrancarReloj();
+            } else {
+                localStorage.removeItem('bloqueoHasta');
+                vidas = 10;
+            }
+        }
 
-        // Estado del botón y reloj
-        if (cooldownEndTime && new Date() < cooldownEndTime) {
-            // BLOQUEADO
+        // FUNCIÓN: INTENTAR JUGAR
+        function checkPlay() {
+            if(bloqueado) {
+                alert("⏳ Tienes que esperar a que se recargue la energía.");
+                return;
+            }
+            if(vidas > 0) {
+                abrirJuego();
+            }
+        }
+
+        // ABRIR PANTALLA DE JUEGO
+        function abrirJuego() {
+            menuScreen.style.display = 'none';
+            gameScreen.style.display = 'block';
+            iniciarJuegoCanvas(); // Inicia el dibujo
+        }
+
+        // TERMINAR JUEGO (SIMULADO)
+        function finishGame() {
+            gameScreen.style.display = 'none';
+            menuScreen.style.display = 'flex';
+            
+            // Restar vida
+            vidas--;
+            livesCount.innerText = vidas;
+
+            // Si se acaban las vidas
+            if(vidas <= 0) {
+                iniciarBloqueo();
+            }
+        }
+
+        // BLOQUEAR POR 30 MINUTOS
+        function iniciarBloqueo() {
+            bloqueado = true;
+            let ahora = new Date();
+            tiempoBloqueo = new Date(ahora.getTime() + 30*60000); // 30 minutos
+            localStorage.setItem('bloqueoHasta', tiempoBloqueo);
+            
+            activarBloqueoVisual();
+            arrancarReloj();
+        }
+
+        function activarBloqueoVisual() {
             btnJugar.classList.add('btn-disabled');
             btnJugar.innerText = "RECARGANDO...";
-            energyText.style.display = 'none';
-            timerText.style.display = 'block';
-        } else {
-            // DESBLOQUEADO
-            // Si ya pasó el tiempo, reseteamos las vidas
-            if (cooldownEndTime && new Date() >= cooldownEndTime) {
-                gamesLeft = MAX_GAMES;
-                cooldownEndTime = null;
-                clearInterval(timerInterval);
-            }
-            
-            btnJugar.classList.remove('btn-disabled');
-            btnJugar.innerText = `JUGAR AHORA (${gamesLeft})`;
-            energyText.style.display = 'block';
-            timerText.style.display = 'none';
-        }
-    }
-
-    // Función 5: El relojito de cuenta regresiva
-    function actualizarReloj() {
-        if (!cooldownEndTime) return;
-
-        const ahora = new Date();
-        const distancia = cooldownEndTime - ahora;
-
-        if (distancia < 0) {
-            // El tiempo terminó
-            actualizarInterfazHome();
-            return;
+            timerDisplay.style.display = 'block';
+            livesCount.innerText = "0";
         }
 
-        const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
-        const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
+        function arrancarReloj() {
+            setInterval(() => {
+                if(!bloqueado) return;
+                
+                let ahora = new Date();
+                let falta = tiempoBloqueo - ahora;
 
-        timerText.innerText = `Próxima recarga en: ${minutos}m ${segundos}s`;
-    }
-
-    // --- FUNCIONES VISUALES (Popups y cambios de pantalla) ---
-    function mostrarAlerta(msg) {
-        document.getElementById('popupMsg').innerText = msg;
-        document.getElementById('infoPopup').style.display = 'block';
-    }
-    function cerrarPopup() {
-        document.getElementById('infoPopup').style.display = 'none';
-    }
-    function salirDelJuego() {
-        gameScreen.style.display = 'none';
-        homeScreen.style.display = 'flex'; // Volver a mostrar flex para centrar
-        document.querySelector('.bottom-nav').style.display = 'flex';
-        // Detener el loop del juego para ahorrar batería
-        juegoActivo = false; 
-    }
-
-    // --- CÓDIGO DEL JUEGO (EL MINERO) INTEGRADO ---
-    // Aquí pego la lógica del juego anterior, adaptada para funcionar dentro de este sistema
-    
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    let juegoActivo = false;
-    let score = 0;
-    let timeLeft = 0;
-    
-    // Configuración del juego (Resumida para integrar)
-    let W, H;
-    const claw = { x:0, y:50, angle:1.57, len:30, state:'IDLE', item:null };
-    let items = [];
-    
-    function iniciarJuegoReal() {
-        homeScreen.style.display = 'none';
-        document.querySelector('.bottom-nav').style.display = 'none';
-        gameScreen.style.display = 'block';
-        
-        // Ajustar tamaño
-        W = canvas.width = window.innerWidth;
-        H = canvas.height = window.innerHeight;
-        
-        // Resetear variables
-        score = 0;
-        timeLeft = 60; // 60 segundos por juego
-        items = [];
-        // Crear items aleatorios
-        for(let i=0; i<8; i++) items.push({
-            x: Math.random()*(W-40)+20, 
-            y: Math.random()*(H/2)+(H/2-50),
-            r: 20, val: 50, visible: true, color: '#FCD535'
-        });
-        
-        juegoActivo = true;
-        claw.state = 'IDLE';
-        loop();
-    }
-
-    function loop() {
-        if (!juegoActivo) return;
-        
-        // Fondo
-        ctx.fillStyle = '#050510';
-        ctx.fillRect(0,0,W,H);
-        
-        // Tiempo
-        timeLeft -= 0.016; // Aprox 60fps
-        if (timeLeft <= 0) {
-            juegoTerminado(); // Se acabó el tiempo, volvemos al menu y restamos vida
-            return;
-        }
-
-        // Lógica simple de la garra (Resumida)
-        if (claw.state === 'IDLE') {
-            claw.angle += 0.03;
-            if (claw.angle > 2.5 || claw.angle < 0.6) claw.angle -= 0.06; // Oscilar simple (bugfix rapido)
-             claw.x = W/2;
-        } else if (claw.state === 'SHOOTING') {
-            claw.len += 10;
-            if (claw.len > H) claw.state = 'RETRACTING';
-            // Colision simple
-            let tipX = W/2 + Math.cos(claw.angle)*claw.len;
-            let tipY = 50 + Math.sin(claw.angle)*claw.len;
-            items.forEach(it => {
-                if(it.visible && Math.hypot(tipX-it.x, tipY-it.y) < it.r) {
-                    claw.item = it;
-                    it.visible = false;
-                    claw.state = 'RETRACTING';
+                if(falta < 0) {
+                    // Desbloquear
+                    bloqueado = false;
+                    vidas = 10;
+                    localStorage.removeItem('bloqueoHasta');
+                    window.location.reload(); // Recargar página
+                    return;
                 }
-            });
-        } else if (claw.state === 'RETRACTING') {
-            claw.len -= 10;
-            if (claw.len <= 30) {
-                claw.len = 30;
-                claw.state = 'IDLE';
-                claw.item = null;
-            }
+
+                let m = Math.floor((falta % (1000 * 60 * 60)) / (1000 * 60));
+                let s = Math.floor((falta % (1000 * 60)) / 1000);
+                timerDisplay.innerText = `Recarga en: ${m}m ${s}s`;
+            }, 1000);
         }
 
-        // Dibujar Items
-        items.forEach(it => {
-            if(it.visible) {
-                ctx.fillStyle = it.color;
-                ctx.beginPath(); ctx.arc(it.x, it.y, it.r, 0, 7); ctx.fill();
+        // --- CÓDIGO BÁSICO DEL JUEGO (MINERO ESPACIAL) ---
+        // Esto es solo para que se vea algo al jugar
+        function iniciarJuegoCanvas() {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            // Dibujar fondo simple y gancho
+            function loop() {
+                if(gameScreen.style.display == 'none') return;
+                
+                ctx.fillStyle = '#050510';
+                ctx.fillRect(0,0,canvas.width, canvas.height);
+                
+                // Texto en pantalla
+                ctx.fillStyle = 'white';
+                ctx.font = '20px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText("Simulación del Juego...", canvas.width/2, canvas.height/2);
+                ctx.font = '14px Arial';
+                ctx.fillText("(Toque la X arriba para salir y gastar una vida)", canvas.width/2, canvas.height/2 + 30);
+                
+                requestAnimationFrame(loop);
             }
-        });
+            loop();
+        }
 
-        // Dibujar Garra
-        let endX = W/2 + Math.cos(claw.angle)*claw.len;
-        let endY = 50 + Math.sin(claw.angle)*claw.len;
-        ctx.strokeStyle = 'white'; ctx.lineWidth=2;
-        ctx.beginPath(); ctx.moveTo(W/2, 50); ctx.lineTo(endX, endY); ctx.stroke();
-        
-        // UI dentro del juego
-        ctx.fillStyle = 'white'; ctx.font = '20px Arial';
-        ctx.fillText("Tiempo: " + Math.ceil(timeLeft), W-120, 40);
-
-        requestAnimationFrame(loop);
-    }
-
-    // Click para disparar
-    canvas.addEventListener('touchstart', (e) => {
-        if(claw.state === 'IDLE') claw.state = 'SHOOTING';
-    });
-    canvas.addEventListener('mousedown', (e) => {
-        if(claw.state === 'IDLE') claw.state = 'SHOOTING';
-    });
-
-    // Iniciar
-    actualizarInterfazHome();
-
-</script>
+    </script>
 </body>
-    </html>
+                </html>
