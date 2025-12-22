@@ -2,392 +2,226 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Moonbix Space Miner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP Shop Simulator</title>
     <style>
-        /* FUENTE DE LETRA MODERNA (Como la de la App) */
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
-
+        /* ESTILOS: Aquí definimos cómo se ve la app (Colores dorados y oscuros estilo VIP) */
         body {
-            background-color: #000;
-            color: white;
-            font-family: 'Roboto', sans-serif;
+            font-family: Arial, sans-serif;
+            background-color: #121212; /* Fondo oscuro */
+            color: #ffffff;
             margin: 0;
-            padding: 0;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* FONDO DE ESTRELLAS */
-        .stars {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #000 url('https://www.transparenttextures.com/patterns/stardust.png');
-            opacity: 0.5;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        /* CONTENEDOR PRINCIPAL */
-        .app-container {
-            z-index: 1;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             padding: 20px;
-            background: radial-gradient(circle at center, #1a1a2e 0%, #000000 100%);
-        }
-
-        /* BARRA SUPERIOR (Puntos) */
-        .top-bar {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 10px;
-            padding: 0 10px;
-            box-sizing: border-box;
-        }
-        .points-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
-        .points-label {
-            color: #888;
-            font-size: 14px;
-            margin-bottom: 5px;
-        }
-        .points-value {
-            font-size: 42px;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        /* IMAGEN CENTRAL (EL PLANETA AMARILLO Y EL ASTRONAUTA) */
-        .hero-section {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            width: 100%;
-        }
-
-        /* Círculo Amarillo Gigante (Simulando el planeta de Binance) */
-        .planet-circle {
-            width: 180px;
-            height: 180px;
-            background: radial-gradient(circle at 30% 30%, #ffd700, #f57f17);
-            border-radius: 50%;
-            box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            margin-bottom: 30px;
-            border: 4px solid #bcaaa4; /* Borde tipo cráter */
-        }
-        
-        /* Logo estilo Binance en el centro */
-        .planet-logo {
-            width: 80px;
-            height: 80px;
-            border: 8px solid #333;
-            transform: rotate(45deg);
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 5px;
-        }
-        .logo-part { background-color: #333; }
-
-        /* El Astronauta (Emoji grande por ahora para no usar imágenes externas rotas) */
-        .astronaut {
-            font-size: 60px;
-            position: absolute;
-            top: -50px;
-            animation: float 3s ease-in-out infinite;
-        }
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
-        }
-
-        /* BARRA DE PROGRESO / TEXTO */
-        .loading-bar-area {
-            width: 80%;
             text-align: center;
-            color: #888;
-            font-size: 14px;
-            margin-bottom: 20px;
         }
 
-        /* BOTONES PRINCIPALES */
-        .action-area {
-            width: 100%;
-            max-width: 350px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+        /* Tarjeta de Saldo */
+        .balance-card {
+            background: linear-gradient(45deg, #FFD700, #DAA520);
+            padding: 20px;
+            border-radius: 15px;
             margin-bottom: 20px;
-        }
-
-        .btn-yellow {
-            background-color: #FCD535; /* El amarillo exacto de Binance */
             color: #000;
-            font-size: 18px;
-            font-weight: bold;
-            padding: 18px;
-            border-radius: 30px;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            box-shadow: 0 4px 10px rgba(252, 213, 53, 0.3);
-            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
         }
-        .btn-yellow:active { transform: scale(0.98); }
 
-        .btn-dark {
-            background-color: #1e2329;
-            color: white;
-            padding: 15px;
-            border-radius: 12px;
+        h1, h2 { margin: 0; }
+        .money { font-size: 2.5em; font-weight: bold; }
+
+        /* Sección de VIPs */
+        .vip-section {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 10px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+        }
+
+        .vip-card {
+            background-color: #1e1e1e;
             border: 1px solid #333;
-            cursor: pointer;
-        }
-        .btn-dark span { font-size: 14px; font-weight: 500; }
-        .icon { margin-right: 10px; }
-
-        /* BOTÓN BLOQUEADO (GRIS) */
-        .btn-disabled {
-            background-color: #444 !important;
-            color: #888 !important;
-            box-shadow: none !important;
-            cursor: not-allowed;
+            border-radius: 10px;
+            padding: 15px;
+            min-width: 120px;
+            opacity: 0.6;
         }
 
-        /* MENSAJE DE TIEMPO */
-        .timer-msg {
-            color: #ff4444;
+        .vip-active {
+            border: 2px solid #FFD700; /* Borde dorado para el activo */
+            opacity: 1;
+        }
+
+        /* Botones de Acción */
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
             font-weight: bold;
-            text-align: center;
-            margin-top: 5px;
-            display: none;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: transform 0.1s;
         }
 
-        /* PANTALLA DE JUEGO (OCULTA) */
-        #gameScreen {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #000;
-            z-index: 100;
+        .btn:active { transform: scale(0.98); }
+
+        .btn-task {
+            background-color: #4CAF50; /* Verde */
+            color: white;
         }
-        .close-game {
-            position: absolute; top: 20px; right: 20px;
-            color: white; font-size: 30px; font-weight: bold;
-            cursor: pointer; z-index: 101; background: rgba(0,0,0,0.5);
-            padding: 5px 15px; border-radius: 50%;
+
+        .btn-ad {
+            background-color: #2196F3; /* Azul */
+            color: white;
+        }
+
+        .btn-buy {
+            background-color: #FFD700;
+            color: black;
+            margin-top: 5px;
+        }
+
+        /* Animación de carga */
+        #loader {
+            display: none;
+            margin-top: 20px;
+            color: #FFD700;
         }
 
     </style>
 </head>
 <body>
 
-    <div class="stars"></div>
+    <div class="balance-card">
+        <h2>Mi Saldo</h2>
+        <div class="money">$<span id="userBalance">1.00</span></div>
+        <p>Nivel Actual: <strong id="currentVip">Ninguno</strong></p>
+    </div>
 
-    <div class="app-container" id="menuScreen">
-        
-        <div class="top-bar">
-            <div class="points-box">
-                <span class="points-label">Puntos disponibles</span>
-                <span class="points-value">80.550</span>
-            </div>
+    <h3>Nivele VIP</h3>
+    <div class="vip-section">
+        <div class="vip-card" id="vip1-card">
+            <h4>VIP 1</h4>
+            <p>Precio: $1.00</p>
+            <p>Gana: $0.50/tarea</p>
+            <button class="btn btn-buy" onclick="comprarVip(1, 1.00)">Comprar</button>
         </div>
 
-        <div class="hero-section">
-            <div class="planet-circle">
-                <div class="planet-logo"></div> 
-                <div class="astronaut">👨‍🚀</div>
-            </div>
-            <div class="loading-bar-area">
-                Juegos restantes: <span id="livesCount" style="color: #FCD535; font-weight:bold;">10</span>/10
-                <div class="timer-msg" id="timerDisplay">Recarga en: 29:59</div>
-            </div>
-        </div>
-
-        <div class="action-area">
-            <button class="btn-yellow" id="btnJugar" onclick="checkPlay()">
-                JUGAR AL JUEGO
-            </button>
-
-            <div class="btn-dark" onclick="alert('Abriendo Telegram Oficial...')">
-                <div style="display:flex; align-items:center;">
-                    <span class="icon">📢</span>
-                    <span>Únete al grupo oficial</span>
-                </div>
-                <span style="color:#FCD535">+ 500</span>
-            </div>
-
-            <div class="btn-dark" onclick="alert('Mostrando Historial de Ganancias...')">
-                <div style="display:flex; align-items:center;">
-                    <span class="icon">💰</span>
-                    <span>Historial de Ganancia</span>
-                </div>
-                <span>></span>
-            </div>
-
-            <div class="btn-dark" onclick="alert('Mostrando Historial de Retiros...')">
-                <div style="display:flex; align-items:center;">
-                    <span class="icon">🏦</span>
-                    <span>Historial de Retiro</span>
-                </div>
-                <span>></span>
-            </div>
+        <div class="vip-card" id="vip2-card">
+            <h4>VIP 2</h4>
+            <p>Precio: $10.00</p>
+            <p>Gana: $2.00/tarea</p>
+            <button class="btn btn-buy" onclick="comprarVip(2, 10.00)">Bloqueado</button>
         </div>
     </div>
 
-    <div id="gameScreen">
-        <div class="close-game" onclick="finishGame()">X</div>
-        <canvas id="canvas" style="display:block; width:100%; height:100%;"></canvas>
+    <hr style="border-color: #333;">
+
+    <h3>Zona de Trabajo</h3>
+    <p style="color: gray; font-size: 0.9em;">Simula el envío de pedidos para ganar comisión.</p>
+    
+    <button class="btn btn-task" id="taskBtn" onclick="hacerTarea()">
+        📦 Enviar Pedido (Hacer Tarea)
+    </button>
+
+    <div id="loader">
+        <p>🔄 Procesando compra con el proveedor...</p>
+        <p>⏳ Espere por favor...</p>
     </div>
+
+    <hr style="border-color: #333;">
+
+    <h3>Recargar Saldo</h3>
+    <button class="btn btn-ad" onclick="verAnuncio()">
+        📺 Ver Anuncio (+ $0.50)
+    </button>
 
     <script>
-        // CONFIGURACIÓN SENCILLA
-        let vidas = 10;
-        let bloqueado = false;
-        let tiempoBloqueo = null;
-        
-        const btnJugar = document.getElementById('btnJugar');
-        const livesCount = document.getElementById('livesCount');
-        const timerDisplay = document.getElementById('timerDisplay');
-        const menuScreen = document.getElementById('menuScreen');
-        const gameScreen = document.getElementById('gameScreen');
+        // Variables iniciales del usuario
+        let saldo = 1.00; // Iniciamos con el bono de regalo
+        let nivelVip = 0; // 0 significa sin VIP
+        let gananciaPorTarea = 0;
 
-        // AL INICIAR: Chequear si hay un bloqueo guardado
-        if(localStorage.getItem('bloqueoHasta')) {
-            let fin = new Date(localStorage.getItem('bloqueoHasta'));
-            if(new Date() < fin) {
-                bloqueado = true;
-                tiempoBloqueo = fin;
-                activarBloqueoVisual();
-                arrancarReloj();
-            } else {
-                localStorage.removeItem('bloqueoHasta');
-                vidas = 10;
-            }
-        }
+        // Actualizamos la pantalla al iniciar
+        actualizarPantalla();
 
-        // FUNCIÓN: INTENTAR JUGAR
-        function checkPlay() {
-            if(bloqueado) {
-                alert("⏳ Tienes que esperar a que se recargue la energía.");
+        // --- FUNCIÓN 1: COMPRAR VIP ---
+        function comprarVip(nivel, costo) {
+            if (nivelVip >= nivel) {
+                alert("Ya tienes este VIP o uno superior.");
                 return;
             }
-            if(vidas > 0) {
-                abrirJuego();
+
+            if (saldo >= costo) {
+                // Restamos el costo
+                saldo = saldo - costo;
+                nivelVip = nivel;
+                
+                // Definimos cuánto gana según el VIP
+                if (nivel === 1) gananciaPorTarea = 0.50;
+                if (nivel === 2) gananciaPorTarea = 2.00;
+
+                alert("¡Felicidades! Has adquirido el VIP " + nivel);
+                actualizarPantalla();
+            } else {
+                alert("Saldo insuficiente. Ve anuncios para recargar.");
             }
         }
 
-        // ABRIR PANTALLA DE JUEGO
-        function abrirJuego() {
-            menuScreen.style.display = 'none';
-            gameScreen.style.display = 'block';
-            iniciarJuegoCanvas(); // Inicia el dibujo
+        // --- FUNCIÓN 2: HACER LA TAREA (SIMULACIÓN) ---
+        function hacerTarea() {
+            if (nivelVip === 0) {
+                alert("Necesitas comprar el VIP 1 primero (Usa tu bono de $1).");
+                return;
+            }
+
+            // Ocultar botón y mostrar carga
+            document.getElementById('taskBtn').style.display = 'none';
+            document.getElementById('loader').style.display = 'block';
+
+            // Esperar 3 segundos simulando el "envío de pedido"
+            setTimeout(() => {
+                saldo = saldo + gananciaPorTarea;
+                
+                // Volver a la normalidad
+                document.getElementById('taskBtn').style.display = 'block';
+                document.getElementById('loader').style.display = 'none';
+                
+                alert("✅ Pedido completado. Comisión recibida.");
+                actualizarPantalla();
+            }, 3000); // 3000 milisegundos = 3 segundos
         }
 
-        // TERMINAR JUEGO (SIMULADO)
-        function finishGame() {
-            gameScreen.style.display = 'none';
-            menuScreen.style.display = 'flex';
+        // --- FUNCIÓN 3: VER ANUNCIO (SIMULADO) ---
+        function verAnuncio() {
+            // AQUI IRÍA EL CÓDIGO REAL DE ADSGRAM O MONETAG
+            // Por ahora, solo simulamos que vio el anuncio
+            alert("Simulando anuncio de Monetag/Adsgram...");
             
-            // Restar vida
-            vidas--;
-            livesCount.innerText = vidas;
-
-            // Si se acaban las vidas
-            if(vidas <= 0) {
-                iniciarBloqueo();
-            }
+            saldo = saldo + 0.50; // Le damos 50 centavos por ver anuncio
+            alert("Gracias por ver el anuncio. Se añadieron $0.50 a tu saldo.");
+            actualizarPantalla();
         }
 
-        // BLOQUEAR POR 30 MINUTOS
-        function iniciarBloqueo() {
-            bloqueado = true;
-            let ahora = new Date();
-            tiempoBloqueo = new Date(ahora.getTime() + 30*60000); // 30 minutos
-            localStorage.setItem('bloqueoHasta', tiempoBloqueo);
+        // --- FUNCIÓN AUXILIAR: ACTUALIZAR PANTALLA ---
+        function actualizarPantalla() {
+            // Mostrar saldo con 2 decimales
+            document.getElementById('userBalance').innerText = saldo.toFixed(2);
             
-            activarBloqueoVisual();
-            arrancarReloj();
-        }
-
-        function activarBloqueoVisual() {
-            btnJugar.classList.add('btn-disabled');
-            btnJugar.innerText = "RECARGANDO...";
-            timerDisplay.style.display = 'block';
-            livesCount.innerText = "0";
-        }
-
-        function arrancarReloj() {
-            setInterval(() => {
-                if(!bloqueado) return;
-                
-                let ahora = new Date();
-                let falta = tiempoBloqueo - ahora;
-
-                if(falta < 0) {
-                    // Desbloquear
-                    bloqueado = false;
-                    vidas = 10;
-                    localStorage.removeItem('bloqueoHasta');
-                    window.location.reload(); // Recargar página
-                    return;
-                }
-
-                let m = Math.floor((falta % (1000 * 60 * 60)) / (1000 * 60));
-                let s = Math.floor((falta % (1000 * 60)) / 1000);
-                timerDisplay.innerText = `Recarga en: ${m}m ${s}s`;
-            }, 1000);
-        }
-
-        // --- CÓDIGO BÁSICO DEL JUEGO (MINERO ESPACIAL) ---
-        // Esto es solo para que se vea algo al jugar
-        function iniciarJuegoCanvas() {
-            const canvas = document.getElementById('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-
-            // Dibujar fondo simple y gancho
-            function loop() {
-                if(gameScreen.style.display == 'none') return;
-                
-                ctx.fillStyle = '#050510';
-                ctx.fillRect(0,0,canvas.width, canvas.height);
-                
-                // Texto en pantalla
-                ctx.fillStyle = 'white';
-                ctx.font = '20px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText("Simulación del Juego...", canvas.width/2, canvas.height/2);
-                ctx.font = '14px Arial';
-                ctx.fillText("(Toque la X arriba para salir y gastar una vida)", canvas.width/2, canvas.height/2 + 30);
-                
-                requestAnimationFrame(loop);
+            // Mostrar nivel actual
+            if (nivelVip > 0) {
+                document.getElementById('currentVip').innerText = "VIP " + nivelVip;
+            } else {
+                document.getElementById('currentVip').innerText = "Ninguno";
             }
-            loop();
-        }
 
+            // Estilos visuales de las tarjetas VIP
+            if (nivelVip >= 1) {
+                document.getElementById('vip1-card').classList.add('vip-active');
+                document.getElementById('vip1-card').querySelector('button').innerText = "Comprado";
+            }
+        }
     </script>
 </body>
-                </html>
+</html>
