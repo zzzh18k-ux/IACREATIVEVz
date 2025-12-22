@@ -2,292 +2,332 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Botonera Viral 20 Opciones</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minero Espacial Alternativo</title>
     <style>
-        /* --- ESTILOS VISUALES (Negro y Moderno) --- */
         body {
             margin: 0;
-            background-color: #121212;
-            color: white;
-            font-family: sans-serif;
+            padding: 0;
+            background-color: #000;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             height: 100vh;
             overflow: hidden;
+            font-family: sans-serif;
         }
-
-        /* 1. EL ESCENARIO (Arriba) */
-        .escenario-container {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: radial-gradient(circle, #2a2a2a 0%, #000 100%);
-            border-bottom: 4px solid #ff0055;
-            position: relative;
-            overflow: hidden;
+        canvas {
+            border: 2px solid #333;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+            /* Cursor de mira para indicar que se puede hacer clic */
+            cursor: crosshair; 
         }
-
-        /* La imagen del meme */
-        #meme-activo {
-            max-width: 90%;
-            max-height: 80%;
-            object-fit: contain;
-            filter: drop-shadow(0 0 15px rgba(255, 0, 85, 0.6));
-            display: none;
-            border-radius: 10px;
-        }
-
-        .texto-instruccion {
-            color: #888;
-            font-style: italic;
-            animation: parpadeo 2s infinite;
-        }
-
-        @keyframes parpadeo { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
-
-        /* Título del meme activo */
-        #titulo-meme {
-            position: absolute;
-            top: 10px;
-            width: 100%;
-            text-align: center;
-            font-size: 24px;
-            text-shadow: 2px 2px 4px black;
-            z-index: 10;
-            margin: 0;
-            padding: 5px;
-            background: rgba(0,0,0,0.5);
-        }
-
-        /* 2. LA ZONA DE BOTONES (Abajo) */
-        .controles-container {
-            height: 50%; /* Mitad de la pantalla */
-            background-color: #181818;
-            padding: 10px;
-            overflow-y: auto; /* Scroll para ver los 20 botones */
-        }
-
-        .parrilla-memes {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 8px;
-            padding-bottom: 40px;
-        }
-
-        /* Estilo de cada botón */
-        .meme-btn {
-            background-color: #333;
-            border: 2px solid #444;
-            border-radius: 10px;
-            padding: 8px;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            height: 70px;
-            justify-content: center;
-            transition: all 0.1s;
-        }
-
-        .meme-btn:active {
-            transform: scale(0.9);
-            background-color: #ffcc00;
-            color: black;
-            border-color: white;
-        }
-
-        .btn-icono { font-size: 24px; margin-bottom: 4px; }
-        .btn-texto { font-size: 11px; font-weight: bold; line-height: 1.1; }
-
-        /* Botón ROJO de Parar */
-        .btn-parar {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 10px;
-            background: linear-gradient(to right, #d32f2f, #b71c1c);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 16px;
-            box-shadow: 0 4px 0 #7f0000;
-        }
-        .btn-parar:active { transform: translateY(4px); box-shadow: none; }
-
     </style>
 </head>
 <body>
 
-    <div class="escenario-container">
-        <h2 id="titulo-meme"></h2>
-        <img id="meme-activo" src="" alt="Meme">
-        <h3 class="texto-instruccion" id="placeholder-texto">👇 Toca un botón abajo 👇</h3>
-    </div>
+<canvas id="gameCanvas"></canvas>
 
-    <div class="controles-container">
-        <button class="btn-parar" onclick="detenerTodo()">🛑 PARAR SONIDO</button>
-        <div class="parrilla-memes" id="contenedor-botones"></div>
-    </div>
+<script>
+    // --- CONFIGURACIÓN INICIAL ---
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
 
-    <audio id="audio-player"></audio>
+    // Tamaño del canvas (ajustado para móviles o escritorio)
+    canvas.width = window.innerWidth > 480 ? 400 : window.innerWidth - 20;
+    canvas.height = window.innerHeight > 800 ? 700 : window.innerHeight - 20;
 
-    <script>
-        // ==========================================
-        // LISTA DE 20 MEMES PRE-CARGADOS
-        // ==========================================
-        const listaDeMemes = [
-            {
-                icono: "🐀", nombre: "Rata Viral",
-                gif: "https://media.tenor.com/M6gZ4Hh2bXQAAAAi/rat-spinning.gif",
-                audio: "https://www.myinstants.com/media/sounds/free-bird-solo.mp3"
-            },
-            {
-                icono: "🐕", nombre: "Perro Bonk",
-                gif: "https://media.tenor.com/kZiBqT1hD5IAAAAi/bonk-doge.gif",
-                audio: "https://www.myinstants.com/media/sounds/bonk_sound_effect.mp3"
-            },
-            {
-                icono: "⚰️", nombre: "Ataúd Dance",
-                gif: "https://media.tenor.com/Bde9yEa8d1QAAAAi/coffin-dance-ghana.gif",
-                audio: "https://www.myinstants.com/media/sounds/astronomia-coffin-dance.mp3"
-            },
-            {
-                icono: "😿", nombre: "Gato Llorón",
-                gif: "https://media.tenor.com/8p2u3a3XgTUAAAAi/crying-cat.gif",
-                audio: "https://www.myinstants.com/media/sounds/crying-cat.mp3"
-            },
-            {
-                icono: "🎻", nombre: "Violín Triste",
-                gif: "https://media.tenor.com/13_u8k9K22kAAAAi/mr-krabs-playing-smallest-violin.gif",
-                audio: "https://www.myinstants.com/media/sounds/sad-violin-spongebob.mp3"
-            },
-            {
-                icono: "👮", nombre: "FBI Open Up",
-                gif: "https://media.tenor.com/3252684877709320253/fbi-raid-swat.gif",
-                audio: "https://www.myinstants.com/media/sounds/fbi-open-up-sfx.mp3"
-            },
-            {
-                icono: "🦗", nombre: "Grillos (Cri Cri)",
-                gif: "https://media.tenor.com/Fw8Lg0eDqGgAAAAi/cricket-jiminy-cricket.gif",
-                audio: "https://www.myinstants.com/media/sounds/cricket-sound.mp3"
-            },
-            {
-                icono: "🎺", nombre: "Trompeta Fail",
-                gif: "https://media.tenor.com/N2s10q2b88EAAAAi/spongebob-disappointed.gif",
-                audio: "https://www.myinstants.com/media/sounds/spongebob-fail.mp3"
-            },
-            {
-                icono: "👁️", nombre: "Illuminati",
-                gif: "https://media.tenor.com/uR47-1aA9lUAAAAi/illuminati-pyramid.gif",
-                audio: "https://www.myinstants.com/media/sounds/x-files-theme.mp3"
-            },
-            {
-                icono: "📢", nombre: "Bocina Aire",
-                gif: "https://media.tenor.com/O61jR6uUqHAAAAAi/mlg-airhorn.gif",
-                audio: "https://www.myinstants.com/media/sounds/mlg-airhorn.mp3"
-            },
-            {
-                icono: "🎬", nombre: "Créditos Finales",
-                gif: "https://media.tenor.com/Tr2xL5o9Q1AAAAAi/directed-by-robert-b-weide.gif",
-                audio: "https://www.myinstants.com/media/sounds/directed-by-robert.mp3"
-            },
-            {
-                icono: "🌈", nombre: "Nyan Cat",
-                gif: "https://media.tenor.com/2U5hKJ9UfC4AAAAi/nyan-cat-rainbow.gif",
-                audio: "https://www.myinstants.com/media/sounds/nyan-cat.mp3"
-            },
-            {
-                icono: "😎", nombre: "Thug Life",
-                gif: "https://media.tenor.com/yF__gZ5vNl4AAAAi/thug-life-glasses.gif",
-                audio: "https://www.myinstants.com/media/sounds/thug-life-snoop.mp3"
-            },
-            {
-                icono: "🤨", nombre: "The Rock",
-                gif: "https://media.tenor.com/z4_6mU60vCoAAAAi/the-rock-sus.gif",
-                audio: "https://www.myinstants.com/media/sounds/vine-boom.mp3"
-            },
-            {
-                icono: "😱", nombre: "OMG Wow",
-                gif: "https://media.tenor.com/l5_u4J34ZMQAAAAi/wow-oh-my-god.gif",
-                audio: "https://www.myinstants.com/media/sounds/anime-wow-sound-effect.mp3"
-            },
-            {
-                icono: "👻", nombre: "Susto",
-                gif: "https://media.tenor.com/13X1Q3v6dGgAAAAi/scary-face.gif",
-                audio: "https://www.myinstants.com/media/sounds/jumpscare.mp3"
-            },
-            {
-                icono: "💻", nombre: "Windows Error",
-                gif: "https://media.tenor.com/b2A6qf8Y86QAAAAi/windows-xp-error.gif",
-                audio: "https://www.myinstants.com/media/sounds/windows-xp-error.mp3"
-            },
-            {
-                icono: "🍄", nombre: "Mario Salto",
-                gif: "https://media.tenor.com/y2A6E941v1AAAAAi/mario-jump.gif",
-                audio: "https://www.myinstants.com/media/sounds/mario-jump.mp3"
-            },
-            {
-                icono: "🚫", nombre: "NOPE",
-                gif: "https://media.tenor.com/tH3-yI2Q0eAAAAAi/nope-engineer.gif",
-                audio: "https://www.myinstants.com/media/sounds/nope-tf2.mp3"
-            },
-            {
-                icono: "🥊", nombre: "John Cena",
-                gif: "https://media.tenor.com/pZq81X4qI6EAAAAi/john-cena-wwe.gif",
-                audio: "https://www.myinstants.com/media/sounds/and-his-name-is-john-cena-1.mp3"
+    // Variables de estado del juego
+    let score = 0;
+    let timeLeft = 60; // 60 segundos de juego
+    let gameState = 'START'; // START, PLAYING, GAMEOVER
+    let lastTime = 0;
+
+    // --- OBJETOS DEL JUEGO ---
+
+    // El Gancho (La nave y la garra)
+    const claw = {
+        x: canvas.width / 2,
+        y: 50, // Posición de la nave arriba
+        angle: Math.PI / 2, // Empieza apuntando hacia abajo (90 grados)
+        angleSpeed: 0.02,
+        angleDir: 1,
+        length: 20,
+        maxLength: canvas.height - 50,
+        state: 'SWINGING', // SWINGING (balanceando), SHOOTING (disparando), RETRACTING (retrayendo)
+        shootSpeed: 8,
+        retractSpeed: 8,
+        caughtItem: null,
+        
+        update: function() {
+            if (this.state === 'SWINGING') {
+                // Balanceo de lado a lado (entre 45 y 135 grados aprox)
+                this.angle += this.angleSpeed * this.angleDir;
+                if (this.angle > Math.PI * 0.75 || this.angle < Math.PI * 0.25) {
+                    this.angleDir *= -1;
+                }
+            } else if (this.state === 'SHOOTING') {
+                this.length += this.shootSpeed;
+                // Si llega al límite o toca el fondo
+                if (this.length >= this.maxLength) {
+                    this.state = 'RETRACTING';
+                }
+            } else if (this.state === 'RETRACTING') {
+                // La velocidad de retracción depende del peso del objeto atrapado
+                let currentRetractSpeed = this.retractSpeed;
+                if (this.caughtItem) {
+                    currentRetractSpeed = this.retractSpeed / this.caughtItem.weight;
+                }
+                this.length -= currentRetractSpeed;
+                
+                // Si regresa al inicio
+                if (this.length <= 20) {
+                    this.length = 20;
+                    this.state = 'SWINGING';
+                    if (this.caughtItem) {
+                        score += this.caughtItem.value;
+                        // Eliminar el ítem atrapado de la lista de ítems
+                        items = items.filter(i => i !== this.caughtItem);
+                        this.caughtItem = null;
+                    }
+                }
             }
-        ];
+        },
 
-        // ==========================================
-        // LÓGICA DE FUNCIONAMIENTO
-        // ==========================================
-        const escenarioImg = document.getElementById('meme-activo');
-        const placeholderTxt = document.getElementById('placeholder-texto');
-        const audioPlayer = document.getElementById('audio-player');
-        const tituloMemeBtn = document.getElementById('titulo-meme');
-        const contenedorBotones = document.getElementById('contenedor-botones');
+        draw: function() {
+            // Dibujar la línea del gancho
+            ctx.beginPath();
+            ctx.moveTo(this.x, this.y);
+            // Calcular la punta del gancho usando trigonometría
+            let endX = this.x + this.length * Math.cos(this.angle);
+            let endY = this.y + this.length * Math.sin(this.angle);
+            ctx.lineTo(endX, endY);
+            ctx.strokeStyle = '#ff6f00'; // Color naranja para la cuerda
+            ctx.lineWidth = 3;
+            ctx.stroke();
 
-        function generarBotones() {
-            listaDeMemes.forEach((meme, index) => {
-                const boton = document.createElement('div');
-                boton.classList.add('meme-btn');
-                boton.innerHTML = `
-                    <span class="btn-icono">${meme.icono}</span>
-                    <span class="btn-texto">${meme.nombre}</span>
-                `;
-                boton.onclick = () => activarMeme(index);
-                contenedorBotones.appendChild(boton);
-            });
+            // Dibujar la "nave" base arriba
+            ctx.fillStyle = '#ff4500'; // Naranja rojizo
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, 20, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Dibujar la punta de la garra
+            ctx.fillStyle = '#ff8c00';
+            ctx.beginPath();
+            ctx.arc(endX, endY, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            return { x: endX, y: endY }; // Devolver la posición de la punta para colisiones
+        }
+    };
+
+    // Los Ítems (Monedas, rocas)
+    let items = [];
+
+    class Item {
+        constructor(x, y, type) {
+            this.x = x;
+            this.y = y;
+            this.type = type;
+            // Definir propiedades según el tipo (diferentes colores y valores)
+            if (type === 'coin') {
+                this.radius = 20;
+                this.value = 50;
+                this.color = '#00ffff'; // Cian brillante (en vez de oro)
+                this.weight = 1; // Ligero
+            } else if (type === 'rock') {
+                this.radius = 25;
+                this.value = 10;
+                this.color = '#8d6e63'; // Marrón cobrizo (en vez de gris)
+                this.weight = 3; // Pesado (sube lento)
+            } else if (type === 'gem') {
+                 this.radius = 15;
+                 this.value = 100;
+                 this.color = '#ff00ff'; // Magenta (muy valioso)
+                 this.weight = 1;
+            }
         }
 
-        function activarMeme(index) {
-            const memeElegido = listaDeMemes[index];
-            placeholderTxt.style.display = 'none';
+        draw() {
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fill();
             
-            // Cargar imagen
-            escenarioImg.src = memeElegido.gif;
-            escenarioImg.style.display = 'block';
-            tituloMemeBtn.innerText = memeElegido.nombre;
+            // Un pequeño brillo
+            ctx.fillStyle = 'rgba(255,255,255,0.3)';
+            ctx.beginPath();
+            ctx.arc(this.x - this.radius/3, this.y - this.radius/3, this.radius/4, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
 
-            // Cargar y tocar audio
-            audioPlayer.src = memeElegido.audio;
-            audioPlayer.volume = 1.0; 
-            audioPlayer.play().catch(e => console.log("Error de audio: " + e));
+    // Función para crear niveles aleatorios
+    function spawnItems() {
+        items = [];
+        // Crear 8 monedas
+        for (let i = 0; i < 8; i++) {
+            items.push(new Item(Math.random() * (canvas.width - 40) + 20, Math.random() * (canvas.height / 2) + canvas.height / 2 - 50, 'coin'));
+        }
+        // Crear 4 rocas
+        for (let i = 0; i < 4; i++) {
+            items.push(new Item(Math.random() * (canvas.width - 40) + 20, Math.random() * (canvas.height / 2) + canvas.height / 2 - 50, 'rock'));
+        }
+        // Crear 2 gemas
+        for (let i = 0; i < 2; i++) {
+             items.push(new Item(Math.random() * (canvas.width - 40) + 20, Math.random() * (canvas.height / 2) + canvas.height / 2 - 50, 'gem'));
+        }
+    }
+
+    // --- LÓGICA PRINCIPAL ---
+
+    // Detectar colisión entre la punta del gancho y un ítem
+    function checkCollision(clawTipX, clawTipY, item) {
+        const dx = clawTipX - item.x;
+        const dy = clawTipY - item.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        // Si la distancia es menor que el radio del ítem + un poco de margen
+        return distance < item.radius + 5;
+    }
+
+    // Bucle principal del juego
+    function gameLoop(timeStamp) {
+        // Calcular tiempo delta para el temporizador
+        let deltaTime = timeStamp - lastTime;
+        lastTime = timeStamp;
+
+        // 1. Limpiar pantalla (Fondo Azul Oscuro Espacial)
+        ctx.fillStyle = '#0a0a2a'; // Azul oscuro profundo
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Dibujar algunas estrellas simples
+        ctx.fillStyle = '#ffffff';
+        for(let i=0; i<30; i++) {
+             // Usamos una semilla simple basada en i para que las estrellas no se muevan
+            let starX = (Math.sin(i*123) * canvas.width + canvas.width) % canvas.width;
+            let starY = (Math.cos(i*456) * canvas.height + canvas.height) % canvas.height;
+            ctx.fillRect(starX, starY, 2, 2);
         }
 
-        function detenerTodo() {
-            audioPlayer.pause();
-            audioPlayer.currentTime = 0;
-            escenarioImg.style.display = 'none';
-            placeholderTxt.style.display = 'block';
-            tituloMemeBtn.innerText = "";
+
+        if (gameState === 'PLAYING') {
+            // Actualizar temporizador
+            if (deltaTime) { timeLeft -= deltaTime / 1000; }
+            if (timeLeft <= 0) {
+                timeLeft = 0;
+                gameState = 'GAMEOVER';
+            }
+
+            // 2. Actualizar objetos
+            claw.update();
+
+            // Si el gancho está disparando, verificar colisiones
+            if (claw.state === 'SHOOTING') {
+                let clawTipX = claw.x + claw.length * Math.cos(claw.angle);
+                let clawTipY = claw.y + claw.length * Math.sin(claw.angle);
+
+                for (let item of items) {
+                    if (checkCollision(clawTipX, clawTipY, item)) {
+                        claw.state = 'RETRACTING';
+                        claw.caughtItem = item;
+                        break; // Solo agarrar uno a la vez
+                    }
+                }
+            }
+            
+            // Si tenemos un ítem atrapado, moverlo con el gancho
+            if (claw.caughtItem) {
+                 claw.caughtItem.x = claw.x + claw.length * Math.cos(claw.angle);
+                 claw.caughtItem.y = claw.y + claw.length * Math.sin(claw.angle);
+            }
+
+            // Verificar si se acabaron los ítems para reiniciar el nivel
+            if (items.length === 0 && claw.state === 'SWINGING') {
+                spawnItems();
+            }
+
         }
 
-        // Iniciar
-        generarBotones();
-    </script>
+        // 3. Dibujar objetos
+        // Dibujar ítems (excepto el que está siendo atrapado, ese se dibuja al final sobre el gancho)
+        items.forEach(item => {
+            if (item !== claw.caughtItem) item.draw();
+        });
+        
+        // Dibujar gancho
+        claw.draw();
+
+        // Dibujar el ítem atrapado encima de la punta del gancho
+        if (claw.caughtItem) {
+             claw.caughtItem.draw();
+        }
+
+
+        // 4. Dibujar UI (Interfaz de usuario)
+        ctx.fillStyle = '#fff';
+        ctx.font = '20px Arial';
+        ctx.fillText('Puntos: ' + score, 20, 30);
+        ctx.fillText('Tiempo: ' + Math.ceil(timeLeft) + 's', canvas.width - 120, 30);
+
+        // Mensajes de estado
+        ctx.textAlign = 'center';
+        if (gameState === 'START') {
+            ctx.fillStyle = 'rgba(0,0,0,0.7)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00ffff';
+            ctx.font = '30px Arial';
+            ctx.fillText('MINERO ESPACIAL', canvas.width / 2, canvas.height / 2 - 20);
+            ctx.font = '20px Arial';
+            ctx.fillStyle = '#fff';
+            ctx.fillText('Toca para empezar a jugar', canvas.width / 2, canvas.height / 2 + 20);
+            ctx.fillText('Atrapa los orbes cian, evita las rocas pesadas', canvas.width / 2, canvas.height / 2 + 50);
+        } else if (gameState === 'GAMEOVER') {
+             ctx.fillStyle = 'rgba(0,0,0,0.7)';
+             ctx.fillRect(0, 0, canvas.width, canvas.height);
+             ctx.fillStyle = '#ff4500';
+             ctx.font = '40px Arial';
+             ctx.fillText('¡TIEMPO FUERA!', canvas.width / 2, canvas.height / 2);
+             ctx.fillStyle = '#fff';
+             ctx.font = '25px Arial';
+             ctx.fillText('Puntuación Final: ' + score, canvas.width / 2, canvas.height / 2 + 40);
+             ctx.font = '20px Arial';
+             ctx.fillText('Toca para reiniciar', canvas.width / 2, canvas.height / 2 + 80);
+        }
+        ctx.textAlign = 'left'; // Resetear alineación
+
+        requestAnimationFrame(gameLoop);
+    }
+
+    // --- CONTROL DEL JUGADOR ---
+    function handleInput(e) {
+        e.preventDefault(); // Evitar zoom o scroll en móviles
+
+        if (gameState === 'START') {
+            gameState = 'PLAYING';
+            score = 0;
+            timeLeft = 60;
+            spawnItems();
+            lastTime = performance.now();
+        } else if (gameState === 'PLAYING') {
+            // Solo disparar si está balanceándose
+            if (claw.state === 'SWINGING') {
+                claw.state = 'SHOOTING';
+            }
+        } else if (gameState === 'GAMEOVER') {
+             gameState = 'START';
+        }
+    }
+
+    // Escuchar clics del mouse y toques en pantalla
+    canvas.addEventListener('mousedown', handleInput);
+    canvas.addEventListener('touchstart', handleInput, { passive: false });
+
+    // Iniciar el juego
+    // spawnItems(); // Se llama al iniciar el juego desde el estado START
+    requestAnimationFrame(gameLoop);
+
+</script>
+
 </body>
-    </html>
+</html>
