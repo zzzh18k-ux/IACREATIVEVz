@@ -2,226 +2,316 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIP Shop Simulator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VIP Premium Hub</title>
     <style>
-        /* ESTILOS: Aquí definimos cómo se ve la app (Colores dorados y oscuros estilo VIP) */
+        /* --- ESTÉTICA APPLE PREMIUM --- */
+        :root {
+            --ios-bg: #000000;
+            --ios-card: #1c1c1e;
+            --ios-text: #f5f5f7;
+            --ios-blue: #0A84FF;
+            --ios-green: #30D158;
+            --ios-gold: #FFD700;
+            --ios-gold-grad: linear-gradient(135deg, #FFD700, #FFA500);
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #121212; /* Fondo oscuro */
-            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--ios-bg);
+            color: var(--ios-text);
             margin: 0;
             padding: 20px;
+            /* Espacio extra abajo para que la barra flotante no tape contenido */
+            padding-bottom: 120px; 
             text-align: center;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Tarjeta de Saldo */
+        h2, h3, h4 { margin-bottom: 10px; font-weight: 600; }
+        p { color: #aaa; font-size: 14px; margin: 5px 0; }
+
+        /* TARJETA PRINCIPAL DE SALDO */
         .balance-card {
-            background: linear-gradient(45deg, #FFD700, #DAA520);
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            color: #000;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            background: var(--ios-gold-grad);
+            padding: 30px 20px;
+            border-radius: 28px; /* Bordes muy redondeados estilo iOS */
+            margin-bottom: 30px;
+            color: #1c1c1e; /* Texto oscuro sobre fondo dorado */
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3); /* Sombra suave y lujosa */
+            position: relative;
+            overflow: hidden;
         }
 
-        h1, h2 { margin: 0; }
-        .money { font-size: 2.5em; font-weight: bold; }
+        /* Efecto de brillo sutil en la tarjeta */
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 60%);
+            transform: rotate(30deg);
+            pointer-events: none;
+        }
 
-        /* Sección de VIPs */
+        .money { font-size: 3.2em; font-weight: 700; letter-spacing: -1px; margin: 10px 0; }
+        .vip-badge {
+            background: rgba(0,0,0,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: inline-block;
+        }
+
+        /* SECCIÓN DE VIPS (Carrusel horizontal) */
         .vip-section {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             overflow-x: auto;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
+            padding: 10px 5px 25px 5px; /* Padding extra abajo para la sombra */
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
         }
+        /* Ocultar barra de scroll */
+        .vip-section::-webkit-scrollbar { display: none; }
 
         .vip-card {
-            background-color: #1e1e1e;
+            background-color: var(--ios-card);
+            border-radius: 24px;
+            padding: 20px;
+            min-width: 140px;
+            scroll-snap-align: center;
             border: 1px solid #333;
-            border-radius: 10px;
-            padding: 15px;
-            min-width: 120px;
-            opacity: 0.6;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            position: relative;
         }
 
         .vip-active {
-            border: 2px solid #FFD700; /* Borde dorado para el activo */
-            opacity: 1;
+            border: 2px solid var(--ios-gold);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            transform: scale(1.02); /* Ligeramente más grande */
         }
 
-        /* Botones de Acción */
+        /* BOTONES ESTILO APPLE */
         .btn {
             width: 100%;
-            padding: 15px;
+            padding: 16px;
             border: none;
-            border-radius: 10px;
+            border-radius: 50px; /* Forma de píldora */
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
-            margin-bottom: 10px;
-            transition: transform 0.1s;
+            transition: transform 0.2s, opacity 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-
-        .btn:active { transform: scale(0.98); }
-
-        .btn-task {
-            background-color: #4CAF50; /* Verde */
-            color: white;
-        }
-
-        .btn-ad {
-            background-color: #2196F3; /* Azul */
-            color: white;
-        }
+        .btn:active { transform: scale(0.96); opacity: 0.9; }
 
         .btn-buy {
-            background-color: #FFD700;
-            color: black;
-            margin-top: 5px;
+            background: var(--ios-gold-grad);
+            color: #1c1c1e;
+            margin-top: 15px;
+            font-size: 14px; padding: 12px;
+        }
+        .btn-ad {
+            background: linear-gradient(135deg, var(--ios-blue), #0055FF);
+            color: white;
+            margin-top: 20px;
+        }
+
+        /* --- BARRA FLOTANTE INFERIOR (La clave del diseño) --- */
+        .floating-action-bar {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            max-width: 400px;
+            z-index: 100;
+            
+            /* Efecto de vidrio esmerilado (Frosted Glass) muy Apple */
+            background: rgba(28, 28, 30, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            
+            padding: 15px;
+            border-radius: 35px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .btn-task-floating {
+            background: linear-gradient(135deg, var(--ios-green), #20c048);
+            color: white;
+            font-size: 18px;
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         /* Animación de carga */
         #loader {
             display: none;
-            margin-top: 20px;
-            color: #FFD700;
+            margin: 10px 0;
+            color: var(--ios-gold);
+            font-weight: 600;
         }
+        /* Pequeña animación de pulso para el loader */
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+        .pulsing { animation: pulse 1.5s infinite ease-in-out; }
 
     </style>
 </head>
 <body>
 
     <div class="balance-card">
-        <h2>Mi Saldo</h2>
+        <h3 style="opacity: 0.7; margin:0;">Balance Total</h3>
         <div class="money">$<span id="userBalance">1.00</span></div>
-        <p>Nivel Actual: <strong id="currentVip">Ninguno</strong></p>
+        <div class="vip-badge">
+            Status: <strong id="currentVip">Sin Membresía</strong>
+        </div>
     </div>
 
-    <h3>Nivele VIP</h3>
+    <h3 style="text-align: left; margin-left: 10px;">Membresías VIP</h3>
     <div class="vip-section">
         <div class="vip-card" id="vip1-card">
-            <h4>VIP 1</h4>
-            <p>Precio: $1.00</p>
-            <p>Gana: $0.50/tarea</p>
-            <button class="btn btn-buy" onclick="comprarVip(1, 1.00)">Comprar</button>
+            <div style="font-size: 30px;">💎</div>
+            <h4>VIP 1 (Inicio)</h4>
+            <p>Inversión: $1.00</p>
+            <p style="color: var(--ios-green);">Gana: $0.50 / pedido</p>
+            <button class="btn btn-buy" onclick="comprarVip(1, 1.00)">
+                Activar con Bono
+            </button>
         </div>
 
         <div class="vip-card" id="vip2-card">
-            <h4>VIP 2</h4>
-            <p>Precio: $10.00</p>
-            <p>Gana: $2.00/tarea</p>
-            <button class="btn btn-buy" onclick="comprarVip(2, 10.00)">Bloqueado</button>
+            <div style="font-size: 30px;">🚀</div>
+            <h4>VIP 2 (Pro)</h4>
+            <p>Inversión: $10.00</p>
+            <p style="color: var(--ios-green);">Gana: $2.00 / pedido</p>
+            <button class="btn btn-buy" style="background: #333; color: #777;" onclick="comprarVip(2, 10.00)">
+                Bloqueado
+            </button>
         </div>
+        
+         <div class="vip-card" style="opacity: 0.5;">
+             <div style="font-size: 30px;">👑</div>
+             <h4>VIP 3 (Elite)</h4>
+             <p>Inversión: $50.00</p>
+             <button class="btn btn-buy" style="background: #333; color: #777;" disabled>Pronto</button>
+         </div>
     </div>
 
-    <hr style="border-color: #333;">
 
-    <h3>Zona de Trabajo</h3>
-    <p style="color: gray; font-size: 0.9em;">Simula el envío de pedidos para ganar comisión.</p>
-    
-    <button class="btn btn-task" id="taskBtn" onclick="hacerTarea()">
-        📦 Enviar Pedido (Hacer Tarea)
-    </button>
-
-    <div id="loader">
-        <p>🔄 Procesando compra con el proveedor...</p>
-        <p>⏳ Espere por favor...</p>
+    <div style="margin-top: 30px; padding: 20px; background: var(--ios-card); border-radius: 24px;">
+        <h3>Recargar Saldo Gratis</h3>
+        <p>Ve un video corto para ganar saldo y subir de nivel.</p>
+        <button class="btn btn-ad" onclick="verAnuncio()">
+            📺 Ver Video (+ $0.50)
+        </button>
     </div>
 
-    <hr style="border-color: #333;">
 
-    <h3>Recargar Saldo</h3>
-    <button class="btn btn-ad" onclick="verAnuncio()">
-        📺 Ver Anuncio (+ $0.50)
-    </button>
+    <div class="floating-action-bar">
+        <div id="loader" class="pulsing">
+            ⏳ Procesando pedido en la blockchain...
+        </div>
+
+        <button class="btn btn-task-floating" id="taskBtn" onclick="hacerTarea()">
+            <span>📦</span> Enviar Pedido Diario
+        </button>
+    </div>
+
 
     <script>
-        // Variables iniciales del usuario
-        let saldo = 1.00; // Iniciamos con el bono de regalo
-        let nivelVip = 0; // 0 significa sin VIP
+        let saldo = 1.00; // Bono inicial
+        let nivelVip = 0;
         let gananciaPorTarea = 0;
 
-        // Actualizamos la pantalla al iniciar
         actualizarPantalla();
 
         // --- FUNCIÓN 1: COMPRAR VIP ---
         function comprarVip(nivel, costo) {
             if (nivelVip >= nivel) {
-                alert("Ya tienes este VIP o uno superior.");
-                return;
+                alert("¡Ya tienes este nivel activo!"); return;
             }
-
             if (saldo >= costo) {
-                // Restamos el costo
-                saldo = saldo - costo;
+                saldo -= costo;
                 nivelVip = nivel;
-                
-                // Definimos cuánto gana según el VIP
                 if (nivel === 1) gananciaPorTarea = 0.50;
                 if (nivel === 2) gananciaPorTarea = 2.00;
-
-                alert("¡Felicidades! Has adquirido el VIP " + nivel);
+                
+                // Feedback visual más premium (vibración si es móvil)
+                if(navigator.vibrate) navigator.vibrate(200);
+                alert("🎉 ¡VIP " + nivel + " Activado con éxito!");
                 actualizarPantalla();
             } else {
-                alert("Saldo insuficiente. Ve anuncios para recargar.");
+                alert("❌ Saldo insuficiente. Ve videos para recargar.");
             }
         }
 
         // --- FUNCIÓN 2: HACER LA TAREA (SIMULACIÓN) ---
         function hacerTarea() {
             if (nivelVip === 0) {
-                alert("Necesitas comprar el VIP 1 primero (Usa tu bono de $1).");
-                return;
+                alert("⚠️ Debes activar el VIP 1 primero usando tu bono."); return;
             }
 
-            // Ocultar botón y mostrar carga
-            document.getElementById('taskBtn').style.display = 'none';
-            document.getElementById('loader').style.display = 'block';
+            const btn = document.getElementById('taskBtn');
+            const loader = document.getElementById('loader');
 
-            // Esperar 3 segundos simulando el "envío de pedido"
+            // Ocultar botón, mostrar loader en la barra flotante
+            btn.style.display = 'none';
+            loader.style.display = 'block';
+            
+             if(navigator.vibrate) navigator.vibrate(50); // Pequeña vibración al iniciar
+
+            // Simulación de 3 segundos
             setTimeout(() => {
-                saldo = saldo + gananciaPorTarea;
+                saldo += gananciaPorTarea;
                 
-                // Volver a la normalidad
-                document.getElementById('taskBtn').style.display = 'block';
-                document.getElementById('loader').style.display = 'none';
+                btn.style.display = 'flex'; // Regresar a flex para que se centre el icono
+                loader.style.display = 'none';
                 
-                alert("✅ Pedido completado. Comisión recibida.");
+                if(navigator.vibrate) navigator.vibrate([100, 50, 100]); // Doble vibración al terminar
+                alert("✅ ¡Comisión de $" + gananciaPorTarea.toFixed(2) + " recibida!");
                 actualizarPantalla();
-            }, 3000); // 3000 milisegundos = 3 segundos
+            }, 3000);
         }
 
-        // --- FUNCIÓN 3: VER ANUNCIO (SIMULADO) ---
+        // --- FUNCIÓN 3: VER ANUNCIO ---
         function verAnuncio() {
-            // AQUI IRÍA EL CÓDIGO REAL DE ADSGRAM O MONETAG
-            // Por ahora, solo simulamos que vio el anuncio
-            alert("Simulando anuncio de Monetag/Adsgram...");
-            
-            saldo = saldo + 0.50; // Le damos 50 centavos por ver anuncio
-            alert("Gracias por ver el anuncio. Se añadieron $0.50 a tu saldo.");
+            alert("🎬 Simulando anuncio publicitario (Monetag/Adsgram)...");
+            saldo += 0.50;
             actualizarPantalla();
         }
 
-        // --- FUNCIÓN AUXILIAR: ACTUALIZAR PANTALLA ---
+        // --- ACTUALIZAR VISUAL ---
         function actualizarPantalla() {
-            // Mostrar saldo con 2 decimales
             document.getElementById('userBalance').innerText = saldo.toFixed(2);
             
-            // Mostrar nivel actual
             if (nivelVip > 0) {
-                document.getElementById('currentVip').innerText = "VIP " + nivelVip;
+                document.getElementById('currentVip').innerText = "VIP " + nivelVip + " Activo";
+                document.getElementById('currentVip').style.color = "#1c1c1e";
             } else {
-                document.getElementById('currentVip').innerText = "Ninguno";
+                document.getElementById('currentVip').innerText = "Sin Membresía";
+                 document.getElementById('currentVip').style.color = "#555";
             }
 
-            // Estilos visuales de las tarjetas VIP
             if (nivelVip >= 1) {
-                document.getElementById('vip1-card').classList.add('vip-active');
-                document.getElementById('vip1-card').querySelector('button').innerText = "Comprado";
+                const vip1 = document.getElementById('vip1-card');
+                vip1.classList.add('vip-active');
+                vip1.querySelector('button').innerText = "✅ Activado";
+                vip1.querySelector('button').style.background = "transparent";
+                 vip1.querySelector('button').style.border = "1px solid #FFD700";
+                 vip1.querySelector('button').style.color = "#FFD700";
+                 vip1.querySelector('button').disabled = true;
             }
         }
     </script>
 </body>
-</html>
+        </html>
