@@ -2,316 +2,412 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VIP Premium Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TG Ad Master Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
     <style>
-        /* --- ESTÉTICA APPLE PREMIUM --- */
         :root {
-            --ios-bg: #000000;
-            --ios-card: #1c1c1e;
-            --ios-text: #f5f5f7;
-            --ios-blue: #0A84FF;
-            --ios-green: #30D158;
-            --ios-gold: #FFD700;
-            --ios-gold-grad: linear-gradient(135deg, #FFD700, #FFA500);
+            --bg-color: #0f0f0f;
+            --card-bg: #1c1c1e;
+            --tg-blue: #3390ec;
+            --tg-bg-msg: #212121;
+            --text-color: #ffffff;
+            --text-secondary: #aaaaaa;
+            --accent-gradient: linear-gradient(135deg, #3390ec, #0088cc);
         }
 
+        * { box-sizing: border-box; transition: all 0.3s ease; }
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--ios-bg);
-            color: var(--ios-text);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 20px;
-            /* Espacio extra abajo para que la barra flotante no tape contenido */
-            padding-bottom: 120px; 
-            text-align: center;
-            -webkit-font-smoothing: antialiased;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
         }
 
-        h2, h3, h4 { margin-bottom: 10px; font-weight: 600; }
-        p { color: #aaa; font-size: 14px; margin: 5px 0; }
+        .container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
-        /* TARJETA PRINCIPAL DE SALDO */
-        .balance-card {
-            background: var(--ios-gold-grad);
-            padding: 30px 20px;
-            border-radius: 28px; /* Bordes muy redondeados estilo iOS */
-            margin-bottom: 30px;
-            color: #1c1c1e; /* Texto oscuro sobre fondo dorado */
-            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3); /* Sombra suave y lujosa */
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .lang-select {
+            background: #2c2c2e;
+            border: 1px solid #3a3a3c;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* Cards & Inputs */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #2c2c2e;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        .input-group { position: relative; margin-bottom: 15px; }
+        .input-group:last-child { margin-bottom: 0; }
+
+        label {
+            display: block;
+            color: var(--tg-blue);
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        textarea, input {
+            width: 100%;
+            background: #121212;
+            border: 1px solid #333;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        textarea:focus, input:focus {
+            border-color: var(--tg-blue);
+            box-shadow: 0 0 0 2px rgba(51, 144, 236, 0.2);
+        }
+
+        /* Telegram Preview Area */
+        .preview-area {
             position: relative;
+            background-image: url('https://web.telegram.org/img/bg_0.png'); /* Fondo patrón Telegram opcional */
+            background-size: cover;
+            background-color: #0e1621;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid #2c2c2e;
             overflow: hidden;
         }
 
-        /* Efecto de brillo sutil en la tarjeta */
-        .balance-card::before {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 60%);
-            transform: rotate(30deg);
-            pointer-events: none;
-        }
-
-        .money { font-size: 3.2em; font-weight: 700; letter-spacing: -1px; margin: 10px 0; }
-        .vip-badge {
-            background: rgba(0,0,0,0.2);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
+        .tg-message-bubble {
+            background: var(--tg-bg-msg);
+            border-radius: 12px 12px 12px 0;
+            padding: 8px 10px 8px 12px;
+            max-width: 90%;
+            position: relative;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.3);
             display: inline-block;
+            min-width: 200px;
         }
 
-        /* SECCIÓN DE VIPS (Carrusel horizontal) */
-        .vip-section {
+        .tg-channel-name {
+            color: var(--tg-blue);
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .tg-text {
+            font-size: 15px;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* Markdown Styles in Preview */
+        .tg-text b { font-weight: 700; }
+        .tg-text i { font-style: italic; }
+        .tg-text code { background: #2b2b2b; padding: 2px 4px; border-radius: 4px; font-family: monospace; color: #5eb5f7; }
+        .tg-text a { color: var(--tg-blue); text-decoration: none; }
+
+        .tg-meta {
+            float: right;
+            font-size: 11px;
+            color: #666;
+            margin-top: 6px;
+            margin-left: 10px;
             display: flex;
-            gap: 15px;
-            overflow-x: auto;
-            padding: 10px 5px 25px 5px; /* Padding extra abajo para la sombra */
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+            align-items: center;
+            gap: 3px;
         }
-        /* Ocultar barra de scroll */
-        .vip-section::-webkit-scrollbar { display: none; }
 
-        .vip-card {
-            background-color: var(--ios-card);
-            border-radius: 24px;
-            padding: 20px;
-            min-width: 140px;
-            scroll-snap-align: center;
-            border: 1px solid #333;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
+        .tg-inline-btn {
+            display: block;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 8px;
+            cursor: pointer;
+            text-decoration: none;
             position: relative;
         }
+        
+        .tg-inline-btn i { font-size: 10px; position: absolute; top: 5px; right: 5px; opacity: 0.5; }
 
-        .vip-active {
-            border: 2px solid var(--ios-gold);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-            transform: scale(1.02); /* Ligeramente más grande */
-        }
-
-        /* BOTONES ESTILO APPLE */
+        /* Actions */
+        .action-buttons { display: flex; gap: 10px; margin-top: 10px; }
+        
         .btn {
-            width: 100%;
-            padding: 16px;
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
             border: none;
-            border-radius: 50px; /* Forma de píldora */
-            font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 14px;
             cursor: pointer;
-            transition: transform 0.2s, opacity 0.2s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        .btn:active { transform: scale(0.96); opacity: 0.9; }
-
-        .btn-buy {
-            background: var(--ios-gold-grad);
-            color: #1c1c1e;
-            margin-top: 15px;
-            font-size: 14px; padding: 12px;
-        }
-        .btn-ad {
-            background: linear-gradient(135deg, var(--ios-blue), #0055FF);
-            color: white;
-            margin-top: 20px;
-        }
-
-        /* --- BARRA FLOTANTE INFERIOR (La clave del diseño) --- */
-        .floating-action-bar {
-            position: fixed;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 85%;
-            max-width: 400px;
-            z-index: 100;
-            
-            /* Efecto de vidrio esmerilado (Frosted Glass) muy Apple */
-            background: rgba(28, 28, 30, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            
-            padding: 15px;
-            border-radius: 35px;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
             display: flex;
-            flex-direction: column;
             align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
-        .btn-task-floating {
-            background: linear-gradient(135deg, var(--ios-green), #20c048);
+        .btn-primary {
+            background: var(--accent-gradient);
             color: white;
-            font-size: 18px;
-            padding: 18px;
+            box-shadow: 0 4px 15px rgba(51, 144, 236, 0.4);
+        }
+        
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(51, 144, 236, 0.6); }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #333;
+            color: var(--text-secondary);
+        }
+        
+        .btn-secondary:hover { border-color: white; color: white; background: rgba(255,255,255,0.05); }
+
+        /* Toast Notification */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 50px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            font-size: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
         }
 
-        /* Animación de carga */
-        #loader {
-            display: none;
-            margin: 10px 0;
-            color: var(--ios-gold);
-            font-weight: 600;
-        }
-        /* Pequeña animación de pulso para el loader */
-        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
-        .pulsing { animation: pulse 1.5s infinite ease-in-out; }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
 
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
     </style>
 </head>
 <body>
 
-    <div class="balance-card">
-        <h3 style="opacity: 0.7; margin:0;">Balance Total</h3>
-        <div class="money">$<span id="userBalance">1.00</span></div>
-        <div class="vip-badge">
-            Status: <strong id="currentVip">Sin Membresía</strong>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <i class="fab fa-telegram-plane"></i> AdMaster
+            </div>
+            <select class="lang-select" id="langSelector" onchange="changeLanguage()">
+                <option value="es">Español</option>
+                <option value="en">English</option>
+                <option value="pt">Português</option>
+            </select>
         </div>
-    </div>
 
-    <h3 style="text-align: left; margin-left: 10px;">Membresías VIP</h3>
-    <div class="vip-section">
-        <div class="vip-card" id="vip1-card">
-            <div style="font-size: 30px;">💎</div>
-            <h4>VIP 1 (Inicio)</h4>
-            <p>Inversión: $1.00</p>
-            <p style="color: var(--ios-green);">Gana: $0.50 / pedido</p>
-            <button class="btn btn-buy" onclick="comprarVip(1, 1.00)">
-                Activar con Bono
+        <div class="card">
+            <label id="lbl-editor"><i class="fas fa-pen"></i> Contenido</label>
+            <textarea id="msgInput" rows="4" placeholder="Escribe tu mensaje aquí..." oninput="updatePreview()">🔥 **OFERTA VIP**&#10;Únete hoy mismo al mejor canal.&#10;&#10;`Código: DESCUENTO20`</textarea>
+            
+            <div style="margin-top: 15px;">
+                <label id="lbl-btn"><i class="fas fa-link"></i> Botón de Acción</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="btnText" placeholder="Texto del Botón" value="💎 UNIRSE AHORA" oninput="updatePreview()">
+                    <input type="text" id="btnUrl" placeholder="https://t.me/..." value="https://t.me/telegram" oninput="updatePreview()">
+                </div>
+            </div>
+        </div>
+
+        <div class="preview-area">
+            <div class="tg-message-bubble">
+                <div class="tg-channel-name">Mi Canal VIP</div>
+                <div id="p-text" class="tg-text"></div>
+                <div class="tg-meta">
+                    <span id="timeDisplay">16:20</span>
+                    <i class="fas fa-check"></i>
+                </div>
+            </div>
+            <a href="#" id="p-btn" class="tg-inline-btn" target="_blank">
+                <i class="fas fa-external-link-alt"></i>
+                <span></span>
+            </a>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-secondary" id="btn-share" onclick="shareLink()">
+                <i class="fas fa-share-alt"></i>
+            </button>
+            <button class="btn btn-primary" id="btn-copy" onclick="copiarComando()">
+                <i class="fas fa-copy"></i> <span id="txt-copy">COPIAR MD</span>
             </button>
         </div>
-
-        <div class="vip-card" id="vip2-card">
-            <div style="font-size: 30px;">🚀</div>
-            <h4>VIP 2 (Pro)</h4>
-            <p>Inversión: $10.00</p>
-            <p style="color: var(--ios-green);">Gana: $2.00 / pedido</p>
-            <button class="btn btn-buy" style="background: #333; color: #777;" onclick="comprarVip(2, 10.00)">
-                Bloqueado
-            </button>
-        </div>
-        
-         <div class="vip-card" style="opacity: 0.5;">
-             <div style="font-size: 30px;">👑</div>
-             <h4>VIP 3 (Elite)</h4>
-             <p>Inversión: $50.00</p>
-             <button class="btn btn-buy" style="background: #333; color: #777;" disabled>Pronto</button>
-         </div>
     </div>
 
-
-    <div style="margin-top: 30px; padding: 20px; background: var(--ios-card); border-radius: 24px;">
-        <h3>Recargar Saldo Gratis</h3>
-        <p>Ve un video corto para ganar saldo y subir de nivel.</p>
-        <button class="btn btn-ad" onclick="verAnuncio()">
-            📺 Ver Video (+ $0.50)
-        </button>
-    </div>
-
-
-    <div class="floating-action-bar">
-        <div id="loader" class="pulsing">
-            ⏳ Procesando pedido en la blockchain...
-        </div>
-
-        <button class="btn btn-task-floating" id="taskBtn" onclick="hacerTarea()">
-            <span>📦</span> Enviar Pedido Diario
-        </button>
-    </div>
-
+    <div id="toast"><i class="fas fa-check-circle" style="color: var(--tg-blue)"></i> <span id="toast-msg">Copiado</span></div>
 
     <script>
-        let saldo = 1.00; // Bono inicial
-        let nivelVip = 0;
-        let gananciaPorTarea = 0;
-
-        actualizarPantalla();
-
-        // --- FUNCIÓN 1: COMPRAR VIP ---
-        function comprarVip(nivel, costo) {
-            if (nivelVip >= nivel) {
-                alert("¡Ya tienes este nivel activo!"); return;
+        // Configuración de Idiomas
+        const translations = {
+            es: { 
+                lblEditor: "Contenido", 
+                lblBtn: "Botón de Acción", 
+                txtCopy: "COPIAR MD", 
+                alert: "¡Copiado al portapapeles!",
+                placeholderMsg: "Escribe tu mensaje...",
+                placeholderBtn: "Texto Botón"
+            },
+            en: { 
+                lblEditor: "Content", 
+                lblBtn: "Action Button", 
+                txtCopy: "COPY MD", 
+                alert: "Copied to clipboard!",
+                placeholderMsg: "Type your message...",
+                placeholderBtn: "Button Text"
+            },
+            pt: { 
+                lblEditor: "Conteúdo", 
+                lblBtn: "Botão de Ação", 
+                txtCopy: "COPIAR MD", 
+                alert: "Copiado para a área de transferência!",
+                placeholderMsg: "Digite sua mensagem...",
+                placeholderBtn: "Texto do Botão"
             }
-            if (saldo >= costo) {
-                saldo -= costo;
-                nivelVip = nivel;
-                if (nivel === 1) gananciaPorTarea = 0.50;
-                if (nivel === 2) gananciaPorTarea = 2.00;
-                
-                // Feedback visual más premium (vibración si es móvil)
-                if(navigator.vibrate) navigator.vibrate(200);
-                alert("🎉 ¡VIP " + nivel + " Activado con éxito!");
-                actualizarPantalla();
-            } else {
-                alert("❌ Saldo insuficiente. Ve videos para recargar.");
-            }
+        };
+
+        // Función para renderizar Markdown básico en HTML para la vista previa
+        function parseMarkdown(text) {
+            let html = text
+                // Escapar HTML para seguridad
+                .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                // Negrita **text**
+                .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                // Cursiva __text__
+                .replace(/__(.*?)__/g, '<i>$1</i>')
+                // Monospaced `text`
+                .replace(/`(.*?)`/g, '<code>$1</code>')
+                // Saltos de línea
+                .replace(/\n/g, '<br>');
+            return html;
         }
 
-        // --- FUNCIÓN 2: HACER LA TAREA (SIMULACIÓN) ---
-        function hacerTarea() {
-            if (nivelVip === 0) {
-                alert("⚠️ Debes activar el VIP 1 primero usando tu bono."); return;
-            }
+        function updatePreview() {
+            const rawText = document.getElementById('msgInput').value;
+            const btnText = document.getElementById('btnText').value;
+            const btnUrl = document.getElementById('btnUrl').value;
 
-            const btn = document.getElementById('taskBtn');
-            const loader = document.getElementById('loader');
-
-            // Ocultar botón, mostrar loader en la barra flotante
-            btn.style.display = 'none';
-            loader.style.display = 'block';
+            // Actualizar texto con markdown renderizado
+            document.getElementById('p-text').innerHTML = parseMarkdown(rawText);
             
-             if(navigator.vibrate) navigator.vibrate(50); // Pequeña vibración al iniciar
-
-            // Simulación de 3 segundos
-            setTimeout(() => {
-                saldo += gananciaPorTarea;
-                
-                btn.style.display = 'flex'; // Regresar a flex para que se centre el icono
-                loader.style.display = 'none';
-                
-                if(navigator.vibrate) navigator.vibrate([100, 50, 100]); // Doble vibración al terminar
-                alert("✅ ¡Comisión de $" + gananciaPorTarea.toFixed(2) + " recibida!");
-                actualizarPantalla();
-            }, 3000);
-        }
-
-        // --- FUNCIÓN 3: VER ANUNCIO ---
-        function verAnuncio() {
-            alert("🎬 Simulando anuncio publicitario (Monetag/Adsgram)...");
-            saldo += 0.50;
-            actualizarPantalla();
-        }
-
-        // --- ACTUALIZAR VISUAL ---
-        function actualizarPantalla() {
-            document.getElementById('userBalance').innerText = saldo.toFixed(2);
+            // Actualizar botón
+            const btnEl = document.getElementById('p-btn');
+            const btnSpan = btnEl.querySelector('span');
             
-            if (nivelVip > 0) {
-                document.getElementById('currentVip').innerText = "VIP " + nivelVip + " Activo";
-                document.getElementById('currentVip').style.color = "#1c1c1e";
+            if (btnText.trim() === "") {
+                btnEl.style.display = "none";
             } else {
-                document.getElementById('currentVip').innerText = "Sin Membresía";
-                 document.getElementById('currentVip').style.color = "#555";
+                btnEl.style.display = "block";
+                btnSpan.innerText = btnText;
+                btnEl.href = btnUrl;
             }
 
-            if (nivelVip >= 1) {
-                const vip1 = document.getElementById('vip1-card');
-                vip1.classList.add('vip-active');
-                vip1.querySelector('button').innerText = "✅ Activado";
-                vip1.querySelector('button').style.background = "transparent";
-                 vip1.querySelector('button').style.border = "1px solid #FFD700";
-                 vip1.querySelector('button').style.color = "#FFD700";
-                 vip1.querySelector('button').disabled = true;
-            }
+            // Actualizar hora actual
+            const now = new Date();
+            document.getElementById('timeDisplay').innerText = 
+                now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
         }
+
+        function changeLanguage() {
+            const lang = document.getElementById('langSelector').value;
+            const t = translations[lang];
+            
+            document.getElementById('lbl-editor').innerHTML = `<i class="fas fa-pen"></i> ${t.lblEditor}`;
+            document.getElementById('lbl-btn').innerHTML = `<i class="fas fa-link"></i> ${t.lblBtn}`;
+            document.getElementById('txt-copy').innerText = t.txtCopy;
+            
+            document.getElementById('msgInput').placeholder = t.placeholderMsg;
+            document.getElementById('btnText').placeholder = t.placeholderBtn;
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            document.getElementById("toast-msg").innerText = message;
+            toast.className = "show";
+            setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+        function copiarComando() {
+            const lang = document.getElementById('langSelector').value;
+            const msg = document.getElementById('msgInput').value;
+            const btnTxt = document.getElementById('btnText').value;
+            const btnLink = document.getElementById('btnUrl').value;
+
+            // Formato Markdown estándar para bots
+            let res = msg;
+            if(btnTxt && btnLink) {
+                // Formato de botón inline común en bots [Texto](URL)
+                res += `\n\n[${btnTxt}](${btnLink})`;
+            }
+
+            navigator.clipboard.writeText(res).then(() => {
+                showToast(translations[lang].alert);
+            });
+        }
+
+        function shareLink() {
+             const msg = document.getElementById('msgInput').value;
+             const url = `https://t.me/share/url?url=${encodeURIComponent(msg)}`;
+             window.open(url, '_blank');
+        }
+
+        // Inicializar
+        updatePreview();
     </script>
 </body>
-        </html>
+    </html>
