@@ -1,80 +1,96 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>IA GOLD STUDIO</title>
+    <title>IA LOGO STUDIO PRO</title>
     
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
     
     <style>
-        body { background: #000; color: #d4af37; font-family: 'Courier New', monospace; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .panel { background: #111; border: 2px solid #d4af37; border-radius: 10px; padding: 20px; width: 100%; max-width: 400px; box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); }
-        h1 { font-size: 18px; text-align: center; text-transform: uppercase; margin-bottom: 20px; }
-        textarea { width: 100%; height: 80px; background: #000; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 5px; outline: none; margin-bottom: 20px; }
-        .btn-gold { background: #d4af37; color: #000; border: none; width: 100%; padding: 15px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-        #loader { display: none; margin: 20px 0; text-align: center; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
-        #resultado { width: 100%; margin-top: 20px; border: 1px solid #d4af37; display: none; }
+        body { 
+            background: #000; color: #fff; font-family: 'Helvetica', sans-serif; 
+            margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; 
+        }
+        /* Diseño "Stealth" (Plata y Negro) */
+        .card-pro {
+            background: #0a0a0a; border: 1px solid #222; border-radius: 12px;
+            padding: 25px; width: 100%; max-width: 400px;
+            box-shadow: 0 0 30px rgba(255,255,255,0.05);
+        }
+        h2 { font-size: 16px; letter-spacing: 3px; color: #aaa; text-align: center; margin-bottom: 25px; }
+        
+        textarea { 
+            width: 100%; height: 100px; background: #000; border: 1px solid #333;
+            color: #fff; border-radius: 8px; padding: 12px; font-size: 15px;
+            outline: none; margin-bottom: 20px;
+        }
+        textarea:focus { border-color: #fff; }
+
+        .btn-black { 
+            background: #fff; color: #000; border: none; padding: 18px;
+            width: 100%; border-radius: 8px; font-weight: bold; font-size: 14px;
+            cursor: pointer; text-transform: uppercase; letter-spacing: 2px;
+        }
+
+        #loader { display: none; margin: 20px 0; font-size: 12px; color: #666; text-align: center; }
+        #resultado { width: 100%; border-radius: 8px; margin-top: 20px; display: none; border: 1px solid #222; }
     </style>
 </head>
 <body>
 
-    <div class="panel">
-        <h1>Gold IA Engine</h1>
-        <textarea id="prompt" placeholder="SISTEMA LISTO... INSERTE PROMPT"></textarea>
-        <button class="btn-gold" onclick="ejecutarTodo()">[ EJECUTAR SISTEMA ]</button>
-        <div id="loader">PROCESANDO DATOS...</div>
-        <img id="resultado">
+    <div class="card-pro">
+        <h2>LOGO STUDIO AI</h2>
+        <textarea id="prompt" placeholder="Describe tu logo o idea (ej: Logo circular de una panadería, estilo minimalista, fondo negro)"></textarea>
+        
+        <button class="btn-black" onclick="iniciarGeneracion()">[ GENERAR DISEÑO ]</button>
+
+        <div id="loader">PROCESANDO IA INTELIGENTE...</div>
+        <img id="resultado" src="">
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        function ejecutarTodo() {
+        function iniciarGeneracion() {
             const prompt = document.getElementById('prompt').value;
             if(prompt.length < 3) return;
 
-            // PRIMERO: Intentar AdsGram (sin que el error bloquee nada)
+            // Manejo de AdsGram sin errores visuales
             const AdController = window.Adsgram.init({ blockId: "18897" });
             
             AdController.show()
-                .then(() => { generarImagen(prompt); })
-                .catch(() => { 
-                    console.log("Ad falló, pero seguimos..."); 
-                    generarImagen(prompt); 
-                });
+                .then(() => { llamarIA(prompt); })
+                .catch(() => { llamarIA(prompt); }); // Si no hay ads, sigue sin avisar
         }
 
-        function generarImagen(txt) {
+        function llamarIA(txt) {
             const loader = document.getElementById('loader');
             const img = document.getElementById('resultado');
             loader.style.display = "block";
             img.style.display = "none";
 
-            // BYPASS DE BLOQUEO AMARILLO:
-            // Usamos un proveedor de imágenes diferente (Image.Pollinations a través de Cloudflare bypass)
-            const randomSeed = Math.floor(Math.random() * 1000000);
+            // Usamos semillas muy largas y parámetros de sesión para evitar el aviso amarillo
+            const bigSeed = Math.floor(Math.random() * 1000000000);
+            const session = "sess_" + Date.now();
             
-            // Cambiamos 'pollinations.ai' por 'image.pollinations.ai' con modelo turbo forzado
-            // y añadimos un parámetro de "nologo" para reducir peso de carga
-            const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(txt)}?seed=${randomSeed}&width=512&height=512&nologo=true&model=turbo&enhance=false`;
+            // VOLVEMOS AL MODELO INTELIGENTE (Flux) para logos y detalles
+            const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(txt)}?seed=${bigSeed}&width=1024&height=1024&nologo=true&model=flux&session=${session}`;
 
             img.src = url;
             
             img.onload = () => {
                 loader.style.display = "none";
                 img.style.display = "block";
-                tg.HapticFeedback.impactOccurred('heavy');
+                tg.HapticFeedback.notificationOccurred('success');
             };
 
-            // Si falla y sale la imagen amarilla o error, usamos el último recurso: 
-            // Un servidor de respaldo que no es Pollinations
             img.onerror = () => {
-                img.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(txt)}?seed=${randomSeed}&model=flux`;
+                // Si sale error amarillo, intentamos con el modelo turbo como respaldo
+                img.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(txt)}?seed=${bigSeed}&model=turbo`;
             };
         }
     </script>
