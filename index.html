@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>IA Studio Elite PRO</title>
+    <title>IA Studio Elite GOLD</title>
     
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
     
     <style>
         :root {
@@ -34,77 +35,73 @@
 
         .badge-credits {
             background: var(--ios-card);
-            padding: 8px 18px; border-radius: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            font-weight: 700; color: var(--ios-accent);
+            padding: 10px 20px; border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            font-weight: 800; color: var(--ios-accent);
+            font-size: 18px;
         }
 
         .container {
             width: 100%; max-width: 400px;
             background: var(--ios-card);
-            border-radius: 24px; padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border-radius: 28px; padding: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.03);
             box-sizing: border-box;
             text-align: center;
         }
 
         textarea {
-            width: 100%; border: none; background: #F9F9F9;
-            border-radius: 16px; padding: 16px; font-size: 17px;
+            width: 100%; border: none; background: #F3F3F3;
+            border-radius: 18px; padding: 18px; font-size: 17px;
             margin-bottom: 20px; resize: none; outline: none; font-family: inherit;
-            border: 1px solid transparent;
         }
-        textarea:focus { border: 1px solid var(--ios-accent); }
 
         .btn {
-            width: 100%; padding: 16px; border-radius: 14px;
-            font-size: 17px; font-weight: 600; border: none;
+            width: 100%; padding: 18px; border-radius: 16px;
+            font-size: 17px; font-weight: 700; border: none;
             cursor: pointer; transition: all 0.2s ease;
             margin-bottom: 12px; display: flex; justify-content: center; align-items: center;
         }
 
         .btn-main { background-color: var(--ios-accent); color: white; }
-        .btn-main:active { opacity: 0.8; transform: scale(0.98); }
+        .btn-main:active { transform: scale(0.97); }
 
         .btn-ads { background-color: #E5E5EA; color: var(--ios-accent); }
 
         .btn-download {
             background-color: var(--ios-green);
-            color: white;
-            display: none;
-            margin-top: 15px;
+            color: white; display: none; margin-top: 15px;
         }
 
         /* BARRA DE PROGRESO */
         #progress-container { display: none; margin: 20px 0; }
-        .progress-text { font-size: 13px; color: var(--ios-secondary); margin-bottom: 8px; font-weight: 500; }
-        .progress-bar-bg { width: 100%; height: 6px; background: #E5E5EA; border-radius: 10px; overflow: hidden; }
+        .progress-text { font-size: 13px; color: var(--ios-secondary); margin-bottom: 8px; }
+        .progress-bar-bg { width: 100%; height: 8px; background: #E5E5EA; border-radius: 10px; overflow: hidden; }
         .progress-bar-fill { width: 0%; height: 100%; background: var(--ios-accent); transition: width 0.4s ease; }
         
         .result-wrapper {
-            margin-top: 20px; width: 100%; border-radius: 20px;
-            overflow: hidden; display: none; box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            border: 1px solid #eee;
+            margin-top: 20px; width: 100%; border-radius: 24px;
+            overflow: hidden; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
-        #resultado { width: 100%; display: block; background: #fff; }
+        #resultado { width: 100%; display: block; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1 style="font-size: 26px; font-weight: 700;">Studio Elite</h1>
-        <div class="badge-credits">⚡ <span id="val-creditos">3</span></div>
+        <h1 style="font-size: 24px; font-weight: 800;">Elite Studio</h1>
+        <div class="badge-credits">⚡ <span id="val-creditos">1000</span></div>
     </div>
 
     <div class="container">
-        <textarea id="prompt" rows="3" placeholder="Escribe tu idea aquí..."></textarea>
+        <textarea id="prompt" rows="3" placeholder="¿Qué vamos a crear hoy?"></textarea>
         
-        <button class="btn btn-main" id="btn-gen" onclick="iniciarGeneracion()">Generar Imagen</button>
-        <button class="btn btn-ads" onclick="accionAnuncio()">Obtener Energía</button>
+        <button class="btn btn-main" id="btn-gen" onclick="verificarYGenerar()">✨ Generar (-10⚡)</button>
+        <button class="btn btn-ads" onclick="accionAnuncio()">📺 +100 Energía Gratis</button>
 
         <div id="progress-container">
-            <div class="progress-text" id="status-text">Conectando con el satélite...</div>
+            <div class="progress-text" id="status-text">Iniciando motores de IA...</div>
             <div class="progress-bar-bg">
                 <div class="progress-bar-fill" id="progress-fill"></div>
             </div>
@@ -115,7 +112,7 @@
         </div>
 
         <button class="btn btn-download" id="btn-descarga" onclick="descargarImagen()">
-            ⬇️ Descargar en Galería
+            ⬇️ Descargar Masterpiece
         </button>
     </div>
 
@@ -124,33 +121,55 @@
         tg.expand();
         tg.setHeaderColor("#F2F2F7");
 
-        let creditos = localStorage.getItem('user_creds_pro') ? parseInt(localStorage.getItem('user_creds_pro')) : 3;
+        // --- 1. BIENVENIDA DE 1000 ENERGÍA ---
+        let creditos = localStorage.getItem('user_creds_gold') ? parseInt(localStorage.getItem('user_creds_gold')) : 1000;
         let intentos = 0;
 
         function refrescarUI() {
             document.getElementById('val-creditos').innerText = creditos;
-            localStorage.setItem('user_creds_pro', creditos);
-            document.getElementById('btn-gen').disabled = (creditos <= 0);
+            localStorage.setItem('user_creds_gold', creditos);
+            document.getElementById('btn-gen').disabled = (creditos < 10);
         }
         refrescarUI();
 
+        // --- 2. RECOMPENSA DE 100 ENERGÍA ---
         async function accionAnuncio() {
             const AdController = window.Adsgram.init({ blockId: "18897" });
             AdController.show().then(() => {
-                creditos += 2; refrescarUI();
-                tg.showAlert("✅ ¡Energía cargada!");
+                creditos += 100; // RECOMPENSA ALTA
+                refrescarUI();
+                tg.showAlert("✅ ¡Brutal! Has ganado +100 de Energía.");
             }).catch(() => {
-                creditos += 1; refrescarUI();
-                tg.showAlert("🎁 +1⚡ de cortesía.");
+                // Si falla, intentamos Monetag o damos compensación
+                creditos += 20; 
+                refrescarUI();
+                tg.showAlert("Aviso: No hay videos, recibes +20 de cortesía.");
             });
+        }
+
+        // --- 3. INTERRUPCIÓN SORPRESA ---
+        function verificarYGenerar() {
+            // Hay un 30% de probabilidad de que salte un anuncio antes de generar
+            if (Math.random() < 0.30) {
+                tg.showConfirm("Anuncio patrocinado para mantener la calidad Elite.", (confirm) => {
+                    const AdController = window.Adsgram.init({ blockId: "18897" });
+                    AdController.show().finally(() => {
+                        iniciarGeneracion();
+                    });
+                });
+            } else {
+                iniciarGeneracion();
+            }
         }
 
         function iniciarGeneracion() {
             const p = document.getElementById('prompt').value;
-            if(p.length < 2) return tg.showAlert("Escribe algo primero.");
+            if(p.length < 2) return tg.showAlert("Describe tu idea.");
             
-            creditos -= 1; refrescarUI();
-            intentos = 0; // Reiniciamos contador de intentos
+            // --- 4. COSTO DE 10 ENERGÍA ---
+            creditos -= 10; 
+            refrescarUI();
+            intentos = 0;
             pedirImagen(p);
         }
 
@@ -165,31 +184,29 @@
             progressCont.style.display = "block";
             box.style.display = "none";
             btnD.style.display = "none";
-            progressFill.style.width = "20%";
-            statusText.innerText = "Buscando servidor libre...";
+            progressFill.style.width = "15%";
+            statusText.innerText = "Conectando con servidores Elite...";
 
-            const seed = Math.floor(Math.random() * 1000000);
-            const quality = "High-end photography, cinematic, 8k, masterpiece: ";
-            const bypass = Date.now(); // CÓDIGO ÚNICO ANTI-BLOQUEO
-
-            // LISTA DE MODELOS AGRESIVOS (Si uno falla, probamos el otro)
+            const seed = Math.floor(Math.random() * 2000000);
+            const quality = "High-end ultra-realistic photography, cinematic lighting, 8k, hyper-detailed: ";
             const modelos = ["flux", "turbo", "unity"];
             const modeloActual = modelos[intentos % modelos.length];
+            const bypass = Date.now();
 
-            const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(quality + promptUser)}?seed=${seed}&width=1024&height=1024&nologo=true&model=${modeloActual}&cachebust=${bypass}`;
+            const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(quality + promptUser)}?seed=${seed}&width=1024&height=1024&nologo=true&model=${modeloActual}&cb=${bypass}`;
 
             img.src = url;
 
             img.onload = () => {
-                // Si la imagen cargó pero es muy pequeña (el aviso amarillo es pequeño), reintentamos
-                if (img.naturalWidth < 300 && intentos < 2) {
+                // Verificamos si es el aviso amarillo (usualmente muy pequeño)
+                if (img.naturalWidth < 400 && intentos < 2) {
                     intentos++;
                     pedirImagen(promptUser);
                     return;
                 }
                 
                 progressFill.style.width = "100%";
-                statusText.innerText = "¡Imagen lista!";
+                statusText.innerText = "¡Arte generado!";
                 
                 setTimeout(() => {
                     progressCont.style.display = "none";
@@ -202,10 +219,9 @@
             img.onerror = () => {
                 if (intentos < 2) {
                     intentos++;
-                    statusText.innerText = "Servidor ocupado, saltando a refuerzo...";
                     pedirImagen(promptUser);
                 } else {
-                    tg.showAlert("Todos los servidores están llenos. Intenta en 1 minuto.");
+                    tg.showAlert("Servidores saturados. Reintentando...");
                     progressCont.style.display = "none";
                 }
             };
@@ -214,13 +230,13 @@
         function descargarImagen() {
             const imgUrl = document.getElementById('resultado').src;
             tg.showPopup({
-                title: 'Guardar Imagen',
-                message: 'Para descargar, abre la imagen y mantenla presionada.',
-                buttons: [{id: 'ok', type: 'default', text: 'Abrir Imagen'}]
+                title: 'Descargar Arte',
+                message: 'Abre la imagen y mantén presionado para guardar en tu galería.',
+                buttons: [{id: 'ok', type: 'default', text: 'Abrir Foto'}]
             }, (id) => {
                 if(id === 'ok') tg.openLink(imgUrl);
             });
         }
     </script>
 </body>
-                    </html>
+</html>
