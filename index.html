@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>IA Studio Elite</title>
+    <title>IA Studio Elite PRO</title>
     
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
-        /* ESTILO IPHONE PROFESIONAL CREMA */
         :root {
             --ios-bg: #F2F2F7; 
             --ios-card: #FFFFFF;
@@ -53,7 +52,9 @@
             width: 100%; border: none; background: #F9F9F9;
             border-radius: 16px; padding: 16px; font-size: 17px;
             margin-bottom: 20px; resize: none; outline: none; font-family: inherit;
+            border: 1px solid transparent;
         }
+        textarea:focus { border: 1px solid var(--ios-accent); }
 
         .btn {
             width: 100%; padding: 16px; border-radius: 14px;
@@ -74,40 +75,19 @@
             margin-top: 15px;
         }
 
-        /* DISEÑO DEL CONTADOR DE PROGRESO */
-        #progress-container {
-            display: none;
-            margin: 20px 0;
-        }
-
-        .progress-text {
-            font-size: 14px;
-            color: var(--ios-secondary);
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .progress-bar-bg {
-            width: 100%;
-            height: 6px;
-            background: #E5E5EA;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .progress-bar-fill {
-            width: 0%;
-            height: 100%;
-            background: var(--ios-accent);
-            transition: width 0.3s ease;
-        }
+        /* BARRA DE PROGRESO */
+        #progress-container { display: none; margin: 20px 0; }
+        .progress-text { font-size: 13px; color: var(--ios-secondary); margin-bottom: 8px; font-weight: 500; }
+        .progress-bar-bg { width: 100%; height: 6px; background: #E5E5EA; border-radius: 10px; overflow: hidden; }
+        .progress-bar-fill { width: 0%; height: 100%; background: var(--ios-accent); transition: width 0.4s ease; }
         
         .result-wrapper {
             margin-top: 20px; width: 100%; border-radius: 20px;
             overflow: hidden; display: none; box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #eee;
         }
 
-        #resultado { width: 100%; display: block; }
+        #resultado { width: 100%; display: block; background: #fff; }
     </style>
 </head>
 <body>
@@ -118,13 +98,13 @@
     </div>
 
     <div class="container">
-        <textarea id="prompt" rows="3" placeholder="Describe tu idea maestra..."></textarea>
+        <textarea id="prompt" rows="3" placeholder="Escribe tu idea aquí..."></textarea>
         
-        <button class="btn btn-main" id="btn-gen" onclick="accionGenerar()">Generar Imagen</button>
+        <button class="btn btn-main" id="btn-gen" onclick="iniciarGeneracion()">Generar Imagen</button>
         <button class="btn btn-ads" onclick="accionAnuncio()">Obtener Energía</button>
 
         <div id="progress-container">
-            <div class="progress-text">Analizando pixeles... <span id="percent">0%</span></div>
+            <div class="progress-text" id="status-text">Conectando con el satélite...</div>
             <div class="progress-bar-bg">
                 <div class="progress-bar-fill" id="progress-fill"></div>
             </div>
@@ -135,7 +115,7 @@
         </div>
 
         <button class="btn btn-download" id="btn-descarga" onclick="descargarImagen()">
-            ⬇️ Descargar Imagen
+            ⬇️ Descargar en Galería
         </button>
     </div>
 
@@ -144,12 +124,12 @@
         tg.expand();
         tg.setHeaderColor("#F2F2F7");
 
-        let creditos = localStorage.getItem('user_creds_v5') ? parseInt(localStorage.getItem('user_creds_v5')) : 3;
-        let timerInterval;
-        
+        let creditos = localStorage.getItem('user_creds_pro') ? parseInt(localStorage.getItem('user_creds_pro')) : 3;
+        let intentos = 0;
+
         function refrescarUI() {
             document.getElementById('val-creditos').innerText = creditos;
-            localStorage.setItem('user_creds_v5', creditos);
+            localStorage.setItem('user_creds_pro', creditos);
             document.getElementById('btn-gen').disabled = (creditos <= 0);
         }
         refrescarUI();
@@ -158,53 +138,58 @@
             const AdController = window.Adsgram.init({ blockId: "18897" });
             AdController.show().then(() => {
                 creditos += 2; refrescarUI();
-                tg.showAlert("✅ Energía cargada.");
+                tg.showAlert("✅ ¡Energía cargada!");
             }).catch(() => {
                 creditos += 1; refrescarUI();
-                tg.showAlert("Cortesía: +1⚡ por intentar.");
+                tg.showAlert("🎁 +1⚡ de cortesía.");
             });
         }
 
-        function accionGenerar() {
+        function iniciarGeneracion() {
             const p = document.getElementById('prompt').value;
             if(p.length < 2) return tg.showAlert("Escribe algo primero.");
-
-            creditos -= 1; refrescarUI();
             
+            creditos -= 1; refrescarUI();
+            intentos = 0; // Reiniciamos contador de intentos
+            pedirImagen(p);
+        }
+
+        function pedirImagen(promptUser) {
             const progressCont = document.getElementById('progress-container');
             const progressFill = document.getElementById('progress-fill');
-            const percentText = document.getElementById('percent');
+            const statusText = document.getElementById('status-text');
             const box = document.getElementById('box-resultado');
             const btnD = document.getElementById('btn-descarga');
             const img = document.getElementById('resultado');
 
-            // Iniciar vista de carga
             progressCont.style.display = "block";
             box.style.display = "none";
             btnD.style.display = "none";
-            
-            // Lógica del contador (0 a 99%)
-            let progreso = 0;
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                if (progreso < 95) {
-                    progreso += Math.floor(Math.random() * 5) + 1;
-                    if (progreso > 95) progreso = 95;
-                    progressFill.style.width = progreso + "%";
-                    percentText.innerText = progreso + "%";
-                }
-            }, 400);
+            progressFill.style.width = "20%";
+            statusText.innerText = "Buscando servidor libre...";
 
-            const seed = Math.floor(Math.random() * 999999);
-            const quality = "High-end photography, cinematic lighting, 8k, detailed: ";
-            const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(quality + p)}?seed=${seed}&width=1024&height=1024&nologo=true&model=flux`;
+            const seed = Math.floor(Math.random() * 1000000);
+            const quality = "High-end photography, cinematic, 8k, masterpiece: ";
+            const bypass = Date.now(); // CÓDIGO ÚNICO ANTI-BLOQUEO
+
+            // LISTA DE MODELOS AGRESIVOS (Si uno falla, probamos el otro)
+            const modelos = ["flux", "turbo", "unity"];
+            const modeloActual = modelos[intentos % modelos.length];
+
+            const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(quality + promptUser)}?seed=${seed}&width=1024&height=1024&nologo=true&model=${modeloActual}&cachebust=${bypass}`;
 
             img.src = url;
-            
+
             img.onload = () => {
-                clearInterval(timerInterval);
+                // Si la imagen cargó pero es muy pequeña (el aviso amarillo es pequeño), reintentamos
+                if (img.naturalWidth < 300 && intentos < 2) {
+                    intentos++;
+                    pedirImagen(promptUser);
+                    return;
+                }
+                
                 progressFill.style.width = "100%";
-                percentText.innerText = "100%";
+                statusText.innerText = "¡Imagen lista!";
                 
                 setTimeout(() => {
                     progressCont.style.display = "none";
@@ -215,17 +200,22 @@
             };
 
             img.onerror = () => {
-                clearInterval(timerInterval);
-                tg.showAlert("El servidor está ocupado. Intenta de nuevo.");
-                progressCont.style.display = "none";
+                if (intentos < 2) {
+                    intentos++;
+                    statusText.innerText = "Servidor ocupado, saltando a refuerzo...";
+                    pedirImagen(promptUser);
+                } else {
+                    tg.showAlert("Todos los servidores están llenos. Intenta en 1 minuto.");
+                    progressCont.style.display = "none";
+                }
             };
         }
 
         function descargarImagen() {
             const imgUrl = document.getElementById('resultado').src;
             tg.showPopup({
-                title: 'Descarga',
-                message: 'Para guardar, abre la imagen y mantén el dedo presionado sobre ella.',
+                title: 'Guardar Imagen',
+                message: 'Para descargar, abre la imagen y mantenla presionada.',
                 buttons: [{id: 'ok', type: 'default', text: 'Abrir Imagen'}]
             }, (id) => {
                 if(id === 'ok') tg.openLink(imgUrl);
@@ -233,4 +223,4 @@
         }
     </script>
 </body>
-            </html>
+                    </html>
