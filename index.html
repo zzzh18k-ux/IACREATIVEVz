@@ -2,147 +2,36 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TG Ad Master 2.0</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
+    <title>Mi IA de Imágenes</title>
     <style>
-        :root { --bg: #0f0f0f; --card: #1c1c1e; --blue: #3390ec; --text: #fff; }
-        * { box-sizing: border-box; font-family: 'Roboto', sans-serif; }
-        body { background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; }
-        
-        .container { width: 100%; max-width: 450px; }
-        
-        .header { text-align: center; margin-bottom: 20px; }
-        .logo { font-size: 20px; font-weight: 700; color: var(--blue); }
-        .warning { font-size: 11px; color: #aaa; background: #252525; padding: 8px; border-radius: 6px; margin-top: 5px; border: 1px solid #333; }
-
-        .card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #333; }
-        label { color: var(--blue); font-size: 11px; font-weight: bold; display: block; margin-bottom: 5px; text-transform: uppercase; }
-        
-        textarea, input { width: 100%; background: #111; border: 1px solid #333; color: white; padding: 10px; border-radius: 8px; outline: none; margin-bottom: 10px; }
-        textarea:focus, input:focus { border-color: var(--blue); }
-
-        /* Switcher de Modo */
-        .mode-switch { display: flex; background: #111; padding: 4px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #333; }
-        .mode-btn { flex: 1; padding: 8px; border: none; background: transparent; color: #666; font-weight: bold; cursor: pointer; border-radius: 6px; transition: 0.3s; font-size: 12px; }
-        .mode-btn.active { background: var(--blue); color: white; }
-
-        /* Preview */
-        .preview-box { background: url('https://web.telegram.org/img/bg_0.png'); background-color: #1a202c; padding: 15px; border-radius: 12px; border: 1px solid #333; position: relative; }
-        .tg-msg { background: #212121; padding: 8px 12px; border-radius: 10px 10px 10px 0; display: inline-block; max-width: 90%; font-size: 14px; line-height: 1.4; white-space: pre-wrap; }
-        .tg-btn { display: block; margin-top: 8px; background: rgba(51, 144, 236, 0.1); color: var(--blue); text-align: center; padding: 8px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold; border: 1px solid rgba(51, 144, 236, 0.3); }
-        
-        .action-btn { width: 100%; background: var(--blue); color: white; border: none; padding: 14px; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer; margin-top: 10px; }
-        .action-btn:active { transform: scale(0.98); }
+        body { font-family: sans-serif; text-align: center; padding: 20px; background: #f0f2f5; }
+        input { padding: 10px; width: 70%; border-radius: 5px; border: 1px solid #ccc; }
+        button { padding: 10px 20px; background: #0088cc; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .foto { margin-top: 20px; max-width: 100%; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <div class="header">
-            <div class="logo"><i class="fab fa-telegram"></i> AD MASTER V2</div>
-            <div class="warning" id="warning-msg">
-                <i class="fas fa-info-circle"></i> <b>Modo Usuario:</b> Ideal para reenviar tú mismo. El botón será un enlace normal.
-            </div>
+    <h2>🎨 Generador de Imágenes IA</h2>
+    <input type="text" id="prompt" placeholder="Escribe algo (ej: ciudad futurista)...">
+    <button onclick="generar()">Crear Imagen</button>
+    
+    <div id="contenedor">
         </div>
-
-        <div class="mode-switch">
-            <button class="mode-btn active" onclick="setMode('user')">👤 MODO MANUAL</button>
-            <button class="mode-btn" onclick="setMode('bot')">🤖 MODO BOT PRO</button>
-        </div>
-
-        <div class="card">
-            <label>Mensaje</label>
-            <textarea id="msg" rows="4" oninput="update()">🔥 OFERTA LIMITADA&#10;Entra al mejor canal VIP.</textarea>
-            
-            <label>Botón / Link</label>
-            <div style="display:flex; gap:5px;">
-                <input type="text" id="btnTxt" value="UNIRME YA" placeholder="Texto Botón" oninput="update()">
-                <input type="text" id="link" value="https://t.me/canal" placeholder="Enlace" oninput="update()">
-            </div>
-        </div>
-
-        <div class="preview-box">
-            <div class="tg-msg" id="p-text"></div>
-            <a href="#" class="tg-btn" id="p-btn" target="_blank"></a>
-        </div>
-
-        <button class="action-btn" onclick="copiar()">
-            <i class="fas fa-copy"></i> <span id="btn-copy-text">COPIAR MENSAJE</span>
-        </button>
-    </div>
 
     <script>
-        let currentMode = 'user';
-
-        function setMode(mode) {
-            currentMode = mode;
-            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
+        function generar() {
+            const texto = document.getElementById('prompt').value;
+            if(!texto) return alert("Escribe algo primero");
             
-            const warn = document.getElementById('warning-msg');
-            const btnCopy = document.getElementById('btn-copy-text');
-
-            if (mode === 'bot') {
-                warn.innerHTML = '<i class="fas fa-robot"></i> <b>Modo Bot:</b> Usa esto SOLO si tienes un bot como @ControllerBot o @PostBot. Generará Markdown.';
-                btnCopy.innerText = "COPIAR CÓDIGO MARKDOWN";
-            } else {
-                warn.innerHTML = '<i class="fas fa-user"></i> <b>Modo Manual:</b> Copia y pega en cualquier chat. El botón se convertirá en enlace texto.';
-                btnCopy.innerText = "COPIAR MENSAJE LISTO";
-            }
-            update();
-        }
-
-        function update() {
-            const msg = document.getElementById('msg').value;
-            const btnTxt = document.getElementById('btnTxt').value;
+            const contenedor = document.getElementById('contenedor');
+            contenedor.innerHTML = "<p>Generando... espera unos segundos...</p>";
             
-            // Renderizado simple en la vista previa
-            document.getElementById('p-text').innerText = msg;
+            // Creamos la URL con el texto del usuario
+            const urlImagen = `https://image.pollinations.ai/prompt/${encodeURIComponent(texto)}?width=1080&height=1080&nologo=true`;
             
-            const btnEl = document.getElementById('p-btn');
-            if(currentMode === 'bot') {
-                btnEl.style.display = 'block';
-                btnEl.innerText = btnTxt;
-                btnEl.style.borderStyle = 'solid'; // Estilo botón
-            } else {
-                // En modo usuario, mostramos cómo se verá realmente (un link de texto)
-                btnEl.style.display = 'block';
-                btnEl.innerText = "🔗 " + btnTxt + " (Enlace)";
-                btnEl.style.borderStyle = 'none';
-                btnEl.style.textAlign = 'left';
-                btnEl.style.padding = '5px 0';
-                btnEl.style.background = 'transparent';
-            }
+            // La mostramos en pantalla
+            contenedor.innerHTML = `<img src="${urlImagen}" class="foto">`;
         }
-
-        function copiar() {
-            const msg = document.getElementById('msg').value;
-            const btnTxt = document.getElementById('btnTxt').value;
-            const link = document.getElementById('link').value;
-            let finalCopy = "";
-
-            if (currentMode === 'bot') {
-                // Formato para Bots (Markdown + Sintaxis de botón)
-                // Se usa ** para negrita porque los bots sí lo leen
-                // El formato [Texto](Link) lo entienden los bots de posteo
-                finalCopy = `**${msg}**\n\n[${btnTxt}](${link})`; 
-                alert("Copiado formato Markdown para BOT. Pégalo en tu Bot de administración.");
-            } else {
-                // Formato para Humanos (Texto limpio)
-                // Quitamos asteriscos porque Telegram normal no siempre los convierte al pegar
-                // Ponemos el link explícito porque los humanos no pueden enviar botones
-                finalCopy = `${msg}\n\n👇 ${btnTxt}:\n${link}`;
-                alert("Copiado formato texto. Listo para pegar en cualquier chat.");
-            }
-
-            navigator.clipboard.writeText(finalCopy);
-        }
-
-        // Iniciar
-        update();
     </script>
 </body>
-                </html>
+</html>
