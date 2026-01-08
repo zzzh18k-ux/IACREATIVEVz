@@ -9,117 +9,102 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
-        /* COLORES CREMA Y ESTILO IPHONE */
+        /* ESTILO IPHONE PROFESIONAL CREMA */
         :root {
-            --ios-bg: #F2F2F7; /* Crema/Gris claro de iOS */
+            --ios-bg: #F2F2F7; 
             --ios-card: #FFFFFF;
-            --ios-accent: #007AFF; /* Azul Apple */
+            --ios-accent: #007AFF; 
             --ios-text: #1C1C1E;
             --ios-secondary: #8E8E93;
+            --ios-green: #34C759;
         }
 
         body { 
             background-color: var(--ios-bg); 
             color: var(--ios-text); 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            margin: 0; 
-            padding: 20px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            margin: 0; padding: 20px; 
+            display: flex; flex-direction: column; align-items: center;
         }
 
-        /* Encabezado */
         .header {
-            width: 100%;
-            max-width: 400px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            width: 100%; max-width: 400px;
+            display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 20px;
-            padding: 10px 5px;
         }
-
-        .header h1 { font-size: 24px; font-weight: 700; margin: 0; }
 
         .badge-credits {
             background: var(--ios-card);
-            padding: 6px 16px;
-            border-radius: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            font-weight: 600;
-            color: var(--ios-accent);
-            border: 1px solid rgba(0,0,0,0.05);
+            padding: 8px 18px; border-radius: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-weight: 700; color: var(--ios-accent);
         }
 
-        /* Contenedor Principal */
         .container {
-            width: 100%;
-            max-width: 400px;
+            width: 100%; max-width: 400px;
             background: var(--ios-card);
-            border-radius: 25px;
-            padding: 25px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+            border-radius: 24px; padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
             box-sizing: border-box;
+            text-align: center;
         }
 
         textarea {
-            width: 100%;
-            border: none;
-            background: #F9F9F9;
-            border-radius: 15px;
-            padding: 15px;
-            font-size: 16px;
-            font-family: inherit;
-            margin-bottom: 20px;
-            resize: none;
-            box-sizing: border-box;
-            outline: none;
-            color: #333;
+            width: 100%; border: none; background: #F9F9F9;
+            border-radius: 16px; padding: 16px; font-size: 17px;
+            margin-bottom: 20px; resize: none; outline: none; font-family: inherit;
         }
 
-        /* Botones iPhone */
         .btn {
-            width: 100%;
-            padding: 16px;
-            border-radius: 14px;
-            font-size: 17px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            width: 100%; padding: 16px; border-radius: 14px;
+            font-size: 17px; font-weight: 600; border: none;
+            cursor: pointer; transition: all 0.2s ease;
+            margin-bottom: 12px; display: flex; justify-content: center; align-items: center;
         }
 
-        .btn-main {
-            background-color: var(--ios-accent);
+        .btn-main { background-color: var(--ios-accent); color: white; }
+        .btn-main:active { opacity: 0.8; transform: scale(0.98); }
+
+        .btn-ads { background-color: #E5E5EA; color: var(--ios-accent); }
+
+        .btn-download {
+            background-color: var(--ios-green);
             color: white;
+            display: none;
+            margin-top: 15px;
         }
 
-        .btn-main:active { transform: scale(0.97); opacity: 0.9; }
-
-        .btn-ads {
-            background-color: #E5E5EA;
-            color: var(--ios-accent);
+        /* DISEÑO DEL CONTADOR DE PROGRESO */
+        #progress-container {
+            display: none;
+            margin: 20px 0;
         }
 
-        .btn-ads:active { transform: scale(0.97); background-color: #D1D1D6; }
+        .progress-text {
+            font-size: 14px;
+            color: var(--ios-secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
 
-        .btn:disabled { background-color: #D1D1D6; color: #8E8E93; cursor: not-allowed; }
+        .progress-bar-bg {
+            width: 100%;
+            height: 6px;
+            background: #E5E5EA;
+            border-radius: 10px;
+            overflow: hidden;
+        }
 
-        /* Area de Imagen */
-        #loader { display: none; color: var(--ios-secondary); margin: 15px 0; font-size: 14px; }
+        .progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: var(--ios-accent);
+            transition: width 0.3s ease;
+        }
         
         .result-wrapper {
-            margin-top: 15px;
-            width: 100%;
-            border-radius: 20px;
-            overflow: hidden;
-            display: none;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            margin-top: 20px; width: 100%; border-radius: 20px;
+            overflow: hidden; display: none; box-shadow: 0 5px 15px rgba(0,0,0,0.08);
         }
 
         #resultado { width: 100%; display: block; }
@@ -128,101 +113,124 @@
 <body>
 
     <div class="header">
-        <h1>Studio Elite</h1>
-        <div class="badge-credits">
-            ⚡ <span id="val-creditos">3</span>
-        </div>
+        <h1 style="font-size: 26px; font-weight: 700;">Studio Elite</h1>
+        <div class="badge-credits">⚡ <span id="val-creditos">3</span></div>
     </div>
 
     <div class="container">
-        <textarea id="prompt" rows="4" placeholder="Describe tu obra maestra..."></textarea>
+        <textarea id="prompt" rows="3" placeholder="Describe tu idea maestra..."></textarea>
         
-        <button class="btn btn-main" id="btn-gen" onclick="accionGenerar()">
-            Generar Imagen (1⚡)
-        </button>
-        
-        <button class="btn btn-ads" onclick="accionAnuncio()">
-            Cargar Energía Gratis
-        </button>
+        <button class="btn btn-main" id="btn-gen" onclick="accionGenerar()">Generar Imagen</button>
+        <button class="btn btn-ads" onclick="accionAnuncio()">Obtener Energía</button>
 
-        <center>
-            <div id="loader">Procesando con IA de lujo...</div>
-        </center>
+        <div id="progress-container">
+            <div class="progress-text">Analizando pixeles... <span id="percent">0%</span></div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progress-fill"></div>
+            </div>
+        </div>
 
         <div class="result-wrapper" id="box-resultado">
             <img id="resultado">
         </div>
+
+        <button class="btn btn-download" id="btn-descarga" onclick="descargarImagen()">
+            ⬇️ Descargar Imagen
+        </button>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.ready();
-        
-        // Configuramos el color de la barra de Telegram para que combine
         tg.setHeaderColor("#F2F2F7");
 
-        // Inicializar con 3 créditos
-        let creditos = localStorage.getItem('user_creds') ? parseInt(localStorage.getItem('user_creds')) : 3;
+        let creditos = localStorage.getItem('user_creds_v5') ? parseInt(localStorage.getItem('user_creds_v5')) : 3;
+        let timerInterval;
         
         function refrescarUI() {
             document.getElementById('val-creditos').innerText = creditos;
-            localStorage.setItem('user_creds', creditos);
+            localStorage.setItem('user_creds_v5', creditos);
             document.getElementById('btn-gen').disabled = (creditos <= 0);
         }
         refrescarUI();
 
-        // --- LÓGICA DE ANUNCIOS ---
         async function accionAnuncio() {
             const AdController = window.Adsgram.init({ blockId: "18897" });
-            
-            AdController.show().then((result) => {
-                // Éxito: Vio el video
-                creditos += 2;
-                refrescarUI();
-                tg.showAlert("✅ ¡Excelente! Recibiste +2 de Energía.");
-            }).catch((err) => {
-                // Fallo: No hay video o error
-                // REGALO DE CORTESÍA para que no se rinda el usuario
-                creditos += 1;
-                refrescarUI();
-                tg.showAlert("No hay videos ahora, pero te regalamos +1⚡ por intentar.");
+            AdController.show().then(() => {
+                creditos += 2; refrescarUI();
+                tg.showAlert("✅ Energía cargada.");
+            }).catch(() => {
+                creditos += 1; refrescarUI();
+                tg.showAlert("Cortesía: +1⚡ por intentar.");
             });
         }
 
         function accionGenerar() {
-            const promptInput = document.getElementById('prompt').value;
-            if(promptInput.length < 3) return tg.showAlert("Por favor, escribe una idea.");
-            
-            creditos -= 1;
-            refrescarUI();
-            
-            const loader = document.getElementById('loader');
-            const box = document.getElementById('box-resultado');
-            const img = document.getElementById('resultado');
-            
-            loader.style.display = "block";
-            box.style.display = "none";
+            const p = document.getElementById('prompt').value;
+            if(p.length < 2) return tg.showAlert("Escribe algo primero.");
 
-            // PROMPT MEJORADO para que la IA no haga "basura"
-            // Le añadimos términos de alta calidad automáticamente
-            const mejorPrompt = `High-end professional digital art, masterpiece, 8k resolution, cinematic lighting, sharp details, luxury aesthetic: ${promptInput}`;
+            creditos -= 1; refrescarUI();
             
-            const seed = Math.floor(Math.random() * 888888);
-            const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(mejorPrompt)}?seed=${seed}&width=1024&height=1024&nologo=true&model=flux`;
+            const progressCont = document.getElementById('progress-container');
+            const progressFill = document.getElementById('progress-fill');
+            const percentText = document.getElementById('percent');
+            const box = document.getElementById('box-resultado');
+            const btnD = document.getElementById('btn-descarga');
+            const img = document.getElementById('resultado');
+
+            // Iniciar vista de carga
+            progressCont.style.display = "block";
+            box.style.display = "none";
+            btnD.style.display = "none";
+            
+            // Lógica del contador (0 a 99%)
+            let progreso = 0;
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (progreso < 95) {
+                    progreso += Math.floor(Math.random() * 5) + 1;
+                    if (progreso > 95) progreso = 95;
+                    progressFill.style.width = progreso + "%";
+                    percentText.innerText = progreso + "%";
+                }
+            }, 400);
+
+            const seed = Math.floor(Math.random() * 999999);
+            const quality = "High-end photography, cinematic lighting, 8k, detailed: ";
+            const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(quality + p)}?seed=${seed}&width=1024&height=1024&nologo=true&model=flux`;
 
             img.src = url;
             
             img.onload = () => {
-                loader.style.display = "none";
-                box.style.display = "block";
-                tg.HapticFeedback.notificationOccurred('success'); // Vibración de iPhone
+                clearInterval(timerInterval);
+                progressFill.style.width = "100%";
+                percentText.innerText = "100%";
+                
+                setTimeout(() => {
+                    progressCont.style.display = "none";
+                    box.style.display = "block";
+                    btnD.style.display = "flex";
+                    tg.HapticFeedback.notificationOccurred('success');
+                }, 500);
             };
 
             img.onerror = () => {
-                loader.innerText = "Error al conectar. Intenta de nuevo.";
+                clearInterval(timerInterval);
+                tg.showAlert("El servidor está ocupado. Intenta de nuevo.");
+                progressCont.style.display = "none";
             };
+        }
+
+        function descargarImagen() {
+            const imgUrl = document.getElementById('resultado').src;
+            tg.showPopup({
+                title: 'Descarga',
+                message: 'Para guardar, abre la imagen y mantén el dedo presionado sobre ella.',
+                buttons: [{id: 'ok', type: 'default', text: 'Abrir Imagen'}]
+            }, (id) => {
+                if(id === 'ok') tg.openLink(imgUrl);
+            });
         }
     </script>
 </body>
-</html>
+            </html>
