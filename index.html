@@ -3,116 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>IA CREDIT STUDIO</title>
+    <title>IA CREDIT STUDIO ELITE</title>
     
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
     
     <style>
-        :root { --accent: #ff9500; --bg: #0d0d0d; --card: #1a1a1a; }
-        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        
-        .status-bar { width: 100%; max-width: 400px; display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: bold; }
-        .credits-count { color: var(--accent); background: rgba(255,149,0,0.1); padding: 5px 15px; border-radius: 20px; border: 1px solid var(--accent); }
+        /* DISEÑO DE LUJO (MODERNO Y LIMPIO) */
+        :root {
+            --primary: #007AFF; /* Azul Apple, más elegante que el naranja */
+            --bg: #09090b;
+            --card: #18181b;
+            --text: #ffffff;
+            --accent: #3f3f46;
+        }
 
-        .main-card { background: var(--card); border-radius: 20px; padding: 25px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
-        
-        textarea { width: 100%; height: 100px; background: #000; border: 1px solid #333; color: #fff; border-radius: 12px; padding: 12px; font-size: 16px; outline: none; margin-bottom: 15px; }
-        
-        .btn { border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
-        .btn-gen { background: var(--accent); color: #000; font-size: 16px; }
-        .btn-ads { background: #333; color: #fff; font-size: 14px; border: 1px solid #444; }
-        .btn-gen:disabled { background: #222; color: #555; cursor: not-allowed; }
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+        }
 
-        #loader { display: none; margin: 20px 0; color: var(--accent); }
-        #resultado { width: 100%; border-radius: 12px; margin-top: 20px; display: none; }
+        /* Barra de estado elegante */
+        .status-bar { 
+            width: 100%; 
+            max-width: 400px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            margin-bottom: 25px; 
+        }
+
+        .credits-container {
+            background: rgba(0, 122, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 100px;
+            border: 1px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .energy-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* Tarjeta principal con efecto cristal */
+        .main-card { 
+            background: var(--card); 
+            border-radius: 24px; 
+            padding: 24px; 
+            width: 100%; 
+            max-width: 400px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
+            border: 1px solid var(--accent);
+            box-sizing: border-box;
+        }
+
+        h2 { font-size: 1.2rem; margin-top: 0; color: #a1a1aa; font-weight: 500; }
+
+        textarea { 
+            width: 100%; 
+            height: 120px; 
+            background: #000; 
+            border: 1px solid var(--accent); 
+            color: #fff; 
+            border-radius: 16px; 
+            padding: 15px; 
+            font-size: 16px; 
+            outline: none; 
+            margin-bottom: 20px; 
+            resize: none;
+            box-sizing: border-box;
+            transition: border 0.3s;
+        }
+
+        textarea:focus { border-color: var(--primary); }
+
+        /* Botones Pro */
+        .btn { 
+            border: none; 
+            padding: 16px; 
+            width: 100%; 
+            border-radius: 14px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.2s; 
+            margin-bottom: 12px; 
+            font-size: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-gen { background: var(--primary); color: white; }
+        .btn-gen:active { transform: scale(0.98); opacity: 0.9; }
+
+        .btn-ads { background: transparent; color: #a1a1aa; border: 1px solid var(--accent); }
+        .btn-ads:active { background: var(--accent); }
+
+        .btn:disabled { background: #27272a; color: #52525b; border: none; cursor: not-allowed; }
+
+        /* Resultado */
+        #loader { display: none; margin: 20px 0; font-size: 14px; color: var(--primary); letter-spacing: 1px; }
+        
+        .img-container {
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 16px;
+            overflow: hidden;
+            display: none;
+            border: 1px solid var(--accent);
+        }
+
+        #resultado { width: 100%; display: block; }
     </style>
 </head>
 <body>
 
     <div class="status-bar">
-        <span>ENERGÍA IA</span>
-        <span class="credits-count" id="creditos-val">3</span>
+        <span style="font-weight: 600; letter-spacing: 1px;">STUDIO ELITE</span>
+        <div class="credits-container">
+            <div class="energy-dot"></div>
+            <span id="creditos-val" style="font-weight: bold; color: var(--primary);">3</span>
+            <span style="font-size: 12px; color: var(--primary);">ENERGÍA</span>
+        </div>
     </div>
 
     <div class="main-card">
-        <textarea id="prompt" placeholder="Escribe el nombre o idea aquí..."></textarea>
+        <h2>¿Qué deseas crear hoy?</h2>
+        <textarea id="prompt" placeholder="Ejemplo: Un león con corona de diamantes, estilo cinematico..."></textarea>
         
-        <button class="btn btn-gen" id="btn-generar" onclick="usarCredito()">✨ GENERAR IMAGEN (-1⚡)</button>
+        <button class="btn btn-gen" id="btn-generar" onclick="usarCredito()">
+            <span>✨ Generar Imagen</span>
+        </button>
         
-        <button class="btn btn-ads" onclick="recargarPorAd()">📺 VER VIDEO (+2⚡)</button>
+        <button class="btn btn-ads" onclick="recargarPorAd()">
+            <span>📺 Ver video (+2 Energía)</span>
+        </button>
 
-        <div id="loader">⚡ PROCESANDO IMAGEN ELITE...</div>
-        <img id="resultado">
+        <center>
+            <div id="loader">CREANDO OBRA MAESTRA...</div>
+        </center>
+
+        <div class="img-container" id="container-img">
+            <img id="resultado">
+        </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        tg.ready();
 
-        // Inicializar créditos (se guardan en el navegador)
         let creditos = localStorage.getItem('user_credits') ? parseInt(localStorage.getItem('user_credits')) : 3;
         actualizarUI();
 
         function actualizarUI() {
             document.getElementById('creditos-val').innerText = creditos;
             localStorage.setItem('user_credits', creditos);
-            
-            // Si no hay créditos, desactivar el botón de generar
             document.getElementById('btn-generar').disabled = (creditos <= 0);
         }
 
+        // --- ARREGLO DE ANUNCIOS ---
         async function recargarPorAd() {
-            // Intentamos mostrar el anuncio de AdsGram
-            try {
-                const AdController = window.Adsgram.init({ blockId: "18897" });
-                const result = await AdController.show();
-                
-                // Si vio el anuncio, le damos créditos
+            // Reemplaza "18897" con tu ID real de Adsgram si este no funciona
+            const AdController = window.Adsgram.init({ blockId: "18897" });
+            
+            AdController.show().then((result) => {
+                // El usuario terminó de ver el video
                 creditos += 2;
                 actualizarUI();
-                alert("¡Recargaste +2 de Energía!");
-            } catch (e) {
-                // Si no hay anuncio disponible o falla
-                alert("No hay videos disponibles ahora. Intenta más tarde.");
-            }
+                tg.showAlert("✅ ¡Energía recargada con éxito!");
+            }).catch((result) => {
+                // El anuncio falló o el usuario lo cerró antes
+                tg.showAlert("Aviso: No hay videos disponibles. Intenta en unos minutos.");
+            });
         }
 
         function usarCredito() {
             const promptText = document.getElementById('prompt').value;
-            if(promptText.length < 3) return alert("Escribe algo más detallado.");
-            if(creditos <= 0) return alert("¡Te quedaste sin energía!");
+            if(promptText.length < 3) return tg.showAlert("Por favor, escribe una idea más clara.");
+            if(creditos <= 0) return tg.showAlert("No tienes energía suficiente.");
 
             creditos -= 1;
             actualizarUI();
             generarImagen(promptText);
         }
 
-        function generarImagen(txt) {
+        // --- ARREGLO DE IA (MEJOR PROMPT) ---
+        function generarImagen(userText) {
             const loader = document.getElementById('loader');
+            const container = document.getElementById('container-img');
             const img = document.getElementById('resultado');
-            loader.style.display = "block";
-            img.style.display = "none";
-
-            const seed = Math.floor(Math.random() * 99999999);
-            // Instrucción para texto limpio y diseño premium
-            const cleanPrompt = `Premium Typography design: "${txt}", sharp fonts, clear background, high quality, elite art style.`;
             
-            // Bypass para el error amarillo (session única)
-            const session = "sess_" + Date.now();
-            const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(cleanPrompt)}?seed=${seed}&width=1024&height=1024&nologo=true&model=flux&tk=${session}`;
+            loader.style.display = "block";
+            container.style.display = "none";
+
+            const seed = Math.floor(Math.random() * 1000000);
+            
+            // Aquí está el truco: Envolvemos el texto del usuario en "palabras mágicas"
+            // para que la IA no haga cualquier cosa.
+            const masterPrompt = `Professional photography, high quality, masterpiece, 8k, highly detailed: ${userText}. Sharp focus, cinematic lighting, elegant composition, no blur, high contrast.`;
+            
+            const session = "user_" + Date.now();
+            // Usamos el modelo 'flux' que es el mejor actualmente para texto y realismo
+            const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(masterPrompt)}?seed=${seed}&width=1024&height=1024&nologo=true&model=flux`;
 
             img.src = url;
             
             img.onload = () => {
                 loader.style.display = "none";
-                img.style.display = "block";
-                tg.HapticFeedback.impactOccurred('medium');
+                container.style.display = "block";
+                tg.HapticFeedback.impactOccurred('medium'); // Vibra el celular al terminar
             };
 
             img.onerror = () => {
-                img.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(cleanPrompt)}?seed=${seed}&model=turbo`;
+                loader.innerText = "Error al conectar con el servidor. Intenta de nuevo.";
             };
         }
     </script>
