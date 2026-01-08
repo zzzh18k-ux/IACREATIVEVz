@@ -3,109 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>IA Pro Generator</title>
+    <title>IA Master Pro</title>
+    
+    <script src="https://sad.adsgram.ai/js/adsgram-sdk.js"></script>
+
     <style>
-        :root {
-            --primary: #0088cc;
-            --bg: #f0f2f5;
-            --card: #ffffff;
-        }
+        :root { --primary: #0088cc; --bg: #f4f4f9; --card: #ffffff; }
         body { font-family: -apple-system, system-ui; margin: 0; padding: 15px; background: var(--bg); }
-        .card { background: var(--card); padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h2 { margin-top: 0; color: #1c1c1c; font-size: 1.2rem; }
+        .card { background: var(--card); padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
         
-        textarea { 
-            width: 100%; height: 80px; padding: 12px; border-radius: 12px; 
-            border: 1px solid #ddd; font-size: 16px; resize: none; box-sizing: border-box;
+        textarea { width: 100%; height: 90px; padding: 12px; border-radius: 12px; border: 1px solid #ddd; font-size: 16px; resize: none; box-sizing: border-box; outline: none; }
+        #main-btn { width: 100%; padding: 15px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-size: 17px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        
+        /* Contenedor del Anuncio */
+        #ad-wrapper { 
+            margin: 15px 0; 
+            padding: 5px; 
+            border: 1px dashed #bbb; 
+            border-radius: 12px; 
+            background: #fafafa; 
+            min-height: 60px;
+            display: block; /* Lo dejamos visible para que AdsGram lo cargue siempre */
         }
         
-        .style-selector { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 15px 0; }
-        .style-btn { 
-            padding: 8px; border: 1px solid #ddd; border-radius: 8px; 
-            background: #fff; font-size: 12px; cursor: pointer;
-        }
-        .style-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-        
-        #main-btn { 
-            width: 100%; padding: 15px; background: var(--primary); color: #fff; 
-            border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer;
-        }
-
-        #loader { display: none; margin: 20px 0; font-size: 14px; color: #666; }
-        .spinner { 
-            width: 30px; height: 30px; border: 4px solid #f3f3f3; 
-            border-top: 4px solid var(--primary); border-radius: 50%; 
-            animation: spin 1s linear infinite; margin: 10px auto;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        img { width: 100%; border-radius: 15px; margin-top: 20px; display: none; }
-        .download-btn { 
-            display: none; margin-top: 10px; color: var(--primary); 
-            text-decoration: none; font-weight: bold; font-size: 14px; 
-        }
+        #loader { display: none; text-align: center; margin: 20px 0; }
+        img { width: 100%; border-radius: 15px; margin-top: 15px; display: none; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .tip { font-size: 11px; color: #888; text-align: center; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>🎨 Generador IA Pro</h2>
-    <textarea id="prompt" placeholder="Describe tu idea... (Ej: Logo de pizza con letras neon)"></textarea>
+    <h2>🎨 Creador IA</h2>
+    <p class="tip">💡 Explica detalladamente colores y formas para mejores resultados.</p>
     
-    <div class="style-selector">
-        <button class="style-btn active" onclick="setStyle('real', this)">Realista</button>
-        <button class="style-btn" onclick="setStyle('logo', this)">Logo</button>
-        <button class="style-btn" onclick="setStyle('art', this)">Arte</button>
+    <textarea id="prompt" placeholder="Escribe tu idea aquí..."></textarea>
+    
+    <button id="main-btn" onclick="generarConAd()">✨ Generar Imagen</button>
+
+    <div id="ad-wrapper">
+        <span style="font-size: 9px; color: #ccc; display: block;">AD</span>
+        <ins class="adsgram" data-block-id="18897"></ins>
     </div>
 
-    <button id="main-btn" onclick="generar()">Crear Imagen</button>
-
-    <div id="loader">
-        <div class="spinner"></div>
-        Creando tu obra maestra...
-    </div>
-
-    <img id="resultado" src="" alt="Resultado">
-    <center><a id="download" class="download-btn" href="#" download="ia_imagen.jpg">⬇️ Descargar Imagen</a></center>
+    <div id="loader">Generando tu imagen...</div>
+    <img id="resultado" src="">
 </div>
 
 <script>
-    let currentStyle = 'real';
-
-    function setStyle(style, btn) {
-        currentStyle = style;
-        document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+    function generarConAd() {
+        // Esta función asegura que el anuncio se intente mostrar/refrescar
+        // y luego ejecuta la creación de la imagen.
+        
+        // Si usas banners de AdsGram, ellos se cargan solos al mostrarse el bloque.
+        ejecutarIA();
     }
 
-    function generar() {
+    function ejecutarIA() {
         const text = document.getElementById('prompt').value;
         const img = document.getElementById('resultado');
         const loader = document.getElementById('loader');
-        const dnl = document.getElementById('download');
         
-        if(!text) return alert("Escribe algo");
+        if(text.length < 5) return alert("Por favor, detalla más tu idea.");
 
         loader.style.display = "block";
         img.style.display = "none";
-        dnl.style.display = "none";
 
-        let finalPrompt = text;
-        if(currentStyle === 'logo') finalPrompt += ", professional vector logo, flat design, white background, high quality typography";
-        if(currentStyle === 'art') finalPrompt += ", digital art, detailed, masterpiece, vibrant colors";
-
-        const seed = Math.floor(Math.random() * 1000000);
-        const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(finalPrompt)}?seed=${seed}&width=1024&height=1024&nologo=true&model=flux`;
+        const seed = Math.floor(Math.random() * 9999999);
+        // Usamos el modelo Flux que es excelente para letras
+        const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(text)}?seed=${seed}&width=1024&height=1024&nologo=true&model=flux`;
 
         img.src = url;
         img.onload = () => {
             loader.style.display = "none";
             img.style.display = "block";
-            dnl.href = url;
-            dnl.style.display = "inline-block";
         };
     }
 </script>
 
 </body>
-    </html>
+</html>
