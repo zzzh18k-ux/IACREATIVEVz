@@ -3,25 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>IA CREDIT STUDIO ELITE</title>
+    <title>IA Studio Elite</title>
     
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
-        /* DISEÑO DE LUJO (MODERNO Y LIMPIO) */
+        /* COLORES CREMA Y ESTILO IPHONE */
         :root {
-            --primary: #007AFF; /* Azul Apple, más elegante que el naranja */
-            --bg: #09090b;
-            --card: #18181b;
-            --text: #ffffff;
-            --accent: #3f3f46;
+            --ios-bg: #F2F2F7; /* Crema/Gris claro de iOS */
+            --ios-card: #FFFFFF;
+            --ios-accent: #007AFF; /* Azul Apple */
+            --ios-text: #1C1C1E;
+            --ios-secondary: #8E8E93;
         }
 
         body { 
-            background: var(--bg); 
-            color: var(--text); 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background-color: var(--ios-bg); 
+            color: var(--ios-text); 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
             margin: 0; 
             padding: 20px; 
             display: flex; 
@@ -29,101 +29,97 @@
             align-items: center;
         }
 
-        /* Barra de estado elegante */
-        .status-bar { 
-            width: 100%; 
-            max-width: 400px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            margin-bottom: 25px; 
-        }
-
-        .credits-container {
-            background: rgba(0, 122, 255, 0.1);
-            padding: 8px 16px;
-            border-radius: 100px;
-            border: 1px solid var(--primary);
+        /* Encabezado */
+        .header {
+            width: 100%;
+            max-width: 400px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
+            margin-bottom: 20px;
+            padding: 10px 5px;
         }
 
-        .energy-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--primary);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--primary);
+        .header h1 { font-size: 24px; font-weight: 700; margin: 0; }
+
+        .badge-credits {
+            background: var(--ios-card);
+            padding: 6px 16px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            font-weight: 600;
+            color: var(--ios-accent);
+            border: 1px solid rgba(0,0,0,0.05);
         }
 
-        /* Tarjeta principal con efecto cristal */
-        .main-card { 
-            background: var(--card); 
-            border-radius: 24px; 
-            padding: 24px; 
-            width: 100%; 
-            max-width: 400px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
-            border: 1px solid var(--accent);
+        /* Contenedor Principal */
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background: var(--ios-card);
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
             box-sizing: border-box;
         }
 
-        h2 { font-size: 1.2rem; margin-top: 0; color: #a1a1aa; font-weight: 500; }
-
-        textarea { 
-            width: 100%; 
-            height: 120px; 
-            background: #000; 
-            border: 1px solid var(--accent); 
-            color: #fff; 
-            border-radius: 16px; 
-            padding: 15px; 
-            font-size: 16px; 
-            outline: none; 
-            margin-bottom: 20px; 
+        textarea {
+            width: 100%;
+            border: none;
+            background: #F9F9F9;
+            border-radius: 15px;
+            padding: 15px;
+            font-size: 16px;
+            font-family: inherit;
+            margin-bottom: 20px;
             resize: none;
             box-sizing: border-box;
-            transition: border 0.3s;
+            outline: none;
+            color: #333;
         }
 
-        textarea:focus { border-color: var(--primary); }
-
-        /* Botones Pro */
-        .btn { 
-            border: none; 
-            padding: 16px; 
-            width: 100%; 
-            border-radius: 14px; 
-            font-weight: 600; 
-            cursor: pointer; 
-            transition: all 0.2s; 
-            margin-bottom: 12px; 
-            font-size: 16px;
+        /* Botones iPhone */
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 12px;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
         }
 
-        .btn-gen { background: var(--primary); color: white; }
-        .btn-gen:active { transform: scale(0.98); opacity: 0.9; }
+        .btn-main {
+            background-color: var(--ios-accent);
+            color: white;
+        }
 
-        .btn-ads { background: transparent; color: #a1a1aa; border: 1px solid var(--accent); }
-        .btn-ads:active { background: var(--accent); }
+        .btn-main:active { transform: scale(0.97); opacity: 0.9; }
 
-        .btn:disabled { background: #27272a; color: #52525b; border: none; cursor: not-allowed; }
+        .btn-ads {
+            background-color: #E5E5EA;
+            color: var(--ios-accent);
+        }
 
-        /* Resultado */
-        #loader { display: none; margin: 20px 0; font-size: 14px; color: var(--primary); letter-spacing: 1px; }
+        .btn-ads:active { transform: scale(0.97); background-color: #D1D1D6; }
+
+        .btn:disabled { background-color: #D1D1D6; color: #8E8E93; cursor: not-allowed; }
+
+        /* Area de Imagen */
+        #loader { display: none; color: var(--ios-secondary); margin: 15px 0; font-size: 14px; }
         
-        .img-container {
+        .result-wrapper {
+            margin-top: 15px;
             width: 100%;
-            margin-top: 20px;
-            border-radius: 16px;
+            border-radius: 20px;
             overflow: hidden;
             display: none;
-            border: 1px solid var(--accent);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
 
         #resultado { width: 100%; display: block; }
@@ -131,32 +127,29 @@
 </head>
 <body>
 
-    <div class="status-bar">
-        <span style="font-weight: 600; letter-spacing: 1px;">STUDIO ELITE</span>
-        <div class="credits-container">
-            <div class="energy-dot"></div>
-            <span id="creditos-val" style="font-weight: bold; color: var(--primary);">3</span>
-            <span style="font-size: 12px; color: var(--primary);">ENERGÍA</span>
+    <div class="header">
+        <h1>Studio Elite</h1>
+        <div class="badge-credits">
+            ⚡ <span id="val-creditos">3</span>
         </div>
     </div>
 
-    <div class="main-card">
-        <h2>¿Qué deseas crear hoy?</h2>
-        <textarea id="prompt" placeholder="Ejemplo: Un león con corona de diamantes, estilo cinematico..."></textarea>
+    <div class="container">
+        <textarea id="prompt" rows="4" placeholder="Describe tu obra maestra..."></textarea>
         
-        <button class="btn btn-gen" id="btn-generar" onclick="usarCredito()">
-            <span>✨ Generar Imagen</span>
+        <button class="btn btn-main" id="btn-gen" onclick="accionGenerar()">
+            Generar Imagen (1⚡)
         </button>
         
-        <button class="btn btn-ads" onclick="recargarPorAd()">
-            <span>📺 Ver video (+2 Energía)</span>
+        <button class="btn btn-ads" onclick="accionAnuncio()">
+            Cargar Energía Gratis
         </button>
 
         <center>
-            <div id="loader">CREANDO OBRA MAESTRA...</div>
+            <div id="loader">Procesando con IA de lujo...</div>
         </center>
 
-        <div class="img-container" id="container-img">
+        <div class="result-wrapper" id="box-resultado">
             <img id="resultado">
         </div>
     </div>
@@ -165,73 +158,71 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.ready();
+        
+        // Configuramos el color de la barra de Telegram para que combine
+        tg.setHeaderColor("#F2F2F7");
 
-        let creditos = localStorage.getItem('user_credits') ? parseInt(localStorage.getItem('user_credits')) : 3;
-        actualizarUI();
-
-        function actualizarUI() {
-            document.getElementById('creditos-val').innerText = creditos;
-            localStorage.setItem('user_credits', creditos);
-            document.getElementById('btn-generar').disabled = (creditos <= 0);
+        // Inicializar con 3 créditos
+        let creditos = localStorage.getItem('user_creds') ? parseInt(localStorage.getItem('user_creds')) : 3;
+        
+        function refrescarUI() {
+            document.getElementById('val-creditos').innerText = creditos;
+            localStorage.setItem('user_creds', creditos);
+            document.getElementById('btn-gen').disabled = (creditos <= 0);
         }
+        refrescarUI();
 
-        // --- ARREGLO DE ANUNCIOS ---
-        async function recargarPorAd() {
-            // Reemplaza "18897" con tu ID real de Adsgram si este no funciona
+        // --- LÓGICA DE ANUNCIOS ---
+        async function accionAnuncio() {
             const AdController = window.Adsgram.init({ blockId: "18897" });
             
             AdController.show().then((result) => {
-                // El usuario terminó de ver el video
+                // Éxito: Vio el video
                 creditos += 2;
-                actualizarUI();
-                tg.showAlert("✅ ¡Energía recargada con éxito!");
-            }).catch((result) => {
-                // El anuncio falló o el usuario lo cerró antes
-                tg.showAlert("Aviso: No hay videos disponibles. Intenta en unos minutos.");
+                refrescarUI();
+                tg.showAlert("✅ ¡Excelente! Recibiste +2 de Energía.");
+            }).catch((err) => {
+                // Fallo: No hay video o error
+                // REGALO DE CORTESÍA para que no se rinda el usuario
+                creditos += 1;
+                refrescarUI();
+                tg.showAlert("No hay videos ahora, pero te regalamos +1⚡ por intentar.");
             });
         }
 
-        function usarCredito() {
-            const promptText = document.getElementById('prompt').value;
-            if(promptText.length < 3) return tg.showAlert("Por favor, escribe una idea más clara.");
-            if(creditos <= 0) return tg.showAlert("No tienes energía suficiente.");
-
+        function accionGenerar() {
+            const promptInput = document.getElementById('prompt').value;
+            if(promptInput.length < 3) return tg.showAlert("Por favor, escribe una idea.");
+            
             creditos -= 1;
-            actualizarUI();
-            generarImagen(promptText);
-        }
-
-        // --- ARREGLO DE IA (MEJOR PROMPT) ---
-        function generarImagen(userText) {
+            refrescarUI();
+            
             const loader = document.getElementById('loader');
-            const container = document.getElementById('container-img');
+            const box = document.getElementById('box-resultado');
             const img = document.getElementById('resultado');
             
             loader.style.display = "block";
-            container.style.display = "none";
+            box.style.display = "none";
 
-            const seed = Math.floor(Math.random() * 1000000);
+            // PROMPT MEJORADO para que la IA no haga "basura"
+            // Le añadimos términos de alta calidad automáticamente
+            const mejorPrompt = `High-end professional digital art, masterpiece, 8k resolution, cinematic lighting, sharp details, luxury aesthetic: ${promptInput}`;
             
-            // Aquí está el truco: Envolvemos el texto del usuario en "palabras mágicas"
-            // para que la IA no haga cualquier cosa.
-            const masterPrompt = `Professional photography, high quality, masterpiece, 8k, highly detailed: ${userText}. Sharp focus, cinematic lighting, elegant composition, no blur, high contrast.`;
-            
-            const session = "user_" + Date.now();
-            // Usamos el modelo 'flux' que es el mejor actualmente para texto y realismo
-            const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(masterPrompt)}?seed=${seed}&width=1024&height=1024&nologo=true&model=flux`;
+            const seed = Math.floor(Math.random() * 888888);
+            const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(mejorPrompt)}?seed=${seed}&width=1024&height=1024&nologo=true&model=flux`;
 
             img.src = url;
             
             img.onload = () => {
                 loader.style.display = "none";
-                container.style.display = "block";
-                tg.HapticFeedback.impactOccurred('medium'); // Vibra el celular al terminar
+                box.style.display = "block";
+                tg.HapticFeedback.notificationOccurred('success'); // Vibración de iPhone
             };
 
             img.onerror = () => {
-                loader.innerText = "Error al conectar con el servidor. Intenta de nuevo.";
+                loader.innerText = "Error al conectar. Intenta de nuevo.";
             };
         }
     </script>
 </body>
-    </html>
+</html>
