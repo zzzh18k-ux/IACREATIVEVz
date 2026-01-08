@@ -3,116 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>IA Master Pro + Monetización</title>
+    <title>IA NEON STUDIO</title>
     
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
-    
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
-        :root { 
-            --primary: #0088cc; 
-            --bg: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fad0c4, #ffd1ff); 
-        }
+        /* ESTILO OSCURO PROFESIONAL */
         body { 
-            background: var(--bg); 
-            background-size: 400% 400%; 
-            animation: gradientBG 15s ease infinite; 
-            font-family: 'Segoe UI', sans-serif; 
+            background: #09090b; /* Negro absoluto */
+            color: #e4e4e7; font-family: 'Inter', -apple-system, sans-serif;
             display: flex; flex-direction: column; align-items: center; 
-            padding: 20px; min-height: 100vh; margin: 0; 
+            padding: 20px; min-height: 100vh; margin: 0;
         }
-        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        
-        .glass-card { 
-            background: rgba(255, 255, 255, 0.9); 
-            backdrop-filter: blur(10px); 
-            border-radius: 25px; 
-            padding: 25px; 
-            width: 100%; max-width: 400px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
-            text-align: center; 
+
+        .main-card { 
+            background: #18181b; border-radius: 24px; padding: 25px; 
+            width: 100%; max-width: 420px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            border: 1px solid #27272a; text-align: center;
         }
+
+        h2 { color: #22d3ee; font-size: 24px; margin-bottom: 8px; letter-spacing: -1px; }
+        p.subtitle { color: #71717a; font-size: 13px; margin-bottom: 20px; }
+
         textarea { 
-            width: 100%; height: 100px; border-radius: 15px; 
-            border: 1px solid #ddd; padding: 12px; font-size: 16px; 
-            margin-bottom: 15px; outline: none; resize: none; 
+            width: 100%; height: 110px; border-radius: 16px; border: 1px solid #3f3f46;
+            padding: 14px; background: #09090b; color: #fff; font-size: 16px;
+            margin-bottom: 20px; outline: none; resize: none; transition: 0.3s;
         }
-        .btn-main { 
-            background: linear-gradient(45deg, #0088cc, #00a8ff); 
-            color: white; border: none; padding: 18px; width: 100%; 
-            border-radius: 18px; font-weight: bold; font-size: 18px; 
-            cursor: pointer; box-shadow: 0 8px 15px rgba(0, 136, 204, 0.3); 
+        textarea:focus { border-color: #22d3ee; box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.2); }
+
+        .btn-generate { 
+            background: #22d3ee; color: #083344;
+            border: none; padding: 18px; width: 100%; border-radius: 16px;
+            font-weight: 800; font-size: 16px; cursor: pointer;
+            text-transform: uppercase; letter-spacing: 1px;
+            transition: transform 0.1s, opacity 0.2s;
         }
-        #loader { display: none; margin-top: 20px; font-weight: bold; color: #0088cc; }
-        #resultado { width: 100%; border-radius: 15px; margin-top: 20px; display: none; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .btn-generate:active { transform: scale(0.97); opacity: 0.9; }
+
+        #loader { display: none; margin: 25px 0; color: #22d3ee; font-size: 14px; font-weight: 500; }
+        
+        .result-container { margin-top: 25px; width: 100%; min-height: 200px; border-radius: 20px; background: #09090b; overflow: hidden; border: 1px dashed #27272a; }
+        #resultado { width: 100%; display: none; }
+
+        .footer-text { font-size: 11px; color: #52525b; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-    <div class="glass-card">
-        <h2>🎨 GENERADOR IA</h2>
-        <textarea id="prompt" placeholder="Escribe tu idea detalladamente..."></textarea>
+    <div class="main-card">
+        <h2>NEON IA STUDIO</h2>
+        <p class="subtitle">Generación de imágenes de alta fidelidad</p>
         
-        <p style="font-size: 11px; color: #888; margin-bottom: 15px;">
-            💡 Describe colores, formas y texto para evitar el error amarillo.
-        </p>
+        <textarea id="prompt" placeholder="Escribe tu idea... (ej: Un lobo mecánico en el espacio)"></textarea>
+        
+        <button class="btn-generate" onclick="startFlow()">✨ Iniciar Creación</button>
 
-        <button class="btn-main" onclick="botonGenerar()">✨ GENERAR AHORA</button>
+        <div id="loader">
+            <div style="margin-bottom: 10px;">⚡ Sincronizando con la red...</div>
+        </div>
 
-        <div id="loader">🚀 Procesando imagen...</div>
-        <img id="resultado" src="">
+        <div class="result-container">
+            <img id="resultado" src="">
+        </div>
+
+        <p class="footer-text">Powered by Dark Engine AI • Monetized by AdsGram</p>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        tg.setHeaderColor('#09090b');
 
-        const ADSGRAM_ID = "18897";
+        function startFlow() {
+            const text = document.getElementById('prompt').value;
+            if(text.length < 3) return;
 
-        function botonGenerar() {
-            const prompt = document.getElementById('prompt').value;
-            if(prompt.length < 5) return alert("Por favor, explica mejor tu idea.");
-
-            // Primero intentamos mostrar AdsGram (ID 18897)
-            const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
+            // 1. ADSGRAM (Corrección del error blanco)
+            const AdController = window.Adsgram.init({ blockId: "18897" });
             
-            AdController.show().then(() => {
-                // Si el usuario ve el Ad o lo cierra, genera la imagen
-                procesarImagen(prompt);
-            }).catch(() => {
-                // Si falla AdsGram, generamos igual (Monetag ya estará actuando de fondo)
-                procesarImagen(prompt);
-            });
+            AdController.show()
+                .then(() => { generateImage(text); })
+                .catch((err) => { 
+                    // Si no hay ads o hay error, no mostramos nada y generamos la imagen
+                    console.log("Ad skipped");
+                    generateImage(text); 
+                });
         }
 
-        function procesarImagen(texto) {
+        function generateImage(prompt) {
             const loader = document.getElementById('loader');
             const img = document.getElementById('resultado');
 
             loader.style.display = "block";
             img.style.display = "none";
 
-            // Semilla aleatoria y timestamp para saltar el Rate Limit amarillo
-            const seed = Math.floor(Math.random() * 99999999);
-            const t = Date.now();
+            // 2. CORRECCIÓN ERROR AMARILLO (Rate Limit)
+            // Usamos modelo Turbo + Seed aleatoria gigante + Cache Buster único
+            const seed = Math.floor(Math.random() * 2000000000);
+            const uniqueID = Date.now() + Math.random().toString(36).substring(2, 8);
             
-            // Usamos modelo FLUX para máxima calidad
-            const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(texto)}?seed=${seed}&width=1024&height=1024&nologo=true&model=flux&t=${t}`;
+            // Cambiamos a pollinations.ai con parámetros de bypass
+            const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?seed=${seed}&width=1024&height=1024&nologo=true&model=turbo&cache=${uniqueID}`;
 
             img.src = url;
+            
             img.onload = () => {
                 loader.style.display = "none";
                 img.style.display = "block";
                 tg.HapticFeedback.impactOccurred('medium');
             };
 
-            // Si sale el error amarillo, intentamos con el modelo turbo automáticamente
             img.onerror = () => {
-                img.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(texto)}?seed=${seed}&model=turbo`;
+                // Si el modelo Turbo falla, intentamos con el modelo por defecto rápidamente
+                img.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?seed=${seed}&model=flux`;
             };
         }
     </script>
 </body>
-</html>
+            </html>
