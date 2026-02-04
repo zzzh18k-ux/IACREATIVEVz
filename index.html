@@ -12,6 +12,10 @@
     
     <style>
         :root { --primary: #6366f1; --bg: #f3f4f6; --card: #ffffff; --text: #1f2937; }
+        
+        /* QUITAR AZUL AL TOCAR EN MOVILES */
+        * { -webkit-tap-highlight-color: transparent; outline: none; user-select: none; }
+        
         body { margin: 0; padding: 0; background: var(--bg); font-family: 'Poppins', sans-serif; color: var(--text); overflow-x: hidden; }
         
         /* PANTALLA DE BLOQUEO (BIENVENIDA) */
@@ -30,8 +34,10 @@
             padding: 15px 40px; border-radius: 50px; font-size: 18px; font-weight: 800;
             cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
             margin-top: 30px; transition: transform 0.2s;
+            /* Fix para móviles */
+            -webkit-tap-highlight-color: transparent; outline: none;
         }
-        .btn-enter:active { transform: scale(0.95); }
+        .btn-enter:active { transform: scale(0.95); opacity: 0.8; }
 
         /* HEADER */
         .header {
@@ -57,15 +63,17 @@
         input, textarea {
             width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #e5e7eb;
             background: #f9fafb; font-family: inherit; font-size: 14px; box-sizing: border-box; outline: none;
+            user-select: text; /* Permitir escribir */
         }
         input:focus, textarea:focus { border-color: var(--primary); }
         
         button {
             width: 100%; padding: 14px; border-radius: 12px; border: none; color: white; font-weight: 600;
             cursor: pointer; margin-top: 10px; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px;
+            -webkit-tap-highlight-color: transparent; outline: none;
         }
 
-        .result-area { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 15px; border-radius: 10px; margin-top: 15px; font-size: 13px; white-space: pre-wrap; display: none; }
+        .result-area { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 15px; border-radius: 10px; margin-top: 15px; font-size: 13px; white-space: pre-wrap; display: none; user-select: text; }
 
         /* COLORS */
         .c-purple { background: linear-gradient(135deg, #a855f7, #7c3aed); }
@@ -88,7 +96,6 @@
     </style>
 </head>
 <body>
-
     <div id="splash-screen">
         <div class="splash-icon">🚀</div>
         <h1>SUPER TOOLS</h1>
@@ -170,43 +177,45 @@
 
         <div style="height: 50px;"></div>
     </div>
-
-    <script>
+        <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
         const ADSGRAM_ID = "18897"; 
 
-        // 1. FUNCIÓN DE ENTRADA (MUESTRA EL PRIMER ANUNCIO OBLIGATORIO) 🚧
+        // 1. FUNCIÓN DE ENTRADA MEJORADA (ANTIBLOQUEO) 🚀
         function entrarApp() {
             const btn = document.querySelector('.btn-enter');
-            btn.innerText = "Cargando...";
-            
+            btn.innerText = "⏳ Abriendo..."; 
+            btn.style.opacity = "0.7";
+            const splash = document.getElementById('splash-screen');
+
+            // SEGURO DE VIDA: Si en 2.5 seg no carga el anuncio, entra a la fuerza
+            const seguridad = setTimeout(() => {
+                splash.style.display = 'none';
+            }, 2500);
+
             try {
                 window.Adsgram.init({ blockId: ADSGRAM_ID }).show().then(() => {
-                    // Si ve el anuncio, entra
-                    document.getElementById('splash-screen').style.display = 'none';
+                    clearTimeout(seguridad);
+                    splash.style.display = 'none';
                 }).catch((e) => {
-                    // Si falla (error de red), entra igual para no bloquear
-                    document.getElementById('splash-screen').style.display = 'none';
+                    clearTimeout(seguridad);
+                    splash.style.display = 'none';
                 });
             } catch(e) {
-                document.getElementById('splash-screen').style.display = 'none';
+                clearTimeout(seguridad);
+                splash.style.display = 'none';
             }
         }
 
-        // 2. EJECUTAR HERRAMIENTAS (CON O SIN ANUNCIO)
+        // 2. HERRAMIENTAS
         function runTool(type) {
-            // LISTA DE COSAS QUE COBRAN ANUNCIO
             const cobro = ['text', 'tags', 'nicks', 'desc', 'calc', 'bible'];
-            
             if(cobro.includes(type)) {
                 try {
-                    window.Adsgram.init({ blockId: ADSGRAM_ID }).show().then(() => {
-                        execute(type);
-                    }).catch(() => { execute(type); });
+                    window.Adsgram.init({ blockId: ADSGRAM_ID }).show().then(() => { execute(type); }).catch(() => { execute(type); });
                 } catch(e) { execute(type); }
             } else {
-                // Si no está en la lista (Relax), pasa directo
                 execute(type);
             }
         }
@@ -239,202 +248,16 @@
             }
         }
 
-        // --- LÓGICA DE FONDO (TEXTOS) ---
         function decorarTexto(txt) { return "✨ " + txt.toUpperCase() + " ✨\n\n✅ Disponible\n📍 Envío Seguro\n👇 DM\n#Ventas"; }
         function generarHashtags(t) { t=t.replace(/\s/g,''); return `#${t} #${t}2026 #Viral #${t}Trend #Fyp`; }
-        function generarNicks(n) { n=n.replace(/\s/g,''); return `1. @${n}Oficial\n2. ⚡${n}⚡\n3. The${n}\n4. ${n}.Pro`; }
+        function generarNicks(n) { n=n.replace(/\s/g,''); return `1. @${n}Oficial\n2. ⚡${n}⚡\n3. The${n}`; }
 
-        // --- ZONA ZEN (SIN ANUNCIOS) ---
-        let breathing = false;
-        let breathTimer;
+        let breathing = false; let breathTimer;
         function toggleBreath() {
             let circle = document.getElementById('breathe-circle');
             let btn = document.getElementById('btn-breath');
-            if(!breathing) {
-                breathing = true; btn.innerText = "⏹ DETENER";
-                breathLoop();
-            } else {
-                breathing = false; btn.innerText = "▶️ INICIAR (Relax)";
-                clearTimeout(breathTimer); circle.className=""; circle.innerText="INHALA";
-            }
-        }
-        function breathLoop() {
-            if(!breathing) return;
-            let c = document.getElementById('breathe-circle');
-            c.className = "inhale"; c.innerText = "INHALA";
-            breathTimer = setTimeout(() => {
-                if(!breathing) return;
-                c.className = "exhale"; c.innerText = "EXHALA";
-                if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-                breathTimer = setTimeout(breathLoop, 4000);
-            }, 4000);
-        <div id="splash-screen">
-        <div class="splash-icon">🚀</div>
-        <h1>SUPER TOOLS</h1>
-        <p>Todas las herramientas que necesitas en un solo lugar.</p>
-        
-        <button class="btn-enter" onclick="entrarApp()">
-            ENTRAR AHORA
-        </button>
-        <p style="font-size: 10px; opacity: 0.7; margin-top: 20px;">Toca para iniciar</p>
-    </div>
-
-    <div class="header">
-        <h1>⚡ SUPER TOOLS PRO</h1>
-        <p>Desliza para ver más herramientas 👇</p>
-    </div>
-
-    <div class="main-container">
-
-        <div class="tool-card">
-            <div class="card-header"><div class="icon-box c-purple"><i class="fas fa-magic"></i></div><div class="card-title">Decorador Mágico</div></div>
-            <textarea id="txt-input" placeholder="Escribe texto feo aquí..."></textarea>
-            <button onclick="runTool('text')" style="background:#8b5cf6">✨ DECORAR</button>
-            <div id="res-text" class="result-area"></div>
-        </div>
-
-        <div class="tool-card">
-            <div class="card-header"><div class="icon-box c-blue"><i class="fas fa-hashtag"></i></div><div class="card-title">Tags Virales</div></div>
-            <input type="text" id="tag-topic" placeholder="Tema (ej: Futbol)">
-            <button onclick="runTool('tags')" style="background:#3b82f6">🔥 GENERAR</button>
-            <div id="res-tags" class="result-area"></div>
-        </div>
-
-        <div class="tool-card">
-            <div class="card-header"><div class="icon-box c-blue"><i class="fas fa-user-tag"></i></div><div class="card-title">Nicks Pro</div></div>
-            <input type="text" id="nick-name" placeholder="Tu Nombre">
-            <button onclick="runTool('nicks')" style="background:#2563eb">🆔 CREAR NICKS</button>
-            <div id="res-nicks" class="result-area"></div>
-        </div>
-
-        <div class="tool-card">
-            <div class="card-header"><div class="icon-box c-purple"><i class="fas fa-pen-nib"></i></div><div class="card-title">Descripción Viral</div></div>
-            <input type="text" id="desc-title" placeholder="Título de tu video...">
-            <button onclick="runTool('desc')" style="background:#7c3aed">📝 ESCRIBIR</button>
-            <div id="res-desc" class="result-area"></div>
-        </div>
-
-        <div class="separator">💰 FINANZAS 💰</div>
-
-        <div class="tool-card">
-            <div class="card-header"><div class="icon-box c-green"><i class="fas fa-calculator"></i></div><div class="card-title">Calculadora</div></div>
-            <input type="text" id="calc-currency" placeholder="Moneda (ej: Bs, $)">
-            <div style="display:flex; gap:10px; margin-top:10px;">
-                <input type="number" id="calc-amount" placeholder="Cant.">
-                <input type="number" id="calc-price" placeholder="Precio">
-            </div>
-            <button onclick="runTool('calc')" style="background:#10b981">💸 CALCULAR</button>
-            <div id="res-calc" class="result-area" style="font-size:20px; text-align:center; font-weight:bold;"></div>
-        </div>
-
-        <div class="separator">🧘 RELAX & FE (SIN ANUNCIOS) 🙏</div>
-
-        <div class="tool-card">
-            <div class="card-header"><div class="icon-box c-orange"><i class="fas fa-bible"></i></div><div class="card-title">Palabra de Dios</div></div>
-            <button onclick="runTool('bible')" style="background:#f97316">🙏 VER VERSÍCULO</button>
-            <div id="res-bible" class="result-area" style="font-style:italic;"></div>
-        </div>
-
-        <div class="tool-card">
-            <div class="card-header"><div class="icon-box c-pink"><i class="fas fa-lungs"></i></div><div class="card-title">Respiración</div></div>
-            <div id="breathe-circle">INHALA</div>
-            <button onclick="toggleBreath()" id="btn-breath" style="background:#ec4899">▶️ INICIAR (Relax)</button>
-        </div>
-
-        <div class="tool-card">
-            <div class="card-header"><div class="icon-box c-pink"><i class="fas fa-hand-pointer"></i></div><div class="card-title">Burbujas</div></div>
-            <div id="bubble-wrap"></div>
-            <button onclick="initBubbles()" style="background:#db2777; margin-top:15px;">🔄 REINICIAR (Gratis)</button>
-        </div>
-
-        <div style="height: 50px;"></div>
-    </div>
-            <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        const ADSGRAM_ID = "18897"; 
-
-        // 1. FUNCIÓN DE ENTRADA (MUESTRA EL PRIMER ANUNCIO OBLIGATORIO) 🚧
-        function entrarApp() {
-            const btn = document.querySelector('.btn-enter');
-            btn.innerText = "Cargando...";
-            
-            try {
-                window.Adsgram.init({ blockId: ADSGRAM_ID }).show().then(() => {
-                    // Si ve el anuncio, entra
-                    document.getElementById('splash-screen').style.display = 'none';
-                }).catch((e) => {
-                    // Si falla (error de red), entra igual para no bloquear
-                    document.getElementById('splash-screen').style.display = 'none';
-                });
-            } catch(e) {
-                document.getElementById('splash-screen').style.display = 'none';
-            }
-        }
-
-        // 2. EJECUTAR HERRAMIENTAS (CON O SIN ANUNCIO)
-        function runTool(type) {
-            // LISTA DE COSAS QUE COBRAN ANUNCIO
-            const cobro = ['text', 'tags', 'nicks', 'desc', 'calc', 'bible'];
-            
-            if(cobro.includes(type)) {
-                try {
-                    window.Adsgram.init({ blockId: ADSGRAM_ID }).show().then(() => {
-                        execute(type);
-                    }).catch(() => { execute(type); });
-                } catch(e) { execute(type); }
-            } else {
-                // Si no está en la lista (Relax), pasa directo
-                execute(type);
-            }
-        }
-
-        function execute(type) {
-            let res = "";
-            let divId = "res-" + type;
-
-            if(type === 'text') res = decorarTexto(document.getElementById('txt-input').value);
-            else if(type === 'tags') res = generarHashtags(document.getElementById('tag-topic').value);
-            else if(type === 'nicks') res = generarNicks(document.getElementById('nick-name').value);
-            else if(type === 'desc') {
-                let t = document.getElementById('desc-title').value;
-                res = `🔥 **${t.toUpperCase()}** 🔥\n\n😱 Tienes que ver esto...\n👇 Comenta y comparte!\n#Viral`;
-            }
-            else if(type === 'calc') {
-                let c = document.getElementById('calc-currency').value || "$";
-                let a = parseFloat(document.getElementById('calc-amount').value) || 0;
-                let p = parseFloat(document.getElementById('calc-price').value) || 0;
-                res = (a * p).toLocaleString('es-VE') + " " + c;
-            }
-            else if(type === 'bible') {
-                const v = ["Todo lo puedo en Cristo. - Fil 4:13", "El Señor es mi pastor. - Sal 23:1", "No temas, yo estoy contigo. - Isa 41:10"];
-                res = v[Math.floor(Math.random() * v.length)];
-            }
-
-            if(res) {
-                document.getElementById(divId).innerText = res;
-                document.getElementById(divId).style.display = 'block';
-            }
-        }
-
-        // --- LÓGICA DE FONDO (TEXTOS) ---
-        function decorarTexto(txt) { return "✨ " + txt.toUpperCase() + " ✨\n\n✅ Disponible\n📍 Envío Seguro\n👇 DM\n#Ventas"; }
-        function generarHashtags(t) { t=t.replace(/\s/g,''); return `#${t} #${t}2026 #Viral #${t}Trend #Fyp`; }
-        function generarNicks(n) { n=n.replace(/\s/g,''); return `1. @${n}Oficial\n2. ⚡${n}⚡\n3. The${n}\n4. ${n}.Pro`; }
-
-        // --- ZONA ZEN (SIN ANUNCIOS) ---
-        let breathing = false;
-        let breathTimer;
-        function toggleBreath() {
-            let circle = document.getElementById('breathe-circle');
-            let btn = document.getElementById('btn-breath');
-            if(!breathing) {
-                breathing = true; btn.innerText = "⏹ DETENER";
-                breathLoop();
-            } else {
-                breathing = false; btn.innerText = "▶️ INICIAR (Relax)";
-                clearTimeout(breathTimer); circle.className=""; circle.innerText="INHALA";
-            }
+            if(!breathing) { breathing=true; btn.innerText="⏹ DETENER"; breathLoop(); } 
+            else { breathing=false; btn.innerText="▶️ INICIAR (Relax)"; clearTimeout(breathTimer); circle.className=""; circle.innerText="INHALA"; }
         }
         function breathLoop() {
             if(!breathing) return;
@@ -463,7 +286,6 @@
                 container.appendChild(b);
             }
         }
-
         window.onload = initBubbles;
     </script>
 </body>
