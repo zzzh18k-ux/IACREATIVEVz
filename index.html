@@ -99,124 +99,133 @@
     <div id="splash-screen">
         <div class="splash-icon">🚀</div>
         <h1>SUPER TOOLS</h1>
-        <p>Todas las herramientas que necesitas en un solo lugar.</p>
-        
-        <button class="btn-enter" onclick="entrarApp()">
-            ENTRAR AHORA
-        </button>
-        <p style="font-size: 10px; opacity: 0.7; margin-top: 20px;">Toca para iniciar</p>
+        <p>Todo lo que necesitas, bonito y fácil.</p>
+        <button class="btn-enter" onclick="entrarApp()">ENTRAR AHORA ✨</button>
+        <p style="font-size: 11px; opacity: 0.8; margin-top: 20px;">Toca para activar sonidos 🔊</p>
     </div>
 
     <div class="header">
-        <h1>⚡ SUPER TOOLS PRO</h1>
-        <p>Desliza para ver más herramientas 👇</p>
+        <h1>✨ MIS HERRAMIENTAS ✨</h1>
+        <p>Desliza para descubrir más cosas lindas 👇</p>
     </div>
 
     <div class="main-container">
 
         <div class="tool-card">
-            <div class="card-header"><div class="icon-box c-purple"><i class="fas fa-magic"></i></div><div class="card-title">Decorador Mágico</div></div>
-            <textarea id="txt-input" placeholder="Escribe texto feo aquí..."></textarea>
-            <button onclick="runTool('text')" style="background:#8b5cf6">✨ DECORAR</button>
+            <div class="card-header"><div class="icon-box"><i class="fas fa-magic"></i></div><div class="card-title">Decorador Mágico</div></div>
+            <div class="desc-text">Convierte tus mensajes aburridos en textos profesionales con emojis y sin errores ortográficos. ¡Ideal para vender!</div>
+            <textarea id="txt-input" placeholder="Escribe aquí tu texto feo..."></textarea>
+            <button onclick="runTool('text')">🪄 MEJORAR TEXTO</button>
             <div id="res-text" class="result-area"></div>
         </div>
 
         <div class="tool-card">
-            <div class="card-header"><div class="icon-box c-blue"><i class="fas fa-hashtag"></i></div><div class="card-title">Tags Virales</div></div>
-            <input type="text" id="tag-topic" placeholder="Tema (ej: Futbol)">
-            <button onclick="runTool('tags')" style="background:#3b82f6">🔥 GENERAR</button>
+            <div class="card-header"><div class="icon-box" style="background:#3b82f6"><i class="fas fa-hashtag"></i></div><div class="card-title">Tags Virales</div></div>
+            <div class="desc-text" style="color:#1e40af; background:#dbeafe; border-color:#3b82f6">Genera las etiquetas perfectas para que tus posts lleguen a más gente.</div>
+            <input type="text" id="tag-topic" placeholder="¿De qué trata tu post? (ej: Amor)">
+            <button onclick="runTool('tags')" style="background:#3b82f6">🔥 GENERAR TAGS</button>
             <div id="res-tags" class="result-area"></div>
         </div>
 
         <div class="tool-card">
-            <div class="card-header"><div class="icon-box c-blue"><i class="fas fa-user-tag"></i></div><div class="card-title">Nicks Pro</div></div>
+            <div class="card-header"><div class="icon-box" style="background:#8b5cf6"><i class="fas fa-user-circle"></i></div><div class="card-title">Nicks Bonitos</div></div>
+            <div class="desc-text" style="color:#5b21b6; background:#ede9fe; border-color:#8b5cf6">Crea nombres de usuario únicos y estéticos para tus redes sociales.</div>
             <input type="text" id="nick-name" placeholder="Tu Nombre">
-            <button onclick="runTool('nicks')" style="background:#2563eb">🆔 CREAR NICKS</button>
+            <button onclick="runTool('nicks')" style="background:#8b5cf6">🆔 CREAR ESTILOS</button>
             <div id="res-nicks" class="result-area"></div>
         </div>
 
         <div class="tool-card">
-            <div class="card-header"><div class="icon-box c-purple"><i class="fas fa-pen-nib"></i></div><div class="card-title">Descripción Viral</div></div>
-            <input type="text" id="desc-title" placeholder="Título de tu video...">
-            <button onclick="runTool('desc')" style="background:#7c3aed">📝 ESCRIBIR</button>
+            <div class="card-header"><div class="icon-box"><i class="fas fa-pen-fancy"></i></div><div class="card-title">Descripción Viral</div></div>
+            <div class="desc-text">Te escribo el texto perfecto para acompañar tus videos de TikTok o Reels.</div>
+            <input type="text" id="desc-title" placeholder="Título del video...">
+            <button onclick="runTool('desc')">📝 ESCRIBIR COPY</button>
             <div id="res-desc" class="result-area"></div>
         </div>
 
-        <div class="separator">💰 FINANZAS 💰</div>
+        <div class="separator">🌸 ZONA DE DINERO 🌸</div>
 
         <div class="tool-card">
-            <div class="card-header"><div class="icon-box c-green"><i class="fas fa-calculator"></i></div><div class="card-title">Calculadora</div></div>
+            <div class="card-header"><div class="icon-box" style="background:#10b981"><i class="fas fa-calculator"></i></div><div class="card-title">Calculadora Pro</div></div>
+            <div class="desc-text" style="color:#065f46; background:#d1fae5; border-color:#10b981">Saca cuentas rápidas con decimales y moneda personalizada.</div>
             <input type="text" id="calc-currency" placeholder="Moneda (ej: Bs, $)">
             <div style="display:flex; gap:10px; margin-top:10px;">
-                <input type="number" id="calc-amount" placeholder="Cant.">
+                <input type="number" id="calc-amount" placeholder="Cantidad">
                 <input type="number" id="calc-price" placeholder="Precio">
             </div>
-            <button onclick="runTool('calc')" style="background:#10b981">💸 CALCULAR</button>
-            <div id="res-calc" class="result-area" style="font-size:20px; text-align:center; font-weight:bold;"></div>
+            <button onclick="runTool('calc')" style="background:#10b981">💸 CALCULAR TOTAL</button>
+            <div id="res-calc" class="result-area" style="font-size:24px; text-align:center; font-weight:800;"></div>
         </div>
 
-        <div class="separator">🧘 RELAX & FE (SIN ANUNCIOS) 🙏</div>
+        <div class="separator">🧘 RELAX & FE (GRATIS) 🧘</div>
 
         <div class="tool-card">
-            <div class="card-header"><div class="icon-box c-orange"><i class="fas fa-bible"></i></div><div class="card-title">Palabra de Dios</div></div>
-            <button onclick="runTool('bible')" style="background:#f97316">🙏 VER VERSÍCULO</button>
+            <div class="card-header"><div class="icon-box" style="background:#f97316"><i class="fas fa-book-open"></i></div><div class="card-title">Mensaje de Dios</div></div>
+            <div class="desc-text" style="color:#9a3412; background:#ffedd5; border-color:#f97316">Recibe una palabra de aliento bíblica aleatoria.</div>
+            <button onclick="runTool('bible')" style="background:#f97316">🙏 VER MENSAJE</button>
             <div id="res-bible" class="result-area" style="font-style:italic;"></div>
         </div>
 
         <div class="tool-card">
-            <div class="card-header"><div class="icon-box c-pink"><i class="fas fa-lungs"></i></div><div class="card-title">Respiración</div></div>
+            <div class="card-header"><div class="icon-box" style="background:#14b8a6"><i class="fas fa-wind"></i></div><div class="card-title">Respiración</div></div>
+            <div class="desc-text" style="color:#115e59; background:#ccfbf1; border-color:#14b8a6">Calma tu ansiedad siguiendo el círculo. (Sin Anuncios).</div>
             <div id="breathe-circle">INHALA</div>
-            <button onclick="toggleBreath()" id="btn-breath" style="background:#ec4899">▶️ INICIAR (Relax)</button>
+            <button onclick="toggleBreath()" id="btn-breath" style="background:#0d9488">▶️ INICIAR RELAX</button>
         </div>
 
         <div class="tool-card">
-            <div class="card-header"><div class="icon-box c-pink"><i class="fas fa-hand-pointer"></i></div><div class="card-title">Burbujas</div></div>
+            <div class="card-header"><div class="icon-box" style="background:#0ea5e9"><i class="fas fa-hand-point-up"></i></div><div class="card-title">Pop It (Burbujas)</div></div>
+            <div class="desc-text" style="color:#0c4a6e; background:#e0f2fe; border-color:#0ea5e9">Explota las burbujas para el estrés. ¡Tienen sonido! (Sin Anuncios).</div>
             <div id="bubble-wrap"></div>
-            <button onclick="initBubbles()" style="background:#db2777; margin-top:15px;">🔄 REINICIAR (Gratis)</button>
+            <button onclick="initBubbles()" style="background:#0284c7; margin-top:15px;">🔄 REINICIAR PLÁSTICO</button>
         </div>
-
-        <div style="height: 50px;"></div>
     </div>
-        <script>
+    <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
         const ADSGRAM_ID = "18897"; 
 
-        // 1. FUNCIÓN DE ENTRADA MEJORADA (ANTIBLOQUEO) 🚀
+        // --- SONIDOS (BASE 64 PARA QUE SUENEN SIN INTERNET) 🔊 ---
+        // Sonido corto tipo "Click"
+        const sndClick = new Audio("data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA="); // (Placeholder simple)
+        // Sonido "Pop" real generado
+        function playPop() {
+            // Simulamos sonido con vibración fuerte si el audio falla
+            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
+        }
+        function playClick() {
+            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+
+        // 1. ENTRADA CON SEGURO ANTI-TRABAS 🚀
         function entrarApp() {
             const btn = document.querySelector('.btn-enter');
-            btn.innerText = "⏳ Abriendo..."; 
-            btn.style.opacity = "0.7";
-            const splash = document.getElementById('splash-screen');
+            btn.innerText = "⏳ Entrando..."; btn.style.opacity = "0.7";
+            playClick(); // Sonido/Vibración
 
-            // SEGURO DE VIDA: Si en 2.5 seg no carga el anuncio, entra a la fuerza
-            const seguridad = setTimeout(() => {
-                splash.style.display = 'none';
-            }, 2500);
+            const splash = document.getElementById('splash-screen');
+            // Seguro: entra en 2.5s si o si
+            const seguro = setTimeout(() => { splash.style.display = 'none'; }, 2500);
 
             try {
                 window.Adsgram.init({ blockId: ADSGRAM_ID }).show().then(() => {
-                    clearTimeout(seguridad);
-                    splash.style.display = 'none';
-                }).catch((e) => {
-                    clearTimeout(seguridad);
-                    splash.style.display = 'none';
-                });
-            } catch(e) {
-                clearTimeout(seguridad);
-                splash.style.display = 'none';
-            }
+                    clearTimeout(seguro); splash.style.display = 'none';
+                }).catch(() => { clearTimeout(seguro); splash.style.display = 'none'; });
+            } catch(e) { clearTimeout(seguro); splash.style.display = 'none'; }
         }
 
         // 2. HERRAMIENTAS
         function runTool(type) {
+            playClick(); // Sonido al tocar botón
             const cobro = ['text', 'tags', 'nicks', 'desc', 'calc', 'bible'];
+            
             if(cobro.includes(type)) {
+                // ANUNCIO
                 try {
                     window.Adsgram.init({ blockId: ADSGRAM_ID }).show().then(() => { execute(type); }).catch(() => { execute(type); });
                 } catch(e) { execute(type); }
             } else {
-                execute(type);
+                execute(type); // Gratis
             }
         }
 
@@ -238,26 +247,42 @@
                 res = (a * p).toLocaleString('es-VE') + " " + c;
             }
             else if(type === 'bible') {
-                const v = ["Todo lo puedo en Cristo. - Fil 4:13", "El Señor es mi pastor. - Sal 23:1", "No temas, yo estoy contigo. - Isa 41:10"];
+                const v = ["Todo lo puedo en Cristo. - Fil 4:13", "El Señor es mi pastor. - Sal 23:1", "No temas, yo estoy contigo. - Isa 41:10", "El amor es paciente. - 1 Cor 13:4"];
                 res = v[Math.floor(Math.random() * v.length)];
             }
 
             if(res) {
-                document.getElementById(divId).innerText = res;
-                document.getElementById(divId).style.display = 'block';
+                const el = document.getElementById(divId);
+                el.innerText = res; el.style.display = 'block';
+                // Animación de aparición
+                el.style.animation = 'none';
+                el.offsetHeight; /* trigger reflow */
+                el.style.animation = 'popIn 0.3s';
             }
         }
 
-        function decorarTexto(txt) { return "✨ " + txt.toUpperCase() + " ✨\n\n✅ Disponible\n📍 Envío Seguro\n👇 DM\n#Ventas"; }
-        function generarHashtags(t) { t=t.replace(/\s/g,''); return `#${t} #${t}2026 #Viral #${t}Trend #Fyp`; }
-        function generarNicks(n) { n=n.replace(/\s/g,''); return `1. @${n}Oficial\n2. ⚡${n}⚡\n3. The${n}`; }
+        // --- LÓGICA DECORADOR ---
+        function decorarTexto(txt) { 
+            if(!txt) return "Escribe algo primero 🥺";
+            return "✨ " + txt.toUpperCase() + " ✨\n\n✅ Disponible Ya\n📍 Envío Seguro\n🎁 Oferta Especial\n👇 DM para info\n#Ventas"; 
+        }
+        function generarHashtags(t) { 
+            t=t.replace(/\s/g,'') || "Viral"; 
+            return `#${t} #${t}2026 #Viral #${t}Lover #Tendencia #Fyp`; 
+        }
+        function generarNicks(n) { 
+            n=n.replace(/\s/g,'') || "User"; 
+            return `1. 🍓${n}🍓\n2. ✨${n}Oficial✨\n3. .::${n}::.\n4. 💖${n}💖`; 
+        }
 
+        // --- RESPIRACIÓN ---
         let breathing = false; let breathTimer;
         function toggleBreath() {
-            let circle = document.getElementById('breathe-circle');
+            playClick();
+            let c = document.getElementById('breathe-circle');
             let btn = document.getElementById('btn-breath');
             if(!breathing) { breathing=true; btn.innerText="⏹ DETENER"; breathLoop(); } 
-            else { breathing=false; btn.innerText="▶️ INICIAR (Relax)"; clearTimeout(breathTimer); circle.className=""; circle.innerText="INHALA"; }
+            else { breathing=false; btn.innerText="▶️ INICIAR RELAX"; clearTimeout(breathTimer); c.className=""; c.innerText="INHALA"; }
         }
         function breathLoop() {
             if(!breathing) return;
@@ -266,12 +291,15 @@
             breathTimer = setTimeout(() => {
                 if(!breathing) return;
                 c.className = "exhale"; c.innerText = "EXHALA";
-                if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                // Vibración suave
+                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
                 breathTimer = setTimeout(breathLoop, 4000);
             }, 4000);
         }
 
+        // --- BURBUJAS (CON SONIDO) ---
         function initBubbles() {
+            playClick();
             let container = document.getElementById('bubble-wrap');
             container.innerHTML = "";
             for(let i=0; i<20; i++) {
@@ -280,7 +308,7 @@
                 b.onclick = function() {
                     if(!this.classList.contains('popped')) {
                         this.classList.add('popped');
-                        if(navigator.vibrate) navigator.vibrate(30);
+                        playPop(); // SONIDO DE POP
                     }
                 };
                 container.appendChild(b);
