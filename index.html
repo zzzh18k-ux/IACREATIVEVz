@@ -2,240 +2,170 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>IA Studio Elite GOLD</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Magic Post Creator ✨</title>
     
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        :root {
-            --ios-bg: #F2F2F7; 
-            --ios-card: #FFFFFF;
-            --ios-accent: #007AFF; 
-            --ios-text: #1C1C1E;
-            --ios-secondary: #8E8E93;
-            --ios-green: #34C759;
-        }
-
-        body { 
-            background-color: var(--ios-bg); 
-            color: var(--ios-text); 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            margin: 0; padding: 20px; 
+        body {
+            margin: 0; padding: 20px;
+            background: #f0f2f5; font-family: 'Poppins', sans-serif;
             display: flex; flex-direction: column; align-items: center;
         }
-
-        .header {
-            width: 100%; max-width: 400px;
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .badge-credits {
-            background: var(--ios-card);
-            padding: 10px 20px; border-radius: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            font-weight: 800; color: var(--ios-accent);
-            font-size: 18px;
-        }
-
-        .container {
-            width: 100%; max-width: 400px;
-            background: var(--ios-card);
-            border-radius: 28px; padding: 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.03);
-            box-sizing: border-box;
-            text-align: center;
-        }
+        .container { width: 100%; max-width: 400px; }
+        
+        h1 { font-size: 22px; color: #333; text-align: center; margin-bottom: 5px; }
+        p { text-align: center; color: #666; font-size: 12px; margin-bottom: 20px; }
 
         textarea {
-            width: 100%; border: none; background: #F3F3F3;
-            border-radius: 18px; padding: 18px; font-size: 17px;
-            margin-bottom: 20px; resize: none; outline: none; font-family: inherit;
+            width: 100%; height: 100px;
+            border: 2px solid #ddd; border-radius: 15px;
+            padding: 15px; font-family: inherit; font-size: 14px;
+            box-sizing: border-box; outline: none; resize: none;
         }
+        textarea:focus { border-color: #6c5ce7; }
 
-        .btn {
-            width: 100%; padding: 18px; border-radius: 16px;
-            font-size: 17px; font-weight: 700; border: none;
-            cursor: pointer; transition: all 0.2s ease;
-            margin-bottom: 12px; display: flex; justify-content: center; align-items: center;
+        .btn-magic {
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            color: white; border: none; padding: 15px;
+            width: 100%; border-radius: 12px;
+            font-weight: bold; font-size: 16px; cursor: pointer;
+            margin-top: 15px; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
         }
+        .btn-magic:active { transform: scale(0.98); }
 
-        .btn-main { background-color: var(--ios-accent); color: white; }
-        .btn-main:active { transform: scale(0.97); }
-
-        .btn-ads { background-color: #E5E5EA; color: var(--ios-accent); }
-
-        .btn-download {
-            background-color: var(--ios-green);
-            color: white; display: none; margin-top: 15px;
+        /* RESULTADO */
+        .result-box {
+            background: white; padding: 20px;
+            border-radius: 15px; margin-top: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            display: none; border: 1px solid #eee;
         }
-
-        /* BARRA DE PROGRESO */
-        #progress-container { display: none; margin: 20px 0; }
-        .progress-text { font-size: 13px; color: var(--ios-secondary); margin-bottom: 8px; }
-        .progress-bar-bg { width: 100%; height: 8px; background: #E5E5EA; border-radius: 10px; overflow: hidden; }
-        .progress-bar-fill { width: 0%; height: 100%; background: var(--ios-accent); transition: width 0.4s ease; }
         
-        .result-wrapper {
-            margin-top: 20px; width: 100%; border-radius: 24px;
-            overflow: hidden; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        .preview {
+            white-space: pre-wrap; /* Respeta saltos de línea */
+            font-size: 14px; color: #333; line-height: 1.6;
         }
 
-        #resultado { width: 100%; display: block; }
+        .actions { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-copy {
+            flex: 1; background: #00b894; color: white;
+            border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1 style="font-size: 24px; font-weight: 800;">Elite Studio</h1>
-        <div class="badge-credits">⚡ <span id="val-creditos">1000</span></div>
-    </div>
-
     <div class="container">
-        <textarea id="prompt" rows="3" placeholder="¿Qué vamos a crear hoy?"></textarea>
-        
-        <button class="btn btn-main" id="btn-gen" onclick="verificarYGenerar()">✨ Generar (-10⚡)</button>
-        <button class="btn btn-ads" onclick="accionAnuncio()">📺 +100 Energía Gratis</button>
+        <h1>Magic Post Creator ✨</h1>
+        <p>Convierte texto aburrido en un Post de Venta Viral con Emojis y Negritas.</p>
 
-        <div id="progress-container">
-            <div class="progress-text" id="status-text">Iniciando motores de IA...</div>
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill" id="progress-fill"></div>
+        <textarea id="inputText" placeholder="Escribe aquí tu texto aburrido...
+Ej: Vendo zapatos talla 40 en valencia precio 20 dolares"></textarea>
+
+        <button class="btn-magic" onclick="transformarTexto()">
+            <span>✨</span> MEJORAR CON IA
+        </button>
+
+        <div id="result-box" class="result-box">
+            <div class="preview" id="outputText"></div>
+            
+            <div class="actions">
+                <button class="btn-copy" onclick="copiar()">📋 COPIAR</button>
+                <button class="btn-copy" style="background:#dfe6e9; color:#333" onclick="location.reload()">🔄 OTRO</button>
             </div>
         </div>
-
-        <div class="result-wrapper" id="box-resultado">
-            <img id="resultado">
-        </div>
-
-        <button class="btn btn-download" id="btn-descarga" onclick="descargarImagen()">
-            ⬇️ Descargar Masterpiece
-        </button>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.setHeaderColor("#F2F2F7");
+        const ADSGRAM_ID = "18897"; 
 
-        // --- 1. BIENVENIDA DE 1000 ENERGÍA ---
-        let creditos = localStorage.getItem('user_creds_gold') ? parseInt(localStorage.getItem('user_creds_gold')) : 1000;
-        let intentos = 0;
+        function transformarTexto() {
+            let texto = document.getElementById('inputText').value;
+            if(!texto) return tg.showAlert("Escribe algo primero");
 
-        function refrescarUI() {
-            document.getElementById('val-creditos').innerText = creditos;
-            localStorage.setItem('user_creds_gold', creditos);
-            document.getElementById('btn-gen').disabled = (creditos < 10);
-        }
-        refrescarUI();
-
-        // --- 2. RECOMPENSA DE 100 ENERGÍA ---
-        async function accionAnuncio() {
-            const AdController = window.Adsgram.init({ blockId: "18897" });
-            AdController.show().then(() => {
-                creditos += 100; // RECOMPENSA ALTA
-                refrescarUI();
-                tg.showAlert("✅ ¡Brutal! Has ganado +100 de Energía.");
-            }).catch(() => {
-                // Si falla, intentamos Monetag o damos compensación
-                creditos += 20; 
-                refrescarUI();
-                tg.showAlert("Aviso: No hay videos, recibes +20 de cortesía.");
-            });
-        }
-
-        // --- 3. INTERRUPCIÓN SORPRESA ---
-        function verificarYGenerar() {
-            // Hay un 30% de probabilidad de que salte un anuncio antes de generar
-            if (Math.random() < 0.30) {
-                tg.showConfirm("Anuncio patrocinado para mantener la calidad Elite.", (confirm) => {
-                    const AdController = window.Adsgram.init({ blockId: "18897" });
-                    AdController.show().finally(() => {
-                        iniciarGeneracion();
-                    });
+            // EL COBRO: ANTES DE MOSTRAR LA MAGIA 💰
+            try {
+                window.Adsgram.init({ blockId: ADSGRAM_ID }).show().then(() => {
+                    aplicarMagia(texto);
+                }).catch(() => {
+                    aplicarMagia(texto);
                 });
-            } else {
-                iniciarGeneracion();
+            } catch(e) {
+                aplicarMagia(texto);
             }
         }
 
-        function iniciarGeneracion() {
-            const p = document.getElementById('prompt').value;
-            if(p.length < 2) return tg.showAlert("Describe tu idea.");
-            
-            // --- 4. COSTO DE 10 ENERGÍA ---
-            creditos -= 10; 
-            refrescarUI();
-            intentos = 0;
-            pedirImagen(p);
-        }
+        function aplicarMagia(textoOriginal) {
+            let lineas = textoOriginal.split('\n');
+            let resultado = "";
 
-        function pedirImagen(promptUser) {
-            const progressCont = document.getElementById('progress-container');
-            const progressFill = document.getElementById('progress-fill');
-            const statusText = document.getElementById('status-text');
-            const box = document.getElementById('box-resultado');
-            const btnD = document.getElementById('btn-descarga');
-            const img = document.getElementById('resultado');
-
-            progressCont.style.display = "block";
-            box.style.display = "none";
-            btnD.style.display = "none";
-            progressFill.style.width = "15%";
-            statusText.innerText = "Conectando con servidores Elite...";
-
-            const seed = Math.floor(Math.random() * 2000000);
-            const quality = "High-end ultra-realistic photography, cinematic lighting, 8k, hyper-detailed: ";
-            const modelos = ["flux", "turbo", "unity"];
-            const modeloActual = modelos[intentos % modelos.length];
-            const bypass = Date.now();
-
-            const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(quality + promptUser)}?seed=${seed}&width=1024&height=1024&nologo=true&model=${modeloActual}&cb=${bypass}`;
-
-            img.src = url;
-
-            img.onload = () => {
-                // Verificamos si es el aviso amarillo (usualmente muy pequeño)
-                if (img.naturalWidth < 400 && intentos < 2) {
-                    intentos++;
-                    pedirImagen(promptUser);
-                    return;
-                }
-                
-                progressFill.style.width = "100%";
-                statusText.innerText = "¡Arte generado!";
-                
-                setTimeout(() => {
-                    progressCont.style.display = "none";
-                    box.style.display = "block";
-                    btnD.style.display = "flex";
-                    tg.HapticFeedback.notificationOccurred('success');
-                }, 500);
+            // 1. DICCIONARIO DE EMOJIS (Lógica Simple)
+            // Si encuentra estas palabras, pone estos emojis
+            const emojis = {
+                "precio": "💰", "dolares": "💵", "oferta": "🔥", "vendo": "🛍️",
+                "envio": "🚚", "gratis": "🎁", "info": "ℹ️", "talla": "👟",
+                "celular": "📱", "nuevo": "✨", "ubicacion": "📍", "caracas": "🇻🇪",
+                "venezuela": "🇻🇪", "contacto": "📞", "dm": "📩"
             };
 
-            img.onerror = () => {
-                if (intentos < 2) {
-                    intentos++;
-                    pedirImagen(promptUser);
-                } else {
-                    tg.showAlert("Servidores saturados. Reintentando...");
-                    progressCont.style.display = "none";
+            // 2. PROCESAR PRIMERA LÍNEA (TÍTULO)
+            if(lineas.length > 0) {
+                let titulo = lineas[0].toUpperCase();
+                // Convertir a Negrita (Matemática Unicode)
+                titulo = toBold(titulo);
+                resultado += "🔥 " + titulo + " 🔥\n\n";
+            }
+
+            // 3. PROCESAR EL CUERPO
+            for(let i=1; i < lineas.length; i++) {
+                let linea = lineas[i];
+                if(linea.trim() === "") continue;
+
+                // Buscar palabras clave para poner emojis
+                let emojiEncontrado = "👉"; // Emoji por defecto
+                
+                let palabras = linea.toLowerCase().split(' ');
+                for(let p of palabras) {
+                    if(emojis[p] || emojis[p.replace('s','')]) { // busca singular/plural simple
+                        emojiEncontrado = emojis[p] || emojis[p.replace('s','')];
+                        break;
+                    }
                 }
-            };
+                
+                resultado += `${emojiEncontrado} ${linea}\n`;
+            }
+
+            // 4. AGREGAR FINAL DE MARKETING
+            resultado += "\n👇 **¡Escríbeme al Privado!**\n";
+            resultado += "#Ventas #Oportunidad #Viral";
+
+            // MOSTRAR
+            document.getElementById('outputText').innerText = resultado;
+            document.getElementById('result-box').style.display = 'block';
+            document.querySelector('.btn-magic').style.display = 'none';
         }
 
-        function descargarImagen() {
-            const imgUrl = document.getElementById('resultado').src;
-            tg.showPopup({
-                title: 'Descargar Arte',
-                message: 'Abre la imagen y mantén presionado para guardar en tu galería.',
-                buttons: [{id: 'ok', type: 'default', text: 'Abrir Foto'}]
-            }, (id) => {
-                if(id === 'ok') tg.openLink(imgUrl);
-            });
+        // FUNCIÓN PARA CONVERTIR A NEGRITA (UNICODE)
+        function toBold(text) {
+            const normal = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            const bold   = "𝗔𝗕𝗖𝗗𝗘𝗙𝗚𝗛𝗜𝗝𝗞𝗟𝗠𝗡𝗢𝗣𝗤𝗥𝗦𝗧𝗨𝗩𝗪𝗫𝗬𝗭𝗮𝗯𝗰𝗱𝗲𝗳𝗴𝗵𝗶𝗷𝗸𝗹𝗺𝗻𝗼𝗽𝗾𝗿𝘀𝘁𝘂𝘃𝘄𝘅𝘆𝘇𝟬𝟭𝟮𝟯𝟰𝟱𝟲𝟳𝟴𝟵";
+            return text.split('').map(char => {
+                let i = normal.indexOf(char);
+                return i !== -1 ? bold.substr(i*2, 2) : char; // *2 porque bold usa 2 chars unicode
+            }).join('');
+        }
+
+        function copiar() {
+            let txt = document.getElementById('outputText').innerText;
+            navigator.clipboard.writeText(txt);
+            tg.showAlert("¡Copiado al portapapeles!");
         }
     </script>
 </body>
