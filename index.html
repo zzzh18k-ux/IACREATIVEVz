@@ -3,80 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Magic Post Creator ✨</title>
+    <title>Decorador de Textos ✨</title>
     
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     
     <style>
         body {
             margin: 0; padding: 20px;
-            background: #f0f2f5; font-family: 'Poppins', sans-serif;
+            background: #fdf2f8; /* Fondo rosita muy suave */
+            font-family: 'Poppins', sans-serif;
             display: flex; flex-direction: column; align-items: center;
+            color: #4a4a4a;
         }
         .container { width: 100%; max-width: 400px; }
         
-        h1 { font-size: 22px; color: #333; text-align: center; margin-bottom: 5px; }
-        p { text-align: center; color: #666; font-size: 12px; margin-bottom: 20px; }
+        h1 { 
+            font-size: 24px; color: #db2777; text-align: center; margin-bottom: 5px; 
+            font-weight: 600;
+        }
+        p { 
+            text-align: center; color: #831843; font-size: 13px; margin-bottom: 25px; 
+            line-height: 1.5; background: #fce7f3; padding: 10px; border-radius: 10px;
+        }
 
         textarea {
-            width: 100%; height: 100px;
-            border: 2px solid #ddd; border-radius: 15px;
-            padding: 15px; font-family: inherit; font-size: 14px;
+            width: 100%; height: 120px;
+            border: 2px solid #fbcfe8; border-radius: 15px;
+            padding: 15px; font-family: inherit; font-size: 15px;
             box-sizing: border-box; outline: none; resize: none;
+            background: #fff; color: #333;
+            transition: 0.3s;
         }
-        textarea:focus { border-color: #6c5ce7; }
+        textarea:focus { border-color: #db2777; box-shadow: 0 0 10px rgba(219, 39, 119, 0.2); }
 
         .btn-magic {
-            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
-            color: white; border: none; padding: 15px;
+            background: linear-gradient(135deg, #db2777, #ec4899);
+            color: white; border: none; padding: 16px;
             width: 100%; border-radius: 12px;
-            font-weight: bold; font-size: 16px; cursor: pointer;
-            margin-top: 15px; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+            font-weight: 600; font-size: 16px; cursor: pointer;
+            margin-top: 20px; box-shadow: 0 4px 15px rgba(219, 39, 119, 0.3);
             display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: transform 0.2s;
         }
-        .btn-magic:active { transform: scale(0.98); }
+        .btn-magic:active { transform: scale(0.97); }
 
         /* RESULTADO */
         .result-box {
             background: white; padding: 20px;
-            border-radius: 15px; margin-top: 20px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-            display: none; border: 1px solid #eee;
+            border-radius: 15px; margin-top: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            display: none; border: 1px solid #fce7f3;
         }
         
         .preview {
-            white-space: pre-wrap; /* Respeta saltos de línea */
-            font-size: 14px; color: #333; line-height: 1.6;
+            white-space: pre-wrap;
+            font-size: 15px; color: #333; line-height: 1.6;
         }
 
-        .actions { display: flex; gap: 10px; margin-top: 15px; }
+        .actions { display: flex; gap: 10px; margin-top: 20px; }
         .btn-copy {
-            flex: 1; background: #00b894; color: white;
-            border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer;
+            flex: 1; background: #10b981; color: white;
+            border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer;
+            box-shadow: 0 3px 10px rgba(16, 185, 129, 0.2);
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Magic Post Creator ✨</h1>
-        <p>Convierte texto aburrido en un Post de Venta Viral con Emojis y Negritas.</p>
+        <h1>✨ Editor Mágico ✨</h1>
+        <p>
+            Transforma tus mensajes aburridos en textos profesionales. 
+            Agregamos emojis, organizamos la información y corregimos errores comunes para que tus ventas destaquen. 🚀
+        </p>
 
-        <textarea id="inputText" placeholder="Escribe aquí tu texto aburrido...
-Ej: Vendo zapatos talla 40 en valencia precio 20 dolares"></textarea>
+        <textarea id="inputText" placeholder="Escribe aquí tu texto...
+Ej: vendo telefono xq necesito plata el presio es barato"></textarea>
 
         <button class="btn-magic" onclick="transformarTexto()">
-            <span>✨</span> MEJORAR CON IA
+            <span>🪄</span> DECORAR TEXTO
         </button>
 
         <div id="result-box" class="result-box">
             <div class="preview" id="outputText"></div>
             
             <div class="actions">
-                <button class="btn-copy" onclick="copiar()">📋 COPIAR</button>
-                <button class="btn-copy" style="background:#dfe6e9; color:#333" onclick="location.reload()">🔄 OTRO</button>
+                <button class="btn-copy" onclick="copiar()">📋 Copiar Texto</button>
+                <button class="btn-copy" style="background:#f3f4f6; color:#555" onclick="location.reload()">🔄 Nuevo</button>
             </div>
         </div>
     </div>
@@ -93,58 +108,73 @@ Ej: Vendo zapatos talla 40 en valencia precio 20 dolares"></textarea>
             // EL COBRO: ANTES DE MOSTRAR LA MAGIA 💰
             try {
                 window.Adsgram.init({ blockId: ADSGRAM_ID }).show().then(() => {
-                    aplicarMagia(texto);
+                    procesarMagia(texto);
                 }).catch(() => {
-                    aplicarMagia(texto);
+                    procesarMagia(texto);
                 });
             } catch(e) {
-                aplicarMagia(texto);
+                procesarMagia(texto);
             }
         }
 
-        function aplicarMagia(textoOriginal) {
-            let lineas = textoOriginal.split('\n');
+        function procesarMagia(texto) {
+            // 1. CORRECCIÓN ORTOGRÁFICA BÁSICA (Diccionario de errores comunes)
+            let corregido = correccionBasica(texto);
+
+            // 2. DIVIDIR POR LÍNEAS
+            let lineas = corregido.split('\n');
             let resultado = "";
 
-            // 1. DICCIONARIO DE EMOJIS (Lógica Simple)
-            // Si encuentra estas palabras, pone estos emojis
+            // 3. EMOJIS (Diccionario mejorado)
             const emojis = {
-                "precio": "💰", "dolares": "💵", "oferta": "🔥", "vendo": "🛍️",
-                "envio": "🚚", "gratis": "🎁", "info": "ℹ️", "talla": "👟",
-                "celular": "📱", "nuevo": "✨", "ubicacion": "📍", "caracas": "🇻🇪",
-                "venezuela": "🇻🇪", "contacto": "📞", "dm": "📩"
+                "precio": "💲", "costo": "💲", "valor": "💲", "dolares": "🇺🇸", "bs": "🇻🇪", 
+                "oferta": "🔥", "remate": "🔥", "vendo": "🛍️", "disponible": "✅",
+                "envio": "🚚", "delivery": "🛵", "gratis": "🎁", 
+                "info": "ℹ️", "informacion": "ℹ️", "detalles": "📝",
+                "talla": "📏", "medida": "📏", "color": "🎨",
+                "celular": "📱", "telefono": "📱", "iphone": "🍎", "android": "🤖",
+                "nuevo": "✨", "usado": "👍", "garantia": "🛡️",
+                "ubicacion": "📍", "caracas": "🏙️", "venezuela": "🇻🇪",
+                "contacto": "📞", "whatsapp": "📲", "dm": "📩", "privado": "📩",
+                "pago": "💳", "zelle": "🟣", "binance": "🔶", "efectivo": "💵"
             };
 
-            // 2. PROCESAR PRIMERA LÍNEA (TÍTULO)
+            // PROCESAR PRIMERA LÍNEA (TÍTULO - Sin negrita, solo mayúscula y emojis)
             if(lineas.length > 0) {
-                let titulo = lineas[0].toUpperCase();
-                // Convertir a Negrita (Matemática Unicode)
-                titulo = toBold(titulo);
-                resultado += "🔥 " + titulo + " 🔥\n\n";
+                let titulo = lineas[0].toUpperCase().trim();
+                resultado += "✨ " + titulo + " ✨\n\n";
             }
 
-            // 3. PROCESAR EL CUERPO
+            // PROCESAR EL RESTO
             for(let i=1; i < lineas.length; i++) {
-                let linea = lineas[i];
-                if(linea.trim() === "") continue;
+                let linea = lineas[i].trim();
+                if(linea === "") {
+                    resultado += "\n";
+                    continue;
+                }
 
-                // Buscar palabras clave para poner emojis
-                let emojiEncontrado = "👉"; // Emoji por defecto
-                
+                // Buscar emoji adecuado para la línea
+                let emojiLinea = "👉"; // Emoji por defecto
                 let palabras = linea.toLowerCase().split(' ');
+                
                 for(let p of palabras) {
-                    if(emojis[p] || emojis[p.replace('s','')]) { // busca singular/plural simple
-                        emojiEncontrado = emojis[p] || emojis[p.replace('s','')];
+                    // Limpiar puntuación de la palabra para comparar
+                    let limpia = p.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+                    if(emojis[limpia]) {
+                        emojiLinea = emojis[limpia];
                         break;
                     }
                 }
                 
-                resultado += `${emojiEncontrado} ${linea}\n`;
+                // Capitalizar primera letra de la línea
+                let lineaBonita = linea.charAt(0).toUpperCase() + linea.slice(1);
+                
+                resultado += `${emojiLinea} ${lineaBonita}\n`;
             }
 
-            // 4. AGREGAR FINAL DE MARKETING
-            resultado += "\n👇 **¡Escríbeme al Privado!**\n";
-            resultado += "#Ventas #Oportunidad #Viral";
+            // PIE DE PÁGINA (Footer)
+            resultado += "\n➖➖➖➖➖➖➖➖➖➖\n";
+            resultado += "📩 ¡Responde para más info!";
 
             // MOSTRAR
             document.getElementById('outputText').innerText = resultado;
@@ -152,20 +182,41 @@ Ej: Vendo zapatos talla 40 en valencia precio 20 dolares"></textarea>
             document.querySelector('.btn-magic').style.display = 'none';
         }
 
-        // FUNCIÓN PARA CONVERTIR A NEGRITA (UNICODE)
-        function toBold(text) {
-            const normal = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            const bold   = "𝗔𝗕𝗖𝗗𝗘𝗙𝗚𝗛𝗜𝗝𝗞𝗟𝗠𝗡𝗢𝗣𝗤𝗥𝗦𝗧𝗨𝗩𝗪𝗫𝗬𝗭𝗮𝗯𝗰𝗱𝗲𝗳𝗴𝗵𝗶𝗷𝗸𝗹𝗺𝗻𝗼𝗽𝗾𝗿𝘀𝘁𝘂𝘃𝘄𝘅𝘆𝘇𝟬𝟭𝟮𝟯𝟰𝟱𝟲𝟳𝟴𝟵";
-            return text.split('').map(char => {
-                let i = normal.indexOf(char);
-                return i !== -1 ? bold.substr(i*2, 2) : char; // *2 porque bold usa 2 chars unicode
-            }).join('');
+        function correccionBasica(txt) {
+            // Diccionario de reemplazos (Errores comunes en chat)
+            // Usamos expresiones regulares para reemplazar solo palabras completas
+            const errores = [
+                { mal: "\\bq\\b", bien: "que" },
+                { mal: "\\bxq\\b", bien: "porque" },
+                { mal: "\\bporq\\b", bien: "porque" },
+                { mal: "\\bx\\b", bien: "por" },
+                { mal: "\\bd\\b", bien: "de" },
+                { mal: "\\bbn\\b", bien: "bien" },
+                { mal: "\\bpresio\\b", bien: "precio" },
+                { mal: "\\bprcio\\b", bien: "precio" },
+                { mal: "\\binteresado\\b", bien: "interesados" },
+                { mal: "\\binfo\\b", bien: "información" },
+                { mal: "\\bubi\\b", bien: "ubicación" },
+                { mal: "\\btlf\\b", bien: "teléfono" },
+                { mal: "\\bnum\\b", bien: "número" },
+                { mal: "\\bgrasias\\b", bien: "gracias" },
+                { mal: "\\bhol\\b", bien: "hola" },
+                { mal: "\\bvend\\b", bien: "vendo" }
+            ];
+
+            let textoCorregido = txt;
+            errores.forEach(item => {
+                let regex = new RegExp(item.mal, "gi"); // g=global, i=mayus/minus
+                textoCorregido = textoCorregido.replace(regex, item.bien);
+            });
+
+            return textoCorregido;
         }
 
         function copiar() {
             let txt = document.getElementById('outputText').innerText;
             navigator.clipboard.writeText(txt);
-            tg.showAlert("¡Copiado al portapapeles!");
+            tg.showAlert("¡Texto copiado!");
         }
     </script>
 </body>
