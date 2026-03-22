@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Candy Cloud Global</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&display=swap" rel="stylesheet">
+    
+    <script src='//libtl.com/sdk.js' data-zone='10763886' data-sdk='show_10763886'></script>
+
     <style>
         :root {
             --accent: #ff007a; --neon-cyan: #00f2ff; --gold: #ffcc00;
@@ -21,7 +24,6 @@
         }
         .app-container { width: 100%; max-width: 480px; margin: 0 auto; padding: 25px; height: 100vh; overflow-y: auto; padding-bottom: 120px; position: relative; z-index: 10; }
         
-        /* HEADER ESTILO PREMIUM */
         .brand-header { display: flex; flex-direction: column; margin-bottom: 35px; }
         .brand-top { display: flex; justify-content: space-between; align-items: center; }
         .logo-box { display: flex; align-items: center; gap: 8px; }
@@ -58,10 +60,8 @@
         .modal-card { background: #070a11; border-top: 1px solid rgba(255,255,255,0.1); border-radius: 35px 35px 0 0; padding: 40px 25px; width: 100%; animation: slideUp 0.3s ease-out; max-height: 85vh; overflow-y: auto; }
 
         .mission-item { background: rgba(255,255,255,0.02); padding: 22px; border-radius: 22px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
-        .history-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 20px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center; }
         
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        #video-overlay { position: fixed; inset:0; background:#000; z-index:10000; display:none; flex-direction:column; align-items:center; justify-content:center; }
     </style>
 </head>
 <body>
@@ -118,7 +118,6 @@
         <button class="prime-btn" id="task-btn" onclick="startTask()" data-t="btn_task">ADS VIDEO (0/5)</button>
         
         <button class="prime-btn" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); color:#fff;" onclick="openModal('modal-guide')">GUIDE / RULES</button>
-
         <button class="prime-btn" style="background:none; border:1px solid #1a1a1a; color:#555; font-size: 13px;" onclick="openWithdraw()" data-t="btn_withdraw">WITHDRAW (0.02)</button>
         
         <div id="hist-section" style="margin-top:40px; display:none;">
@@ -129,7 +128,6 @@
 
     <div id="v-earn" style="display:none;">
         <h2 data-t="earn_t" style="font-weight:800; font-size: 24px; margin-bottom: 25px; text-transform: uppercase;">Misiones</h2>
-        
         <div class="mission-item">
             <div>
                 <div style="font-weight: 800; font-size: 15px;" data-t="m1">Canal Oficial</div>
@@ -137,7 +135,6 @@
             </div>
             <button class="prime-btn" id="btn-c1" style="width:auto; padding:10px 20px; margin:0; border-radius: 12px; font-size:12px;" onclick="join(1)" data-t="join">UNIRSE</button>
         </div>
-
         <div class="mission-item">
             <div>
                 <div style="font-weight: 800; font-size: 15px;" data-t="m2">Grupo VIP</div>
@@ -161,16 +158,12 @@
         es: {
             bal_label: "Balance Neto", candies: "🍬 Caramelos", btn_task: "VER VIDEO", btn_withdraw: "RETIRAR (0.02)",
             earn_t: "Misiones", m1: "Canal Oficial", m2: "Grupo VIP", join: "UNIRSE", nav_h: "INICIO", nav_e: "GANA",
-            w_title: "Retirar Fondos", w_confirm: "CONFIRMAR RETIRO", cancel: "CANCELAR", hist_t: "Historial de Retiros",
-            err_bal: "Saldo insuficiente 🔒", err_candies: "Misiones incompletas 🍬", err_wallet: "Dirección inválida ❌",
-            ok_withdraw: "Transacción enviada ✅", ready: "Vuelva mañana 🌙", g_title: "Guía de Ganancias"
+            err_bal: "Saldo insuficiente 🔒", err_candies: "Misiones incompletas 🍬", ready: "Vuelva mañana 🌙", g_title: "Guía de Ganancias"
         },
         en: {
             bal_label: "Net Balance", candies: "🍬 Candies", btn_task: "WATCH VIDEO", btn_withdraw: "WITHDRAW (0.02)",
             earn_t: "Missions", m1: "Official Channel", m2: "VIP Group", join: "JOIN", nav_h: "HOME", nav_e: "EARN",
-            w_title: "Withdraw Funds", w_confirm: "CONFIRM WITHDRAWAL", cancel: "CANCEL", hist_t: "Activity Log",
-            err_bal: "Insufficient balance 🔒", err_candies: "Missions incomplete 🍬", err_wallet: "Invalid address ❌",
-            ok_withdraw: "Transaction sent ✅", ready: "Come back tomorrow 🌙", g_title: "Earning Guide"
+            err_bal: "Insufficient balance 🔒", err_candies: "Missions incomplete 🍬", ready: "Come back tomorrow 🌙", g_title: "Earning Guide"
         }
     };
 
@@ -190,8 +183,6 @@
             const key = el.getAttribute('data-t');
             if(i18n[l][key]) el.innerText = i18n[l][key];
         });
-        document.getElementById('l-es').className = (l === 'es' ? 'l-btn active' : 'l-btn');
-        document.getElementById('l-en').className = (l === 'en' ? 'l-btn active' : 'l-btn');
         update();
         save();
     }
@@ -207,34 +198,20 @@
         } else {
             btn.innerText = `${i18n[db.lang].btn_task} (${db.taskProgress}/5)`;
         }
-        if(db.ch1) verifBtn('btn-c1');
-        if(db.ch2) verifBtn('btn-c2');
-        if(db.hist.length > 0) {
-            document.getElementById('hist-section').style.display = 'block';
-            document.getElementById('history-list').innerHTML = db.hist.map(h => `
-                <div class="history-card">
-                    <div><b style="color:#fff">${h.amt} USDT</b><br><small style="color:#333">${h.date}</small></div>
-                    <div style="color:#00ff88; font-size:10px; font-weight:800; background:rgba(0,255,136,0.05); padding:5px 10px; border-radius:5px; border: 1px solid rgba(0,255,136,0.1);">COMPLETED</div>
-                </div>
-            `).join('');
-        }
     }
 
-    function verifBtn(id) {
-        const b = document.getElementById(id);
-        b.innerText = "DONE";
-        b.style.background = "rgba(255,255,255,0.05)"; b.style.color = "#444"; b.style.border = "none"; b.onclick = null;
-    }
-
+    // FUNCIÓN PARA DISPARAR ANUNCIO MONETAG
     function startTask() {
         if(db.candies < 2) return showToast(i18n[db.lang].err_candies);
         if(db.last === new Date().toDateString()) return showToast(i18n[db.lang].ready);
-        document.getElementById('video-overlay').style.display = 'flex';
-        let c = 10;
-        const t = setInterval(() => { 
-            c--; document.getElementById('timer').innerText = c; 
-            if(c<=0) { clearInterval(t); document.getElementById('video-overlay').style.display='none'; finishStep(); } 
-        }, 1000);
+
+        // Llamada al SDK de Monetag
+        show_10763886().then(() => {
+            // Cuando el video termina con éxito:
+            finishStep();
+        }).catch((e) => {
+            showToast("Error al cargar video ❌");
+        });
     }
 
     function finishStep() {
@@ -246,28 +223,18 @@
             db.total++; 
             db.last = new Date().toDateString();
             db.taskProgress = 0;
-            showToast("Success: +" + win + " USDT");
+            showToast("Success: +" + win + " USDT ✅");
         } else {
             showToast(`Progress: ${db.taskProgress}/5`);
         }
         save(); update();
     }
 
-    function openWithdraw() {
-        if(db.balance < 0.02) return showToast(i18n[db.lang].err_bal);
-        document.getElementById('modal-withdraw').style.display = 'flex';
-    }
-
-    function confirmWithdraw() {
-        const wallet = document.getElementById('wallet-addr').value;
-        if(wallet.length < 10) return showToast(i18n[db.lang].err_wallet);
-        const amount = db.balance.toFixed(4);
-        const msg = `🚨 *RETIRO SOLICITADO*\n\n💰 Monto: ${amount} USDT\n🌐 Red: Polygon (MATIC)\n👛 Billetera: \`${wallet}\`\n📅 Fecha: ${new Date().toLocaleString()}`;
-        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
-        db.hist.unshift({ amt: amount, date: new Date().toLocaleDateString() });
-        db.balance = 0; save(); update();
-        closeModal('modal-withdraw');
-        showToast(i18n[db.lang].ok_withdraw);
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        document.getElementById('toast-msg').innerText = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
     }
 
     function join(n) { 
@@ -281,17 +248,8 @@
     function view(v) {
         document.getElementById('v-home').style.display = (v === 'home' ? 'block' : 'none');
         document.getElementById('v-earn').style.display = (v === 'earn' ? 'block' : 'none');
-        document.getElementById('nav-h').style.color = (v === 'home' ? '#fff' : '#444');
-        document.getElementById('nav-e').style.color = (v === 'earn' ? '#fff' : '#444');
     }
     window.onload = load;
-
-    function showToast(msg) {
-        const t = document.getElementById('toast');
-        document.getElementById('toast-msg').innerText = msg;
-        t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 3000);
-    }
 </script>
 </body>
 </html>
