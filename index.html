@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Candy Cloud Premium</title>
+    <title>Candy Cloud Global</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -14,101 +14,103 @@
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
         body {
             font-family: 'Outfit', sans-serif; background-color: var(--deep-dark);
-            color: #ffffff; margin: 0; padding: 0; overflow-x: hidden;
+            color: #ffffff; margin: 0; padding: 0; overflow: hidden;
             background-image: radial-gradient(circle at top right, rgba(255, 0, 122, 0.1), transparent 40%);
-            min-height: 100vh;
+            height: 100vh;
         }
-        .app-container { width: 100%; max-width: 480px; margin: 0 auto; padding: 25px; padding-bottom: 120px; }
+        .app-container { width: 100%; max-width: 480px; margin: 0 auto; padding: 25px; height: 100vh; overflow-y: auto; padding-bottom: 120px; }
         
+        /* Notificación Elegante (Adiós avisos baratos) */
+        .toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1); padding: 15px 25px; border-radius: 20px;
+            z-index: 11000; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; align-items: center; gap: 10px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
         /* Balance Card */
         .balance-card {
             background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(0,0,0,0.4));
             border-radius: 40px; padding: 40px 20px; text-align: center; border: 1px solid rgba(255,255,255,0.06);
             box-shadow: 0 40px 80px rgba(0,0,0,0.5); margin-bottom: 25px;
         }
-        .main-amount { font-size: 3.5rem; font-weight: 800; letter-spacing: -3px; display: inline-block; }
-        
-        /* Botones */
-        .prime-btn { background: var(--grad-prime); border: none; width: 100%; padding: 20px; border-radius: 22px; color: white; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 15px; box-shadow: 0 15px 30px rgba(255, 0, 122, 0.2); }
-        .prime-btn:active { transform: scale(0.98); opacity: 0.8; }
-        
-        /* Modales Modernos */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; display: none; align-items: flex-end; backdrop-filter: blur(10px); animation: fadeIn 0.3s ease; }
-        .modal-card { background: #0a0e17; border-top: 1px solid rgba(255,255,255,0.1); border-radius: 40px 40px 0 0; padding: 35px 25px; width: 100%; animation: slideUp 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
-        
-        .input-glass { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 18px; width: 100%; color: #fff; font-family: 'Outfit'; font-size: 14px; margin: 20px 0; text-align: center; }
-        
-        /* Historial */
-        .history-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .status-tag { color: #00ff88; font-size: 10px; font-weight: 800; background: rgba(0,255,136,0.1); padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(0,255,136,0.2); }
+        .main-amount { font-size: 3.5rem; font-weight: 800; letter-spacing: -3px; }
 
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* Botones e Inputs */
+        .prime-btn { background: var(--grad-prime); border: none; width: 100%; padding: 20px; border-radius: 22px; color: white; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; margin-top: 15px; }
+        .prime-btn:active { transform: scale(0.96); }
+        .input-glass { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 18px; width: 100%; color: #fff; font-family: 'Outfit'; margin: 20px 0; text-align: center; font-size: 14px; }
+
+        /* Selector de Idioma */
+        .lang-pill { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 5px; display: flex; gap: 5px; }
+        .l-btn { border: none; background: none; color: #444; font-weight: 800; font-size: 10px; padding: 5px 10px; cursor: pointer; border-radius: 8px; }
+        .l-btn.active { background: #fff; color: #000; }
+
+        /* Modales */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; display: none; align-items: flex-end; backdrop-filter: blur(10px); }
+        .modal-card { background: #0a0e17; border-top: 1px solid rgba(255,255,255,0.1); border-radius: 40px 40px 0 0; padding: 35px 25px; width: 100%; animation: slideUp 0.4s ease; }
+
+        .history-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 22px; padding: 18px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center; }
         
-        #video-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:10000; display:none; flex-direction:column; align-items:center; justify-content:center; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        #video-overlay { position: fixed; inset:0; background:#000; z-index:10000; display:none; flex-direction:column; align-items:center; justify-content:center; }
     </style>
 </head>
 <body>
+
+<div id="toast" class="toast"><span id="toast-icon">⚠️</span> <span id="toast-msg">Mensaje</span></div>
 
 <div class="modal-overlay" id="modal-withdraw">
     <div class="modal-card">
         <div style="text-align: center;">
             <div style="font-size: 40px;">⚡</div>
-            <h2 style="margin: 10px 0 5px 0; font-weight: 800;">Retirar USDT</h2>
-            <p style="color: #666; font-size: 13px; margin: 0;">Red: <b>Polygon (MATIC)</b></p>
-            <input type="text" id="wallet-addr" class="input-glass" placeholder="Pega tu dirección 0x...">
-            <button class="prime-btn" onclick="confirmWithdraw()">CONFIRMAR RETIRO</button>
-            <button style="background:none; border:none; color:#444; margin-top:20px; font-weight:700; width:100%;" onclick="closeModal('modal-withdraw')">CANCELAR</button>
-        </div>
-    </div>
-</div>
-
-<div class="modal-overlay" id="modal-cycle" style="align-items: center;">
-    <div class="modal-card" style="border-radius:40px; margin: 20px;">
-        <div style="text-align:center;">
-            <div style="font-size: 40px;">💎</div>
-            <h2 style="font-weight: 800; margin:15px 0;">Ciclo de Ganancia</h2>
-            <div style="background:rgba(255,255,255,0.02); border-radius:20px; padding:15px; text-align:left; margin-bottom:20px;">
-                <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #111;"><span>Hoy</span> <span style="color:#00ff88; font-weight:800;" id="cy-today">0.010 USDT ✓</span></div>
-                <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #111;"><span>Mañana</span> <span style="color:var(--neon-cyan)">0.002 USDT</span></div>
-                <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #111;"><span>Día 3</span> <span style="color:var(--neon-cyan)">0.010 USDT</span></div>
-                <div style="display:flex; justify-content:space-between; padding:8px 0;"><span>Día 4</span> <span style="color:var(--neon-cyan)">0.008 USDT</span></div>
-            </div>
-            <button class="prime-btn" onclick="closeModal('modal-cycle')">ENTENDIDO</button>
+            <h2 data-t="w_title" style="margin: 10px 0;">Retirar Fondos</h2>
+            <p style="color: #666; font-size: 12px;">Network: <b>USDT Polygon (MATIC)</b></p>
+            <input type="text" id="wallet-addr" class="input-glass" placeholder="0x...">
+            <button class="prime-btn" onclick="confirmWithdraw()" data-t="w_confirm">CONFIRMAR RETIRO</button>
+            <button style="background:none; border:none; color:#444; margin-top:20px; font-weight:700; width:100%;" onclick="closeModal('modal-withdraw')" data-t="cancel">CANCELAR</button>
         </div>
     </div>
 </div>
 
 <div class="app-container">
-    <div style="font-weight:800; font-size:22px; letter-spacing:-1px; margin-bottom:30px;">CANDY CLOUD</div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+        <div style="font-weight:800; font-size:20px; letter-spacing:-1px;">CANDY CLOUD</div>
+        <div class="lang-pill">
+            <button class="l-btn active" id="l-es" onclick="setLang('es')">ES</button>
+            <button class="l-btn" id="l-en" onclick="setLang('en')">EN</button>
+        </div>
+    </div>
 
     <div id="v-home">
         <div class="balance-card">
-            <div style="font-size: 11px; color: #555; text-transform: uppercase;">Balance Neto</div>
+            <div style="font-size: 11px; color: #555; text-transform: uppercase;" data-t="bal_label">Balance Neto</div>
             <div class="main-amount">$<span id="val-balance">0.0000</span></div>
-            <div style="margin-top:15px; font-size:13px; background:rgba(255,255,255,0.03); padding:8px 15px; border-radius:50px; display:inline-block;">
-                🍬 Caramelos: <b id="val-candy" style="color:var(--accent)">0</b>
+            <div style="margin-top:15px; font-size:12px; background:rgba(255,255,255,0.03); padding:8px 15px; border-radius:50px; display:inline-block;">
+                🍬 <span data-t="candies">Caramelos</span>: <b id="val-candy" style="color:var(--accent)">0</b>
             </div>
         </div>
 
-        <button class="prime-btn" onclick="startTask()">Ejecutar Tarea Diaria</button>
-        <button class="prime-btn" style="background:none; border:1px solid #1a1a1a; color:#fff;" onclick="openWithdraw()">Retirar (0.02)</button>
+        <button class="prime-btn" onclick="startTask()" data-t="btn_task">Ejecutar Tarea Diaria</button>
+        <button class="prime-btn" style="background:none; border:1px solid #1a1a1a; color:#fff;" onclick="openWithdraw()" data-t="btn_withdraw">Retirar (0.02)</button>
         
         <div id="hist-section" style="margin-top:40px; display:none;">
-            <div style="font-size:10px; color:#444; font-weight:800; text-transform:uppercase; margin-bottom:10px;">Historial de Retiros</div>
+            <div style="font-size:10px; color:#444; font-weight:800; text-transform:uppercase; margin-bottom:10px;" data-t="hist_t">Historial de Retiros</div>
             <div id="history-list"></div>
         </div>
     </div>
 
     <div id="v-earn" style="display:none;">
-        <h2 style="font-weight:800;">Misiones</h2>
-        <div style="background:var(--glass); padding:20px; border-radius:25px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
-            <div><b>Canal Oficial</b><br><small style="color:var(--gold)">+1 Caramelo</small></div>
-            <button class="prime-btn" id="btn-c1" style="width:auto; padding:12px 20px; margin:0;" onclick="join(1)">UNIRSE</button>
+        <h2 data-t="earn_t" style="font-weight:800;">Misiones</h2>
+        <div style="background:var(--glass); padding:20px; border-radius:25px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; border: 1px solid rgba(255,255,255,0.03);">
+            <div><b data-t="m1">Canal Oficial</b><br><small style="color:var(--gold)">+1 Caramelo</small></div>
+            <button class="prime-btn" id="btn-c1" style="width:auto; padding:12px 20px; margin:0;" onclick="join(1)" data-t="join">UNIRSE</button>
         </div>
-        <div style="background:var(--glass); padding:20px; border-radius:25px; display:flex; justify-content:space-between; align-items:center;">
-            <div><b>Grupo VIP</b><br><small style="color:var(--gold)">+1 Caramelo</small></div>
-            <button class="prime-btn" id="btn-c2" style="width:auto; padding:12px 20px; margin:0;" onclick="join(2)">UNIRSE</button>
+        <div style="background:var(--glass); padding:20px; border-radius:25px; display:flex; justify-content:space-between; align-items:center; border: 1px solid rgba(255,255,255,0.03);">
+            <div><b data-t="m2">Grupo VIP</b><br><small style="color:var(--gold)">+1 Caramelo</small></div>
+            <button class="prime-btn" id="btn-c2" style="width:auto; padding:12px 20px; margin:0;" onclick="join(2)" data-t="join">UNIRSE</button>
         </div>
     </div>
 </div>
@@ -116,22 +118,58 @@
 <div id="video-overlay"><div id="timer" style="font-size:90px; font-weight:800;">10</div></div>
 
 <nav style="position:fixed; bottom:0; left:0; width:100%; background:rgba(5,8,15,0.98); display:flex; justify-content:space-around; padding:20px; border-top:1px solid #111; z-index:100;">
-    <button onclick="view('home')" id="nav-h" style="background:none; border:none; color:#fff; font-weight:800; cursor:pointer;">INICIO</button>
-    <button onclick="view('earn')" id="nav-e" style="background:none; border:none; color:#444; font-weight:800; cursor:pointer;">GANA</button>
+    <button onclick="view('home')" id="nav-h" style="background:none; border:none; color:#fff; font-weight:800; cursor:pointer;" data-t="nav_h">INICIO</button>
+    <button onclick="view('earn')" id="nav-e" style="background:none; border:none; color:#444; font-weight:800; cursor:pointer;" data-t="nav_e">GANA</button>
 </nav>
 
 <script>
     const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
     const CHISMOSO_ID = "@ALSKSNNSLSMS"; 
 
-    // DB inicial con bono si es primera vez
-    let db = { balance: 0.0100, candies: 0, ch1: false, ch2: false, last: '', total: 0, hist: [] };
+    const i18n = {
+        es: {
+            bal_label: "Balance Neto", candies: "Caramelos", btn_task: "Ejecutar Tarea Diaria", btn_withdraw: "Retirar (0.02)",
+            earn_t: "Misiones", m1: "Canal Oficial", m2: "Grupo VIP", join: "UNIRSE", nav_h: "INICIO", nav_e: "GANA",
+            w_title: "Retirar Fondos", w_confirm: "CONFIRMAR RETIRO", cancel: "CANCELAR", hist_t: "Historial de Retiros",
+            err_bal: "Saldo insuficiente 🔒", err_candies: "Completa las misiones primero 🔒", err_wallet: "Dirección inválida ❌",
+            ok_withdraw: "Retiro enviado con éxito ✅", ready: "✓ LISTO"
+        },
+        en: {
+            bal_label: "Net Balance", candies: "Candies", btn_task: "Execute Daily Task", btn_withdraw: "Withdraw (0.02)",
+            earn_t: "Missions", m1: "Official Channel", m2: "VIP Group", join: "JOIN", nav_h: "HOME", nav_e: "EARN",
+            w_title: "Withdraw Funds", w_confirm: "CONFIRM WITHDRAWAL", cancel: "CANCEL", hist_t: "Withdrawal History",
+            err_bal: "Insufficient balance 🔒", err_candies: "Complete missions first 🔒", err_wallet: "Invalid address ❌",
+            ok_withdraw: "Withdrawal sent successfully ✅", ready: "✓ DONE"
+        }
+    };
 
-    function save() { localStorage.setItem('_candy_premium_v1', JSON.stringify(db)); }
+    let db = { lang: 'es', balance: 0.0100, candies: 0, ch1: false, ch2: false, last: '', total: 0, hist: [] };
+
+    function save() { localStorage.setItem('_candy_global_v2', JSON.stringify(db)); }
     function load() { 
-        const data = localStorage.getItem('_candy_premium_v1'); 
+        const data = localStorage.getItem('_candy_global_v2'); 
         if(data) db = JSON.parse(data); 
+        setLang(db.lang);
         update(); 
+    }
+
+    function setLang(l) {
+        db.lang = l;
+        document.querySelectorAll('[data-t]').forEach(el => {
+            const key = el.getAttribute('data-t');
+            if(i18n[l][key]) el.innerText = i18n[l][key];
+        });
+        document.getElementById('l-es').className = (l === 'es' ? 'l-btn active' : 'l-btn');
+        document.getElementById('l-en').className = (l === 'en' ? 'l-btn active' : 'l-btn');
+        save();
+    }
+
+    function showToast(msg, icon="⚠️") {
+        const t = document.getElementById('toast');
+        document.getElementById('toast-msg').innerText = msg;
+        document.getElementById('toast-icon').innerText = icon;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
     }
 
     function update() {
@@ -145,7 +183,7 @@
             document.getElementById('history-list').innerHTML = db.hist.map(h => `
                 <div class="history-card">
                     <div><b>${h.amt} USDT</b><br><small style="color:#333">${h.date}</small></div>
-                    <div class="status-tag">EXITOSO</div>
+                    <div style="color:#00ff88; font-size:10px; font-weight:800; background:rgba(0,255,136,0.1); padding:5px 10px; border-radius:8px;">EXITOSO</div>
                 </div>
             `).join('');
         }
@@ -153,17 +191,14 @@
 
     function verifBtn(id) {
         const b = document.getElementById(id);
-        b.innerText = "✓ LISTO"; b.style.background = "rgba(0,255,136,0.1)"; b.style.color = "#00ff88"; b.style.border = "1px solid rgba(0,255,136,0.2)"; b.onclick = null;
+        b.innerText = i18n[db.lang].ready;
+        b.style.background = "rgba(0,255,136,0.1)"; b.style.color = "#00ff88"; b.style.border = "1px solid rgba(0,255,136,0.2)"; b.onclick = null;
     }
 
     function startTask() {
-        if(db.candies < 2) return alert("Completa las misiones primero 🔒");
-        if(db.last === new Date().toDateString()) {
-            const cycle = [0.01, 0.002, 0.01, 0.008];
-            document.getElementById('cy-today').innerText = cycle[(db.total-1+4)%4].toFixed(3) + " USDT ✓";
-            document.getElementById('modal-cycle').style.display = 'flex';
-            return;
-        }
+        if(db.candies < 2) return showToast(i18n[db.lang].err_candies);
+        if(db.last === new Date().toDateString()) return showToast("Vuelve mañana 🌙", "⏰");
+        
         document.getElementById('video-overlay').style.display = 'flex';
         let c = 10;
         const t = setInterval(() => { 
@@ -176,17 +211,17 @@
         const cycle = [0.01, 0.002, 0.01, 0.008];
         let win = cycle[db.total % 4];
         db.balance += win; db.total++; db.last = new Date().toDateString();
-        save(); update();
+        save(); update(); showToast("+" + win + " USDT", "💰");
     }
 
     function openWithdraw() {
-        if(db.balance < 0.02) return alert("Necesitas al menos 0.02 USDT");
+        if(db.balance < 0.02) return showToast(i18n[db.lang].err_bal);
         document.getElementById('modal-withdraw').style.display = 'flex';
     }
 
     function confirmWithdraw() {
         const wallet = document.getElementById('wallet-addr').value;
-        if(wallet.length < 10) return alert("Dirección inválida");
+        if(wallet.length < 10) return showToast(i18n[db.lang].err_wallet);
 
         const amount = db.balance.toFixed(4);
         const msg = `🚨 *RETIRO SOLICITADO*\n\n💰 Monto: ${amount} USDT\n🌐 Red: Polygon (MATIC)\n👛 Billetera: \`${wallet}\`\n📅 Fecha: ${new Date().toLocaleString()}`;
@@ -196,6 +231,7 @@
         db.hist.unshift({ amt: amount, date: new Date().toLocaleDateString() });
         db.balance = 0; save(); update();
         closeModal('modal-withdraw');
+        showToast(i18n[db.lang].ok_withdraw, "✅");
     }
 
     function join(n) { 
