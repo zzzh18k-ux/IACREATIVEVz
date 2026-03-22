@@ -38,16 +38,6 @@
 
         .prime-btn { background: var(--grad-prime); border: none; width: 100%; padding: 20px; border-radius: 22px; color: white; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; margin-top: 15px; }
         .prime-btn:active { transform: scale(0.96); }
-        
-        /* Botón Guía Mejorado */
-        .guide-btn {
-            background: rgba(0, 242, 255, 0.05); border: 1px solid rgba(0, 242, 255, 0.2);
-            width: 100%; padding: 15px; border-radius: 22px; color: var(--neon-cyan);
-            font-size: 14px; font-weight: 800; cursor: pointer; transition: 0.3s;
-            margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
-        .guide-btn:active { background: rgba(0, 242, 255, 0.15); }
-
         .input-glass { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 18px; width: 100%; color: #fff; font-family: 'Outfit'; margin: 20px 0; text-align: center; font-size: 14px; }
 
         .lang-pill { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 5px; display: flex; gap: 5px; }
@@ -124,9 +114,7 @@
 
         <button class="prime-btn" id="task-btn" onclick="startTask()" data-t="btn_task">Ver Video (0/5)</button>
         
-        <button class="guide-btn" onclick="openModal('modal-guide')">
-            <span>📖</span> <span data-t="g_btn">Guía de Ganancias</span>
-        </button>
+        <button class="prime-btn" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#fff;" onclick="openModal('modal-guide')">📖 Guía de Ganancias</button>
 
         <button class="prime-btn" style="background:none; border:1px solid #1a1a1a; color:#fff;" onclick="openWithdraw()" data-t="btn_withdraw">Retirar (0.02)</button>
         
@@ -168,7 +156,7 @@
             err_bal: "Saldo insuficiente 🔒", err_candies: "Completa las misiones primero 🔒", err_wallet: "Dirección inválida ❌",
             ok_withdraw: "Retiro enviado con éxito ✅", ready: "Vuelve mañana 🌙", g_title: "Guía de Ganancias",
             g_cycle: "Ciclo de 4 Días:", g_rules: "Reglas:", g_r1: "• Debes ver 5 videos diarios.", 
-            g_r2: "• Retiro mínimo: 0.020 USDT.", g_r3: "• Red: USDT Polygon (MATIC).", g_btn: "Guía de Ganancias"
+            g_r2: "• Retiro mínimo: 0.020 USDT.", g_r3: "• Red: USDT Polygon (MATIC)."
         },
         en: {
             bal_label: "Net Balance", candies: "Candies", btn_task: "Watch Video", btn_withdraw: "Withdraw (0.02)",
@@ -177,7 +165,7 @@
             err_bal: "Insufficient balance 🔒", err_candies: "Complete missions first 🔒", err_wallet: "Invalid address ❌",
             ok_withdraw: "Withdrawal sent successfully ✅", ready: "Come back tomorrow 🌙", g_title: "Earning Guide",
             g_cycle: "4-Day Cycle:", g_rules: "Rules:", g_r1: "• You must watch 5 videos daily.",
-            g_r2: "• Min withdrawal: 0.020 USDT.", g_r3: "• Net: USDT Polygon (MATIC).", g_btn: "Earnings Guide"
+            g_r2: "• Min withdrawal: 0.020 USDT.", g_r3: "• Net: USDT Polygon (MATIC)."
         }
     };
 
@@ -216,15 +204,13 @@
         document.getElementById('val-candy').innerText = db.candies;
         
         const btn = document.getElementById('task-btn');
+        // Si ya completó la tarea de hoy
         if(db.last === new Date().toDateString()) {
-            btn.innerText = i18n[db.lang].ready;
-            btn.style.background = "rgba(255,255,255,0.03)";
-            btn.style.border = "1px solid rgba(255,255,255,0.05)";
-            btn.style.color = "#555";
+            btn.innerText = i18n[db.lang].ready; // "Vuelve mañana" o "Come back tomorrow"
+            btn.style.opacity = "0.5";
+            btn.onclick = null;
         } else {
             btn.innerText = `${i18n[db.lang].btn_task} (${db.taskProgress}/5)`;
-            btn.style.background = "var(--grad-prime)";
-            btn.style.color = "white";
         }
 
         if(db.ch1) verifBtn('btn-c1');
@@ -243,7 +229,7 @@
 
     function verifBtn(id) {
         const b = document.getElementById(id);
-        b.innerText = "✓"; // Simplificado para que quepa bien
+        b.innerText = "✓";
         b.style.background = "rgba(0,255,136,0.1)"; b.style.color = "#00ff88"; b.style.border = "1px solid rgba(0,255,136,0.2)"; b.onclick = null;
     }
 
