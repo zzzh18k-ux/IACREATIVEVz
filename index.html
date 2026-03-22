@@ -3,243 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>USDT Staking Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Staking Secure | App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0d1117;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --primary-accent: #00d2ff;
-            --secondary-accent: #3a7bd5;
-            --text-main: #f0f0f0;
-            --text-dim: #a0a0a0;
-            --button-grad: linear-gradient(145deg, #00d2ff, #3a7bd5);
+            --bg-main: #0a0e14;
+            --card-surface: #161b22;
+            --primary-gold: #c9a86a; /* Un dorado elegante, no chillón */
+            --accent-blue: #2196f3;
+            --text-white: #ffffff;
+            --text-muted: #8b949e;
+            --success: #2ea043;
         }
 
         body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-white);
+            margin: 0; padding: 0;
+            display: flex; justify-content: center;
         }
 
-        /* Contenedor Principal */
-        .container {
-            width: 100%;
-            max-width: 450px;
-            padding: 20px;
-            box-sizing: border-box;
+        .app-container {
+            width: 100%; max-width: 480px;
+            padding: 16px; box-sizing: border-box;
+            padding-bottom: 80px;
         }
 
-        /* Encabezado */
+        /* Header Profesional */
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 24px; padding: 10px 0;
         }
 
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .status-badge {
+            background: rgba(46, 160, 67, 0.15);
+            color: #3fb950;
+            padding: 4px 12px; border-radius: 20px;
+            font-size: 12px; font-weight: 600;
+            border: 1px solid rgba(46, 160, 67, 0.3);
         }
 
-        .avatar {
-            width: 45px;
-            height: 45px;
-            background: var(--button-grad);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+        /* Tarjeta de Balance "Cremosa" */
+        .main-card {
+            background: var(--card-surface);
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            margin-bottom: 20px;
         }
 
-        /* Tarjeta de Saldo "Cremosa" */
-        .balance-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 25px;
-            padding: 25px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            margin-bottom: 25px;
-        }
+        .label-small { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; }
+        .balance-main { font-size: 32px; font-weight: 700; margin-bottom: 16px; }
 
-        .balance-label {
-            font-size: 14px;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .balance-amount {
-            font-size: 38px;
-            font-weight: 800;
-            margin: 10px 0;
-            background: linear-gradient(to right, #fff, #00d2ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Sección de Bono Congelado */
-        .bonus-box {
-            background: rgba(0, 210, 255, 0.1);
-            border: 1px dashed var(--primary-accent);
-            border-radius: 15px;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
-        }
-
-        .lock-icon { font-size: 20px; }
-
-        /* Botones Estilo Juego */
-        .btn-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .btn {
-            background: var(--button-grad);
-            border: none;
-            border-radius: 18px;
-            padding: 15px;
-            color: white;
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.4);
-            text-align: center;
-        }
-
-        .btn:active {
-            transform: scale(0.95);
-            box-shadow: 0 2px 5px rgba(0, 210, 255, 0.2);
-        }
-
-        .btn-secondary {
+        /* Barra de progreso de Staking */
+        .staking-progress {
             background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: none;
+            height: 8px; border-radius: 4px;
+            margin: 15px 0; overflow: hidden;
+        }
+        .progress-fill {
+            width: 45%; height: 100%;
+            background: linear-gradient(90deg, var(--primary-gold), #f3e5ab);
+            box-shadow: 0 0 10px rgba(201, 168, 106, 0.5);
         }
 
-        /* Sección de Inversión */
-        .stats-section {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 20px;
+        /* Botones de Acción (Estilo Juego pero Serio) */
+        .grid-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+        
+        .action-btn {
+            background: #21262d; border: 1px solid #30363d;
+            border-radius: 16px; padding: 14px;
+            color: white; font-weight: 600;
+            cursor: pointer; transition: 0.2s;
+            text-align: center; font-size: 14px;
         }
 
-        .stat-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
+        .action-btn.primary {
+            background: linear-gradient(180deg, #30363d 0%, #21262d 100%);
+            border-color: var(--primary-gold);
+            color: var(--primary-gold);
         }
 
-        .stat-label { color: var(--text-dim); }
-        .stat-value { font-weight: 600; color: #00ff88; }
+        /* Sección "Cómo funciona" para generar confianza */
+        .info-section {
+            background: rgba(33, 150, 243, 0.05);
+            border: 1px solid rgba(33, 150, 243, 0.2);
+            border-radius: 16px; padding: 16px; margin-top: 10px;
+        }
+        .info-title { font-size: 14px; font-weight: 700; color: var(--accent-blue); margin-bottom: 5px; display: block; }
+        .info-text { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
 
         /* Navegación Inferior */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            max-width: 450px;
-            background: rgba(13, 17, 23, 0.95);
+        .nav-bar {
+            position: fixed; bottom: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 100%; max-width: 480px;
+            background: rgba(13, 17, 20, 0.95);
             backdrop-filter: blur(10px);
-            display: flex;
-            justify-content: space-around;
-            padding: 15px 0;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex; justify-content: space-around;
+            padding: 12px 0; border-top: 1px solid #30363d;
         }
 
-        .nav-item {
-            text-align: center;
-            color: var(--text-dim);
-            font-size: 11px;
-            text-decoration: none;
-        }
-
-        .nav-item i {
-            display: block;
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
-
-        .active { color: var(--primary-accent); }
-
+        .nav-item { color: var(--text-muted); text-decoration: none; font-size: 10px; text-align: center; }
+        .nav-item.active { color: var(--primary-gold); }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="app-container">
     <div class="header">
-        <div class="user-info">
-            <div class="avatar">U</div>
-            <span>Hola, Usuario</span>
+        <div>
+            <span style="font-weight: 700; font-size: 18px;">Staking<span style="color:var(--primary-gold)">Pro</span></span>
         </div>
-        <div style="font-size: 24px;">🔔</div>
+        <div class="status-badge">● Sistema Activo</div>
     </div>
 
-    <div class="balance-card">
-        <div class="balance-label">Cartera Total</div>
-        <div class="balance-amount">0.00 USDT</div>
+    <div class="main-card">
+        <div class="label-small">Fondos en Operación</div>
+        <div class="balance-main">2.00 <span style="font-size: 16px; color: var(--text-muted);">USDT</span></div>
         
-        <div class="bonus-box">
-            <span>🔒 Bono de Bienvenida</span>
-            <span style="font-weight: 800;">2.00 USDT</span>
+        <div class="label-small" style="display: flex; justify-content: space-between;">
+            <span>Progreso de minería diario</span>
+            <span>45%</span>
         </div>
-        <p style="font-size: 12px; color: var(--text-dim); margin-top: 10px;">
-            Este bono se activará automáticamente al iniciar el staking.
+        <div class="staking-progress">
+            <div class="progress-fill"></div>
+        </div>
+        
+        <div style="font-size: 12px; color: var(--success); font-weight: 600;">
+            ✓ Generando 0.02 USDT / día
+        </div>
+    </div>
+
+    <div class="grid-buttons">
+        <div class="action-btn primary">Añadir Fondos</div>
+        <div class="action-btn">Retirar Ganancias</div>
+    </div>
+
+    <div class="info-section">
+        <span class="info-title">ℹ️ Transparencia de Staking</span>
+        <p class="info-text">
+            Sus fondos de bienvenida de **2.00 USDT** se encuentran en un contrato inteligente de liquidez. Las ganancias se acreditan cada 24 horas directamente a su balance retirable.
         </p>
     </div>
 
-    <div class="btn-group">
-        <button class="btn">Recargar</button>
-        <button class="btn btn-secondary">Retirar</button>
-    </div>
-
-    <div class="stats-section">
-        <h3 style="margin-top: 0; font-size: 18px;">Minería en la Nube</h3>
-        <div class="stat-item">
-            <span class="stat-label">Inversión Activa</span>
-            <span class="stat-value">2.00 USDT</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-label">Ganancia Diaria</span>
-            <span class="stat-value">+ 0.02 USDT</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-label">Estado</span>
-            <span class="stat-value" style="color: #00d2ff;">Trabajando...</span>
-        </div>
-        
-        <button class="btn" style="width: 100%; margin-top: 10px; background: #00ff88; color: #000;">
-            ESTACAR AHORA
-        </button>
+    <div style="margin-top: 25px; text-align: center;">
+        <span class="label-small">Patrocinado por</span><br>
+        <span style="font-weight: 800; opacity: 0.3; letter-spacing: 2px;">ADSGRAM NETWORK</span>
     </div>
 </div>
 
-<div class="bottom-nav">
-    <a href="#" class="nav-item active">🏠<br>Inicio</a>
-    <a href="#" class="nav-item">👥<br>Equipo</a>
-    <a href="#" class="nav-item">📈<br>Staking</a>
-    <a href="#" class="nav-item">⚙️<br>Perfil</a>
-</div>
+<nav class="nav-bar">
+    <a href="#" class="nav-item active">🏠<br>Panel</a>
+    <a href="#" class="nav-item">📊<br>Mercado</a>
+    <a href="#" class="nav-item">🛡️<br>Seguridad</a>
+    <a href="#" class="nav-item">👤<br>Cuenta</a>
+</nav>
 
 </body>
 </html>
