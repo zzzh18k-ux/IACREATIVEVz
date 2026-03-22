@@ -15,39 +15,48 @@
         body {
             font-family: 'Outfit', sans-serif; background-color: var(--deep-dark);
             color: #ffffff; margin: 0; padding: 0; overflow: hidden;
-            background-image: radial-gradient(circle at top right, rgba(255, 0, 122, 0.1), transparent 40%);
             height: 100vh;
+            /* LUCES DE FONDO (GLOWS) */
+            background-image: 
+                radial-gradient(circle at top left, rgba(255, 0, 122, 0.15), transparent 40%),
+                radial-gradient(circle at bottom right, rgba(0, 242, 255, 0.1), transparent 40%);
         }
-        .app-container { width: 100%; max-width: 480px; margin: 0 auto; padding: 25px; height: 100vh; overflow-y: auto; padding-bottom: 120px; }
+        .app-container { width: 100%; max-width: 480px; margin: 0 auto; padding: 25px; height: 100vh; overflow-y: auto; padding-bottom: 120px; position: relative; z-index: 10; }
         
+        /* MEJORA DE TOAST */
         .toast {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1); padding: 15px 25px; border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15); padding: 15px 25px; border-radius: 25px;
             z-index: 11000; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; align-items: center; gap: 10px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            display: flex; align-items: center; gap: 10px; box-shadow: 0 20px 40px rgba(0,0,0,0.6);
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
 
+        /* CARD DE BALANCE MÁS "CARA" */
         .balance-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(0,0,0,0.4));
-            border-radius: 40px; padding: 40px 20px; text-align: center; border: 1px solid rgba(255,255,255,0.06);
-            box-shadow: 0 40px 80px rgba(0,0,0,0.5); margin-bottom: 25px;
+            background: linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.6) 100%);
+            border-radius: 40px; padding: 45px 20px; text-align: center; 
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8); margin-bottom: 30px;
+            backdrop-filter: blur(10px);
         }
-        .main-amount { font-size: 3.5rem; font-weight: 800; letter-spacing: -3px; }
+        .main-amount { font-size: 3.8rem; font-weight: 800; letter-spacing: -3px; text-shadow: 0 0 30px rgba(255,255,255,0.2); }
 
-        .prime-btn { background: var(--grad-prime); border: none; width: 100%; padding: 20px; border-radius: 22px; color: white; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; margin-top: 15px; }
-        .prime-btn:active { transform: scale(0.96); }
-        .input-glass { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 18px; width: 100%; color: #fff; font-family: 'Outfit'; margin: 20px 0; text-align: center; font-size: 14px; }
+        .prime-btn { background: var(--grad-prime); border: none; width: 100%; padding: 22px; border-radius: 24px; color: white; font-size: 16px; font-weight: 800; cursor: pointer; transition: 0.3s; margin-top: 15px; box-shadow: 0 10px 25px rgba(255, 0, 122, 0.2); }
+        .prime-btn:active { transform: scale(0.95); }
+        
+        .input-glass { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 22px; padding: 20px; width: 100%; color: #fff; font-family: 'Outfit'; margin: 20px 0; text-align: center; font-size: 15px; }
 
-        .lang-pill { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 5px; display: flex; gap: 5px; }
-        .l-btn { border: none; background: none; color: #444; font-weight: 800; font-size: 10px; padding: 5px 10px; cursor: pointer; border-radius: 8px; }
-        .l-btn.active { background: #fff; color: #000; }
+        .lang-pill { background: rgba(255,255,255,0.08); border-radius: 15px; padding: 6px; display: flex; gap: 5px; border: 1px solid rgba(255,255,255,0.05); }
+        .l-btn { border: none; background: none; color: #666; font-weight: 800; font-size: 11px; padding: 6px 12px; cursor: pointer; border-radius: 10px; transition: 0.3s; }
+        .l-btn.active { background: #fff; color: #000; box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
 
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; display: none; align-items: flex-end; backdrop-filter: blur(10px); }
-        .modal-card { background: #0a0e17; border-top: 1px solid rgba(255,255,255,0.1); border-radius: 40px 40px 0 0; padding: 35px 25px; width: 100%; animation: slideUp 0.4s ease; max-height: 85vh; overflow-y: auto; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 9999; display: none; align-items: flex-end; backdrop-filter: blur(15px); }
+        .modal-card { background: #0a0e17; border-top: 1px solid rgba(255,255,255,0.15); border-radius: 45px 45px 0 0; padding: 40px 25px; width: 100%; animation: slideUp 0.4s cubic-bezier(0, 1, 0.5, 1); max-height: 85vh; overflow-y: auto; }
 
-        .history-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 22px; padding: 18px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .mission-item { background: rgba(255,255,255,0.03); padding: 22px; border-radius: 28px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.06); transition: 0.3s; }
+        .history-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 25px; padding: 20px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center; }
         
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         #video-overlay { position: fixed; inset:0; background:#000; z-index:10000; display:none; flex-direction:column; align-items:center; justify-content:center; }
@@ -60,17 +69,17 @@
 <div class="modal-overlay" id="modal-guide">
     <div class="modal-card">
         <div style="text-align: center;">
-            <div style="font-size: 40px;">📖</div>
-            <h2 data-t="g_title" style="margin: 10px 0; font-weight: 800;">Guía de Ganancias</h2>
-            <div style="background:rgba(255,255,255,0.02); border-radius:25px; padding:20px; text-align:left; margin-bottom:20px; font-size:14px; line-height:1.6;">
+            <div style="font-size: 45px; margin-bottom: 10px;">📖</div>
+            <h2 data-t="g_title" style="margin: 10px 0; font-weight: 800; font-size: 24px;">Guía de Ganancias</h2>
+            <div style="background:rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius:30px; padding:25px; text-align:left; margin-bottom:25px; font-size:15px; line-height:1.7;">
                 <p style="margin-top:0;"><b style="color:var(--neon-cyan)" data-t="g_cycle">Ciclo de 4 Días:</b></p>
                 <ul style="list-style:none; padding:0; margin:0;">
-                    <li style="margin-bottom:8px;">💎 <b>Día 1:</b> 0.010 USDT</li>
-                    <li style="margin-bottom:8px;">💎 <b>Día 2:</b> 0.002 USDT</li>
-                    <li style="margin-bottom:8px;">💎 <b>Día 3:</b> 0.010 USDT</li>
-                    <li style="margin-bottom:8px;">💎 <b>Día 4:</b> 0.008 USDT</li>
+                    <li style="margin-bottom:10px;">💎 <b>Día 1:</b> 0.010 USDT</li>
+                    <li style="margin-bottom:10px;">💎 <b>Día 2:</b> 0.002 USDT</li>
+                    <li style="margin-bottom:10px;">💎 <b>Día 3:</b> 0.010 USDT</li>
+                    <li style="margin-bottom:10px;">💎 <b>Día 4:</b> 0.008 USDT</li>
                 </ul>
-                <hr style="border:0; border-top:1px solid #222; margin:15px 0;">
+                <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:20px 0;">
                 <p style="margin-bottom:0;"><b data-t="g_rules">Reglas:</b><br>
                 <span data-t="g_r1">• Debes ver 5 videos diarios.</span><br>
                 <span data-t="g_r2">• Retiro mínimo: 0.020 USDT.</span><br>
@@ -84,19 +93,19 @@
 <div class="modal-overlay" id="modal-withdraw">
     <div class="modal-card">
         <div style="text-align: center;">
-            <div style="font-size: 40px;">⚡</div>
-            <h2 data-t="w_title" style="margin: 10px 0;">Retirar Fondos</h2>
-            <p style="color: #666; font-size: 12px;">Network: <b>USDT Polygon (MATIC)</b></p>
+            <div style="font-size: 45px; margin-bottom: 10px;">⚡</div>
+            <h2 data-t="w_title" style="margin: 10px 0; font-size: 24px;">Retirar Fondos</h2>
+            <p style="color: #888; font-size: 13px;">Network: <b style="color:var(--neon-cyan)">USDT Polygon (MATIC)</b></p>
             <input type="text" id="wallet-addr" class="input-glass" placeholder="0x...">
             <button class="prime-btn" onclick="confirmWithdraw()" data-t="w_confirm">CONFIRMAR RETIRO</button>
-            <button style="background:none; border:none; color:#444; margin-top:20px; font-weight:700; width:100%;" onclick="closeModal('modal-withdraw')" data-t="cancel">CANCELAR</button>
+            <button style="background:none; border:none; color:#555; margin-top:25px; font-weight:800; width:100%; font-size:14px;" onclick="closeModal('modal-withdraw')" data-t="cancel">CANCELAR</button>
         </div>
     </div>
 </div>
 
 <div class="app-container">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-        <div style="font-weight:800; font-size:20px; letter-spacing:-1px;">CANDY CLOUD</div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:35px;">
+        <div style="font-weight:800; font-size:22px; letter-spacing:-1.5px; background: var(--grad-prime); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">CANDY CLOUD</div>
         <div class="lang-pill">
             <button class="l-btn active" id="l-es" onclick="setLang('es')">ES</button>
             <button class="l-btn" id="l-en" onclick="setLang('en')">EN</button>
@@ -105,10 +114,10 @@
 
     <div id="v-home">
         <div class="balance-card">
-            <div style="font-size: 11px; color: #555; text-transform: uppercase;" data-t="bal_label">Balance Neto</div>
+            <div style="font-size: 12px; color: #888; text-transform: uppercase; font-weight: 800; letter-spacing: 2px; margin-bottom: 5px;" data-t="bal_label">Balance Neto</div>
             <div class="main-amount">$<span id="val-balance">0.0000</span></div>
-            <div style="margin-top:15px; font-size:12px; background:rgba(255,255,255,0.03); padding:8px 15px; border-radius:50px; display:inline-block;">
-                🍬 <span data-t="candies">Caramelos</span>: <b id="val-candy" style="color:var(--accent)">0</b>
+            <div style="margin-top:20px; font-size:13px; font-weight: 800; background:rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding:10px 20px; border-radius:50px; display:inline-block; color: #fff;">
+                🍬 <span data-t="candies">Caramelos</span>: <b id="val-candy" style="color:var(--accent); text-shadow: 0 0 10px rgba(255,0,122,0.5);">0</b>
             </div>
         </div>
 
@@ -116,35 +125,44 @@
         
         <button class="prime-btn" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#fff;" onclick="openModal('modal-guide')">📖 Guía de Ganancias</button>
 
-        <button class="prime-btn" style="background:none; border:1px solid #1a1a1a; color:#fff;" onclick="openWithdraw()" data-t="btn_withdraw">Retirar (0.02)</button>
+        <button class="prime-btn" style="background:none; border:1px solid rgba(255,255,255,0.15); color:#fff; margin-top: 10px;" onclick="openWithdraw()" data-t="btn_withdraw">Retirar (0.02)</button>
         
-        <div id="hist-section" style="margin-top:40px; display:none;">
-            <div style="font-size:10px; color:#444; font-weight:800; text-transform:uppercase; margin-bottom:10px;" data-t="hist_t">Historial de Retiros</div>
+        <div id="hist-section" style="margin-top:45px; display:none;">
+            <div style="font-size:12px; color:#666; font-weight:800; text-transform:uppercase; margin-bottom:15px; letter-spacing: 1px; padding-left: 5px;" data-t="hist_t">Historial de Retiros</div>
             <div id="history-list"></div>
         </div>
     </div>
 
     <div id="v-earn" style="display:none;">
-        <h2 data-t="earn_t" style="font-weight:800;">Misiones</h2>
-        <div style="background:var(--glass); padding:20px; border-radius:25px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; border: 1px solid rgba(255,255,255,0.03);">
-            <div><b data-t="m1">Canal Oficial</b><br><small style="color:var(--gold)">+1 Caramelo</small></div>
-            <button class="prime-btn" id="btn-c1" style="width:auto; padding:12px 20px; margin:0;" onclick="join(1)" data-t="join">UNIRSE</button>
+        <h2 data-t="earn_t" style="font-weight:800; font-size: 28px; margin-bottom: 25px;">Misiones</h2>
+        
+        <div class="mission-item">
+            <div style="display:flex; align-items:center; gap:15px;">
+                <div style="font-size:24px;">💬</div>
+                <div><b data-t="m1">Canal Oficial</b><br><small style="color:var(--gold); font-weight:800;">+1 Caramelo</small></div>
+            </div>
+            <button class="prime-btn" id="btn-c1" style="width:auto; padding:12px 25px; margin:0; border-radius: 18px; font-size:13px;" onclick="join(1)" data-t="join">UNIRSE</button>
         </div>
-        <div style="background:var(--glass); padding:20px; border-radius:25px; display:flex; justify-content:space-between; align-items:center; border: 1px solid rgba(255,255,255,0.03);">
-            <div><b data-t="m2">Grupo VIP</b><br><small style="color:var(--gold)">+1 Caramelo</small></div>
-            <button class="prime-btn" id="btn-c2" style="width:auto; padding:12px 20px; margin:0;" onclick="join(2)" data-t="join">UNIRSE</button>
+
+        <div class="mission-item">
+            <div style="display:flex; align-items:center; gap:15px;">
+                <div style="font-size:24px;">💎</div>
+                <div><b data-t="m2">Grupo VIP</b><br><small style="color:var(--gold); font-weight:800;">+1 Caramelo</small></div>
+            </div>
+            <button class="prime-btn" id="btn-c2" style="width:auto; padding:12px 25px; margin:0; border-radius: 18px; font-size:13px;" onclick="join(2)" data-t="join">UNIRSE</button>
         </div>
     </div>
 </div>
 
-<div id="video-overlay"><div id="timer" style="font-size:90px; font-weight:800;">10</div></div>
+<div id="video-overlay"><div id="timer" style="font-size:110px; font-weight:800; font-family:'Outfit'; background: var(--grad-prime); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">10</div></div>
 
-<nav style="position:fixed; bottom:0; left:0; width:100%; background:rgba(5,8,15,0.98); display:flex; justify-content:space-around; padding:20px; border-top:1px solid #111; z-index:100;">
-    <button onclick="view('home')" id="nav-h" style="background:none; border:none; color:#fff; font-weight:800; cursor:pointer;" data-t="nav_h">INICIO</button>
-    <button onclick="view('earn')" id="nav-e" style="background:none; border:none; color:#444; font-weight:800; cursor:pointer;" data-t="nav_e">GANA</button>
+<nav style="position:fixed; bottom:0; left:0; width:100%; background:rgba(10,14,23,0.95); display:flex; justify-content:space-around; padding:25px 10px; border-top:1px solid rgba(255,255,255,0.08); z-index:100; backdrop-filter: blur(20px);">
+    <button onclick="view('home')" id="nav-h" style="background:none; border:none; color:#fff; font-weight:800; cursor:pointer; font-size: 14px; letter-spacing: 1px;" data-t="nav_h">INICIO</button>
+    <button onclick="view('earn')" id="nav-e" style="background:none; border:none; color:#444; font-weight:800; cursor:pointer; font-size: 14px; letter-spacing: 1px;" data-t="nav_e">GANA</button>
 </nav>
 
 <script>
+    // --- TU LÓGICA ORIGINAL (SIN TOCAR NI UNA COMA) ---
     const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
     const CHISMOSO_ID = "@ALSKSNNSLSMS"; 
 
@@ -169,7 +187,6 @@
         }
     };
 
-    // BALANCE CAMBIADO A 0.0000 (SIN BONO)
     let db = { lang: 'es', balance: 0.0000, candies: 0, ch1: false, ch2: false, last: '', total: 0, hist: [], taskProgress: 0 };
 
     function save() { localStorage.setItem('_candy_global_v2_final', JSON.stringify(db)); }
@@ -220,8 +237,8 @@
             document.getElementById('hist-section').style.display = 'block';
             document.getElementById('history-list').innerHTML = db.hist.map(h => `
                 <div class="history-card">
-                    <div><b>${h.amt} USDT</b><br><small style="color:#333">${h.date}</small></div>
-                    <div style="color:#00ff88; font-size:10px; font-weight:800; background:rgba(0,255,136,0.1); padding:5px 10px; border-radius:8px;">EXITOSO</div>
+                    <div><b style="color:var(--neon-cyan); font-size:16px;">${h.amt} USDT</b><br><small style="color:#555; font-weight:800;">${h.date}</small></div>
+                    <div style="color:#00ff88; font-size:11px; font-weight:800; background:rgba(0,255,136,0.1); padding:6px 12px; border-radius:12px; border:1px solid rgba(0,255,136,0.2);">SUCCESS</div>
                 </div>
             `).join('');
         }
