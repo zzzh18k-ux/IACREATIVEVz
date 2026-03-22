@@ -21,6 +21,13 @@
         }
         .app-container { width: 100%; max-width: 480px; margin: 0 auto; padding: 25px; height: 100vh; overflow-y: auto; padding-bottom: 120px; position: relative; z-index: 10; }
         
+        /* HEADER ESTILO PREMIUM */
+        .brand-header { display: flex; flex-direction: column; margin-bottom: 35px; }
+        .brand-top { display: flex; justify-content: space-between; align-items: center; }
+        .logo-box { display: flex; align-items: center; gap: 8px; }
+        .big-candy { font-size: 24px; filter: drop-shadow(0 0 8px var(--accent)); }
+        .value-badge { font-size: 10px; font-weight: 800; color: var(--gold); background: rgba(255, 204, 0, 0.1); padding: 2px 8px; border-radius: 6px; margin-top: 5px; align-self: flex-start; border: 1px solid rgba(255, 204, 0, 0.2); }
+
         .toast {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
             background: rgba(10, 14, 23, 0.9); backdrop-filter: blur(20px);
@@ -84,33 +91,27 @@
     </div>
 </div>
 
-<div class="modal-overlay" id="modal-withdraw">
-    <div class="modal-card">
-        <div style="text-align: center;">
-            <h2 data-t="w_title" style="margin: 0 0 10px 0; font-size: 22px; text-transform: uppercase;">Retirar Fondos</h2>
-            <p style="color: #666; font-size: 12px; margin-bottom: 20px;">Protocolo: <b style="color:var(--neon-cyan)">Polygon MATIC</b></p>
-            <input type="text" id="wallet-addr" class="input-glass" placeholder="Dirección de billetera 0x...">
-            <button class="prime-btn" onclick="confirmWithdraw()" data-t="w_confirm">CONFIRMAR TRANSACCIÓN</button>
-            <button style="background:none; border:none; color:#444; margin-top:20px; font-weight:800; width:100%; font-size:13px; text-transform:uppercase;" onclick="closeModal('modal-withdraw')" data-t="cancel">VOLVER</button>
-        </div>
-    </div>
-</div>
-
 <div class="app-container">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:35px;">
-        <div style="font-weight:800; font-size:20px; letter-spacing:-1px; color: #fff;">CANDY CLOUD</div>
-        <div class="lang-pill">
-            <button class="l-btn active" id="l-es" onclick="setLang('es')">ES</button>
-            <button class="l-btn" id="l-en" onclick="setLang('en')">EN</button>
+    <header class="brand-header">
+        <div class="brand-top">
+            <div class="logo-box">
+                <span class="big-candy">🍬</span>
+                <div style="font-weight:800; font-size:20px; letter-spacing:-1px; color: #fff;">CANDY CLOUD</div>
+            </div>
+            <div class="lang-pill">
+                <button class="l-btn active" id="l-es" onclick="setLang('es')">ES</button>
+                <button class="l-btn" id="l-en" onclick="setLang('en')">EN</button>
+            </div>
         </div>
-    </div>
+        <div class="value-badge">VALUE: 1 🍬 = 1.00 USDT</div>
+    </header>
 
     <div id="v-home">
         <div class="balance-card">
             <div style="font-size: 11px; color: #555; text-transform: uppercase; font-weight: 800; letter-spacing: 1.5px; margin-bottom: 8px;" data-t="bal_label">Net Balance</div>
             <div class="main-amount">$<span id="val-balance">0.0000</span></div>
             <div style="margin-top:15px; font-size:12px; font-weight: 800; background:rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding:8px 18px; border-radius:50px; display:inline-block;">
-                <span data-t="candies">Candies</span>: <span id="val-candy" style="color:var(--accent)">0</span>
+                <span data-t="candies">🍬 Caramelos</span>: <span id="val-candy" style="color:var(--accent)">0</span>
             </div>
         </div>
 
@@ -132,7 +133,7 @@
         <div class="mission-item">
             <div>
                 <div style="font-weight: 800; font-size: 15px;" data-t="m1">Canal Oficial</div>
-                <div style="color:var(--gold); font-size: 11px; font-weight: 800;">+1 Caramelo</div>
+                <div style="color:var(--gold); font-size: 11px; font-weight: 800;">+1 🍬 Caramelo</div>
             </div>
             <button class="prime-btn" id="btn-c1" style="width:auto; padding:10px 20px; margin:0; border-radius: 12px; font-size:12px;" onclick="join(1)" data-t="join">UNIRSE</button>
         </div>
@@ -140,14 +141,12 @@
         <div class="mission-item">
             <div>
                 <div style="font-weight: 800; font-size: 15px;" data-t="m2">Grupo VIP</div>
-                <div style="color:var(--gold); font-size: 11px; font-weight: 800;">+1 Caramelo</div>
+                <div style="color:var(--gold); font-size: 11px; font-weight: 800;">+1 🍬 Caramelo</div>
             </div>
             <button class="prime-btn" id="btn-c2" style="width:auto; padding:10px 20px; margin:0; border-radius: 12px; font-size:12px;" onclick="join(2)" data-t="join">UNIRSE</button>
         </div>
     </div>
 </div>
-
-<div id="video-overlay"><div id="timer" style="font-size:100px; font-weight:800; color: #fff;">10</div></div>
 
 <nav style="position:fixed; bottom:0; left:0; width:100%; background:rgba(5,8,15,0.98); display:flex; justify-content:space-around; padding:22px; border-top:1px solid #111; z-index:100; backdrop-filter: blur(10px);">
     <button onclick="view('home')" id="nav-h" style="background:none; border:none; color:#fff; font-weight:800; cursor:pointer; font-size: 12px; letter-spacing: 1px;" data-t="nav_h">HOME</button>
@@ -160,22 +159,18 @@
 
     const i18n = {
         es: {
-            bal_label: "Balance Neto", candies: "Caramelos", btn_task: "VER VIDEO", btn_withdraw: "RETIRAR (0.02)",
+            bal_label: "Balance Neto", candies: "🍬 Caramelos", btn_task: "VER VIDEO", btn_withdraw: "RETIRAR (0.02)",
             earn_t: "Misiones", m1: "Canal Oficial", m2: "Grupo VIP", join: "UNIRSE", nav_h: "INICIO", nav_e: "GANA",
             w_title: "Retirar Fondos", w_confirm: "CONFIRMAR RETIRO", cancel: "CANCELAR", hist_t: "Historial de Retiros",
-            err_bal: "Saldo insuficiente 🔒", err_candies: "Misiones incompletas 🔒", err_wallet: "Dirección inválida ❌",
-            ok_withdraw: "Transacción enviada ✅", ready: "Vuelva mañana 🌙", g_title: "Guía de Ganancias",
-            g_cycle: "Ciclo de 4 Días:", g_rules: "Reglas:", g_r1: "• Visualización: 5 videos diarios.", 
-            g_r2: "• Retiro mín: 0.020 USDT.", g_r3: "• Red: USDT Polygon (MATIC)."
+            err_bal: "Saldo insuficiente 🔒", err_candies: "Misiones incompletas 🍬", err_wallet: "Dirección inválida ❌",
+            ok_withdraw: "Transacción enviada ✅", ready: "Vuelva mañana 🌙", g_title: "Guía de Ganancias"
         },
         en: {
-            bal_label: "Net Balance", candies: "Candies", btn_task: "WATCH VIDEO", btn_withdraw: "WITHDRAW (0.02)",
+            bal_label: "Net Balance", candies: "🍬 Candies", btn_task: "WATCH VIDEO", btn_withdraw: "WITHDRAW (0.02)",
             earn_t: "Missions", m1: "Official Channel", m2: "VIP Group", join: "JOIN", nav_h: "HOME", nav_e: "EARN",
             w_title: "Withdraw Funds", w_confirm: "CONFIRM WITHDRAWAL", cancel: "CANCEL", hist_t: "Activity Log",
-            err_bal: "Insufficient balance 🔒", err_candies: "Missions incomplete 🔒", err_wallet: "Invalid address ❌",
-            ok_withdraw: "Transaction sent ✅", ready: "Come back tomorrow 🌙", g_title: "Earning Guide",
-            g_cycle: "4-Day Cycle:", g_rules: "Rules:", g_r1: "• Must watch 5 videos daily.",
-            g_r2: "• Min withdraw: 0.020 USDT.", g_r3: "• Net: USDT Polygon (MATIC)."
+            err_bal: "Insufficient balance 🔒", err_candies: "Missions incomplete 🍬", err_wallet: "Invalid address ❌",
+            ok_withdraw: "Transaction sent ✅", ready: "Come back tomorrow 🌙", g_title: "Earning Guide"
         }
     };
 
@@ -199,14 +194,6 @@
         document.getElementById('l-en').className = (l === 'en' ? 'l-btn active' : 'l-btn');
         update();
         save();
-    }
-
-    function showToast(msg, icon="") {
-        const t = document.getElementById('toast');
-        document.getElementById('toast-msg').innerText = msg;
-        document.getElementById('toast-icon').innerText = icon;
-        t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 3000);
     }
 
     function update() {
@@ -298,6 +285,13 @@
         document.getElementById('nav-e').style.color = (v === 'earn' ? '#fff' : '#444');
     }
     window.onload = load;
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        document.getElementById('toast-msg').innerText = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
 </script>
 </body>
 </html>
