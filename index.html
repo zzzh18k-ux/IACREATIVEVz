@@ -3,349 +3,312 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Candy Cloud - Professional Staking</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>Candy Cloud Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --accent: #ff007a;
             --neon-cyan: #00f2ff;
-            --deep-dark: #080c14;
-            --glass: rgba(255, 255, 255, 0.05);
-            --grad: linear-gradient(135deg, #ff007a 0%, #7000ff 100%);
+            --gold: #ffcc00;
+            --deep-dark: #05080f;
+            --glass: rgba(255, 255, 255, 0.03);
+            --grad-prime: linear-gradient(135deg, #ff007a 0%, #7000ff 100%);
+            --grad-gold: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
         }
 
         body {
             font-family: 'Outfit', sans-serif;
             background-color: var(--deep-dark);
-            color: #ffffff;
-            margin: 0; padding: 0;
+            color: #ffffff; margin: 0; padding: 0;
             overflow-x: hidden;
-            background-image: radial-gradient(circle at 10% 20%, rgba(255, 0, 122, 0.05) 0%, transparent 40%),
-                              radial-gradient(circle at 90% 80%, rgba(0, 242, 255, 0.05) 0%, transparent 40%);
+            background-image: radial-gradient(circle at top right, rgba(255, 0, 122, 0.08), transparent 40%);
         }
 
-        .app-container { width: 100%; max-width: 480px; margin: 0 auto; padding: 20px; box-sizing: border-box; padding-bottom: 100px; }
+        .app-container { width: 100%; max-width: 480px; margin: 0 auto; padding: 20px; box-sizing: border-box; padding-bottom: 110px; }
 
-        /* Estilo de Texto e Idioma */
+        /* Iconos SVG Estilizados */
+        .icon-svg { width: 24px; height: 24px; fill: currentColor; vertical-align: middle; }
+
+        /* Header Premium */
         .header-ui { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .lang-selector { display: flex; gap: 8px; }
-        .lang-chip { 
-            background: var(--glass); border: 1px solid rgba(255,255,255,0.1); 
-            padding: 4px 10px; border-radius: 8px; font-size: 10px; cursor: pointer; color: #aaa;
-        }
-        .lang-chip.active { border-color: var(--neon-cyan); color: var(--neon-cyan); }
+        .logo-text { font-weight: 800; font-size: 20px; letter-spacing: -1px; background: var(--grad-prime); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* Card de Balance "Expensive" */
+        /* Card de Balance con Signo $ */
         .balance-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
-            border-radius: 30px; padding: 35px 20px; text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-            position: relative; overflow: hidden;
+            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(0,0,0,0.5));
+            border-radius: 35px; padding: 40px 20px; text-align: center;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+            position: relative;
         }
-        .balance-card::before {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(255, 0, 122, 0.1) 0%, transparent 50%);
-        }
-
-        .label-text { font-size: 11px; text-transform: uppercase; letter-spacing: 3px; color: var(--neon-cyan); font-weight: 500; }
-        .main-amount { font-size: 3.5rem; font-weight: 700; margin: 10px 0; letter-spacing: -2px; }
-        .candy-tag { 
-            background: rgba(255, 255, 255, 0.05); padding: 6px 16px; border-radius: 50px; 
-            font-size: 13px; border: 1px solid rgba(255,255,255,0.1); display: inline-flex; align-items: center; gap: 8px;
+        .symbol { font-size: 1.8rem; vertical-align: super; color: var(--neon-cyan); margin-right: 5px; font-weight: 300; }
+        .main-amount { font-size: 3.8rem; font-weight: 800; letter-spacing: -3px; display: inline-block; }
+        .candy-badge { 
+            margin-top: 15px; background: rgba(255,255,255,0.05); padding: 8px 20px; border-radius: 50px; 
+            font-size: 12px; border: 1px solid rgba(255,255,255,0.1); display: inline-flex; align-items: center; gap: 8px;
         }
 
-        /* Botones de Juego */
-        .action-area { margin-top: 30px; }
+        /* Botones y Acciones */
         .prime-btn {
-            background: var(--grad); border: none; width: 100%; padding: 22px; border-radius: 20px;
+            background: var(--grad-prime); border: none; width: 100%; padding: 22px; border-radius: 22px;
             color: white; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.3s;
-            box-shadow: 0 10px 30px rgba(255, 0, 122, 0.3); margin-bottom: 15px;
+            box-shadow: 0 15px 35px rgba(255, 0, 122, 0.25); margin-top: 25px;
             display: flex; align-items: center; justify-content: center; gap: 12px;
         }
-        .prime-btn:active { transform: scale(0.97); }
-        .btn-locked { background: #1a1f26; color: #444; box-shadow: none; border: 1px solid #333; cursor: not-allowed; }
+        .prime-btn:active { transform: scale(0.96); }
 
-        /* Input Billetera */
-        .wallet-section { margin-top: 25px; background: var(--glass); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
-        .wallet-input {
-            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); width: 100%;
-            padding: 15px; border-radius: 12px; color: var(--neon-cyan); font-family: monospace;
-            box-sizing: border-box; margin-top: 10px; font-size: 12px;
+        /* Level 2 Upgrade Card */
+        .upgrade-card {
+            background: rgba(255,255,255,0.02); border-radius: 25px; padding: 20px; margin-top: 20px;
+            border: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden;
+        }
+        .upgrade-card.ready { border-color: var(--gold); background: rgba(255, 204, 0, 0.05); }
+        .lvl2-btn {
+            background: #1a1a1a; color: #555; border: 1px solid #333; width: 100%; 
+            padding: 15px; border-radius: 15px; font-weight: 700; margin-top: 10px; cursor: not-allowed;
+        }
+        .lvl2-btn.active {
+            background: var(--grad-gold); color: #000; border: none; cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
         }
 
-        /* Notificaciones Personalizadas (Modales) */
+        /* Modales Reales */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box;
+            background: rgba(0,0,0,0.95); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 30px;
         }
-        .modal-box {
-            background: #121826; border: 1px solid var(--accent); border-radius: 25px; padding: 30px;
-            text-align: center; max-width: 400px; width: 100%;
+        .modal-content {
+            background: #0f141e; border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; 
+            padding: 40px 20px; text-align: center; width: 100%;
         }
-        .modal-btn { background: var(--accent); border: none; color: white; padding: 12px 30px; border-radius: 12px; margin-top: 20px; cursor: pointer; font-weight: 600; }
 
-        /* Tareas Estilo Cards */
-        .task-row { background: var(--glass); border-radius: 20px; padding: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .task-info b { display: block; font-size: 14px; margin-bottom: 4px; }
-        .task-info span { font-size: 11px; color: #777; }
-
-        /* Barra de Navegación */
+        /* Nav Moderno */
         .nav-bar {
-            position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(8,12,20,0.9);
-            backdrop-filter: blur(20px); display: flex; justify-content: space-around; padding: 15px 0;
+            position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(5,8,15,0.95);
+            backdrop-filter: blur(20px); display: flex; justify-content: space-around; padding: 20px 0;
             border-top: 1px solid rgba(255,255,255,0.05);
         }
-        .nav-link { background: none; border: none; color: #555; text-align: center; cursor: pointer; font-size: 10px; font-family: inherit; font-weight: 600; }
-        .nav-link.active { color: var(--accent); }
-        .nav-link i { display: block; font-size: 22px; margin-bottom: 4px; }
+        .nav-item { background: none; border: none; color: #444; cursor: pointer; font-size: 11px; font-weight: 600; transition: 0.3s; }
+        .nav-item.active { color: var(--accent); }
+        .nav-item svg { display: block; margin: 0 auto 5px; width: 22px; height: 22px; }
 
-        /* Animación Video */
-        #video-player {
+        /* Video Loader */
+        #video-screen {
             position: fixed; top:0; left:0; width:100%; height:100%; background:#000;
-            display:none; z-index:10000; flex-direction:column; align-items:center; justify-content:center;
+            z-index:10000; display:none; flex-direction:column; align-items:center; justify-content:center;
         }
     </style>
 </head>
 <body>
 
-<div class="modal-overlay" id="custom-modal">
-    <div class="modal-box">
-        <div id="modal-icon" style="font-size: 40px; margin-bottom: 15px;">✨</div>
-        <h3 id="modal-title" style="margin: 0; color: var(--neon-cyan);">Título</h3>
-        <p id="modal-msg" style="color: #aaa; font-size: 14px; margin-top: 10px;">Mensaje de sistema.</p>
-        <button class="modal-btn" onclick="closeModal()">Entendido</button>
+<div class="modal-overlay" id="modal">
+    <div class="modal-content">
+        <div id="m-icon" style="font-size: 50px; margin-bottom: 15px;"></div>
+        <h2 id="m-title" style="margin: 0; font-weight: 800;"></h2>
+        <p id="m-body" style="color: #888; margin: 15px 0 25px 0; font-size: 14px;"></p>
+        <button class="prime-btn" onclick="closeM()" style="margin-top:0; padding: 15px;">Confirmar</button>
     </div>
 </div>
 
 <div class="app-container">
     <div class="header-ui">
-        <div style="font-weight: 800; font-size: 18px; letter-spacing: -1px;">CANDY<span style="color:var(--accent)">CLOUD</span></div>
-        <div class="lang-selector">
-            <div class="lang-chip active" id="l-es" onclick="setLang('es')">ES</div>
-            <div class="lang-chip" id="l-en" onclick="setLang('en')">EN</div>
-        </div>
+        <div class="logo-text">CANDY CLOUD PRO</div>
+        <div style="font-size: 10px; color: var(--neon-cyan); letter-spacing: 2px;">V2.5 PREMIUM</div>
     </div>
 
-    <div id="sec-home">
+    <div id="v-home">
         <div class="balance-card">
-            <div class="label-text" id="t-bal">Balance Disponible</div>
-            <div class="main-amount" id="val-balance">0.0000</div>
-            <div class="candy-tag">
-                <span id="t-candy">Caramelos</span>: <b id="val-candy" style="color:var(--accent)">0</b> 🍬
-            </div>
-        </div>
-
-        <div class="wallet-section">
-            <div class="label-text" style="font-size: 9px; color: #666;">Red: USDT Polygon (MATIC)</div>
-            <input type="text" class="wallet-input" id="inp-wallet" placeholder="0x..." onchange="saveWallet()">
-        </div>
-
-        <div class="action-area">
-            <button class="prime-btn" id="btn-do-task" onclick="handleTask()">
-                💎 <span id="t-btn-task">Realizar Tarea Diaria</span>
-            </button>
-            
-            <div class="task-row" style="opacity: 0.6; border: 1px dashed #333;">
-                <div class="task-info">
-                    <b id="t-lvl2-name">Nivel 2: Premium</b>
-                    <span>Rango: 0.03 - 0.08 USDT</span>
+            <div style="font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 2px;">Balance Neto</div>
+            <div class="main-amount"><span class="symbol">$</span><span id="val-balance">0.0000</span></div>
+            <div style="display:block;">
+                <div class="candy-badge">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+                    <span id="txt-c">Caramelos</span>: <b id="val-candy" style="color:var(--accent)">0</b>
                 </div>
-                <button class="lang-chip" id="t-btn-up">Bloqueado</button>
             </div>
-
-            <button class="prime-btn btn-locked" id="btn-withdraw" style="background:none;" onclick="handleWithdraw()">
-                🚀 <span id="t-btn-withdraw">Retirar (Min: 0.02)</span>
-            </button>
         </div>
+
+        <div style="margin-top: 25px; background: var(--glass); padding: 20px; border-radius: 22px;">
+            <div style="font-size: 10px; color: #555; margin-bottom: 8px;">WALLET USDT (POLYGON)</div>
+            <input type="text" id="wallet-addr" placeholder="0x..." style="width:100%; background:transparent; border:1px solid #222; padding:12px; border-radius:12px; color:var(--neon-cyan); outline:none; font-family:monospace; font-size:12px;" onchange="saveW()">
+        </div>
+
+        <button class="prime-btn" onclick="startTask()">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+            <span id="txt-btn-t">Ejecutar Tarea Diaria</span>
+        </button>
+
+        <div class="upgrade-card" id="up-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <b style="font-size:14px; display:block;" id="txt-l2">Nivel 2: Maestro Premium</b>
+                    <span style="font-size:11px; color:#666;">Ganancia: 0.03 - 0.08 USDT</span>
+                </div>
+                <div id="up-price" style="color:var(--gold); font-weight:800;">$2.50</div>
+            </div>
+            <button class="lvl2-btn" id="btn-upgrade" onclick="buyLevel2()">Bloqueado (Saldo Insuficiente)</button>
+        </div>
+
+        <button class="prime-btn" id="btn-withdraw" style="background:none; border: 1px solid #222; box-shadow:none; color:#444;" onclick="withdraw()">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            <span id="txt-btn-w">Retirar (Min: 0.02)</span>
+        </button>
     </div>
 
-    <div id="sec-earn" style="display:none;">
-        <h2 id="t-earn-title" style="margin-top:0;">Bonificación Inicial</h2>
-        <p id="t-earn-desc" style="font-size: 13px; color: #777; margin-bottom: 25px;">Activa tus herramientas de trabajo siguiendo nuestros canales.</p>
+    <div id="v-earn" style="display:none;">
+        <h2 style="font-weight:800; margin-bottom:10px;">Recompensas</h2>
+        <p style="color:#666; font-size:13px; margin-bottom:30px;">Activa tu cuenta uniendo tu perfil a los canales oficiales.</p>
         
-        <div class="task-row">
-            <div class="task-info">
-                <b id="t-ch1-title">Canal Oficial A</b>
-                <span id="t-ch1-rew">+1 Caramelo ($1.00) 🍬</span>
-            </div>
-            <button class="lang-chip active" id="btn-ch1" onclick="join(1)">UNIRSE</button>
+        <div style="background:var(--glass); padding:20px; border-radius:22px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
+            <div><b style="font-size:14px;">Canal Oficial 1</b><br><span style="color:var(--gold); font-size:12px;">+1 Caramelo ($1)</span></div>
+            <button class="prime-btn" style="margin:0; width:auto; padding:10px 20px; font-size:12px;" id="c1" onclick="join(1)">UNIRSE</button>
         </div>
 
-        <div class="task-row">
-            <div class="task-info">
-                <b id="t-ch2-title">Canal Oficial B</b>
-                <span id="t-ch2-rew">+1 Caramelo ($1.00) 🍬</span>
-            </div>
-            <button class="lang-chip active" id="btn-ch2" onclick="join(2)">UNIRSE</button>
+        <div style="background:var(--glass); padding:20px; border-radius:22px; display:flex; justify-content:space-between; align-items:center;">
+            <div><b style="font-size:14px;">Canal Oficial 2</b><br><span style="color:var(--gold); font-size:12px;">+1 Caramelo ($1)</span></div>
+            <button class="prime-btn" style="margin:0; width:auto; padding:10px 20px; font-size:12px;" id="c2" onclick="join(2)">UNIRSE</button>
         </div>
     </div>
 </div>
 
-<div id="video-player">
-    <div style="color:var(--accent); font-weight: 800; margin-bottom: 10px;" id="t-v-wait">Sincronizando contrato...</div>
-    <div id="v-timer" style="font-size: 60px; font-weight: 800;">10</div>
-    <div style="font-size: 10px; color: #333; margin-top: 20px;">CRYPTO CLOUD SECURE PROTOCOL</div>
+<div id="video-screen">
+    <div style="color:var(--accent); font-weight:800; letter-spacing:2px; margin-bottom:15px;">Sincronizando...</div>
+    <div id="timer" style="font-size:80px; font-weight:800;">10</div>
 </div>
 
 <nav class="nav-bar">
-    <button class="nav-link active" id="nav-h" onclick="view('home')"><i>🏠</i><span id="t-n-h">Dashboard</span></button>
-    <button class="nav-link" id="nav-e" onclick="view('earn')"><i>🍬</i><span id="t-n-e">Recompensas</span></button>
+    <button class="nav-item active" id="n-h" onclick="view('home')">
+        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <span>Dashboard</span>
+    </button>
+    <button class="nav-item" id="n-e" onclick="view('earn')">
+        <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        <span>Gana</span>
+    </button>
 </nav>
 
 <script>
-    // --- MOTOR DE DATOS ---
     let db = {
-        lang: 'es',
         balance: 0.0000,
         candies: 0,
         wallet: '',
         ch1: false, ch2: false,
-        lastDate: '',
-        totalTasks: 0
+        last: '',
+        level: 1,
+        total: 0
     };
 
-    const strings = {
-        es: {
-            bal: "Balance Disponible", candy: "Caramelos", 
-            btn_task: "Realizar Tarea Diaria", btn_withdraw: "Retirar Ganancias",
-            earn_title: "Bonificación Inicial", earn_desc: "Activa tus herramientas de trabajo siguiendo nuestros canales oficiales.",
-            v_wait: "Procesando Tarea Digital...", m_min: "Balance insuficiente. Mínimo: 0.02 USDT",
-            m_wallet: "Por favor, configure su billetera Polygon primero.",
-            m_candy: "Acceso denegado. Se requieren 2 caramelos activos.",
-            m_today: "Tarea completada por hoy. Regrese mañana.",
-            m_win: "¡Excelente! Has generado ",
-            ch_joined: "✓ UNIDO", n_dash: "Dashboard", n_earn: "Gana"
-        },
-        en: {
-            bal: "Withdrawable Balance", candy: "Candies",
-            btn_task: "Execute Daily Task", btn_withdraw: "Withdraw Earnings",
-            earn_title: "Starter Bonus", earn_desc: "Activate your tools by following our official community channels.",
-            v_wait: "Processing Digital Task...", m_min: "Insufficient balance. Min: 0.02 USDT",
-            m_wallet: "Please configure your Polygon wallet first.",
-            m_candy: "Access denied. 2 active candies required.",
-            m_today: "Task completed for today. Come back tomorrow.",
-            m_win: "Excellent! You earned ",
-            ch_joined: "✓ JOINED", n_dash: "Dashboard", n_earn: "Earn"
-        }
-    };
-
-    // --- FUNCIONES CORE ---
-    function save() { localStorage.setItem('_candy_pro_db', JSON.stringify(db)); }
+    function save() { localStorage.setItem('_candy_v25', JSON.stringify(db)); }
     function load() {
-        const data = localStorage.getItem('_candy_pro_db');
-        if(data) db = JSON.parse(data);
+        const d = localStorage.getItem('_candy_v25');
+        if(d) db = JSON.parse(d);
         update();
     }
 
-    function showModal(title, msg, icon = '✨') {
-        document.getElementById('modal-title').innerText = title;
-        document.getElementById('modal-msg').innerText = msg;
-        document.getElementById('modal-icon').innerText = icon;
-        document.getElementById('custom-modal').style.display = 'flex';
+    function pop(title, msg, icon) {
+        document.getElementById('m-title').innerText = title;
+        document.getElementById('m-body').innerText = msg;
+        document.getElementById('m-icon').innerText = icon;
+        document.getElementById('modal').style.display = 'flex';
     }
-    function closeModal() { document.getElementById('custom-modal').style.display = 'none'; }
+    function closeM() { document.getElementById('modal').style.display = 'none'; }
 
     function update() {
-        const s = strings[db.lang];
-        document.getElementById('t-bal').innerText = s.bal;
-        document.getElementById('t-candy').innerText = s.candy;
-        document.getElementById('t-btn-task').innerText = s.btn_task;
-        document.getElementById('t-btn-withdraw').innerText = s.btn_withdraw;
-        document.getElementById('t-earn-title').innerText = s.earn_title;
-        document.getElementById('t-earn-desc').innerText = s.earn_desc;
-        document.getElementById('t-n-h').innerText = s.n_dash;
-        document.getElementById('t-n-e').innerText = s.n_earn;
-        document.getElementById('t-v-wait').innerText = s.v_wait;
-
         document.getElementById('val-balance').innerText = db.balance.toFixed(4);
         document.getElementById('val-candy').innerText = db.candies;
-        document.getElementById('inp-wallet').value = db.wallet;
+        document.getElementById('wallet-addr').value = db.wallet;
 
-        // Visual de canales
-        if(db.ch1) { document.getElementById('btn-ch1').innerText = s.ch_joined; document.getElementById('btn-ch1').classList.remove('active'); }
-        if(db.ch2) { document.getElementById('btn-ch2').innerText = s.ch_joined; document.getElementById('btn-ch2').classList.remove('active'); }
+        // Visual Nivel 2
+        const upBtn = document.getElementById('btn-upgrade');
+        const upCard = document.getElementById('up-card');
+        
+        if(db.level === 2) {
+            upBtn.innerText = "NIVEL PREMIUM ACTIVO";
+            upBtn.classList.add('active');
+            upCard.classList.add('ready');
+        } else if(db.balance >= 2.5) {
+            upBtn.innerText = "COMPRAR NIVEL 2 AHORA";
+            upBtn.classList.add('active');
+            upCard.classList.add('ready');
+            upBtn.style.cursor = "pointer";
+        }
 
-        // Botón retiro
-        const wb = document.getElementById('btn-withdraw');
+        // Botón Retiro
         if(db.balance >= 0.02) {
-            wb.classList.remove('btn-locked');
-            wb.style.background = 'var(--glass)';
+            const wb = document.getElementById('btn-withdraw');
             wb.style.borderColor = 'var(--neon-cyan)';
             wb.style.color = 'var(--neon-cyan)';
         }
-    }
 
-    function setLang(l) {
-        db.lang = l;
-        document.getElementById('l-es').classList.toggle('active', l === 'es');
-        document.getElementById('l-en').classList.toggle('active', l === 'en');
-        update(); save();
+        if(db.ch1) document.getElementById('c1').innerText = "✓";
+        if(db.ch2) document.getElementById('c2').innerText = "✓";
     }
-
-    function saveWallet() { db.wallet = document.getElementById('inp-wallet').value; save(); }
 
     function view(v) {
-        document.getElementById('sec-home').style.display = (v === 'home' ? 'block' : 'none');
-        document.getElementById('sec-earn').style.display = (v === 'earn' ? 'block' : 'none');
-        document.getElementById('nav-h').classList.toggle('active', v === 'home');
-        document.getElementById('nav-e').classList.toggle('active', v === 'earn');
+        document.getElementById('v-home').style.display = (v === 'home' ? 'block' : 'none');
+        document.getElementById('v-earn').style.display = (v === 'earn' ? 'block' : 'none');
+        document.getElementById('n-h').classList.toggle('active', v === 'home');
+        document.getElementById('n-e').classList.toggle('active', v === 'earn');
     }
 
     function join(n) {
-        if(n === 1 && !db.ch1) { window.open('https://t.me/TuCanal_A', '_blank'); db.ch1 = true; db.candies++; }
-        if(n === 2 && !db.ch2) { window.open('https://t.me/TuCanal_B', '_blank'); db.ch2 = true; db.candies++; }
+        if(n === 1 && !db.ch1) { window.open('https://t.me/CanalOficial1'); db.ch1 = true; db.candies++; }
+        if(n === 2 && !db.ch2) { window.open('https://t.me/CanalOficial2'); db.ch2 = true; db.candies++; }
         save(); update();
     }
 
-    function handleTask() {
-        const s = strings[db.lang];
-        if(db.candies < 2) return showModal("Aviso", s.m_candy, "🔒");
-        if(db.wallet.length < 10) return showModal("Atención", s.m_wallet, "💳");
-        
-        const today = new Date().toDateString();
-        if(db.lastDate === today) return showModal("Diario", s.m_today, "📅");
+    function startTask() {
+        if(db.candies < 2) return pop("Acceso Denegado", "Debes activar tus 2 caramelos en la sección de Gana.", "🔒");
+        if(db.wallet.length < 10) return pop("Sin Billetera", "Configura tu dirección de Polygon para recibir pagos.", "💳");
+        if(db.last === new Date().toDateString()) return pop("Límite Diario", "Ya completaste tu tarea. Vuelve mañana.", "📅");
 
-        // Simulación Video
-        const v = document.getElementById('video-player');
-        v.style.display = 'flex';
+        const screen = document.getElementById('video-screen');
+        screen.style.display = 'flex';
         let count = 10;
         const timer = setInterval(() => {
             count--;
-            document.getElementById('v-timer').innerText = count;
+            document.getElementById('timer').innerText = count;
             if(count <= 0) {
                 clearInterval(timer);
-                v.style.display = 'none';
-                finishTask();
+                screen.style.display = 'none';
+                finish();
             }
         }, 1000);
     }
 
-    function finishTask() {
-        const s = strings[db.lang];
+    function finish() {
         let win = 0;
-        if(db.totalTasks === 0) {
+        if(db.total === 0) {
             win = 0.0100;
         } else {
-            const options = [0.002, 0.008, 0.015, 0.020];
-            win = options[Math.floor(Math.random() * options.length)];
+            const r = db.level === 1 ? [0.002, 0.008, 0.01, 0.02] : [0.03, 0.04, 0.06, 0.08];
+            win = r[Math.floor(Math.random() * r.length)];
         }
         db.balance += win;
-        db.totalTasks++;
-        db.lastDate = new Date().toDateString();
-        update(); save();
-        showModal("¡Éxito!", s.m_win + win + " USDT", "💎");
+        db.total++;
+        db.last = new Date().toDateString();
+        save(); update();
+        pop("Tarea Exitosa", "Has generado " + win + " USDT. ¡Sigue así!", "⚡");
     }
 
-    function handleWithdraw() {
-        const s = strings[db.lang];
-        if(db.balance < 0.02) return showModal("Retiro", s.m_min, "⚠️");
+    function buyLevel2() {
+        if(db.level === 2) return;
+        if(db.balance < 2.5) return pop("Saldo Insuficiente", "Necesitas 2.50 USDT para subir de nivel.", "❌");
         
-        showModal("Procesando", "Tu solicitud de retiro a " + db.wallet + " ha sido enviada a revisión técnica.", "🏦");
-        db.balance = 0;
-        update(); save();
+        db.balance -= 2.5;
+        db.level = 2;
+        save(); update();
+        pop("¡Felicidades!", "Has desbloqueado el Nivel Premium. Tus ganancias ahora son mayores.", "🏆");
     }
 
+    function withdraw() {
+        if(db.balance < 0.02) return pop("Mínimo", "Necesitas al menos 0.02 USDT para retirar.", "⚠️");
+        pop("Enviado", "Tu retiro está siendo procesado por la red Polygon.", "📤");
+        db.balance = 0;
+        save(); update();
+    }
+
+    function saveW() { db.wallet = document.getElementById('wallet-addr').value; save(); }
     window.onload = load;
 </script>
 
