@@ -2,319 +2,244 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Super Tools App 🚀</title>
-    
-    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USDT Staking Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #6366f1; --bg: #f3f4f6; --card: #ffffff; --text: #1f2937; }
-        
-        /* QUITAR AZUL AL TOCAR EN MOVILES */
-        * { -webkit-tap-highlight-color: transparent; outline: none; user-select: none; }
-        
-        body { margin: 0; padding: 0; background: var(--bg); font-family: 'Poppins', sans-serif; color: var(--text); overflow-x: hidden; }
-        
-        /* PANTALLA DE BLOQUEO (BIENVENIDA) */
-        #splash-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            z-index: 9999; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; color: white;
-            text-align: center; padding: 20px; box-sizing: border-box;
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --primary-accent: #00d2ff;
+            --secondary-accent: #3a7bd5;
+            --text-main: #f0f0f0;
+            --text-dim: #a0a0a0;
+            --button-grad: linear-gradient(145deg, #00d2ff, #3a7bd5);
         }
-        .splash-icon { font-size: 60px; margin-bottom: 20px; animation: float 3s infinite ease-in-out; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        
-        .btn-enter {
-            background: white; color: #6366f1; border: none;
-            padding: 15px 40px; border-radius: 50px; font-size: 18px; font-weight: 800;
-            cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            margin-top: 30px; transition: transform 0.2s;
-            /* Fix para móviles */
-            -webkit-tap-highlight-color: transparent; outline: none;
-        }
-        .btn-enter:active { transform: scale(0.95); opacity: 0.8; }
 
-        /* HEADER */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Contenedor Principal */
+        .container {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Encabezado */
         .header {
-            position: fixed; top: 0; left: 0; width: 100%;
-            background: rgba(255,255,255,0.95); padding: 15px; text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 100; backdrop-filter: blur(5px);
-        }
-        .header h1 { margin: 0; font-size: 18px; color: var(--primary); font-weight: 800; }
-        .header p { margin: 0; font-size: 10px; color: #6b7280; }
-
-        /* MAIN */
-        .main-container { margin-top: 70px; padding: 15px; padding-bottom: 50px; display: flex; flex-direction: column; gap: 20px; }
-
-        /* CARDS */
-        .tool-card {
-            background: var(--card); border-radius: 20px; padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e5e7eb;
-        }
-        .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
-        .icon-box { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; }
-        .card-title { font-weight: 700; font-size: 16px; }
-
-        input, textarea {
-            width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #e5e7eb;
-            background: #f9fafb; font-family: inherit; font-size: 14px; box-sizing: border-box; outline: none;
-            user-select: text; /* Permitir escribir */
-        }
-        input:focus, textarea:focus { border-color: var(--primary); }
-        
-        button {
-            width: 100%; padding: 14px; border-radius: 12px; border: none; color: white; font-weight: 600;
-            cursor: pointer; margin-top: 10px; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px;
-            -webkit-tap-highlight-color: transparent; outline: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
         }
 
-        .result-area { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 15px; border-radius: 10px; margin-top: 15px; font-size: 13px; white-space: pre-wrap; display: none; user-select: text; }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-        /* COLORS */
-        .c-purple { background: linear-gradient(135deg, #a855f7, #7c3aed); }
-        .c-green { background: linear-gradient(135deg, #10b981, #059669); }
-        .c-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-        .c-orange { background: linear-gradient(135deg, #f97316, #ea580c); }
-        .c-pink { background: linear-gradient(135deg, #ec4899, #db2777); }
+        .avatar {
+            width: 45px;
+            height: 45px;
+            background: var(--button-grad);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+        }
 
-        /* BUBBLES */
-        #bubble-wrap { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 15px; }
-        .bubble { width: 100%; aspect-ratio: 1; background: linear-gradient(135deg, #60a5fa, #3b82f6); border-radius: 50%; box-shadow: inset -2px -2px 5px rgba(0,0,0,0.2), 2px 2px 5px rgba(255,255,255,0.5); cursor: pointer; transition: 0.1s; }
-        .bubble.popped { background: #dbeafe; transform: scale(0.9); box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1); }
+        /* Tarjeta de Saldo "Cremosa" */
+        .balance-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin-bottom: 25px;
+        }
 
-        /* BREATH */
-        #breathe-circle { width: 100px; height: 100px; background: #a7f3d0; border-radius: 50%; margin: 20px auto; display: flex; align-items: center; justify-content: center; color: #065f46; font-weight: bold; transition: all 4s ease-in-out; }
-        .inhale { transform: scale(1.5); background: #6ee7b7; }
-        .exhale { transform: scale(1); background: #a7f3d0; }
+        .balance-label {
+            font-size: 14px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-        .separator { text-align: center; margin: 20px 0; color: #9ca3af; font-size: 12px; }
+        .balance-amount {
+            font-size: 38px;
+            font-weight: 800;
+            margin: 10px 0;
+            background: linear-gradient(to right, #fff, #00d2ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Sección de Bono Congelado */
+        .bonus-box {
+            background: rgba(0, 210, 255, 0.1);
+            border: 1px dashed var(--primary-accent);
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .lock-icon { font-size: 20px; }
+
+        /* Botones Estilo Juego */
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background: var(--button-grad);
+            border: none;
+            border-radius: 18px;
+            padding: 15px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.4);
+            text-align: center;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 5px rgba(0, 210, 255, 0.2);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: none;
+        }
+
+        /* Sección de Inversión */
+        .stats-section {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .stat-label { color: var(--text-dim); }
+        .stat-value { font-weight: 600; color: #00ff88; }
+
+        /* Navegación Inferior */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 450px;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-item {
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 11px;
+            text-decoration: none;
+        }
+
+        .nav-item i {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .active { color: var(--primary-accent); }
+
     </style>
 </head>
 <body>
-    <div id="splash-screen">
-        <div class="splash-icon">🚀</div>
-        <h1>SUPER TOOLS</h1>
-        <p>Todo lo que necesitas, bonito y fácil.</p>
-        <button class="btn-enter" onclick="entrarApp()">ENTRAR AHORA ✨</button>
-        <p style="font-size: 11px; opacity: 0.8; margin-top: 20px;">Toca para activar sonidos 🔊</p>
-    </div>
 
+<div class="container">
     <div class="header">
-        <h1>✨ MIS HERRAMIENTAS ✨</h1>
-        <p>Desliza para descubrir más cosas lindas 👇</p>
+        <div class="user-info">
+            <div class="avatar">U</div>
+            <span>Hola, Usuario</span>
+        </div>
+        <div style="font-size: 24px;">🔔</div>
     </div>
 
-    <div class="main-container">
-
-        <div class="tool-card">
-            <div class="card-header"><div class="icon-box"><i class="fas fa-magic"></i></div><div class="card-title">Decorador Mágico</div></div>
-            <div class="desc-text">Convierte tus mensajes aburridos en textos profesionales con emojis y sin errores ortográficos. ¡Ideal para vender!</div>
-            <textarea id="txt-input" placeholder="Escribe aquí tu texto feo..."></textarea>
-            <button onclick="runTool('text')">🪄 MEJORAR TEXTO</button>
-            <div id="res-text" class="result-area"></div>
+    <div class="balance-card">
+        <div class="balance-label">Cartera Total</div>
+        <div class="balance-amount">0.00 USDT</div>
+        
+        <div class="bonus-box">
+            <span>🔒 Bono de Bienvenida</span>
+            <span style="font-weight: 800;">2.00 USDT</span>
         </div>
-
-        <div class="tool-card">
-            <div class="card-header"><div class="icon-box" style="background:#3b82f6"><i class="fas fa-hashtag"></i></div><div class="card-title">Tags Virales</div></div>
-            <div class="desc-text" style="color:#1e40af; background:#dbeafe; border-color:#3b82f6">Genera las etiquetas perfectas para que tus posts lleguen a más gente.</div>
-            <input type="text" id="tag-topic" placeholder="¿De qué trata tu post? (ej: Amor)">
-            <button onclick="runTool('tags')" style="background:#3b82f6">🔥 GENERAR TAGS</button>
-            <div id="res-tags" class="result-area"></div>
-        </div>
-
-        <div class="tool-card">
-            <div class="card-header"><div class="icon-box" style="background:#8b5cf6"><i class="fas fa-user-circle"></i></div><div class="card-title">Nicks Bonitos</div></div>
-            <div class="desc-text" style="color:#5b21b6; background:#ede9fe; border-color:#8b5cf6">Crea nombres de usuario únicos y estéticos para tus redes sociales.</div>
-            <input type="text" id="nick-name" placeholder="Tu Nombre">
-            <button onclick="runTool('nicks')" style="background:#8b5cf6">🆔 CREAR ESTILOS</button>
-            <div id="res-nicks" class="result-area"></div>
-        </div>
-
-        <div class="tool-card">
-            <div class="card-header"><div class="icon-box"><i class="fas fa-pen-fancy"></i></div><div class="card-title">Descripción Viral</div></div>
-            <div class="desc-text">Te escribo el texto perfecto para acompañar tus videos de TikTok o Reels.</div>
-            <input type="text" id="desc-title" placeholder="Título del video...">
-            <button onclick="runTool('desc')">📝 ESCRIBIR COPY</button>
-            <div id="res-desc" class="result-area"></div>
-        </div>
-
-        <div class="separator">🌸 ZONA DE DINERO 🌸</div>
-
-        <div class="tool-card">
-            <div class="card-header"><div class="icon-box" style="background:#10b981"><i class="fas fa-calculator"></i></div><div class="card-title">Calculadora Pro</div></div>
-            <div class="desc-text" style="color:#065f46; background:#d1fae5; border-color:#10b981">Saca cuentas rápidas con decimales y moneda personalizada.</div>
-            <input type="text" id="calc-currency" placeholder="Moneda (ej: Bs, $)">
-            <div style="display:flex; gap:10px; margin-top:10px;">
-                <input type="number" id="calc-amount" placeholder="Cantidad">
-                <input type="number" id="calc-price" placeholder="Precio">
-            </div>
-            <button onclick="runTool('calc')" style="background:#10b981">💸 CALCULAR TOTAL</button>
-            <div id="res-calc" class="result-area" style="font-size:24px; text-align:center; font-weight:800;"></div>
-        </div>
-
-        <div class="separator">🧘 RELAX & FE (GRATIS) 🧘</div>
-
-        <div class="tool-card">
-            <div class="card-header"><div class="icon-box" style="background:#f97316"><i class="fas fa-book-open"></i></div><div class="card-title">Mensaje de Dios</div></div>
-            <div class="desc-text" style="color:#9a3412; background:#ffedd5; border-color:#f97316">Recibe una palabra de aliento bíblica aleatoria.</div>
-            <button onclick="runTool('bible')" style="background:#f97316">🙏 VER MENSAJE</button>
-            <div id="res-bible" class="result-area" style="font-style:italic;"></div>
-        </div>
-
-        <div class="tool-card">
-            <div class="card-header"><div class="icon-box" style="background:#14b8a6"><i class="fas fa-wind"></i></div><div class="card-title">Respiración</div></div>
-            <div class="desc-text" style="color:#115e59; background:#ccfbf1; border-color:#14b8a6">Calma tu ansiedad siguiendo el círculo. (Sin Anuncios).</div>
-            <div id="breathe-circle">INHALA</div>
-            <button onclick="toggleBreath()" id="btn-breath" style="background:#0d9488">▶️ INICIAR RELAX</button>
-        </div>
-
-        <div class="tool-card">
-            <div class="card-header"><div class="icon-box" style="background:#0ea5e9"><i class="fas fa-hand-point-up"></i></div><div class="card-title">Pop It (Burbujas)</div></div>
-            <div class="desc-text" style="color:#0c4a6e; background:#e0f2fe; border-color:#0ea5e9">Explota las burbujas para el estrés. ¡Tienen sonido! (Sin Anuncios).</div>
-            <div id="bubble-wrap"></div>
-            <button onclick="initBubbles()" style="background:#0284c7; margin-top:15px;">🔄 REINICIAR PLÁSTICO</button>
-        </div>
+        <p style="font-size: 12px; color: var(--text-dim); margin-top: 10px;">
+            Este bono se activará automáticamente al iniciar el staking.
+        </p>
     </div>
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        const ADSGRAM_ID = "18897"; 
 
-        // --- SONIDOS (BASE 64 PARA QUE SUENEN SIN INTERNET) 🔊 ---
-        // Sonido corto tipo "Click"
-        const sndClick = new Audio("data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA="); // (Placeholder simple)
-        // Sonido "Pop" real generado
-        function playPop() {
-            // Simulamos sonido con vibración fuerte si el audio falla
-            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
-        }
-        function playClick() {
-            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-        }
+    <div class="btn-group">
+        <button class="btn">Recargar</button>
+        <button class="btn btn-secondary">Retirar</button>
+    </div>
 
-        // 1. ENTRADA CON SEGURO ANTI-TRABAS 🚀
-        function entrarApp() {
-            const btn = document.querySelector('.btn-enter');
-            btn.innerText = "⏳ Entrando..."; btn.style.opacity = "0.7";
-            playClick(); // Sonido/Vibración
+    <div class="stats-section">
+        <h3 style="margin-top: 0; font-size: 18px;">Minería en la Nube</h3>
+        <div class="stat-item">
+            <span class="stat-label">Inversión Activa</span>
+            <span class="stat-value">2.00 USDT</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Ganancia Diaria</span>
+            <span class="stat-value">+ 0.02 USDT</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Estado</span>
+            <span class="stat-value" style="color: #00d2ff;">Trabajando...</span>
+        </div>
+        
+        <button class="btn" style="width: 100%; margin-top: 10px; background: #00ff88; color: #000;">
+            ESTACAR AHORA
+        </button>
+    </div>
+</div>
 
-            const splash = document.getElementById('splash-screen');
-            // Seguro: entra en 2.5s si o si
-            const seguro = setTimeout(() => { splash.style.display = 'none'; }, 2500);
+<div class="bottom-nav">
+    <a href="#" class="nav-item active">🏠<br>Inicio</a>
+    <a href="#" class="nav-item">👥<br>Equipo</a>
+    <a href="#" class="nav-item">📈<br>Staking</a>
+    <a href="#" class="nav-item">⚙️<br>Perfil</a>
+</div>
 
-            try {
-                window.Adsgram.init({ blockId: ADSGRAM_ID }).show().then(() => {
-                    clearTimeout(seguro); splash.style.display = 'none';
-                }).catch(() => { clearTimeout(seguro); splash.style.display = 'none'; });
-            } catch(e) { clearTimeout(seguro); splash.style.display = 'none'; }
-        }
-
-        // 2. HERRAMIENTAS
-        function runTool(type) {
-            playClick(); // Sonido al tocar botón
-            const cobro = ['text', 'tags', 'nicks', 'desc', 'calc', 'bible'];
-            
-            if(cobro.includes(type)) {
-                // ANUNCIO
-                try {
-                    window.Adsgram.init({ blockId: ADSGRAM_ID }).show().then(() => { execute(type); }).catch(() => { execute(type); });
-                } catch(e) { execute(type); }
-            } else {
-                execute(type); // Gratis
-            }
-        }
-
-        function execute(type) {
-            let res = "";
-            let divId = "res-" + type;
-
-            if(type === 'text') res = decorarTexto(document.getElementById('txt-input').value);
-            else if(type === 'tags') res = generarHashtags(document.getElementById('tag-topic').value);
-            else if(type === 'nicks') res = generarNicks(document.getElementById('nick-name').value);
-            else if(type === 'desc') {
-                let t = document.getElementById('desc-title').value;
-                res = `🔥 **${t.toUpperCase()}** 🔥\n\n😱 Tienes que ver esto...\n👇 Comenta y comparte!\n#Viral`;
-            }
-            else if(type === 'calc') {
-                let c = document.getElementById('calc-currency').value || "$";
-                let a = parseFloat(document.getElementById('calc-amount').value) || 0;
-                let p = parseFloat(document.getElementById('calc-price').value) || 0;
-                res = (a * p).toLocaleString('es-VE') + " " + c;
-            }
-            else if(type === 'bible') {
-                const v = ["Todo lo puedo en Cristo. - Fil 4:13", "El Señor es mi pastor. - Sal 23:1", "No temas, yo estoy contigo. - Isa 41:10", "El amor es paciente. - 1 Cor 13:4"];
-                res = v[Math.floor(Math.random() * v.length)];
-            }
-
-            if(res) {
-                const el = document.getElementById(divId);
-                el.innerText = res; el.style.display = 'block';
-                // Animación de aparición
-                el.style.animation = 'none';
-                el.offsetHeight; /* trigger reflow */
-                el.style.animation = 'popIn 0.3s';
-            }
-        }
-
-        // --- LÓGICA DECORADOR ---
-        function decorarTexto(txt) { 
-            if(!txt) return "Escribe algo primero 🥺";
-            return "✨ " + txt.toUpperCase() + " ✨\n\n✅ Disponible Ya\n📍 Envío Seguro\n🎁 Oferta Especial\n👇 DM para info\n#Ventas"; 
-        }
-        function generarHashtags(t) { 
-            t=t.replace(/\s/g,'') || "Viral"; 
-            return `#${t} #${t}2026 #Viral #${t}Lover #Tendencia #Fyp`; 
-        }
-        function generarNicks(n) { 
-            n=n.replace(/\s/g,'') || "User"; 
-            return `1. 🍓${n}🍓\n2. ✨${n}Oficial✨\n3. .::${n}::.\n4. 💖${n}💖`; 
-        }
-
-        // --- RESPIRACIÓN ---
-        let breathing = false; let breathTimer;
-        function toggleBreath() {
-            playClick();
-            let c = document.getElementById('breathe-circle');
-            let btn = document.getElementById('btn-breath');
-            if(!breathing) { breathing=true; btn.innerText="⏹ DETENER"; breathLoop(); } 
-            else { breathing=false; btn.innerText="▶️ INICIAR RELAX"; clearTimeout(breathTimer); c.className=""; c.innerText="INHALA"; }
-        }
-        function breathLoop() {
-            if(!breathing) return;
-            let c = document.getElementById('breathe-circle');
-            c.className = "inhale"; c.innerText = "INHALA";
-            breathTimer = setTimeout(() => {
-                if(!breathing) return;
-                c.className = "exhale"; c.innerText = "EXHALA";
-                // Vibración suave
-                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                breathTimer = setTimeout(breathLoop, 4000);
-            }, 4000);
-        }
-
-        // --- BURBUJAS (CON SONIDO) ---
-        function initBubbles() {
-            playClick();
-            let container = document.getElementById('bubble-wrap');
-            container.innerHTML = "";
-            for(let i=0; i<20; i++) {
-                let b = document.createElement('div');
-                b.className = 'bubble';
-                b.onclick = function() {
-                    if(!this.classList.contains('popped')) {
-                        this.classList.add('popped');
-                        playPop(); // SONIDO DE POP
-                    }
-                };
-                container.appendChild(b);
-            }
-        }
-        window.onload = initBubbles;
-    </script>
 </body>
 </html>
