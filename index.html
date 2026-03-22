@@ -27,17 +27,14 @@
         }
         .main-amount { font-size: 3.5rem; font-weight: 800; letter-spacing: -3px; display: inline-block; }
         .prime-btn { background: var(--grad-prime); border: none; width: 100%; padding: 22px; border-radius: 25px; color: white; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 25px; display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .lvl2-btn { background: #111; color: #444; border: 1px solid #222; width: 100%; padding: 18px; border-radius: 20px; font-weight: 800; margin-top: 15px; cursor: not-allowed; transition: 0.3s; }
-        .lvl2-btn.active { background: var(--grad-gold); color: #000; border: none; cursor: pointer; box-shadow: 0 10px 20px rgba(170, 119, 28, 0.3); }
+        .status-box { background: rgba(0,242,255,0.05); border-left: 3px solid var(--neon-cyan); padding: 15px; border-radius: 15px; margin-top: 20px; display: none; font-size: 13px; animation: slideUp 0.3s ease; }
+        
+        /* Modal de Billetera */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 30px; backdrop-filter: blur(15px); }
         .modal-card { background: #0a0e17; border: 1px solid rgba(255,255,255,0.08); border-radius: 35px; padding: 40px 25px; text-align: center; width: 100%; }
-        .schedule-box { background: rgba(255,255,255,0.02); border-radius: 20px; padding: 15px; margin: 20px 0; text-align: left; }
-        .day-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 13px; }
-        .win-tag { color: #00ff88; font-weight: 800; }
-        .status-box { background: rgba(0,242,255,0.05); border-left: 3px solid var(--neon-cyan); padding: 15px; border-radius: 15px; margin-top: 20px; display: none; font-size: 13px; animation: slideUp 0.3s ease; }
-        .lang-dot { background: var(--glass); border: 1px solid rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 12px; font-size: 10px; cursor: pointer; color: #666; font-weight: 800; }
-        .lang-dot.active { border-color: var(--neon-cyan); color: var(--neon-cyan); background: rgba(0, 242, 255, 0.1); }
-        .history-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; }
+        
+        input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid #333; padding: 15px; border-radius: 15px; color: #fff; margin-top: 15px; font-family: 'Outfit'; text-align: center; }
+        
         #video-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:10000; display:none; flex-direction:column; align-items:center; justify-content:center; }
         #timer { font-size: 90px; font-weight: 800; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -45,18 +42,14 @@
 </head>
 <body>
 
-<div class="modal-overlay" id="modal">
+<div class="modal-overlay" id="modal-withdraw">
     <div class="modal-card">
-        <div style="font-size: 50px; margin-bottom: 15px;">💎</div>
-        <h2 style="margin:0; font-weight:800;" data-t="m_title">Ciclo de Ganancia</h2>
-        <div class="schedule-box">
-            <div class="day-row"><span data-t="d1">Hoy</span> <span class="win-tag">0.010 USDT ✓</span></div>
-            <div class="day-row"><span data-t="d2">Mañana</span> <span style="color:var(--neon-cyan)">0.002 USDT</span></div>
-            <div class="day-row"><span data-t="d3">Próximo</span> <span style="color:var(--neon-cyan)">0.010 USDT</span></div>
-            <div class="day-row"><span data-t="d4">Retiro</span> <span style="color:var(--neon-cyan)">0.008 USDT</span></div>
-        </div>
-        <p style="color:#666; font-size:13px; line-height:1.5; margin-bottom:20px;" data-t="m_desc">Este ciclo se repite sin fin. Sigue acumulando hoy para retirar tus 0.02$ garantizados.</p>
-        <button class="prime-btn" onclick="closeM()" style="margin:0;" data-t="m_btn">ENTENDIDO</button>
+        <div style="font-size: 40px;">🏦</div>
+        <h2 style="margin:10px 0; font-weight:800;">Retirar Fondos</h2>
+        <p style="font-size:12px; color:#666;">Introduce tu billetera USDT (Polygon/MATIC)</p>
+        <input type="text" id="wallet-addr" placeholder="0x...">
+        <button class="prime-btn" onclick="confirmWithdraw()">CONFIRMAR RETIRO</button>
+        <button style="background:none; border:none; color:#444; margin-top:15px; cursor:pointer;" onclick="closeW()">Cancelar</button>
     </div>
 </div>
 
@@ -64,49 +57,37 @@
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
         <div style="font-weight:800; font-size:22px; letter-spacing:-1px;">CANDY CLOUD</div>
         <div style="display:flex; gap:8px;">
-            <div class="lang-dot active" id="btn-es" onclick="setLang('es')">ES</div>
-            <div class="lang-dot" id="btn-en" onclick="setLang('en')">EN</div>
+            <div class="lang-dot active" id="btn-es">ES</div>
+            <div class="lang-dot" id="btn-en">EN</div>
         </div>
     </div>
 
     <div id="v-home">
         <div class="balance-card">
-            <div style="font-size: 11px; color: #555; text-transform: uppercase;" data-t="bal_label">Balance Neto</div>
-            <div class="main-amount">$<span id="val-balance">0.0000</span></div>
+            <div style="font-size: 11px; color: #555;">BALANCE NETO</div>
+            <div class="main-amount">$<span id="val-balance">0.0400</span></div>
             <div style="margin-top:15px; font-size:13px; background:rgba(255,255,255,0.03); padding:8px 15px; border-radius:50px; display:inline-block;">
-                🍬 <span data-t="candies">Caramelos</span>: <b id="val-candy" style="color:var(--accent)">0</b>
+                🍬 Caramelos: <b id="val-candy" style="color:var(--accent)">0</b>
             </div>
         </div>
 
         <div id="status-msg" class="status-box"></div>
 
-        <button class="prime-btn" onclick="startTask()" data-t="btn_task">Ejecutar Tarea Diaria</button>
+        <button class="prime-btn" onclick="startTask()">Ejecutar Tarea Diaria</button>
 
-        <div style="background:rgba(255,255,255,0.02); border-radius:30px; padding:25px; margin-top:25px; border:1px solid rgba(255,255,255,0.04);">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div><b style="font-size:15px;" data-t="lvl2_t">Nivel Premium</b><br><span style="font-size:11px; color:#555;" data-t="lvl2_d">Gana 0.10 USDT fijos</span></div>
-                <div style="color:var(--gold); font-weight:800;">$2.50</div>
-            </div>
-            <button class="lvl2-btn" id="btn-upgrade" onclick="buyLevel2()">Locked</button>
-        </div>
-
-        <button class="prime-btn" style="background:none; border:1px solid #1a1a1a; color:#fff;" onclick="withdraw()" data-t="btn_withdraw">Retirar (0.02 USDT)</button>
+        <button class="prime-btn" style="background:none; border:1px solid #1a1a1a; color:#fff;" onclick="openW()">Retirar (0.02 USDT)</button>
         
         <div id="hist-section" style="margin-top:30px; display:none;">
-            <div style="font-size:10px; color:#444; font-weight:800; text-transform:uppercase; margin-bottom:10px;" data-t="hist_t">Historial de Retiros</div>
+            <div style="font-size:10px; color:#444; font-weight:800; text-transform:uppercase; margin-bottom:10px;">Historial</div>
             <div id="history-list"></div>
         </div>
     </div>
 
     <div id="v-earn" style="display:none;">
-        <h2 style="font-weight:800;" data-t="earn_t">Misiones</h2>
+        <h2 style="font-weight:800;">Misiones</h2>
         <div style="background:var(--glass); padding:20px; border-radius:25px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; border:1px solid rgba(255,255,255,0.03);">
             <div><b>Canal Oficial</b><br><small style="color:var(--gold)">+1 Caramelo</small></div>
-            <button class="prime-btn" id="btn-c1" style="width:auto; padding:12px 20px; margin:0;" onclick="join(1)" data-t="join">UNIRSE</button>
-        </div>
-        <div style="background:var(--glass); padding:20px; border-radius:25px; display:flex; justify-content:space-between; align-items:center; border:1px solid rgba(255,255,255,0.03);">
-            <div><b>Grupo VIP</b><br><small style="color:var(--gold)">+1 Caramelo</small></div>
-            <button class="prime-btn" id="btn-c2" style="width:auto; padding:12px 20px; margin:0;" onclick="join(2)" data-t="join">UNIRSE</button>
+            <button class="prime-btn" id="btn-c1" style="width:auto; padding:12px 20px; margin:0;" onclick="join(1)">UNIRSE</button>
         </div>
     </div>
 </div>
@@ -114,126 +95,81 @@
 <div id="video-overlay"><div id="timer">10</div></div>
 
 <nav style="position:fixed; bottom:0; left:0; width:100%; background:rgba(5,8,15,0.98); display:flex; justify-content:space-around; padding:20px; border-top:1px solid #111; z-index:100;">
-    <button onclick="view('home')" style="background:none; border:none; color:#fff; font-weight:800;" data-t="nav_h">INICIO</button>
-    <button onclick="view('earn')" style="background:none; border:none; color:#666; font-weight:800;" data-t="nav_e">GANA</button>
+    <button onclick="view('home')" style="background:none; border:none; color:#fff; font-weight:800;">INICIO</button>
+    <button onclick="view('earn')" style="background:none; border:none; color:#666; font-weight:800;">GANA</button>
 </nav>
 
 <script>
     const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
     const CHISMOSO_ID = "@ALSKSNNSLSMS"; 
 
-    // BONO DE PRUEBA: Iniciamos con 0.0400 para retirar dos veces.
-    let db = { lang: 'es', balance: 0.0400, candies: 0, ch1: false, ch2: false, last: '', level: 1, total: 0, hist: [], refBy: null };
+    let db = { balance: 0.0400, candies: 0, last: '', hist: [], refBy: null };
 
-    const i18n = {
-        es: {
-            bal_label: "Balance Neto", candies: "Caramelos", btn_task: "Ejecutar Tarea Diaria",
-            btn_withdraw: "Retirar (0.02 USDT)", earn_t: "Misiones Candy", join: "UNIRSE",
-            nav_h: "INICIO", nav_e: "GANA", hist_t: "Historial de Retiros", w_err: "SALDO INSUFICIENTE", w_ok: "RETIRO EXITOSO",
-            lvl2_t: "Nivel Premium", lvl2_d: "Gana 0.10 USDT fijos", m_title: "Ciclo de Ganancia", m_btn: "ENTENDIDO",
-            d1: "Hoy", d2: "Mañana", d3: "Próximo", d4: "Retiro", m_desc: "Ciclo de 4 días activo. Mañana recibes 0.002$ y el día 4 completas tus 0.02$."
-        },
-        en: {
-            bal_label: "Net Balance", candies: "Candies", btn_task: "Run Daily Task",
-            btn_withdraw: "Withdraw (0.02 USDT)", earn_t: "Candy Missions", join: "JOIN",
-            nav_h: "HOME", nav_e: "EARN", hist_t: "Withdrawal History", w_err: "INSUFFICIENT BALANCE", w_ok: "SUCCESSFUL WITHDRAWAL",
-            lvl2_t: "Premium Level", lvl2_d: "Earn 0.10 USDT fixed", m_title: "Payout Cycle", m_btn: "GOT IT",
-            d1: "Today", d2: "Tomorrow", d3: "Day 3", d4: "Day 4", m_desc: "4-day cycle active. Tomorrow you get $0.002 and on day 4 you get your $0.02."
-        }
-    };
-
-    function save() { localStorage.setItem('_candy_v3', JSON.stringify(db)); }
+    function save() { localStorage.setItem('_candy_wallet_v1', JSON.stringify(db)); }
     
-    function setLang(l) {
-        db.lang = l;
-        const s = i18n[l];
-        document.querySelectorAll('[data-t]').forEach(el => {
-            const key = el.getAttribute('data-t');
-            if(s[key]) el.innerText = s[key];
-        });
-        document.getElementById('btn-es').classList.toggle('active', l === 'es');
-        document.getElementById('btn-en').classList.toggle('active', l === 'en');
+    function openW() {
+        if(db.balance < 0.02) return showStatus("SALDO INSUFICIENTE", true);
+        document.getElementById('modal-withdraw').style.display = 'flex';
+    }
+
+    function closeW() { document.getElementById('modal-withdraw').style.display = 'none'; }
+
+    function confirmWithdraw() {
+        const wallet = document.getElementById('wallet-addr').value;
+        if(wallet.length < 10) return alert("Pon una billetera válida de Polygon");
+
+        const amount = 0.02;
+        // MENSAJE PARA EL CHISMOSO CON LA BILLETERA
+        const msg = `🚨 *NUEVO RETIRO PENDIENTE*\n\n💰 Monto: ${amount} USDT\n📍 Red: Polygon\n🏦 Billetera: \`${wallet}\`\n\n⚠️ Pagar ahora.`;
+        
+        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
+        
+        db.hist.unshift({ amt: amount, date: new Date().toLocaleDateString() });
+        db.balance -= 0.02;
         save();
-    }
-
-    function checkReferral() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const refId = urlParams.get('start');
-        if (refId && !db.refBy) {
-            db.refBy = refId;
-            save();
-            const msg = `👤 **NUEVO INVITADO**\n\n📥 Un usuario entró a la App\n👤 Invitado por: \`${refId}\``;
-            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
-        }
-    }
-
-    function load() { 
-        const d = localStorage.getItem('_candy_v3'); 
-        if(d) db = JSON.parse(d); 
-        update(); 
-        checkReferral();
-        setLang(db.lang);
+        update();
+        closeW();
+        showStatus("RETIRO ENVIADO ✅");
     }
 
     function update() {
         document.getElementById('val-balance').innerText = db.balance.toFixed(4);
         document.getElementById('val-candy').innerText = db.candies;
-        const ub = document.getElementById('btn-upgrade');
-        if(db.level === 2) { ub.innerText = "NIVEL ACTIVO"; ub.classList.add('active'); ub.onclick = null; }
-        else if(db.balance >= 2.5) { ub.innerText = "ACTIVAR PREMIUM"; ub.classList.add('active'); }
-        if(db.ch1) verifBtn('btn-c1');
-        if(db.ch2) verifBtn('btn-c2');
         if(db.hist.length > 0) {
             document.getElementById('hist-section').style.display = 'block';
             document.getElementById('history-list').innerHTML = db.hist.map(h => `
-                <div class="history-card">
-                    <div><b>${h.amt} USDT</b><br><small>${h.date}</small></div>
-                    <div style="color:#00ff88; font-weight:800;">EXITOSO</div>
+                <div style="background:rgba(255,255,255,0.02); padding:10px; border-radius:15px; margin-top:5px; display:flex; justify-content:space-between;">
+                    <span><b>${h.amt} USDT</b></span><span>EXITOSO</span>
                 </div>
             `).join('');
         }
     }
 
-    function verifBtn(id) {
-        const b = document.getElementById(id);
-        b.innerText = "✓ OK"; b.style.color = "#00ff88"; b.onclick = null;
+    function showStatus(txt, err=false) { 
+        const b = document.getElementById('status-msg'); b.innerText = txt; b.style.display = 'block'; 
+        setTimeout(() => b.style.display='none', 4000); 
     }
 
     function startTask() {
-        if(db.candies < 2) return showStatus("Misiones incompletas 🔒", true);
-        if(db.last === new Date().toDateString()) { document.getElementById('modal').style.display = 'flex'; return; }
+        if(db.candies < 1) return showStatus("Únete al canal primero 🔒", true);
         document.getElementById('video-overlay').style.display = 'flex';
         let c = 10;
         const t = setInterval(() => { c--; document.getElementById('timer').innerText = c; if(c<=0) { clearInterval(t); document.getElementById('video-overlay').style.display='none'; finish(); } }, 1000);
     }
 
     function finish() {
-        let win = (db.level === 2) ? 0.10 : [0.01, 0.002, 0.01, 0.008][db.total] || 0.001;
-        db.balance += win; db.total++; db.last = new Date().toDateString();
-        save(); update(); showStatus("+" + win + " USDT ✅");
+        db.balance += 0.01; db.last = new Date().toDateString();
+        save(); update(); showStatus("+0.01 USDT ✅");
     }
 
-    function withdraw() {
-        if(db.balance < 0.02) return showStatus(i18n[db.lang].w_err, true);
-        const amount = 0.02;
-        const msg = `🚨 *NUEVO RETIRO PENDIENTE*\n\n💰 Monto: ${amount} USDT\n⚠️ Usuario probando chismoso.`;
-        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
-        db.hist.unshift({ amt: amount, date: new Date().toLocaleDateString() });
-        db.balance -= 0.02; 
-        save(); update(); showStatus(i18n[db.lang].w_ok);
-    }
-
-    function buyLevel2() { if(db.level === 2 || db.balance < 2.5) return; db.balance -= 2.5; db.level = 2; save(); update(); }
-    function showStatus(txt, err=false) { const b = document.getElementById('status-msg'); b.innerText = txt; b.style.display = 'block'; setTimeout(() => b.style.display='none', 4000); }
-    function join(n) { 
-        if(n===1) { window.open('https://t.me/CandyCloudoficial'); db.ch1=true; } 
-        else { window.open('https://t.me/CandyCloudgroup'); db.ch2=true; } 
-        db.candies++; save(); update(); 
-    }
-    function closeM() { document.getElementById('modal').style.display = 'none'; }
+    function join(n) { window.open('https://t.me/CandyCloudoficial'); db.candies++; save(); update(); }
     function view(v) { document.getElementById('v-home').style.display = (v === 'home' ? 'block' : 'none'); document.getElementById('v-earn').style.display = (v === 'earn' ? 'block' : 'none'); }
     
-    window.onload = load;
+    window.onload = () => {
+        const d = localStorage.getItem('_candy_wallet_v1');
+        if(d) db = JSON.parse(d);
+        update();
+    };
 </script>
 </body>
 </html>
