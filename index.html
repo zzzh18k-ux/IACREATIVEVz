@@ -169,7 +169,8 @@
         }
     };
 
-    let db = { lang: 'es', balance: 0.0100, candies: 0, ch1: false, ch2: false, last: '', total: 0, hist: [], taskProgress: 0 };
+    // BALANCE CAMBIADO A 0.0000 (SIN BONO)
+    let db = { lang: 'es', balance: 0.0000, candies: 0, ch1: false, ch2: false, last: '', total: 0, hist: [], taskProgress: 0 };
 
     function save() { localStorage.setItem('_candy_global_v2_final', JSON.stringify(db)); }
     function load() { 
@@ -204,9 +205,8 @@
         document.getElementById('val-candy').innerText = db.candies;
         
         const btn = document.getElementById('task-btn');
-        // Si ya completó la tarea de hoy
         if(db.last === new Date().toDateString()) {
-            btn.innerText = i18n[db.lang].ready; // "Vuelve mañana" o "Come back tomorrow"
+            btn.innerText = i18n[db.lang].ready;
             btn.style.opacity = "0.5";
             btn.onclick = null;
         } else {
