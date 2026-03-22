@@ -38,7 +38,6 @@
         .status-box { background: rgba(0,242,255,0.05); border-left: 3px solid var(--neon-cyan); padding: 15px; border-radius: 15px; margin-top: 20px; display: none; font-size: 13px; animation: slideUp 0.3s ease; }
         .lang-dot { background: var(--glass); border: 1px solid rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 12px; font-size: 10px; cursor: pointer; color: #666; font-weight: 800; }
         .lang-dot.active { border-color: var(--neon-cyan); color: var(--neon-cyan); background: rgba(0, 242, 255, 0.1); }
-        .history-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         #video-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:10000; display:none; flex-direction:column; align-items:center; justify-content:center; }
     </style>
@@ -52,7 +51,7 @@
         <div class="schedule-box">
             <div class="day-row"><span data-t="d1">Hoy</span> <span class="win-tag" id="day-today-tag">0.010 USDT ✓</span></div>
             <div class="day-row"><span data-t="d2">Mañana</span> <span style="color:var(--neon-cyan)">0.002 USDT</span></div>
-            <div class="day-row"><span data-t="d3">Próximo</span> <span style="color:var(--neon-cyan)">0.010 USDT</span></div>
+            <div class="day-row"><span data-t="d3">Día 3</span> <span style="color:var(--neon-cyan)">0.010 USDT</span></div>
             <div class="day-row"><span data-t="d4">Retiro</span> <span style="color:var(--neon-cyan)">0.008 USDT</span></div>
         </div>
         <p data-t="m_desc" style="color:#666; font-size:13px; line-height:1.5; margin-bottom:20px;">Vuelve mañana para continuar con el siguiente pago del ciclo.</p>
@@ -80,7 +79,7 @@
 
         <div id="status-msg" class="status-box"></div>
 
-        <button class="prime-btn" id="main-task-btn" onclick="startTask()" data-t="btn_task">Ejecutar Tarea Diaria</button>
+        <button class="prime-btn" onclick="startTask()" data-t="btn_task">Ejecutar Tarea Diaria</button>
 
         <div style="background:rgba(255,255,255,0.02); border-radius:30px; padding:25px; margin-top:25px; border:1px solid rgba(255,255,255,0.04);">
             <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -93,7 +92,6 @@
         <button class="prime-btn" style="background:none; border:1px solid #1a1a1a; color:#fff;" onclick="withdraw()" data-t="btn_withdraw">Retirar (0.02)</button>
         
         <div id="hist-section" style="margin-top:30px; display:none;">
-            <div style="font-size:10px; color:#444; font-weight:800; text-transform:uppercase; margin-bottom:10px;" data-t="hist_t">Historial de Retiros</div>
             <div id="history-list"></div>
         </div>
     </div>
@@ -122,22 +120,23 @@
     const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
     const CHISMOSO_ID = "@ALSKSNNSLSMS"; 
 
-    let db = { lang: 'es', balance: 0.0000, candies: 0, ch1: false, ch2: false, last: '', level: 1, total: 0, hist: [] };
+    // BONO DE BIENVENIDA: 0.0100 USDT al iniciar por primera vez
+    let db = { lang: 'es', balance: 0.0100, candies: 0, ch1: false, ch2: false, last: '', level: 1, total: 0, hist: [] };
     
     const i18n = {
         es: {
             bal_label: "Balance Neto", candies: "Caramelos", btn_task: "Ejecutar Tarea Diaria", btn_withdraw: "Retirar (0.02 USDT)",
             lvl2_t: "Nivel Premium", lvl2_d: "Gana 0.10 USDT fijos", earn_t: "Misiones Candy", join: "UNIRSE", nav_h: "INICIO", nav_e: "GANA",
-            m_title: "Ciclo de Pago", m_desc: "Vuelve mañana para continuar con el siguiente pago del ciclo.", m_btn: "ENTENDIDO",
+            m_title: "Ciclo de Pago", m_desc: "Vuelve mañana para continuar con el ciclo de ganancias.", m_btn: "ENTENDIDO",
             d1: "Hoy (Completado)", d2: "Mañana", d3: "Día 3", d4: "Día 4 (Retiro)",
-            w_err: "SALDO INSUFICIENTE", w_ok: "RETIRO EXITOSO", verif: "✓ VERIFICADO", hist_t: "Historial de Retiros", hist_s: "EXITOSO"
+            w_err: "SALDO INSUFICIENTE", w_ok: "RETIRO EXITOSO", verif: "✓ VERIFICADO", hist_s: "EXITOSO"
         },
         en: {
             bal_label: "Net Balance", candies: "Candies", btn_task: "Run Daily Task", btn_withdraw: "Withdraw (0.02 USDT)",
             lvl2_t: "Premium Level", lvl2_d: "Earn 0.10 USDT fixed", earn_t: "Candy Missions", join: "JOIN", nav_h: "HOME", nav_e: "EARN",
-            m_title: "Payout Cycle", m_desc: "Come back tomorrow to continue with the next cycle payment.", m_btn: "GOT IT",
+            m_title: "Payout Cycle", m_desc: "Come back tomorrow to continue the payout cycle.", m_btn: "GOT IT",
             d1: "Today (Completed)", d2: "Tomorrow", d3: "Day 3", d4: "Day 4 (Withdraw)",
-            w_err: "INSUFFICIENT BALANCE", w_ok: "WITHDRAWAL SUCCESS", verif: "✓ VERIFIED", hist_t: "Withdrawal History", hist_s: "SUCCESS"
+            w_err: "INSUFFICIENT BALANCE", w_ok: "WITHDRAWAL SUCCESS", verif: "✓ VERIFIED", hist_s: "SUCCESS"
         }
     };
 
@@ -159,11 +158,9 @@
     function update() {
         document.getElementById('val-balance').innerText = db.balance.toFixed(4);
         document.getElementById('val-candy').innerText = db.candies;
-        
         const ub = document.getElementById('btn-upgrade');
         if(db.level === 2) { ub.innerText = "NIVEL ACTIVO"; ub.classList.add('active'); ub.onclick = null; }
         else if(db.balance >= 2.5) { ub.innerText = "ACTIVAR PREMIUM"; ub.classList.add('active'); }
-        
         if(db.ch1) verifBtn('btn-c1');
         if(db.ch2) verifBtn('btn-c2');
 
@@ -174,7 +171,7 @@
             hList.innerHTML = db.hist.map(h => `
                 <div class="history-card">
                     <div><b>${h.amt} USDT</b><br><small style="color:#444">${h.date}</small></div>
-                    <div style="color:#00ff88; font-size:10px; font-weight:800; background:rgba(0,255,136,0.1); padding:4px 8px; border-radius:6px; border:1px solid rgba(0,255,136,0.2);">${i18n[db.lang].hist_s}</div>
+                    <div style="color:#00ff88; font-size:10px; font-weight:800; background:rgba(0,255,136,0.1); padding:4px 8px; border-radius:6px;">${i18n[db.lang].hist_s}</div>
                 </div>
             `).join('');
         }
@@ -189,9 +186,8 @@
     function startTask() {
         if(db.candies < 2) return showStatus("Misiones incompletas 🔒", true);
         if(db.last === new Date().toDateString()) { 
-            // CORRECCIÓN: Actualizar texto del ciclo según el progreso antes de mostrar
             const cycle = [0.01, 0.002, 0.01, 0.008];
-            const currentWin = cycle[db.total % 4] || 0.001;
+            const currentWin = cycle[(db.total - 1 + 4) % 4] || 0.01;
             document.getElementById('day-today-tag').innerText = currentWin.toFixed(3) + " USDT ✓";
             document.getElementById('modal').style.display = 'flex'; 
             return; 
@@ -215,7 +211,7 @@
     function withdraw() {
         if(db.balance < 0.02) return showStatus(i18n[db.lang].w_err, true);
         const amount = db.balance.toFixed(4);
-        const msg = `🚨 *RETIRO SOLICITADO*\n\n💰 Monto: ${amount} USDT\n📅 Fecha: ${new Date().toLocaleString()}`;
+        const msg = `🚨 *RETIRO SOLICITADO*\n\n💰 Monto: ${amount} USDT\n📅 Fecha: ${new Date().toLocaleString()}\n⚠️ Estado: Pendiente de pago manual.`;
         fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
         db.hist.unshift({ amt: amount, date: new Date().toLocaleDateString() });
         db.balance = 0; save(); update(); showStatus(i18n[db.lang].w_ok);
