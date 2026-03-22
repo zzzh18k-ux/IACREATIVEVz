@@ -38,6 +38,16 @@
 
         .prime-btn { background: var(--grad-prime); border: none; width: 100%; padding: 20px; border-radius: 22px; color: white; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; margin-top: 15px; }
         .prime-btn:active { transform: scale(0.96); }
+        
+        /* Botón Guía Mejorado */
+        .guide-btn {
+            background: rgba(0, 242, 255, 0.05); border: 1px solid rgba(0, 242, 255, 0.2);
+            width: 100%; padding: 15px; border-radius: 22px; color: var(--neon-cyan);
+            font-size: 14px; font-weight: 800; cursor: pointer; transition: 0.3s;
+            margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .guide-btn:active { background: rgba(0, 242, 255, 0.15); }
+
         .input-glass { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 18px; width: 100%; color: #fff; font-family: 'Outfit'; margin: 20px 0; text-align: center; font-size: 14px; }
 
         .lang-pill { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 5px; display: flex; gap: 5px; }
@@ -113,7 +123,10 @@
         </div>
 
         <button class="prime-btn" id="task-btn" onclick="startTask()" data-t="btn_task">Ver Video (0/5)</button>
-        <button style="background:none; border:none; color:#555; font-weight:800; font-size:12px; width:100%; margin-top:15px; cursor:pointer;" onclick="openModal('modal-guide')">📖 Guía de Ganancias</button>
+        
+        <button class="guide-btn" onclick="openModal('modal-guide')">
+            <span>📖</span> <span data-t="g_btn">Guía de Ganancias</span>
+        </button>
 
         <button class="prime-btn" style="background:none; border:1px solid #1a1a1a; color:#fff;" onclick="openWithdraw()" data-t="btn_withdraw">Retirar (0.02)</button>
         
@@ -153,18 +166,18 @@
             earn_t: "Misiones", m1: "Canal Oficial", m2: "Grupo VIP", join: "UNIRSE", nav_h: "INICIO", nav_e: "GANA",
             w_title: "Retirar Fondos", w_confirm: "CONFIRMAR RETIRO", cancel: "CANCELAR", hist_t: "Historial de Retiros",
             err_bal: "Saldo insuficiente 🔒", err_candies: "Completa las misiones primero 🔒", err_wallet: "Dirección inválida ❌",
-            ok_withdraw: "Retiro enviado con éxito ✅", ready: "✓ LISTO", g_title: "Guía de Ganancias",
+            ok_withdraw: "Retiro enviado con éxito ✅", ready: "Vuelve mañana 🌙", g_title: "Guía de Ganancias",
             g_cycle: "Ciclo de 4 Días:", g_rules: "Reglas:", g_r1: "• Debes ver 5 videos diarios.", 
-            g_r2: "• Retiro mínimo: 0.020 USDT.", g_r3: "• Red: USDT Polygon (MATIC)."
+            g_r2: "• Retiro mínimo: 0.020 USDT.", g_r3: "• Red: USDT Polygon (MATIC).", g_btn: "Guía de Ganancias"
         },
         en: {
             bal_label: "Net Balance", candies: "Candies", btn_task: "Watch Video", btn_withdraw: "Withdraw (0.02)",
             earn_t: "Missions", m1: "Official Channel", m2: "VIP Group", join: "JOIN", nav_h: "HOME", nav_e: "EARN",
             w_title: "Withdraw Funds", w_confirm: "CONFIRM WITHDRAWAL", cancel: "CANCEL", hist_t: "Withdrawal History",
             err_bal: "Insufficient balance 🔒", err_candies: "Complete missions first 🔒", err_wallet: "Invalid address ❌",
-            ok_withdraw: "Withdrawal sent successfully ✅", ready: "✓ DONE", g_title: "Earning Guide",
+            ok_withdraw: "Withdrawal sent successfully ✅", ready: "Come back tomorrow 🌙", g_title: "Earning Guide",
             g_cycle: "4-Day Cycle:", g_rules: "Rules:", g_r1: "• You must watch 5 videos daily.",
-            g_r2: "• Min withdrawal: 0.020 USDT.", g_r3: "• Net: USDT Polygon (MATIC)."
+            g_r2: "• Min withdrawal: 0.020 USDT.", g_r3: "• Net: USDT Polygon (MATIC).", g_btn: "Earnings Guide"
         }
     };
 
@@ -205,10 +218,13 @@
         const btn = document.getElementById('task-btn');
         if(db.last === new Date().toDateString()) {
             btn.innerText = i18n[db.lang].ready;
-            btn.style.opacity = "0.5";
-            btn.onclick = null;
+            btn.style.background = "rgba(255,255,255,0.03)";
+            btn.style.border = "1px solid rgba(255,255,255,0.05)";
+            btn.style.color = "#555";
         } else {
             btn.innerText = `${i18n[db.lang].btn_task} (${db.taskProgress}/5)`;
+            btn.style.background = "var(--grad-prime)";
+            btn.style.color = "white";
         }
 
         if(db.ch1) verifBtn('btn-c1');
@@ -227,13 +243,13 @@
 
     function verifBtn(id) {
         const b = document.getElementById(id);
-        b.innerText = i18n[db.lang].ready;
+        b.innerText = "✓"; // Simplificado para que quepa bien
         b.style.background = "rgba(0,255,136,0.1)"; b.style.color = "#00ff88"; b.style.border = "1px solid rgba(0,255,136,0.2)"; b.onclick = null;
     }
 
     function startTask() {
         if(db.candies < 2) return showToast(i18n[db.lang].err_candies);
-        if(db.last === new Date().toDateString()) return showToast("Vuelve mañana 🌙", "⏰");
+        if(db.last === new Date().toDateString()) return showToast(i18n[db.lang].ready, "⏰");
         
         document.getElementById('video-overlay').style.display = 'flex';
         let c = 10;
