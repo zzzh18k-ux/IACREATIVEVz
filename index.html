@@ -26,34 +26,37 @@
             box-shadow: 0 40px 80px rgba(0,0,0,0.5);
         }
         .main-amount { font-size: 3.5rem; font-weight: 800; letter-spacing: -3px; display: inline-block; }
-        .candy-status { margin-top: 15px; background: rgba(255,255,255,0.03); padding: 8px 18px; border-radius: 50px; font-size: 12px; border: 1px solid rgba(255,255,255,0.08); display: inline-flex; align-items: center; gap: 10px; }
         .prime-btn { background: var(--grad-prime); border: none; width: 100%; padding: 22px; border-radius: 25px; color: white; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 25px; display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .upgrade-section { background: rgba(255,255,255,0.02); border-radius: 30px; padding: 25px; margin-top: 25px; border: 1px solid rgba(255,255,255,0.04); }
-        .lvl2-btn { background: #111; color: #444; border: 1px solid #222; width: 100%; padding: 18px; border-radius: 20px; font-weight: 800; margin-top: 15px; cursor: not-allowed; }
-        .lvl2-btn.active { background: var(--grad-gold); color: #000; border: none; cursor: pointer; }
-        .wallet-box { margin-top: 25px; background: var(--glass); padding: 22px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.05); }
-        .wallet-input { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid #222; padding: 15px; border-radius: 15px; color: var(--neon-cyan); font-family: monospace; font-size: 13px; margin-top: 10px; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 30px; }
+        .lvl2-btn { background: #111; color: #444; border: 1px solid #222; width: 100%; padding: 18px; border-radius: 20px; font-weight: 800; margin-top: 15px; cursor: not-allowed; transition: 0.3s; }
+        .lvl2-btn.active { background: var(--grad-gold); color: #000; border: none; cursor: pointer; box-shadow: 0 10px 20px rgba(170, 119, 28, 0.3); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 30px; backdrop-filter: blur(15px); }
         .modal-card { background: #0a0e17; border: 1px solid rgba(255,255,255,0.08); border-radius: 35px; padding: 40px 25px; text-align: center; width: 100%; }
-        .schedule-list { background: rgba(255,255,255,0.02); border-radius: 20px; padding: 15px; margin: 15px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .day-item { font-size: 11px; color: #888; border-bottom: 1px solid #111; padding: 5px; }
-        .day-item b { color: var(--neon-cyan); }
+        .schedule-box { background: rgba(255,255,255,0.02); border-radius: 20px; padding: 15px; margin: 20px 0; text-align: left; }
+        .day-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 13px; }
+        .day-row:last-child { border: none; }
+        .win-tag { color: #00ff88; font-weight: 800; }
+        .status-box { background: rgba(0,242,255,0.05); border-left: 3px solid var(--neon-cyan); padding: 15px; border-radius: 15px; margin-top: 20px; display: none; font-size: 13px; animation: slideUp 0.3s ease; }
+        .lang-dot { background: var(--glass); border: 1px solid rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 12px; font-size: 10px; cursor: pointer; color: #666; font-weight: 800; }
+        .lang-dot.active { border-color: var(--neon-cyan); color: var(--neon-cyan); background: rgba(0, 242, 255, 0.1); }
+        .history-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         #video-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:10000; display:none; flex-direction:column; align-items:center; justify-content:center; }
     </style>
 </head>
 <body>
+
 <div class="modal-overlay" id="modal">
     <div class="modal-card">
-        <div id="m-icon" style="font-size: 50px; margin-bottom: 15px;">📅</div>
-        <h2 id="m-title" style="margin: 0; font-weight: 800;">Vuelve mañana</h2>
-        <div class="schedule-list">
-            <div class="day-item">Día 1: <b>0.010$</b></div>
-            <div class="day-item">Día 2: <b>0.002$</b></div>
-            <div class="day-item">Día 3: <b>0.010$</b></div>
-            <div class="day-item">Día 4: <b>0.008$</b></div>
+        <div style="font-size: 50px; margin-bottom: 15px;">💎</div>
+        <h2 data-t="m_title" style="margin:0; font-weight:800;">Ciclo de Ganancia</h2>
+        <div class="schedule-box">
+            <div class="day-row"><span data-t="d1">Hoy</span> <span class="win-tag">0.010 USDT ✓</span></div>
+            <div class="day-row"><span data-t="d2">Mañana</span> <span style="color:var(--neon-cyan)">0.002 USDT</span></div>
+            <div class="day-row"><span data-t="d3">Próximo</span> <span style="color:var(--neon-cyan)">0.010 USDT</span></div>
+            <div class="day-row"><span data-t="d4">Retiro</span> <span style="color:var(--neon-cyan)">0.008 USDT</span></div>
         </div>
-        <p id="m-body" style="color: #666; font-size: 14px; margin-bottom: 20px;"></p>
-        <button class="prime-btn" onclick="closeM()" style="margin:0;">CERRAR</button>
+        <p data-t="m_desc" style="color:#666; font-size:13px; line-height:1.5; margin-bottom:20px;">Este ciclo se repite sin fin. Sigue acumulando hoy para retirar tus 0.02$ garantizados.</p>
+        <button class="prime-btn" onclick="closeM()" data-t="m_btn" style="margin:0;">ENTENDIDO</button>
     </div>
 </div>
 
@@ -61,128 +64,156 @@
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
         <div style="font-weight:800; font-size:22px; letter-spacing:-1px;">CANDY CLOUD</div>
         <div style="display:flex; gap:8px;">
-            <div class="lang-dot active" onclick="setLang('es')">ES</div>
-            <div class="lang-dot" onclick="setLang('en')">EN</div>
+            <div class="lang-dot active" id="btn-es" onclick="setLang('es')">ES</div>
+            <div class="lang-dot" id="btn-en" onclick="setLang('en')">EN</div>
         </div>
     </div>
 
     <div id="v-home">
         <div class="balance-card">
-            <div style="font-size: 11px; color: #555; text-transform: uppercase;" id="t-bal-label">Balance Neto</div>
+            <div style="font-size: 11px; color: #555; text-transform: uppercase;" data-t="bal_label">Balance Neto</div>
             <div class="main-amount">$<span id="val-balance">0.0000</span></div>
-            <div class="candy-status">
-                <span id="t-candies">Caramelos</span>: <b id="val-candy" style="color:var(--accent)">0</b>
+            <div style="margin-top:15px; font-size:13px; background:rgba(255,255,255,0.03); padding:8px 15px; border-radius:50px; display:inline-block;">
+                🍬 <span data-t="candies">Caramelos</span>: <b id="val-candy" style="color:var(--accent)">0</b>
             </div>
         </div>
 
-        <div class="wallet-box">
-            <div style="font-size: 10px; color: #444; font-weight: 700;">USDT WALLET (POLYGON)</div>
-            <input type="text" id="wallet-addr" placeholder="0x..." class="wallet-input" onchange="saveW()">
-        </div>
+        <div id="status-msg" class="status-box"></div>
 
-        <button class="prime-btn" onclick="startTask()" id="t-btn-task">Ejecutar Tarea Diaria</button>
+        <button class="prime-btn" onclick="startTask()" data-t="btn_task">Ejecutar Tarea Diaria</button>
 
-        <div class="upgrade-section">
+        <div style="background:rgba(255,255,255,0.02); border-radius:30px; padding:25px; margin-top:25px; border:1px solid rgba(255,255,255,0.04);">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div><b style="font-size:15px;">Nivel Premium</b><br><span style="font-size:11px; color:#555;">Ganancia: 0.10 USDT</span></div>
+                <div><b style="font-size:15px;" data-t="lvl2_t">Nivel Premium</b><br><span style="font-size:11px; color:#555;" data-t="lvl2_d">Gana 0.10 USDT fijos</span></div>
                 <div style="color:var(--gold); font-weight:800;">$2.50</div>
             </div>
             <button class="lvl2-btn" id="btn-upgrade" onclick="buyLevel2()">Locked</button>
         </div>
 
-        <button class="prime-btn" style="background:none; border: 1px solid #1a1a1a; color:#333;" onclick="withdraw()">Retirar (0.02)</button>
+        <button class="prime-btn" style="background:none; border:1px solid #1a1a1a; color:#333;" onclick="withdraw()" data-t="btn_withdraw">Retirar (0.02)</button>
+        
+        <div id="hist-section" style="margin-top:30px; display:none;">
+            <div style="font-size:10px; color:#444; font-weight:800; text-transform:uppercase; margin-bottom:10px;" data-t="hist_t">Historial de Retiros</div>
+            <div id="history-list"></div>
+        </div>
     </div>
 
     <div id="v-earn" style="display:none;">
-        <h2 style="font-weight:800; margin-bottom:20px;">Misiones de Caramelos</h2>
-        <div style="background:var(--glass); padding:20px; border-radius:25px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; border: 1px solid rgba(255,255,255,0.03);">
-            <div><b>Canal 1</b><br><small style="color:var(--gold)">+1 Caramelo (Bono)</small></div>
-            <button class="prime-btn" id="btn-c1" style="width:auto; padding:12px 20px; margin:0;" onclick="join(1)">UNIRSE</button>
+        <h2 data-t="earn_t" style="font-weight:800;">Misiones</h2>
+        <div style="background:var(--glass); padding:20px; border-radius:25px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; border:1px solid rgba(255,255,255,0.03);">
+            <div><b>Canal Oficial</b><br><small style="color:var(--gold)">+1 Caramelo (Bono)</small></div>
+            <button class="prime-btn" id="btn-c1" style="width:auto; padding:12px 20px; margin:0;" onclick="join(1)" data-t="join">UNIRSE</button>
         </div>
-        <div style="background:var(--glass); padding:20px; border-radius:25px; display:flex; justify-content:space-between; align-items:center; border: 1px solid rgba(255,255,255,0.03);">
-            <div><b>Canal 2</b><br><small style="color:var(--gold)">+1 Caramelo (Bono)</small></div>
-            <button class="prime-btn" id="btn-c2" style="width:auto; padding:12px 20px; margin:0;" onclick="join(2)">UNIRSE</button>
+        <div style="background:var(--glass); padding:20px; border-radius:25px; display:flex; justify-content:space-between; align-items:center; border:1px solid rgba(255,255,255,0.03);">
+            <div><b>Grupo VIP</b><br><small style="color:var(--gold)">+1 Caramelo (Bono)</small></div>
+            <button class="prime-btn" id="btn-c2" style="width:auto; padding:12px 20px; margin:0;" onclick="join(2)" data-t="join">UNIRSE</button>
         </div>
     </div>
 </div>
 
-<nav style="position:fixed; bottom:0; left:0; width:100%; background:rgba(5,8,15,0.98); display:flex; justify-content:space-around; padding:20px; border-top:1px solid #111;">
-    <button onclick="view('home')" style="background:none; border:none; color:#666; font-weight:800;">DASHBOARD</button>
-    <button onclick="view('earn')" style="background:none; border:none; color:#666; font-weight:800;">GANA</button>
+<div id="video-overlay"><div id="timer" style="font-size:90px; font-weight:800;">10</div></div>
+
+<nav style="position:fixed; bottom:0; left:0; width:100%; background:rgba(5,8,15,0.98); display:flex; justify-content:space-around; padding:20px; border-top:1px solid #111; z-index:100;">
+    <button onclick="view('home')" style="background:none; border:none; color:#666; font-weight:800; cursor:pointer;" data-t="nav_h">INICIO</button>
+    <button onclick="view('earn')" style="background:none; border:none; color:#666; font-weight:800; cursor:pointer;" data-t="nav_e">GANA</button>
 </nav>
 
-<div id="video-overlay">
-    <div style="color:var(--accent); font-weight:800; font-size: 12px; margin-bottom:20px;">SYNCING...</div>
-    <div id="timer" style="font-size:90px; font-weight:800;">10</div>
-</div>
 <script>
-    let db = { lang: 'es', balance: 0.0000, candies: 0, wallet: '', ch1: false, ch2: false, last: '', level: 1, total: 0 };
+    let db = { lang: 'es', balance: 0.0000, candies: 0, ch1: false, ch2: false, last: '', level: 1, total: 0, hist: [] };
     const i18n = {
-        es: { m_today: "Vuelve mañana para tu siguiente recompensa según el calendario.", m_wallet: "Pon tu billetera primero.", m_candy: "Necesitas 2 caramelos.", verif: "✓ VERIFICADO" },
-        en: { m_today: "Come back tomorrow for your next reward as scheduled.", m_wallet: "Set your wallet first.", m_candy: "Need 2 candies.", verif: "✓ VERIFIED" }
+        es: {
+            bal_label: "Balance Neto", candies: "Caramelos", btn_task: "Ejecutar Tarea Diaria", btn_withdraw: "Retirar (0.02 USDT)",
+            lvl2_t: "Nivel Premium", lvl2_d: "Gana 0.10 USDT fijos", earn_t: "Misiones Candy", join: "UNIRSE", nav_h: "INICIO", nav_e: "GANA",
+            m_title: "Ciclo de Pago", m_desc: "Ciclo de 4 días activo. Mañana recibes 0.002$ y el día 4 completas tus 0.02$ para retiro inmediato.", m_btn: "ENTENDIDO",
+            d1: "Hoy (Completado)", d2: "Mañana", d3: "Día 3", d4: "Día 4 (Retiro)",
+            w_err: "SALDO INSUFICIENTE", w_ok: "RETIRO EXITOSO", verif: "✓ VERIFICADO", hist_t: "Historial de Retiros", hist_s: "EXITOSO"
+        },
+        en: {
+            bal_label: "Net Balance", candies: "Candies", btn_task: "Run Daily Task", btn_withdraw: "Withdraw (0.02 USDT)",
+            lvl2_t: "Premium Level", lvl2_d: "Earn 0.10 USDT fixed", earn_t: "Candy Missions", join: "JOIN", nav_h: "HOME", nav_e: "EARN",
+            m_title: "Payout Cycle", m_desc: "4-day cycle active. Tomorrow you get $0.002 and on day 4 you complete your $0.02 for instant withdrawal.", m_btn: "GOT IT",
+            d1: "Today (Completed)", d2: "Tomorrow", d3: "Day 3", d4: "Day 4 (Withdraw)",
+            w_err: "INSUFFICIENT BALANCE", w_ok: "WITHDRAWAL SUCCESS", verif: "✓ VERIFIED", hist_t: "Withdrawal History", hist_s: "SUCCESS"
+        }
     };
 
-    function save() { localStorage.setItem('_candy_final_v4', JSON.stringify(db)); }
-    function load() { const d = localStorage.getItem('_candy_final_v4'); if(d) db = JSON.parse(d); update(); }
+    function save() { localStorage.setItem('_candy_cloud_vfinal', JSON.stringify(db)); }
+    function load() { const d = localStorage.getItem('_candy_cloud_vfinal'); if(d) db = JSON.parse(d); update(); }
+
+    function setLang(l) {
+        db.lang = l;
+        const s = i18n[l];
+        document.querySelectorAll('[data-t]').forEach(el => {
+            const key = el.getAttribute('data-t');
+            if(s[key]) el.innerText = s[key];
+        });
+        document.getElementById('btn-es').classList.toggle('active', l === 'es');
+        document.getElementById('btn-en').classList.toggle('active', l === 'en');
+        save();
+    }
 
     function update() {
         document.getElementById('val-balance').innerText = db.balance.toFixed(4);
         document.getElementById('val-candy').innerText = db.candies;
-        document.getElementById('wallet-addr').value = db.wallet;
         
         const ub = document.getElementById('btn-upgrade');
-        if(db.level === 2) { ub.innerText = "NIVEL ACTIVO"; ub.classList.add('active'); }
+        if(db.level === 2) { ub.innerText = "NIVEL ACTIVO"; ub.classList.add('active'); ub.onclick = null; }
         else if(db.balance >= 2.5) { ub.innerText = "ACTIVAR PREMIUM"; ub.classList.add('active'); }
+        else { ub.innerText = "Locked"; ub.classList.remove('active'); }
 
-        // Verificación en verde para los canales
-        if(db.ch1) { const b1 = document.getElementById('btn-c1'); b1.innerText = i18n[db.lang].verif; b1.style.background = "#00ff8822"; b1.style.color = "#00ff88"; b1.onclick = null; }
-        if(db.ch2) { const b2 = document.getElementById('btn-c2'); b2.innerText = i18n[db.lang].verif; b2.style.background = "#00ff8822"; b2.style.color = "#00ff88"; b2.onclick = null; }
+        if(db.ch1) verifBtn('btn-c1');
+        if(db.ch2) verifBtn('btn-c2');
+
+        const hBox = document.getElementById('hist-section');
+        const hList = document.getElementById('history-list');
+        if(db.hist.length > 0) {
+            hBox.style.display = 'block';
+            hList.innerHTML = db.hist.map(h => `
+                <div class="history-card">
+                    <div><b>${h.amt} USDT</b><br><small style="color:#444">${h.date}</small></div>
+                    <div style="color:#00ff88; font-size:10px; font-weight:800; background:rgba(0,255,136,0.1); padding:4px 8px; border-radius:6px; border:1px solid rgba(0,255,136,0.2);">${i18n[db.lang].hist_s}</div>
+                </div>
+            `).join('');
+        }
+    }
+
+    function verifBtn(id) {
+        const b = document.getElementById(id);
+        b.innerText = i18n[db.lang].verif;
+        b.style.background = "rgba(0,255,136,0.1)"; b.style.color = "#00ff88"; b.style.border = "1px solid rgba(0,255,136,0.3)"; b.onclick = null;
     }
 
     function startTask() {
-        if(db.candies < 2) return alert(i18n[db.lang].m_candy);
-        if(db.wallet.length < 10) return alert(i18n[db.lang].m_wallet);
-        if(db.last === new Date().toDateString()) {
-            document.getElementById('m-body').innerText = i18n[db.lang].m_today;
-            document.getElementById('modal').style.display = 'flex';
-            return;
-        }
+        if(db.candies < 2) return showStatus("Misiones incompletas 🔒", true);
+        if(db.last === new Date().toDateString()) { document.getElementById('modal').style.display = 'flex'; return; }
         document.getElementById('video-overlay').style.display = 'flex';
         let c = 10;
-        const t = setInterval(() => { 
-            c--; document.getElementById('timer').innerText = c;
-            if(c<=0) { clearInterval(t); document.getElementById('video-overlay').style.display='none'; finish(); }
-        }, 1000);
+        const t = setInterval(() => { c--; document.getElementById('timer').innerText = c; if(c<=0) { clearInterval(t); document.getElementById('video-overlay').style.display='none'; finish(); } }, 1000);
     }
 
     function finish() {
         let win = 0;
-        if(db.level === 2) { win = 0.10; } 
+        if(db.level === 2) win = 0.10;
         else {
-            // Su lógica de 4 días exacta
-            if(db.total === 0) win = 0.01;
-            else if(db.total === 1) win = 0.002;
-            else if(db.total === 2) win = 0.01;
-            else if(db.total === 3) win = 0.008;
-            else win = 0.001;
+            const cycle = [0.01, 0.002, 0.01, 0.008];
+            win = db.total < 4 ? cycle[db.total] : 0.001;
         }
         db.balance += win; db.total++; db.last = new Date().toDateString();
-        save(); update(); alert("Ganaste: " + win + " USDT");
+        save(); update(); showStatus("+" + win + " USDT ✅");
     }
 
-    function join(n) {
-        window.open('https://t.me/CanalOficial');
-        if(n === 1) db.ch1 = true; else db.ch2 = true;
-        db.candies++; // Suma el caramelo para poder trabajar, pero no da $
-        save(); update();
+    function withdraw() {
+        if(db.balance < 0.02) return showStatus(i18n[db.lang].w_err, true);
+        db.hist.unshift({ amt: db.balance.toFixed(2), date: new Date().toLocaleDateString() });
+        db.balance = 0; save(); update(); showStatus(i18n[db.lang].w_ok);
     }
 
     function buyLevel2() { if(db.level === 2 || db.balance < 2.5) return; db.balance -= 2.5; db.level = 2; save(); update(); }
-    function withdraw() { if(db.balance < 0.02) return alert("Mínimo 0.02"); db.balance = 0; save(); update(); alert("Retiro en proceso..."); }
+    function showStatus(txt, err=false) { const b = document.getElementById('status-msg'); b.innerText = txt; b.style.display = 'block'; b.style.borderLeftColor = err ? 'var(--accent)' : 'var(--neon-cyan)'; setTimeout(() => b.style.display='none', 4000); }
+    function join(n) { window.open('https://t.me/TuCanal'); if(n===1) db.ch1=true; else db.ch2=true; db.candies++; save(); update(); }
+    function closeM() { document.getElementById('modal').style.display = 'none'; }
     function view(v) { document.getElementById('v-home').style.display = (v === 'home' ? 'block' : 'none'); document.getElementById('v-earn').style.display = (v === 'earn' ? 'block' : 'none'); }
-    function saveW() { db.wallet = document.getElementById('wallet-addr').value; save(); }
-    function setLang(l) { db.lang = l; save(); update(); }
-    window.onload = load;
+    window.onload = () => { load(); setLang(db.lang); };
 </script>
 </body>
 </html>
