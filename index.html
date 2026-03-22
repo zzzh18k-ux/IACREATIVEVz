@@ -10,58 +10,59 @@
             --accent: #ff007a; --neon-cyan: #00f2ff; --gold: #ffcc00;
             --deep-dark: #05080f; --glass: rgba(255, 255, 255, 0.03);
             --grad-prime: linear-gradient(135deg, #ff007a 0%, #7000ff 100%);
+            --grad-gold: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
         }
-        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
         body {
             font-family: 'Outfit', sans-serif; background-color: var(--deep-dark);
-            color: #ffffff; margin: 0; padding: 0; min-height: 100vh;
+            color: #ffffff; margin: 0; padding: 0; overflow-x: hidden;
+            background-image: radial-gradient(circle at top right, rgba(255, 0, 122, 0.08), transparent 40%);
+            min-height: 100vh;
         }
         .app-container { width: 100%; max-width: 480px; margin: 0 auto; padding: 25px; padding-bottom: 120px; }
         .balance-card {
             background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(0,0,0,0.4));
-            border-radius: 40px; padding: 30px 20px; text-align: center; border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 40px; padding: 40px 20px; text-align: center; border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.5);
         }
-        .main-amount { font-size: 3.5rem; font-weight: 800; letter-spacing: -3px; color: white; }
-        .next-reward-box {
-            margin: 20px 0; padding: 15px; border-radius: 20px; background: rgba(0,242,255,0.03);
-            border: 1px dashed rgba(0,242,255,0.2);
-        }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 30px; }
-        .modal-card { background: #0a0e17; border-radius: 35px; padding: 40px 25px; text-align: center; width: 100%; border: 1px solid rgba(255,255,255,0.1); }
-        .schedule-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
-        .day-box { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 12px; font-size: 11px; border: 1px solid rgba(255,255,255,0.05); }
-        .prime-btn {
-            background: var(--grad-prime); border: none; width: 100%; padding: 20px; border-radius: 25px;
-            color: white; font-size: 16px; font-weight: 700; margin-top: 20px; box-shadow: 0 10px 25px rgba(255, 0, 122, 0.3);
-        }
-        .lang-dot { padding: 5px 10px; border-radius: 10px; font-size: 10px; cursor: pointer; background: var(--glass); color: #555; border: 1px solid rgba(255,255,255,0.1); }
-        .lang-dot.active { border-color: var(--neon-cyan); color: var(--neon-cyan); }
-        .verify-badge { color: #00ff88; font-weight: 800; display: none; }
-        .btn-verify.done { background: #00ff8822; color: #00ff88; border: 1px solid #00ff8844; box-shadow: none; }
+        .main-amount { font-size: 3.5rem; font-weight: 800; letter-spacing: -3px; display: inline-block; }
+        .candy-status { margin-top: 15px; background: rgba(255,255,255,0.03); padding: 8px 18px; border-radius: 50px; font-size: 12px; border: 1px solid rgba(255,255,255,0.08); display: inline-flex; align-items: center; gap: 10px; }
+        .prime-btn { background: var(--grad-prime); border: none; width: 100%; padding: 22px; border-radius: 25px; color: white; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 25px; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .upgrade-section { background: rgba(255,255,255,0.02); border-radius: 30px; padding: 25px; margin-top: 25px; border: 1px solid rgba(255,255,255,0.04); }
+        .lvl2-btn { background: #111; color: #444; border: 1px solid #222; width: 100%; padding: 18px; border-radius: 20px; font-weight: 800; margin-top: 15px; cursor: not-allowed; }
+        .lvl2-btn.active { background: var(--grad-gold); color: #000; border: none; cursor: pointer; }
+        .wallet-box { margin-top: 25px; background: var(--glass); padding: 22px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.05); }
+        .wallet-input { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid #222; padding: 15px; border-radius: 15px; color: var(--neon-cyan); font-family: monospace; font-size: 13px; margin-top: 10px; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 30px; }
+        .modal-card { background: #0a0e17; border: 1px solid rgba(255,255,255,0.08); border-radius: 35px; padding: 40px 25px; text-align: center; width: 100%; }
+        .schedule-list { background: rgba(255,255,255,0.02); border-radius: 20px; padding: 15px; margin: 15px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .day-item { font-size: 11px; color: #888; border-bottom: 1px solid #111; padding: 5px; }
+        .day-item b { color: var(--neon-cyan); }
+        #video-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:10000; display:none; flex-direction:column; align-items:center; justify-content:center; }
     </style>
 </head>
 <body>
 <div class="modal-overlay" id="modal">
     <div class="modal-card">
-        <div id="m-icon" style="font-size: 60px; margin-bottom: 10px;">📅</div>
-        <h2 id="m-title" style="margin:0">Vuelve mañana</h2>
-        <p id="m-body" style="color: #666; font-size: 14px; margin-top: 10px;"></p>
-        <div class="schedule-grid" id="m-schedule">
-            <div class="day-box">Día 1: <b>0.010$</b></div>
-            <div class="day-box">Día 2: <b>0.002$</b></div>
-            <div class="day-box">Día 3: <b>0.010$</b></div>
-            <div class="day-box">Día 4: <b>0.008$</b></div>
+        <div id="m-icon" style="font-size: 50px; margin-bottom: 15px;">📅</div>
+        <h2 id="m-title" style="margin: 0; font-weight: 800;">Vuelve mañana</h2>
+        <div class="schedule-list">
+            <div class="day-item">Día 1: <b>0.010$</b></div>
+            <div class="day-item">Día 2: <b>0.002$</b></div>
+            <div class="day-item">Día 3: <b>0.010$</b></div>
+            <div class="day-item">Día 4: <b>0.008$</b></div>
         </div>
-        <button class="prime-btn" onclick="closeM()">OK</button>
+        <p id="m-body" style="color: #666; font-size: 14px; margin-bottom: 20px;"></p>
+        <button class="prime-btn" onclick="closeM()" style="margin:0;">CERRAR</button>
     </div>
 </div>
+
 <div class="app-container">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-        <div style="font-weight:800; font-size:20px;">CANDY CLOUD</div>
-        <div style="display:flex; gap:5px;" id="lang-switcher">
+        <div style="font-weight:800; font-size:22px; letter-spacing:-1px;">CANDY CLOUD</div>
+        <div style="display:flex; gap:8px;">
             <div class="lang-dot active" onclick="setLang('es')">ES</div>
             <div class="lang-dot" onclick="setLang('en')">EN</div>
-            <div class="lang-dot" onclick="setLang('pt')">PT</div>
         </div>
     </div>
 
@@ -69,96 +70,118 @@
         <div class="balance-card">
             <div style="font-size: 11px; color: #555; text-transform: uppercase;" id="t-bal-label">Balance Neto</div>
             <div class="main-amount">$<span id="val-balance">0.0000</span></div>
-            <div class="next-reward-box">
-                <div style="font-size: 9px; color: #555; margin-bottom: 5px;" id="t-next-label">PRÓXIMO PAGO</div>
-                <div style="color: var(--neon-cyan); font-weight: 800; font-size: 18px;" id="val-next">0.0100 USDT</div>
+            <div class="candy-status">
+                <span id="t-candies">Caramelos</span>: <b id="val-candy" style="color:var(--accent)">0</b>
             </div>
-            <div style="font-size: 13px;">🍬 <span id="t-candies">Caramelos</span>: <b id="val-candy" style="color:var(--accent)">0</b></div>
+        </div>
+
+        <div class="wallet-box">
+            <div style="font-size: 10px; color: #444; font-weight: 700;">USDT WALLET (POLYGON)</div>
+            <input type="text" id="wallet-addr" placeholder="0x..." class="wallet-input" onchange="saveW()">
         </div>
 
         <button class="prime-btn" onclick="startTask()" id="t-btn-task">Ejecutar Tarea Diaria</button>
-        
-        <button class="prime-btn" style="background:none; border:1px solid #222; color:#444;" onclick="withdraw()" id="t-btn-withdraw">Retirar (0.02)</button>
+
+        <div class="upgrade-section">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div><b style="font-size:15px;">Nivel Premium</b><br><span style="font-size:11px; color:#555;">Ganancia: 0.10 USDT</span></div>
+                <div style="color:var(--gold); font-weight:800;">$2.50</div>
+            </div>
+            <button class="lvl2-btn" id="btn-upgrade" onclick="buyLevel2()">Locked</button>
+        </div>
+
+        <button class="prime-btn" style="background:none; border: 1px solid #1a1a1a; color:#333;" onclick="withdraw()">Retirar (0.02)</button>
     </div>
 
     <div id="v-earn" style="display:none;">
-        <h2 id="t-earn-title">Bono de Caramelos</h2>
-        <div style="background:var(--glass); padding:20px; border-radius:25px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
-            <div><b>Canal Oficial</b><br><small style="color:var(--gold)">+1🍬 ($1.00)</small></div>
-            <button class="prime-btn" id="btn-c1" style="width:auto; padding:10px 20px; margin:0;" onclick="join(1)">UNIRSE</button>
+        <h2 style="font-weight:800; margin-bottom:20px;">Misiones de Caramelos</h2>
+        <div style="background:var(--glass); padding:20px; border-radius:25px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; border: 1px solid rgba(255,255,255,0.03);">
+            <div><b>Canal 1</b><br><small style="color:var(--gold)">+1 Caramelo (Bono)</small></div>
+            <button class="prime-btn" id="btn-c1" style="width:auto; padding:12px 20px; margin:0;" onclick="join(1)">UNIRSE</button>
         </div>
-        <div style="background:var(--glass); padding:20px; border-radius:25px; display:flex; justify-content:space-between; align-items:center;">
-            <div><b>Grupo VIP</b><br><small style="color:var(--gold)">+1🍬 ($1.00)</small></div>
-            <button class="prime-btn" id="btn-c2" style="width:auto; padding:10px 20px; margin:0;" onclick="join(2)">UNIRSE</button>
+        <div style="background:var(--glass); padding:20px; border-radius:25px; display:flex; justify-content:space-between; align-items:center; border: 1px solid rgba(255,255,255,0.03);">
+            <div><b>Canal 2</b><br><small style="color:var(--gold)">+1 Caramelo (Bono)</small></div>
+            <button class="prime-btn" id="btn-c2" style="width:auto; padding:12px 20px; margin:0;" onclick="join(2)">UNIRSE</button>
         </div>
     </div>
 </div>
 
-<nav style="position:fixed; bottom:0; width:100%; background:rgba(5,8,15,0.9); display:flex; justify-content:space-around; padding:20px; border-top:1px solid #111;">
-    <button onclick="view('home')" style="background:none; border:none; color:white; font-weight:700;">Home</button>
-    <button onclick="view('earn')" style="background:none; border:none; color:white; font-weight:700;">Earn</button>
+<nav style="position:fixed; bottom:0; left:0; width:100%; background:rgba(5,8,15,0.98); display:flex; justify-content:space-around; padding:20px; border-top:1px solid #111;">
+    <button onclick="view('home')" style="background:none; border:none; color:#666; font-weight:800;">DASHBOARD</button>
+    <button onclick="view('earn')" style="background:none; border:none; color:#666; font-weight:800;">GANA</button>
 </nav>
+
+<div id="video-overlay">
+    <div style="color:var(--accent); font-weight:800; font-size: 12px; margin-bottom:20px;">SYNCING...</div>
+    <div id="timer" style="font-size:90px; font-weight:800;">10</div>
+</div>
 <script>
-    let db = { lang: 'es', balance: 0.0000, candies: 0, ch1: false, ch2: false, last: '', total: 0 };
+    let db = { lang: 'es', balance: 0.0000, candies: 0, wallet: '', ch1: false, ch2: false, last: '', level: 1, total: 0 };
     const i18n = {
-        es: { bal: "Balance Neto", next: "PRÓXIMO PAGO", btn: "Ejecutar Tarea", earn: "Bono de Caramelos", m_today: "Vuelve mañana para continuar tu racha.", join: "UNIRSE", done: "✓ VERIFICADO" },
-        en: { bal: "Net Balance", next: "NEXT PAYOUT", btn: "Run Daily Task", earn: "Candy Bonus", m_today: "Come back tomorrow to continue your streak.", join: "JOIN", done: "✓ VERIFIED" },
-        pt: { bal: "Saldo Líquido", next: "PRÓXIMO PAGAMENTO", btn: "Executar Tarefa", earn: "Bônus de Doces", m_today: "Volte amanhã para continuar sua seqüência.", join: "ENTRAR", done: "✓ VERIFICADO" }
+        es: { m_today: "Vuelve mañana para tu siguiente recompensa según el calendario.", m_wallet: "Pon tu billetera primero.", m_candy: "Necesitas 2 caramelos.", verif: "✓ VERIFICADO" },
+        en: { m_today: "Come back tomorrow for your next reward as scheduled.", m_wallet: "Set your wallet first.", m_candy: "Need 2 candies.", verif: "✓ VERIFIED" }
     };
 
-    function save() { localStorage.setItem('_candy_pro_v3', JSON.stringify(db)); }
-    function load() { const d = localStorage.getItem('_candy_pro_v3'); if(d) db = JSON.parse(d); update(); }
+    function save() { localStorage.setItem('_candy_final_v4', JSON.stringify(db)); }
+    function load() { const d = localStorage.getItem('_candy_final_v4'); if(d) db = JSON.parse(d); update(); }
 
     function update() {
-        const s = i18n[db.lang];
         document.getElementById('val-balance').innerText = db.balance.toFixed(4);
         document.getElementById('val-candy').innerText = db.candies;
-        document.getElementById('t-bal-label').innerText = s.bal;
-        document.getElementById('t-next-label').innerText = s.next;
-        document.getElementById('t-btn-task').innerText = s.btn;
-        document.getElementById('t-earn-title').innerText = s.earn;
+        document.getElementById('wallet-addr').value = db.wallet;
+        
+        const ub = document.getElementById('btn-upgrade');
+        if(db.level === 2) { ub.innerText = "NIVEL ACTIVO"; ub.classList.add('active'); }
+        else if(db.balance >= 2.5) { ub.innerText = "ACTIVAR PREMIUM"; ub.classList.add('active'); }
 
-        // Mostrar próximo pago en pantalla principal
-        let nxt = 0.0100;
-        if(db.total === 1) nxt = 0.0020;
-        else if(db.total === 2) nxt = 0.0100;
-        else if(db.total === 3) nxt = 0.0080;
-        else if(db.total >= 4) nxt = 0.0010;
-        document.getElementById('val-next').innerText = nxt.toFixed(4) + " USDT";
-
-        // Botones verificados en verde
-        if(db.ch1) { const b1 = document.getElementById('btn-c1'); b1.innerText = s.done; b1.classList.add('done'); b1.onclick = null; }
-        if(db.ch2) { const b2 = document.getElementById('btn-c2'); b2.innerText = s.done; b2.classList.add('done'); b2.onclick = null; }
+        // Verificación en verde para los canales
+        if(db.ch1) { const b1 = document.getElementById('btn-c1'); b1.innerText = i18n[db.lang].verif; b1.style.background = "#00ff8822"; b1.style.color = "#00ff88"; b1.onclick = null; }
+        if(db.ch2) { const b2 = document.getElementById('btn-c2'); b2.innerText = i18n[db.lang].verif; b2.style.background = "#00ff8822"; b2.style.color = "#00ff88"; b2.onclick = null; }
     }
 
     function startTask() {
+        if(db.candies < 2) return alert(i18n[db.lang].m_candy);
+        if(db.wallet.length < 10) return alert(i18n[db.lang].m_wallet);
         if(db.last === new Date().toDateString()) {
             document.getElementById('m-body').innerText = i18n[db.lang].m_today;
             document.getElementById('modal').style.display = 'flex';
             return;
         }
-        // Lógica de pago según su plan
-        let win = 0;
-        if(db.total === 0) win = 0.01;
-        else if(db.total === 1) win = 0.002;
-        else if(db.total === 2) win = 0.01;
-        else if(db.total === 3) win = 0.008;
-        else win = 0.001;
+        document.getElementById('video-overlay').style.display = 'flex';
+        let c = 10;
+        const t = setInterval(() => { 
+            c--; document.getElementById('timer').innerText = c;
+            if(c<=0) { clearInterval(t); document.getElementById('video-overlay').style.display='none'; finish(); }
+        }, 1000);
+    }
 
+    function finish() {
+        let win = 0;
+        if(db.level === 2) { win = 0.10; } 
+        else {
+            // Su lógica de 4 días exacta
+            if(db.total === 0) win = 0.01;
+            else if(db.total === 1) win = 0.002;
+            else if(db.total === 2) win = 0.01;
+            else if(db.total === 3) win = 0.008;
+            else win = 0.001;
+        }
         db.balance += win; db.total++; db.last = new Date().toDateString();
-        save(); update(); alert("¡Ganaste " + win + " USDT!");
+        save(); update(); alert("Ganaste: " + win + " USDT");
     }
 
     function join(n) {
-        window.open('https://t.me/TuCanal'); 
+        window.open('https://t.me/CanalOficial');
         if(n === 1) db.ch1 = true; else db.ch2 = true;
-        db.candies++; db.balance += 1.0; // 1 caramelo = 1$ como pidió
+        db.candies++; // Suma el caramelo para poder trabajar, pero no da $
         save(); update();
     }
 
-    function setLang(l) { db.lang = l; save(); update(); }
+    function buyLevel2() { if(db.level === 2 || db.balance < 2.5) return; db.balance -= 2.5; db.level = 2; save(); update(); }
+    function withdraw() { if(db.balance < 0.02) return alert("Mínimo 0.02"); db.balance = 0; save(); update(); alert("Retiro en proceso..."); }
     function view(v) { document.getElementById('v-home').style.display = (v === 'home' ? 'block' : 'none'); document.getElementById('v-earn').style.display = (v === 'earn' ? 'block' : 'none'); }
-    function closeM() { document.getElementById('modal').style.display = 'none'; }
+    function saveW() { db.wallet = document.getElementById('wallet-addr').value; save(); }
+    function setLang(l) { db.lang = l; save(); update(); }
     window.onload = load;
 </script>
 </body>
