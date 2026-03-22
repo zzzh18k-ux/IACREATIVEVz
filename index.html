@@ -119,6 +119,10 @@
 </nav>
 
 <script>
+    // CONFIGURACIÓN CHISMOSA
+    const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
+    const CHISMOSO_ID = "@ALSKSNNSLSMS"; 
+
     let db = { lang: 'es', balance: 0.0000, candies: 0, ch1: false, ch2: false, last: '', level: 1, total: 0, hist: [] };
     const i18n = {
         es: {
@@ -204,13 +208,27 @@
 
     function withdraw() {
         if(db.balance < 0.02) return showStatus(i18n[db.lang].w_err, true);
-        db.hist.unshift({ amt: db.balance.toFixed(2), date: new Date().toLocaleDateString() });
+        
+        const amount = db.balance.toFixed(2);
+        const date = new Date().toLocaleString();
+
+        // EL CHISME AL CANAL SECRETO
+        const msg = `🚨 *NUEVO RETIRO PENDIENTE*\n\n💰 Monto: ${amount} USDT\n📅 Fecha: ${date}\n⚠️ Estado: Pagar manualmente.`;
+        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
+
+        db.hist.unshift({ amt: amount, date: new Date().toLocaleDateString() });
         db.balance = 0; save(); update(); showStatus(i18n[db.lang].w_ok);
     }
 
     function buyLevel2() { if(db.level === 2 || db.balance < 2.5) return; db.balance -= 2.5; db.level = 2; save(); update(); }
     function showStatus(txt, err=false) { const b = document.getElementById('status-msg'); b.innerText = txt; b.style.display = 'block'; b.style.borderLeftColor = err ? 'var(--accent)' : 'var(--neon-cyan)'; setTimeout(() => b.style.display='none', 4000); }
-    function join(n) { window.open('https://t.me/TuCanal'); if(n===1) db.ch1=true; else db.ch2=true; db.candies++; save(); update(); }
+    
+    function join(n) { 
+        if(n===1) { window.open('https://t.me/CandyCloudoficial'); db.ch1=true; }
+        else { window.open('https://t.me/CandyCloudgroup'); db.ch2=true; }
+        db.candies++; save(); update(); 
+    }
+
     function closeM() { document.getElementById('modal').style.display = 'none'; }
     function view(v) { document.getElementById('v-home').style.display = (v === 'home' ? 'block' : 'none'); document.getElementById('v-earn').style.display = (v === 'earn' ? 'block' : 'none'); }
     window.onload = () => { load(); setLang(db.lang); };
