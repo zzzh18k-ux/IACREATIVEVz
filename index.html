@@ -45,7 +45,7 @@
         }
         .btn-action:disabled { background: #1c222d; color: #4b5563; cursor: not-allowed; }
 
-        /* MODAL DE RETIRO - NUEVO ESTILO */
+        /* ESTILOS DEL NUEVO MODAL DE RETIRO */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.92); backdrop-filter: blur(15px);
@@ -65,7 +65,7 @@
         }
         .status-msg { display: none; padding: 10px 0; }
 
-        .history-item { background: rgba(255,255,255,0.02); padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-left: 3px solid var(--success); }
+        .history-item { background: rgba(255,255,255,0.02); padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-left: 3px solid #10b981; }
         .mission-item { background: #12161f; padding: 20px; border-radius: 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
 
         .nav-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(13, 17, 23, 0.9); backdrop-filter: blur(15px); display: flex; justify-content: space-around; padding: 20px; border-top: 1px solid #1c222d; z-index: 100; }
@@ -157,7 +157,11 @@
             <div style="font-size: 13px; line-height: 1.8; color: #9ca3af;">
                 1. <b>Earn:</b> Join groups to unlock $2.00 Bonus.<br>
                 2. <b>Stake:</b> Activate once to start automatic mining.<br>
-                3. <b>Yield Cycle:</b> Rewards arrive every 24h.<br>
+                3. <b>Yield Cycle:</b> Rewards arrive every 24h:<br>
+                <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; margin: 10px 0; border: 1px solid rgba(255,255,255,0.05); color: #fff;">
+                    Day 1: $0.010 | Day 2: $0.002 | Day 3: $0.010<br>
+                    Day 4: $0.008 | Day 5: $0.010
+                </div>
                 4. <b>Withdraw:</b> Minimum claim is <b>$0.02 USDT</b>.
             </div>
         </div>
@@ -178,27 +182,36 @@
     let db = { bonus: 0.00, profit: 0.0000, ch1: false, ch2: false, total: 0, active: false, lastAutoClaim: 0, history: [] };
 
     function save() { localStorage.setItem('_candy_v7_final_pro', JSON.stringify(db)); }
+    
     function load() { 
         const data = localStorage.getItem('_candy_v7_final_pro');
         if(data) db = JSON.parse(data);
         update();
+        
+        setTimeout(() => {
+            show_10763886().catch(() => { console.log("Ad skip at start"); });
+        }, 2000);
+
         setInterval(checkAutoRewards, 5000); 
     }
 
     function checkAutoRewards() {
         if (!db.active) return;
         const now = Date.now();
+        const dayMs = 24 * 60 * 60 * 1000;
         const cycle = [0.01, 0.002, 0.01, 0.008, 0.01];
-        while (now - db.lastAutoClaim >= 86400000) {
+
+        while (now - db.lastAutoClaim >= dayMs) {
             db.profit += cycle[db.total % 5];
             db.total++;
-            db.lastAutoClaim += 86400000;
-            save(); update();
+            db.lastAutoClaim += dayMs;
+            save();
+            update();
             showToast("Mining Reward Added! 🎁");
         }
     }
 
-    // --- FUNCIONES DE RETIRO NUEVAS ---
+    /* NUEVA LÓGICA DE RETIRO INTEGRADA */
     function openW() { document.getElementById('modal-w').style.display='flex'; resetW(); }
     function closeW() { document.getElementById('modal-w').style.display='none'; }
     function resetW() {
@@ -211,7 +224,7 @@
     function handleWithdraw() {
         const a = parseFloat(document.getElementById('amt-in').value);
         const w = document.getElementById('wal-in').value;
-        if(!a || w.length < 10) return showToast("Invalid Details ❌");
+        if(!a || w.length < 10) return showToast("Complete details ❌");
 
         if(db.profit < 0.02 || a > db.profit) {
             document.getElementById('form-ui').style.display='none';
@@ -226,47 +239,60 @@
             save(); update();
             document.getElementById('form-ui').style.display='none';
             document.getElementById('success-ui').style.display='block';
-        }).catch(() => { showToast("Ad required ❌"); });
+        }).catch(() => { showToast("Ads required ❌"); });
     }
 
-    // --- EL RESTO DE TUS FUNCIONES ---
     function activateMining() {
         if(db.bonus < 2.0) return showToast("Need $2.00 Bonus 🔒");
+        if(db.active) return;
         show_10763886().then(() => {
             db.active = true; db.lastAutoClaim = Date.now();
-            db.profit += 0.01; db.total++;
-            save(); update(); view('home');
-        });
+            const cycle = [0.01, 0.002, 0.01, 0.008, 0.01];
+            db.profit += cycle[db.total % 5];
+            db.total++;
+            save(); update();
+            showToast("Mining Activated! ✅"); view('home');
+        }).catch(() => { showToast("Ads must be viewed ❌"); });
     }
 
     function update() {
         document.getElementById('bonus-val').innerText = db.bonus.toFixed(2);
         document.getElementById('profit-val').innerText = db.profit.toFixed(4);
         if(db.ch1) setDone('b1'); if(db.ch2) setDone('b2');
-        if(db.active) { document.getElementById('st-btn').innerText = "MINING ACTIVE"; document.getElementById('st-btn').disabled = true; }
+        if(db.active) {
+            const btn = document.getElementById('st-btn');
+            btn.innerText = "MINING ACTIVE"; btn.disabled = true;
+        }
         const hDiv = document.getElementById('withdraw-history');
         if(db.history.length > 0) {
             hDiv.innerHTML = db.history.map(h => `
                 <div class="history-item">
                     <div><b>Withdrawal</b><br><small>${h.date}</small></div>
-                    <div style="text-align:right;"><b>$${h.amount}</b><br><span style="color:var(--success);font-size:10px;font-weight:800;">SUCCESS</span></div>
+                    <div style="text-align:right;"><b>$${h.amount}</b><br><span style="color:#10b981;font-size:10px;font-weight:800;">SUCCESS</span></div>
                 </div>`).join('');
         }
     }
 
-    function setDone(id) { const el = document.getElementById(id); el.innerText = "Verified"; el.disabled = true; el.style.background = "#1c222d"; }
+    function setDone(id) {
+        const el = document.getElementById(id);
+        el.innerText = "Verified"; el.disabled = true; el.style.background = "#1c222d";
+    }
+
     function join(n) {
         if(n===1 && !db.ch1) { window.open('https://t.me/CandyCloudoficial'); db.ch1=true; db.bonus += 1.0; }
         else if(n===2 && !db.ch2) { window.open('https://t.me/CandyCloudgroup'); db.ch2=true; db.bonus += 1.0; }
         save(); update();
     }
+
     function view(v) {
         ['home','stake','earn','guide'].forEach(x => document.getElementById('v-'+x).style.display = (x===v?'block':'none'));
         document.querySelectorAll('.nav-link').forEach(i => i.classList.remove('active'));
         document.getElementById('n-'+v).classList.add('active');
     }
+
     function showToast(m) {
-        const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show');
+        const t = document.getElementById('toast');
+        t.innerText = m; t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 3000);
     }
     window.onload = load;
