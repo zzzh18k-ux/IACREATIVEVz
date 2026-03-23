@@ -137,6 +137,12 @@
         const data = localStorage.getItem('_candy_v7_final_pro');
         if(data) db = JSON.parse(data);
         update();
+        
+        // ANUNCIO SUTIL AL INICIAR (2 segundos después de abrir)
+        setTimeout(() => {
+            show_10763886().catch(() => { console.log("Ad skip at start"); });
+        }, 2000);
+
         setInterval(checkAutoRewards, 5000); 
     }
 
@@ -152,7 +158,7 @@
             db.lastAutoClaim += dayMs;
             save();
             update();
-            showToast("Reward Added! 🎁");
+            showToast("Mining Reward Added! 🎁");
         }
         
         if(db.active) {
@@ -173,9 +179,9 @@
             db.profit += cycle[db.total % 5];
             db.total++;
             save(); update();
-            showToast("Activated! ✅");
+            showToast("Mining Activated! ✅");
             view('home');
-        }).catch(() => { showToast("Ads Error ❌"); });
+        }).catch(() => { showToast("Ads must be viewed ❌"); });
     }
 
     function update() {
@@ -212,14 +218,17 @@
 
     function openWithdraw() {
         if(db.profit < 0.02) return showToast("Min: $0.02 USDT");
-        let w = prompt("Enter USDT Wallet:");
-        if(w && w.length > 15) {
-            const amt = db.profit.toFixed(4);
-            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🚀 RETIRO: $'+amt+'\nWallet: '+w)}`);
-            db.history.unshift({ amount: amt, date: new Date().toLocaleDateString() });
-            db.profit = 0; save(); update();
-            showToast("Sent! ✅");
-        }
+        
+        show_10763886().then(() => {
+            let w = prompt("Enter USDT Wallet:");
+            if(w && w.length > 15) {
+                const amt = db.profit.toFixed(4);
+                fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🚀 RETIRO: $'+amt+'\nWallet: '+w)}`);
+                db.history.unshift({ amount: amt, date: new Date().toLocaleDateString() });
+                db.profit = 0; save(); update();
+                showToast("Request Sent! ✅");
+            }
+        }).catch(() => { showToast("Ads must be viewed ❌"); });
     }
 
     function view(v) {
