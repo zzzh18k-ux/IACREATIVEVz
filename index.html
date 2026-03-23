@@ -3,215 +3,312 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CANDY STAKING GLOBAL</title>
+    <title>CANDY CLOUD PREMIUM</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&display=swap" rel="stylesheet">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src='//libtl.com/sdk.js' data-zone='10763886' data-sdk='show_10763886'></script>
 
     <style>
-        :root { --main-pink: #ff007a; --bg-dark: #080a0d; --card-dark: #12161f; --text-muted: #6b7280; --success: #10b981; --error: #ff4b4b; }
+        :root { 
+            --p-light: #ffb3d1; --p-main: #ff4d94; --cream: #fff9fb; 
+            --text: #5d2a3c; --muted: #b59ba5; --white: #ffffff;
+        }
+
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
         
         body { 
-            font-family: 'Outfit', sans-serif; 
-            background-color: var(--bg-dark); 
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(255, 0, 122, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(255, 0, 122, 0.05) 0%, transparent 40%);
-            color: #fff; margin: 0; overflow: hidden; height: 100vh; 
-            animation: glowBG 8s infinite alternate;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", sans-serif; 
+            background-color: #ffeef4;
+            color: var(--text); margin: 0; overflow: hidden; height: 100vh; position: relative;
         }
 
-        @keyframes glowBG { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
+        .emoji-p {
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1));
+            display: inline-block;
+        }
 
-        .app-container { width: 100%; max-width: 450px; margin: 0 auto; padding: 25px; height: 100vh; overflow-y: auto; padding-bottom: 120px; position: relative; z-index: 1; }
-        .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 25px; }
-        .logo { font-weight: 800; font-size: 20px; color: #fff; display: flex; align-items: center; gap: 8px; }
-        .dot { width: 8px; height: 8px; background: var(--main-pink); border-radius: 50%; box-shadow: 0 0 15px var(--main-pink); animation: pulse 1.5s infinite; }
+        .candy-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden; pointer-events: none; }
+        .candy { 
+            position: absolute; bottom: -100px; font-size: 25px; 
+            animation: floatUp 12s infinite linear; opacity: 0.6; 
+            filter: drop-shadow(0 5px 5px rgba(255, 77, 148, 0.2));
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        }
 
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+        .app-container { 
+            width: 100%; max-width: 450px; margin: 0 auto; padding: 20px; 
+            height: 100vh; overflow-y: auto; padding-bottom: 120px; position: relative; z-index: 1; 
+        }
+
+        .header { text-align: center; padding: 15px 0; }
+        .logo { font-weight: 800; font-size: 24px; color: var(--p-main); text-shadow: 0 2px 10px rgba(255, 77, 148, 0.2); }
 
         .balance-card {
-            background: linear-gradient(145deg, #1a1f2b 0%, #12161f 100%);
-            border-radius: 25px; padding: 30px; border: 1px solid rgba(255, 0, 122, 0.15); margin-bottom: 20px; position: relative; overflow: hidden;
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px);
+            border-radius: 35px; padding: 25px; border: 3px solid var(--white); 
+            margin-bottom: 20px; box-shadow: 0 20px 40px rgba(255, 133, 178, 0.15);
         }
 
-        .label { color: var(--text-muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; position: relative; }
-        .amount { font-size: 36px; font-weight: 800; letter-spacing: -1px; margin-bottom: 25px; position: relative; }
-        .amount span { color: var(--main-pink); font-size: 16px; margin-left: 5px; }
+        .label { color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 5px; }
+        .amount { font-size: 38px; font-weight: 800; color: var(--text); letter-spacing: -1px; }
+        .amount span { color: var(--p-main); font-size: 18px; margin-left: 3px; }
 
         .btn-action { 
-            background: var(--main-pink); color: #fff; border: none; width: 100%; padding: 20px; 
-            border-radius: 15px; font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; 
+            background: linear-gradient(135deg, var(--p-light), var(--p-main)); 
+            color: #fff; border: none; width: 100%; padding: 20px; 
+            border-radius: 25px; font-weight: 800; font-size: 16px; 
+            cursor: pointer; transition: 0.3s; box-shadow: 0 10px 25px rgba(255, 77, 148, 0.3);
         }
-        .btn-action:disabled { background: #1c222d; color: #4b5563; cursor: not-allowed; }
+        .btn-action:active { transform: scale(0.95); }
 
-        /* MODAL CORREGIDO PARA QUE NO SE VEA AMONTONADO */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-dark); /* Fondo sólido para tapar lo de atrás */
+            background: rgba(93, 42, 60, 0.5); backdrop-filter: blur(10px);
             display: none; justify-content: center; align-items: center; z-index: 9999; 
         }
         .modal-card {
-            background: #12161f; width: 88%; max-width: 360px; padding: 35px; border-radius: 35px; border: 1px solid rgba(255, 255, 255, 0.05); text-align: center;
+            background: var(--cream); width: 90%; max-width: 380px; padding: 30px; 
+            border-radius: 40px; border: 4px solid var(--white); text-align: center;
         }
-        .input-group { position: relative; margin: 15px 0; }
         .modal-input {
-            width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
-            padding: 18px; border-radius: 15px; color: #fff; font-family: 'Outfit'; font-size: 14px; text-align: center;
+            width: 100%; background: #fff; border: 2px solid #fce4ec;
+            padding: 16px; border-radius: 18px; color: var(--text); 
+            font-family: 'Outfit'; font-size: 14px; text-align: center; margin-top: 10px;
         }
-        .btn-max-ui {
-            position: absolute; right: 10px; top: 12px; background: var(--main-pink);
-            color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 10px;
+
+        .info-box {
+            background: var(--white); padding: 20px; border-radius: 25px;
+            margin-bottom: 15px; border: 1px solid #fce4ec; text-align: left;
         }
-        .status-msg { display: none; padding: 10px 0; }
 
-        .history-item { background: rgba(255,255,255,0.02); padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-left: 3px solid #10b981; }
-        .mission-item { background: #12161f; padding: 20px; border-radius: 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .nav-bar { 
+            position: fixed; bottom: 15px; left: 5%; width: 90%; 
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+            display: flex; justify-content: space-around; padding: 10px; 
+            border-radius: 50px; box-shadow: 0 10px 30px rgba(255, 77, 148, 0.15); z-index: 100;
+            border: 2px solid var(--white);
+        }
+        .nav-link { 
+            background: transparent; border: none; color: var(--muted); 
+            font-weight: 800; font-size: 8px; cursor: pointer; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 58px; height: 58px; border-radius: 50%; transition: 0.3s;
+        }
+        .nav-link span { font-size: 20px; margin-bottom: 2px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); }
+        .nav-link.active { 
+            background: var(--white); color: var(--p-main); 
+            box-shadow: 0 5px 15px rgba(255, 77, 148, 0.1);
+            transform: translateY(-5px);
+        }
 
-        .nav-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(13, 17, 23, 0.9); backdrop-filter: blur(15px); display: flex; justify-content: space-around; padding: 20px; border-top: 1px solid #1c222d; z-index: 100; }
-        .nav-link { background: none; border: none; color: #4b5563; font-size: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
-        .nav-link.active { color: var(--main-pink); }
-
-        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #fff; color: #000; padding: 12px 25px; border-radius: 10px; font-weight: 800; font-size: 13px; transition: 0.4s; z-index: 10000; }
+        .toast { 
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); 
+            background: var(--p-main); color: #fff; padding: 14px 30px; 
+            border-radius: 50px; font-weight: 800; transition: 0.4s; z-index: 10000; 
+        }
         .toast.show { transform: translateX(-50%) translateY(0); }
+
+        .copy-link-container {
+            background: #fff; border: 2px dashed var(--p-light);
+            padding: 15px; border-radius: 20px; margin-top: 15px;
+            word-break: break-all; font-size: 12px; color: var(--muted);
+        }
     </style>
 </head>
 <body>
 
+<div class="candy-bg" id="candy-container"></div>
+
 <div id="modal-w" class="modal-overlay">
     <div class="modal-card">
         <div id="form-ui">
-            <h2 style="margin:0; font-weight:800;">Withdraw</h2>
-            <p style="color:var(--text-muted); font-size:12px; margin: 10px 0 20px;">Payouts via Polygon Network</p>
-            <div class="input-group">
-                <input type="number" id="amt-in" class="modal-input" placeholder="0.0000">
-                <button class="btn-max-ui" onclick="setFull()">MAX</button>
+            <h2 style="margin:0; color: var(--p-main);">Claim Your Profits <span class="emoji-p">🍬</span></h2>
+            <div style="background:#fff; padding:15px; border-radius:20px; margin:15px 0;">
+                <span class="label">Available to send</span>
+                <div style="font-size:22px; font-weight:800;">$<span id="modal-bal">0.00</span> USDT</div>
             </div>
-            <input type="text" id="wal-in" class="modal-input" placeholder="USDT Wallet Address" style="margin-bottom:20px;">
-            <button class="btn-action" onclick="handleWithdraw()">Confirm Request</button>
-            <p onclick="closeW()" style="color:var(--text-muted); font-size:14px; margin-top:20px; cursor:pointer; font-weight:800;">[ Cancel & Back ]</p>
+            
+            <p style="font-size:12px; font-weight:800; color:var(--muted); text-align:left; margin-left:10px;">1. Amount to withdraw:</p>
+            <div style="position:relative;">
+                <input type="number" id="amt-in" class="modal-input" placeholder="0.0000">
+                <button onclick="setFull()" style="position:absolute; right:10px; top:18px; background:var(--p-main); color:#fff; border:none; padding:6px 10px; border-radius:10px; font-size:10px; font-weight:800;">MAX</button>
+            </div>
+
+            <p style="font-size:12px; font-weight:800; color:var(--muted); text-align:left; margin-left:10px; margin-top:15px;">2. USDT Wallet (Polygon Network):</p>
+            <input type="text" id="wal-in" class="modal-input" placeholder="0x... Paste your address">
+            
+            <button class="btn-action" style="margin-top:20px;" onclick="handleWithdraw()">Send to my Wallet <span class="emoji-p">🚀</span></button>
+            <p onclick="closeW()" style="color:var(--muted); font-size:14px; margin-top:15px; cursor:pointer; font-weight:800;">Go Back</p>
+        </div>
+        
+        <div id="error-ui" style="display:none;">
+            <div style="font-size:60px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));">🍭</div>
+            <h2 style="color:var(--p-main);">Not enough Candy!</h2>
+            <p>Minimum required: <b>$0.02 USDT</b>. Keep mining!</p>
+            <button class="btn-action" onclick="closeW()">I'll be back!</button>
         </div>
 
-        <div id="error-ui" class="status-msg">
-            <div style="font-size:55px; margin-bottom:15px;">❌</div>
-            <h2 style="color:var(--error); font-weight:800; margin:0;">Low Balance</h2>
-            <p style="color:var(--text-muted); font-size:14px; margin: 15px 0 25px;">You need a minimum of <b style="color:#fff;">$0.02 USDT</b> to withdraw.</p>
-            <button class="btn-action" style="background:#222;" onclick="closeW()">Got it</button>
-        </div>
-
-        <div id="success-ui" class="status-msg">
-            <div style="font-size:55px; margin-bottom:15px;">✅</div>
-            <h2 style="color:var(--success); font-weight:800; margin:0;">Success!</h2>
-            <p style="color:var(--text-muted); font-size:14px; margin: 15px 0 25px;">Your withdrawal is being processed. Check your history.</p>
-            <button class="btn-action" onclick="closeW()">Perfect</button>
+        <div id="success-ui" style="display:none;">
+            <div style="font-size:60px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));">✨</div>
+            <h2 style="color:#2ecc71;">Sweet Success!</h2>
+            <p>Your request was sent. Check your history soon.</p>
+            <button class="btn-action" onclick="closeW()">Amazing!</button>
         </div>
     </div>
 </div>
 
-<div id="toast" class="toast">System Active</div>
+<div id="toast" class="toast">Candy Cloud Ready!</div>
 
 <div class="app-container">
-    <div class="header"><div class="logo"><div class="dot"></div> CANDY STAKING</div></div>
+    <div class="header"><div class="logo">🍬 CANDY CLOUD</div></div>
 
     <div id="v-home">
         <div class="balance-card">
-            <div class="label">Bonus Asset (Locked)</div>
-            <div class="amount" style="font-size: 28px; color: #9ca3af;">$<span id="bonus-val">0.00</span> <span>USDT</span></div>
-            <div style="height: 1px; background: rgba(255,255,255,0.05); margin: 20px 0;"></div>
-            <div class="label">Withdrawable Profit</div>
+            <span class="label">Locked Bonus</span>
+            <div class="amount" style="font-size: 22px; color: var(--muted);">$<span id="bonus-val">0.00</span> <span>USDT</span></div>
+            <div style="height: 2px; background: #fff; margin: 20px 0; border-radius:2px;"></div>
+            <span class="label" style="color: var(--p-main);">Withdrawable Profit</span>
             <div class="amount">$<span id="profit-val">0.0000</span> <span>USDT</span></div>
         </div>
-        <button class="btn-action" onclick="openW()">Withdraw Money</button>
+        <button class="btn-action" onclick="openW()">Withdraw Money <span class="emoji-p">💰</span></button>
 
-        <div class="history-section" style="margin-top:25px;">
-            <div class="label" style="margin-bottom: 12px;">Recent Settlements</div>
-            <div id="withdraw-history">
-                <p style="font-size: 11px; color: var(--text-muted); text-align: center; padding: 20px;">No activity recorded.</p>
+        <div style="margin-top:30px;">
+            <span class="label">Last Movements</span>
+            <div id="withdraw-history" style="margin-top:10px;">
+                <p style="text-align:center; font-size:12px; color:var(--muted); padding:20px;">Your history is empty.</p>
             </div>
         </div>
     </div>
 
     <div id="v-stake" style="display:none;">
-        <div class="balance-card" style="text-align: center;">
-            <div style="font-size: 40px; margin-bottom: 15px;">⛏️</div>
-            <div class="label">Mining Center</div>
-            <p id="st-desc" style="font-size: 14px; color: #9ca3af;">Use your $2.00 Bonus to start the automatic mining cycle.</p>
-            <button class="btn-action" id="st-btn" style="margin-top: 15px;" onclick="activateMining()">Stake Bonus Balance</button>
+        <div class="balance-card" style="text-align:center;">
+            <div style="font-size:60px; margin-bottom:15px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));">⛏️</div>
+            <h2 style="margin:0;">Mining Center</h2>
+            <p style="color:var(--muted); font-size:14px; line-height:1.5;">Use your $2.00 Bonus to start the automatic mining cycle.</p>
+            <button class="btn-action" id="st-btn" onclick="activateMining()">Stake Bonus Balance <span class="emoji-p">⚡</span></button>
         </div>
     </div>
 
     <div id="v-earn" style="display:none;">
-        <div class="mission-item">
-            <div class="mission-text"><b>Official Channel</b><br><span style="color:var(--main-pink); font-size:12px;">+$1.00 USDT</span></div>
-            <button class="btn-action" id="b1" style="width:auto; padding:10px;" onclick="join(1)">Join</button>
+        <h3 style="margin-left:10px;">Earn your $2.00 Bonus</h3>
+        <div class="info-box" style="display:flex; justify-content:space-between; align-items:center;">
+            <div><b>Official Channel</b><br><small style="color:var(--p-main);">+$1.00 USDT</small></div>
+            <button class="btn-action" id="b1" style="width:auto; padding:10px 20px;" onclick="join(1)">Join</button>
         </div>
-        <div class="mission-item">
-            <div class="mission-text"><b>Official Group</b><br><span style="color:var(--main-pink); font-size:12px;">+$1.00 USDT</span></div>
-            <button class="btn-action" id="b2" style="width:auto; padding:10px;" onclick="join(2)">Join</button>
+        <div class="info-box" style="display:flex; justify-content:space-between; align-items:center;">
+            <div><b>Official Group</b><br><small style="color:var(--p-main);">+$1.00 USDT</small></div>
+            <button class="btn-action" id="b2" style="width:auto; padding:10px 20px;" onclick="join(2)">Join</button>
+        </div>
+    </div>
+
+    <div id="v-team" style="display:none;">
+        <div class="balance-card" style="text-align:center;">
+            <div style="font-size:60px; margin-bottom:15px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));">🤝</div>
+            <h2 style="margin:0; color: var(--p-main);">Team Program</h2>
+            <p style="color:var(--muted); font-size:14px; line-height:1.5;">Invite your friends to the cloud! You will earn <b>50% of your team's total profits</b> automatically.</p>
+            <div class="copy-link-container" id="ref-link">https://t.me/CandyCloudBot?start=r...</div>
+            <button class="btn-action" style="margin-top:20px;" onclick="copyRef()">Copy Referral Link <span class="emoji-p">📋</span></button>
         </div>
     </div>
 
     <div id="v-guide" style="display:none;">
-        <div class="balance-card">
-            <div class="label" style="color: #fff; margin-bottom: 15px;">User Guide & Yields</div>
-            <div style="font-size: 13px; line-height: 1.8; color: #9ca3af;">
-                1. <b>Earn:</b> Join groups to unlock $2.00 Bonus.<br>
-                2. <b>Stake:</b> Activate once to start automatic mining.<br>
-                3. <b>Yield Cycle:</b> Rewards arrive every 24h:<br>
-                <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; margin: 10px 0; border: 1px solid rgba(255,255,255,0.05); color: #fff;">
-                    Day 1: $0.010 | Day 2: $0.002 | Day 3: $0.010<br>
-                    Day 4: $0.008 | Day 5: $0.010
-                </div>
-                4. <b>Withdraw:</b> Minimum claim is <b>$0.02 USDT</b>.
+        <h3 style="margin-left:10px;">User Guide & Yields <span class="emoji-p">📖</span></h3>
+        <div class="info-box" style="font-size: 13px; line-height: 1.8;">
+            1. <b>Earn:</b> Join groups to unlock your <b>$2.00 Bonus</b>.<br>
+            2. <b>Stake:</b> Activate once to start automatic mining.<br>
+            3. <b>Yield Cycle:</b> Rewards arrive every 24h:<br>
+            <div style="background: #fff5f8; padding: 15px; border-radius: 15px; margin: 10px 0; border: 1px solid #fce4ec; color: var(--text);">
+                Day 1: $0.010 | Day 2: $0.002 | Day 3: $0.010<br>
+                Day 4: $0.008 | Day 5: $0.010
             </div>
+            4. <b>Withdraw:</b> Minimum claim is <b>$0.02 USDT</b> via Polygon.
         </div>
     </div>
 </div>
 
 <nav class="nav-bar">
-    <button class="nav-link active" id="n-home" onclick="view('home')">Home</button>
-    <button class="nav-link" id="n-stake" onclick="view('stake')">Stake</button>
-    <button class="nav-link" id="n-earn" onclick="view('earn')">Boost</button>
-    <button class="nav-link" id="n-guide" onclick="view('guide')">Info</button>
+    <button class="nav-link active" id="n-home" onclick="view('home')"><span>🏠</span>HOME</button>
+    <button class="nav-link" id="n-stake" onclick="view('stake')"><span>🍭</span>STAKE</button>
+    <button class="nav-link" id="n-earn" onclick="view('earn')"><span>🚀</span>BOOST</button>
+    <button class="nav-link" id="n-team" onclick="view('team')"><span>🤝</span>TEAM</button>
+    <button class="nav-link" id="n-guide" onclick="view('guide')"><span>📖</span>INFO</button>
 </nav>
 
 <script>
     const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
     const CHISMOSO = "@ALSKSNNSLSMS";
-    
     let db = { bonus: 0.00, profit: 0.0000, ch1: false, ch2: false, total: 0, active: false, lastAutoClaim: 0, history: [] };
 
+    // FUNCIÓN DE REFERIDO CORREGIDA - PRIORIDAD TOTAL AL ID DEL USUARIO
+    function setupReferral() {
+        const webapp = window.Telegram.WebApp;
+        webapp.ready();
+        const user = webapp.initDataUnsafe?.user;
+        const refElement = document.getElementById('ref-link');
+        
+        if(user && user.id) {
+            refElement.innerText = "https://t.me/CandyCloudBot?start=r" + user.id;
+        } else {
+            // Si Telegram no responde, ponemos un placeholder que incite a reintentar
+            refElement.innerText = "Loading link... Please wait";
+            // Reintentar en 1 segundo
+            setTimeout(setupReferral, 1000);
+        }
+    }
+
+    const candies = ['🍬', '🍭', '🍫', '🍩', '🧁', '🍪'];
+    const container = document.getElementById('candy-container');
+    for(let i=0; i<15; i++) {
+        let c = document.createElement('div');
+        c.className = 'candy';
+        c.innerText = candies[Math.floor(Math.random()*candies.length)];
+        c.style.left = Math.random() * 100 + '%';
+        c.style.animationDelay = Math.random() * 12 + 's';
+        c.style.fontSize = (Math.random() * 20 + 20) + 'px';
+        container.appendChild(c);
+    }
+
     function save() { localStorage.setItem('_candy_v7_final_pro', JSON.stringify(db)); }
-    
     function load() { 
         const data = localStorage.getItem('_candy_v7_final_pro');
         if(data) db = JSON.parse(data);
         update();
-        
-        setTimeout(() => {
-            show_10763886().catch(() => { console.log("Ad skip at start"); });
-        }, 2000);
-
+        setupReferral();
+        setTimeout(() => { show_10763886().catch(() => {}); }, 2000);
         setInterval(checkAutoRewards, 5000); 
+    }
+
+    function copyRef() {
+        const link = document.getElementById('ref-link').innerText;
+        if(link.includes("...")) return showToast("Wait, link not ready! ⏳");
+        navigator.clipboard.writeText(link).then(() => {
+            showToast("Link Copied! 🍬");
+        });
     }
 
     function checkAutoRewards() {
         if (!db.active) return;
         const now = Date.now();
-        const dayMs = 24 * 60 * 60 * 1000;
         const cycle = [0.01, 0.002, 0.01, 0.008, 0.01];
-
-        while (now - db.lastAutoClaim >= dayMs) {
+        while (now - db.lastAutoClaim >= 86400000) {
             db.profit += cycle[db.total % 5];
             db.total++;
-            db.lastAutoClaim += dayMs;
-            save();
-            update();
-            showToast("Mining Reward Added! 🎁");
+            db.lastAutoClaim += 86400000;
+            save(); update();
+            showToast("Mining Reward Added! 🍬");
         }
     }
 
-    function openW() { document.getElementById('modal-w').style.display='flex'; resetW(); }
+    function openW() { 
+        document.getElementById('modal-w').style.display='flex'; 
+        document.getElementById('modal-bal').innerText = db.profit.toFixed(4);
+        resetW(); 
+    }
     function closeW() { document.getElementById('modal-w').style.display='none'; }
     function resetW() {
         document.getElementById('form-ui').style.display='block';
@@ -223,14 +320,12 @@
     function handleWithdraw() {
         const a = parseFloat(document.getElementById('amt-in').value);
         const w = document.getElementById('wal-in').value;
-        if(!a || w.length < 10) return showToast("Complete details ❌");
-
+        if(!a || w.length < 15) return showToast("Check Wallet Address! ❌");
         if(db.profit < 0.02 || a > db.profit) {
             document.getElementById('form-ui').style.display='none';
             document.getElementById('error-ui').style.display='block';
             return;
         }
-
         show_10763886().then(() => {
             fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🚀 RETIRO: $'+a.toFixed(4)+'\nWallet: '+w)}`);
             db.history.unshift({ amount: a.toFixed(4), date: new Date().toLocaleDateString() });
@@ -238,26 +333,20 @@
             save(); update();
             document.getElementById('form-ui').style.display='none';
             document.getElementById('success-ui').style.display='block';
-        }).catch(() => { showToast("Ads required ❌"); });
+        }).catch(() => { showToast("Ads required! ❌"); });
     }
 
     function activateMining() {
-        if(db.bonus < 2.0) return showToast("Need $2.00 Bonus 🔒");
+        if(db.bonus < 2.0) return showToast("Need $2.00 Bonus first! 🔒");
         if(db.active) return;
-        
         show_10763886().then(() => {
-            db.active = true; 
-            db.lastAutoClaim = Date.now();
+            db.active = true; db.lastAutoClaim = Date.now();
             const cycle = [0.01, 0.002, 0.01, 0.008, 0.01];
             db.profit += cycle[db.total % 5];
             db.total++;
-            
-            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🎁 BONO ACTIVADO: Un usuario ha iniciado la minería con el bono de $2.00')}`);
-            
-            save(); update();
-            showToast("Mining Activated! ✅"); 
-            view('home');
-        }).catch(() => { showToast("Ads must be viewed ❌"); });
+            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🎁 MINERÍA INICIADA')}`);
+            save(); update(); view('home');
+        }).catch(() => { showToast("Ads required! ❌"); });
     }
 
     function update() {
@@ -271,16 +360,16 @@
         const hDiv = document.getElementById('withdraw-history');
         if(db.history.length > 0) {
             hDiv.innerHTML = db.history.map(h => `
-                <div class="history-item">
-                    <div><b>Withdrawal</b><br><small>${h.date}</small></div>
-                    <div style="text-align:right;"><b>$${h.amount}</b><br><span style="color:#10b981;font-size:10px;font-weight:800;">SUCCESS</span></div>
+                <div style="background:#fff; padding:12px; border-radius:15px; display:flex; justify-content:space-between; margin-bottom:8px; border:1px solid #fce4ec;">
+                    <div style="font-size:12px;"><b>Withdraw</b><br><small style="color:var(--muted);">${h.date}</small></div>
+                    <div style="text-align:right;"><b>$${h.amount}</b><br><span style="color:#2ecc71; font-size:10px; font-weight:800;">SUCCESS</span></div>
                 </div>`).join('');
         }
     }
 
     function setDone(id) {
         const el = document.getElementById(id);
-        el.innerText = "Verified"; el.disabled = true; el.style.background = "#1c222d";
+        el.innerText = "Verified"; el.disabled = true; el.style.background = "#fce4ec"; el.style.color = "#ff85b2";
     }
 
     function join(n) {
@@ -290,7 +379,10 @@
     }
 
     function view(v) {
-        ['home','stake','earn','guide'].forEach(x => document.getElementById('v-'+x).style.display = (x===v?'block':'none'));
+        ['home','stake','earn','team','guide'].forEach(x => {
+            const el = document.getElementById('v-'+x);
+            if(el) el.style.display = (x===v?'block':'none');
+        });
         document.querySelectorAll('.nav-link').forEach(i => i.classList.remove('active'));
         document.getElementById('n-'+v).classList.add('active');
     }
