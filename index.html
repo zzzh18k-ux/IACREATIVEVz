@@ -18,11 +18,10 @@
         body {
             font-family: 'Outfit', sans-serif; background-color: var(--deep-dark);
             color: #ffffff; margin: 0; padding: 0; overflow: hidden; height: 100vh;
-            background-image: 
-                radial-gradient(circle at top left, rgba(255, 0, 122, 0.12), transparent 40%),
-                radial-gradient(circle at bottom right, rgba(0, 242, 255, 0.08), transparent 40%);
+            background-image: radial-gradient(circle at top left, rgba(255, 0, 122, 0.12), transparent 40%),
+                              radial-gradient(circle at bottom right, rgba(0, 242, 255, 0.08), transparent 40%);
         }
-        .app-container { width: 100%; max-width: 480px; margin: 0 auto; padding: 25px; height: 100vh; overflow-y: auto; padding-bottom: 120px; position: relative; z-index: 10; }
+        .app-container { width: 100%; max-width: 480px; margin: 0 auto; padding: 25px; height: 100vh; overflow-y: auto; padding-bottom: 120px; position: relative; }
         
         .brand-header { display: flex; flex-direction: column; margin-bottom: 35px; }
         .brand-top { display: flex; justify-content: space-between; align-items: center; }
@@ -49,47 +48,18 @@
 
         .prime-btn { background: var(--grad-prime); border: none; width: 100%; padding: 22px; border-radius: 20px; color: white; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px; }
         .prime-btn:active { transform: scale(0.97); }
-        
-        .input-glass { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 20px; width: 100%; color: #fff; font-family: 'Outfit'; margin: 20px 0; text-align: center; font-size: 15px; }
+        .prime-btn.done { background: rgba(255,255,255,0.05); color: #444; border: 1px solid rgba(255,255,255,0.05); cursor: default; }
 
         .lang-pill { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 4px; display: flex; gap: 4px; border: 1px solid rgba(255,255,255,0.05); }
         .l-btn { border: none; background: none; color: #555; font-weight: 800; font-size: 11px; padding: 6px 12px; cursor: pointer; border-radius: 8px; }
         .l-btn.active { background: #fff; color: #000; }
 
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.94); z-index: 9999; display: none; align-items: flex-end; backdrop-filter: blur(12px); }
-        .modal-card { background: #070a11; border-top: 1px solid rgba(255,255,255,0.1); border-radius: 35px 35px 0 0; padding: 40px 25px; width: 100%; animation: slideUp 0.3s ease-out; max-height: 85vh; overflow-y: auto; }
-
         .mission-item { background: rgba(255,255,255,0.02); padding: 22px; border-radius: 22px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
-        
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div id="toast" class="toast"><span id="toast-icon"></span> <span id="toast-msg"></span></div>
-
-<div class="modal-overlay" id="modal-guide">
-    <div class="modal-card">
-        <div style="text-align: center;">
-            <h2 data-t="g_title" style="margin: 0 0 20px 0; font-weight: 800; font-size: 22px; text-transform: uppercase;">Guía de Ganancias</h2>
-            <div style="background:rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius:20px; padding:25px; text-align:left; margin-bottom:25px; font-size:14px; line-height:1.6; color: #ccc;">
-                <p style="margin-top:0;"><b style="color:var(--neon-cyan)" data-t="g_cycle">Ciclo de 4 Días:</b></p>
-                <ul style="list-style:none; padding:0; margin:0;">
-                    <li style="margin-bottom:8px;">• <b>Día 1:</b> 0.010 USDT</li>
-                    <li style="margin-bottom:8px;">• <b>Día 2:</b> 0.002 USDT</li>
-                    <li style="margin-bottom:8px;">• <b>Día 3:</b> 0.010 USDT</li>
-                    <li style="margin-bottom:8px;">• <b>Día 4:</b> 0.008 USDT</li>
-                </ul>
-                <hr style="border:0; border-top:1px solid rgba(255,255,255,0.05); margin:15px 0;">
-                <p style="margin-bottom:0;"><b data-t="g_rules">Reglas de Red:</b><br>
-                <span data-t="g_r1">• Visualización obligatoria: 5 videos.</span><br>
-                <span data-t="g_r2">• Umbral de retiro: 0.020 USDT.</span><br>
-                <span data-t="g_r3">• Network: Polygon (USDT).</span></p>
-            </div>
-            <button class="prime-btn" onclick="closeModal('modal-guide')" data-t="cancel">CERRAR</button>
-        </div>
-    </div>
-</div>
 
 <div class="app-container">
     <header class="brand-header">
@@ -99,8 +69,8 @@
                 <div style="font-weight:800; font-size:20px; letter-spacing:-1px; color: #fff;">CANDY CLOUD</div>
             </div>
             <div class="lang-pill">
-                <button class="l-btn active" id="l-es" onclick="setLang('es')">ES</button>
-                <button class="l-btn" id="l-en" onclick="setLang('en')">EN</button>
+                <button class="l-btn" id="btn-es" onclick="setLang('es')">ES</button>
+                <button class="l-btn" id="btn-en" onclick="setLang('en')">EN</button>
             </div>
         </div>
         <div class="value-badge">VALUE: 1 🍬 = 1.00 USDT</div>
@@ -108,7 +78,7 @@
 
     <div id="v-home">
         <div class="balance-card">
-            <div style="font-size: 11px; color: #555; text-transform: uppercase; font-weight: 800; letter-spacing: 1.5px; margin-bottom: 8px;" data-t="bal_label">Net Balance</div>
+            <div style="font-size: 11px; color: #555; text-transform: uppercase; font-weight: 800; letter-spacing: 1.5px; margin-bottom: 8px;" data-t="bal_label">Balance Neto</div>
             <div class="main-amount">$<span id="val-balance">0.0000</span></div>
             <div style="margin-top:15px; font-size:12px; font-weight: 800; background:rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding:8px 18px; border-radius:50px; display:inline-block;">
                 <span data-t="candies">🍬 Caramelos</span>: <span id="val-candy" style="color:var(--accent)">0</span>
@@ -116,14 +86,7 @@
         </div>
 
         <button class="prime-btn" id="task-btn" onclick="startTask()" data-t="btn_task">ADS VIDEO (0/5)</button>
-        
-        <button class="prime-btn" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); color:#fff;" onclick="openModal('modal-guide')">GUIDE / RULES</button>
-        <button class="prime-btn" style="background:none; border:1px solid #1a1a1a; color:#555; font-size: 13px;" onclick="openWithdraw()" data-t="btn_withdraw">WITHDRAW (0.02)</button>
-        
-        <div id="hist-section" style="margin-top:40px; display:none;">
-            <div style="font-size:10px; color:#444; font-weight:800; text-transform:uppercase; margin-bottom:10px; letter-spacing: 1px;" data-t="hist_t">Activity Log</div>
-            <div id="history-list"></div>
-        </div>
+        <button class="prime-btn" style="background:none; border:1px solid #1a1a1a; color:#555; font-size: 13px;" data-t="btn_withdraw">RETIRAR (0.02)</button>
     </div>
 
     <div id="v-earn" style="display:none;">
@@ -146,44 +109,43 @@
 </div>
 
 <nav style="position:fixed; bottom:0; left:0; width:100%; background:rgba(5,8,15,0.98); display:flex; justify-content:space-around; padding:22px; border-top:1px solid #111; z-index:100; backdrop-filter: blur(10px);">
-    <button onclick="view('home')" id="nav-h" style="background:none; border:none; color:#fff; font-weight:800; cursor:pointer; font-size: 12px; letter-spacing: 1px;" data-t="nav_h">HOME</button>
-    <button onclick="view('earn')" id="nav-e" style="background:none; border:none; color:#444; font-weight:800; cursor:pointer; font-size: 12px; letter-spacing: 1px;" data-t="nav_e">EARN</button>
+    <button onclick="view('home')" id="nav-h" style="background:none; border:none; color:#fff; font-weight:800; cursor:pointer; font-size: 12px;" data-t="nav_h">INICIO</button>
+    <button onclick="view('earn')" id="nav-e" style="background:none; border:none; color:#444; font-weight:800; cursor:pointer; font-size: 12px;" data-t="nav_e">GANA</button>
 </nav>
 
 <script>
-    const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
-    const CHISMOSO_ID = "@ALSKSNNSLSMS"; 
-
     const i18n = {
         es: {
             bal_label: "Balance Neto", candies: "🍬 Caramelos", btn_task: "VER VIDEO", btn_withdraw: "RETIRAR (0.02)",
             earn_t: "Misiones", m1: "Canal Oficial", m2: "Grupo VIP", join: "UNIRSE", nav_h: "INICIO", nav_e: "GANA",
-            err_bal: "Saldo insuficiente 🔒", err_candies: "Misiones incompletas 🍬", ready: "Vuelva mañana 🌙", g_title: "Guía de Ganancias"
+            err_candies: "Misiones incompletas 🍬", ready: "Vuelva mañana 🌙", done: "LISTO"
         },
         en: {
             bal_label: "Net Balance", candies: "🍬 Candies", btn_task: "WATCH VIDEO", btn_withdraw: "WITHDRAW (0.02)",
             earn_t: "Missions", m1: "Official Channel", m2: "VIP Group", join: "JOIN", nav_h: "HOME", nav_e: "EARN",
-            err_bal: "Insufficient balance 🔒", err_candies: "Missions incomplete 🍬", ready: "Come back tomorrow 🌙", g_title: "Earning Guide"
+            err_candies: "Missions incomplete 🍬", ready: "Come back tomorrow 🌙", done: "DONE"
         }
     };
 
-    let db = { lang: 'es', balance: 0.0000, candies: 0, ch1: false, ch2: false, last: '', total: 0, hist: [], taskProgress: 0 };
+    let db = { lang: 'es', balance: 0.0000, candies: 0, ch1: false, ch2: false, last: '', total: 0, taskProgress: 0 };
 
     function save() { localStorage.setItem('_candy_global_v2_final', JSON.stringify(db)); }
     function load() { 
         const data = localStorage.getItem('_candy_global_v2_final'); 
         if(data) db = JSON.parse(data); 
-        setLang(db.lang);
+        setLang(db.lang); 
         update(); 
     }
 
+    // ARREGLO DEL BOTÓN TRADUCIR
     function setLang(l) {
         db.lang = l;
         document.querySelectorAll('[data-t]').forEach(el => {
             const key = el.getAttribute('data-t');
             if(i18n[l][key]) el.innerText = i18n[l][key];
         });
-        update();
+        document.getElementById('btn-es').className = (l === 'es' ? 'l-btn active' : 'l-btn');
+        document.getElementById('btn-en').className = (l === 'en' ? 'l-btn active' : 'l-btn');
         save();
     }
 
@@ -198,36 +160,51 @@
         } else {
             btn.innerText = `${i18n[db.lang].btn_task} (${db.taskProgress}/5)`;
         }
+        if(db.ch1) setDone('btn-c1');
+        if(db.ch2) setDone('btn-c2');
     }
 
-    // FUNCIÓN PARA DISPARAR ANUNCIO MONETAG
+    function setDone(id) {
+        const b = document.getElementById(id);
+        b.innerText = i18n[db.lang].done;
+        b.classList.add('done');
+        b.onclick = null;
+    }
+
+    // ARREGLO DE LAS TAREAS DE UNIRSE
+    function join(n) { 
+        if(n===1 && !db.ch1) { 
+            window.open('https://t.me/CandyCloudoficial', '_blank'); 
+            db.ch1 = true; db.candies++; 
+        } else if(n===2 && !db.ch2) { 
+            window.open('https://t.me/CandyCloudgroup', '_blank'); 
+            db.ch2 = true; db.candies++; 
+        }
+        save(); update(); 
+    }
+
     function startTask() {
         if(db.candies < 2) return showToast(i18n[db.lang].err_candies);
         if(db.last === new Date().toDateString()) return showToast(i18n[db.lang].ready);
-
-        // Llamada al SDK de Monetag
-        show_10763886().then(() => {
-            // Cuando el video termina con éxito:
-            finishStep();
-        }).catch((e) => {
-            showToast("Error al cargar video ❌");
-        });
+        show_10763886().then(() => { finishStep(); }).catch(() => { showToast("Error Ads ❌"); });
     }
 
     function finishStep() {
         db.taskProgress++;
         if(db.taskProgress >= 5) {
             const cycle = [0.01, 0.002, 0.01, 0.008];
-            let win = cycle[db.total % 4];
-            db.balance += win; 
-            db.total++; 
-            db.last = new Date().toDateString();
-            db.taskProgress = 0;
-            showToast("Success: +" + win + " USDT ✅");
-        } else {
-            showToast(`Progress: ${db.taskProgress}/5`);
+            db.balance += cycle[db.total % 4]; db.total++; 
+            db.last = new Date().toDateString(); db.taskProgress = 0;
+            showToast("Success! ✅");
         }
         save(); update();
+    }
+
+    function view(v) {
+        document.getElementById('v-home').style.display = (v === 'home' ? 'block' : 'none');
+        document.getElementById('v-earn').style.display = (v === 'earn' ? 'block' : 'none');
+        document.getElementById('nav-h').style.color = (v === 'home' ? '#fff' : '#444');
+        document.getElementById('nav-e').style.color = (v === 'earn' ? '#fff' : '#444');
     }
 
     function showToast(msg) {
@@ -237,18 +214,6 @@
         setTimeout(() => t.classList.remove('show'), 3000);
     }
 
-    function join(n) { 
-        if(n===1 && !db.ch1) { window.open('https://t.me/CandyCloudoficial'); db.ch1=true; db.candies++; }
-        else if(n===2 && !db.ch2) { window.open('https://t.me/CandyCloudgroup'); db.ch2=true; db.candies++; }
-        save(); update(); 
-    }
-
-    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-    function view(v) {
-        document.getElementById('v-home').style.display = (v === 'home' ? 'block' : 'none');
-        document.getElementById('v-earn').style.display = (v === 'earn' ? 'block' : 'none');
-    }
     window.onload = load;
 </script>
 </body>
