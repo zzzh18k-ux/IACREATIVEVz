@@ -45,6 +45,28 @@
         }
         .btn-action:disabled { background: #1c222d; color: #4b5563; cursor: not-allowed; }
 
+        /* MODAL DE RETIRO */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
+            display: none; justify-content: center; align-items: center; z-index: 2000;
+        }
+        .modal-card {
+            background: #12161f; width: 90%; max-width: 380px;
+            padding: 30px; border-radius: 30px; border: 1px solid rgba(255, 0, 122, 0.3);
+            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .input-group { position: relative; margin: 20px 0; }
+        .modal-input {
+            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            padding: 18px; border-radius: 15px; color: #fff; font-family: 'Outfit'; font-size: 14px;
+        }
+        .btn-max {
+            position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+            background: var(--main-pink); color: #fff; border: none; padding: 6px 12px;
+            border-radius: 8px; font-size: 10px; font-weight: 800; cursor: pointer;
+        }
+
         .history-item { background: rgba(255,255,255,0.02); padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-left: 3px solid #10b981; }
         .mission-item { background: #12161f; padding: 20px; border-radius: 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
 
@@ -52,11 +74,29 @@
         .nav-link { background: none; border: none; color: #4b5563; font-size: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
         .nav-link.active { color: var(--main-pink); }
 
-        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #fff; color: #000; padding: 12px 25px; border-radius: 10px; font-weight: 800; font-size: 13px; transition: 0.4s; z-index: 10000; }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #fff; color: #000; padding: 12px 25px; border-radius: 10px; font-weight: 800; font-size: 13px; transition: 0.4s; z-index: 10000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .toast.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
+
+<div id="modal-w" class="modal-overlay">
+    <div class="modal-card">
+        <div style="font-size: 40px; margin-bottom: 10px;">💸</div>
+        <h2 style="margin: 0; font-weight: 800; color: #fff;">Withdrawal</h2>
+        <p style="color: var(--text-muted); font-size: 12px; margin-top: 5px;">Minimum: $0.02 USDT</p>
+        
+        <div class="input-group">
+            <input type="number" id="w-amount" class="modal-input" placeholder="0.0000">
+            <button class="btn-max" onclick="setMax()">MAX</button>
+        </div>
+        
+        <input type="text" id="w-wallet" class="modal-input" placeholder="Wallet Address (Polygon)" style="margin-bottom: 20px;">
+        
+        <button class="btn-action" onclick="processWithdraw()">Confirm Request</button>
+        <p onclick="closeW()" style="color: var(--text-muted); font-size: 12px; margin-top: 15px; cursor: pointer; font-weight: 800;">Cancel</p>
+    </div>
+</div>
 
 <div id="toast" class="toast">System Active</div>
 
@@ -71,7 +111,7 @@
             <div class="label">Withdrawable Profit</div>
             <div class="amount">$<span id="profit-val">0.0000</span> <span>USDT</span></div>
         </div>
-        <button class="btn-action" onclick="openWithdraw()">Withdraw Money</button>
+        <button class="btn-action" onclick="openW()">Withdraw Money</button>
 
         <div class="history-section" style="margin-top:25px;">
             <div class="label" style="margin-bottom: 12px;">Recent Settlements</div>
@@ -105,14 +145,9 @@
         <div class="balance-card">
             <div class="label" style="color: #fff; margin-bottom: 15px;">User Guide & Yields</div>
             <div style="font-size: 13px; line-height: 1.8; color: #9ca3af;">
-                1. <b>Earn:</b> Join groups to unlock $2.00 Bonus.<br>
-                2. <b>Stake:</b> Activate once to start automatic mining.<br>
-                3. <b>Yield Cycle:</b> Rewards arrive every 24h:<br>
-                <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; margin: 10px 0; border: 1px solid rgba(255,255,255,0.05); color: #fff;">
-                    Day 1: $0.010 | Day 2: $0.002 | Day 3: $0.010<br>
-                    Day 4: $0.008 | Day 5: $0.010
-                </div>
-                4. <b>Withdraw:</b> Minimum claim is <b>$0.02 USDT</b>.
+                1. <b>Earn:</b> Join groups.<br>
+                2. <b>Stake:</b> Activate auto-mining.<br>
+                3. <b>Withdraw:</b> Min: <b>$0.02 USDT</b>.
             </div>
         </div>
     </div>
@@ -137,62 +172,68 @@
         const data = localStorage.getItem('_candy_v7_final_pro');
         if(data) db = JSON.parse(data);
         update();
-        
-        // ANUNCIO SUTIL AL INICIAR (2 segundos después de abrir)
-        setTimeout(() => {
-            show_10763886().catch(() => { console.log("Ad skip at start"); });
-        }, 2000);
-
+        setTimeout(() => { show_10763886().catch(()=>{}); }, 2000);
         setInterval(checkAutoRewards, 5000); 
+    }
+
+    function openW() {
+        if(db.profit < 0.02) return showToast("Insufficient Balance ❌");
+        document.getElementById('modal-w').style.display = 'flex';
+    }
+
+    function closeW() { document.getElementById('modal-w').style.display = 'none'; }
+
+    function setMax() { document.getElementById('w-amount').value = db.profit.toFixed(4); }
+
+    function processWithdraw() {
+        const amt = parseFloat(document.getElementById('w-amount').value);
+        const wal = document.getElementById('w-wallet').value;
+
+        if(!amt || amt < 0.02 || amt > db.profit) return showToast("Invalid Amount ❌");
+        if(wal.length < 10) return showToast("Invalid Wallet ❌");
+
+        closeW();
+        show_10763886().then(() => {
+            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🚀 RETIRO: $'+amt+'\nWallet: '+wal)}`);
+            db.history.unshift({ amount: amt.toFixed(4), date: new Date().toLocaleDateString() });
+            db.profit -= amt;
+            save(); update();
+            showToast("Withdrawal Successful! ✅");
+        }).catch(() => { showToast("Ad required to withdraw ❌"); });
     }
 
     function checkAutoRewards() {
         if (!db.active) return;
         const now = Date.now();
-        const dayMs = 24 * 60 * 60 * 1000;
         const cycle = [0.01, 0.002, 0.01, 0.008, 0.01];
-
-        while (now - db.lastAutoClaim >= dayMs) {
+        while (now - db.lastAutoClaim >= 86400000) {
             db.profit += cycle[db.total % 5];
             db.total++;
-            db.lastAutoClaim += dayMs;
-            save();
-            update();
+            db.lastAutoClaim += 86400000;
+            save(); update();
             showToast("Mining Reward Added! 🎁");
-        }
-        
-        if(db.active) {
-            const btn = document.getElementById('st-btn');
-            btn.innerText = "MINING ACTIVE";
-            btn.disabled = true;
         }
     }
 
     function activateMining() {
         if(db.bonus < 2.0) return showToast("Need $2.00 Bonus 🔒");
         if(db.active) return;
-        
         show_10763886().then(() => {
             db.active = true;
             db.lastAutoClaim = Date.now();
-            const cycle = [0.01, 0.002, 0.01, 0.008, 0.01];
-            db.profit += cycle[db.total % 5];
+            db.profit += 0.01;
             db.total++;
             save(); update();
             showToast("Mining Activated! ✅");
             view('home');
-        }).catch(() => { showToast("Ads must be viewed ❌"); });
+        }).catch(() => { showToast("Ads required ❌"); });
     }
 
     function update() {
         document.getElementById('bonus-val').innerText = db.bonus.toFixed(2);
         document.getElementById('profit-val').innerText = db.profit.toFixed(4);
         if(db.ch1) setDone('b1'); if(db.ch2) setDone('b2');
-        if(db.active) {
-            const btn = document.getElementById('st-btn');
-            btn.innerText = "MINING ACTIVE";
-            btn.disabled = true;
-        }
+        if(db.active) { document.getElementById('st-btn').innerText = "MINING ACTIVE"; document.getElementById('st-btn').disabled = true; }
         
         const hDiv = document.getElementById('withdraw-history');
         if(db.history.length > 0) {
@@ -214,21 +255,6 @@
         if(n===1 && !db.ch1) { window.open('https://t.me/CandyCloudoficial'); db.ch1=true; db.bonus += 1.0; }
         else if(n===2 && !db.ch2) { window.open('https://t.me/CandyCloudgroup'); db.ch2=true; db.bonus += 1.0; }
         save(); update();
-    }
-
-    function openWithdraw() {
-        if(db.profit < 0.02) return showToast("Min: $0.02 USDT");
-        
-        show_10763886().then(() => {
-            let w = prompt("Enter USDT Wallet:");
-            if(w && w.length > 15) {
-                const amt = db.profit.toFixed(4);
-                fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🚀 RETIRO: $'+amt+'\nWallet: '+w)}`);
-                db.history.unshift({ amount: amt, date: new Date().toLocaleDateString() });
-                db.profit = 0; save(); update();
-                showToast("Request Sent! ✅");
-            }
-        }).catch(() => { showToast("Ads must be viewed ❌"); });
     }
 
     function view(v) {
