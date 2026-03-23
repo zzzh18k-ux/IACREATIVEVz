@@ -211,7 +211,7 @@
             <div style="font-size:60px; margin-bottom:15px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));">🤝</div>
             <h2 style="margin:0; color: var(--p-main);">Team Program</h2>
             <p style="color:var(--muted); font-size:14px; line-height:1.5;">Invite your friends to the cloud! You will earn <b>50% of your team's total profits</b> automatically.</p>
-            <div class="copy-link-container" id="ref-link">https://t.me/CandyCloudBot?start=r...</div>
+            <div class="copy-link-container" id="ref-link">Loading link...</div>
             <button class="btn-action" style="margin-top:20px;" onclick="copyRef()">Copy Referral Link <span class="emoji-p">📋</span></button>
         </div>
     </div>
@@ -244,20 +244,16 @@
     const CHISMOSO = "@ALSKSNNSLSMS";
     let db = { bonus: 0.00, profit: 0.0000, ch1: false, ch2: false, total: 0, active: false, lastAutoClaim: 0, history: [] };
 
-    // FUNCIÓN DE REFERIDO CORREGIDA - PRIORIDAD TOTAL AL ID DEL USUARIO
     function setupReferral() {
         const webapp = window.Telegram.WebApp;
         webapp.ready();
         const user = webapp.initDataUnsafe?.user;
         const refElement = document.getElementById('ref-link');
-        
         if(user && user.id) {
             refElement.innerText = "https://t.me/CandyCloudBot?start=r" + user.id;
         } else {
-            // Si Telegram no responde, ponemos un placeholder que incite a reintentar
-            refElement.innerText = "Loading link... Please wait";
-            // Reintentar en 1 segundo
-            setTimeout(setupReferral, 1000);
+            refElement.innerText = "Loading link...";
+            setTimeout(setupReferral, 1000); 
         }
     }
 
@@ -273,6 +269,7 @@
         container.appendChild(c);
     }
 
+    // USANDO LLAVE ESPECÍFICA SOLICITADA
     function save() { localStorage.setItem('_candy_v7_final_pro', JSON.stringify(db)); }
     function load() { 
         const data = localStorage.getItem('_candy_v7_final_pro');
@@ -285,10 +282,8 @@
 
     function copyRef() {
         const link = document.getElementById('ref-link').innerText;
-        if(link.includes("...")) return showToast("Wait, link not ready! ⏳");
-        navigator.clipboard.writeText(link).then(() => {
-            showToast("Link Copied! 🍬");
-        });
+        if(link.includes("Loading")) return showToast("Please wait! ⏳");
+        navigator.clipboard.writeText(link).then(() => { showToast("Link Copied! 🍬"); });
     }
 
     function checkAutoRewards() {
