@@ -14,98 +14,78 @@
         body { 
             font-family: 'Outfit', sans-serif; 
             background-color: var(--bg-dark); 
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(255, 0, 122, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(255, 0, 122, 0.05) 0%, transparent 40%);
+            background-image: radial-gradient(circle at 10% 20%, rgba(255, 0, 122, 0.05) 0%, transparent 40%);
             color: #fff; margin: 0; overflow: hidden; height: 100vh; 
-            animation: glowBG 8s infinite alternate;
         }
 
-        @keyframes glowBG { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
-
-        .app-container { width: 100%; max-width: 450px; margin: 0 auto; padding: 25px; height: 100vh; overflow-y: auto; padding-bottom: 120px; position: relative; z-index: 1; }
-        .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 25px; }
-        .logo { font-weight: 800; font-size: 20px; color: #fff; display: flex; align-items: center; gap: 8px; }
-        .dot { width: 8px; height: 8px; background: var(--main-pink); border-radius: 50%; box-shadow: 0 0 15px var(--main-pink); animation: pulse 1.5s infinite; }
-
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
-
+        .app-container { width: 100%; max-width: 450px; margin: 0 auto; padding: 25px; height: 100vh; overflow-y: auto; padding-bottom: 120px; }
+        
+        /* TARJETAS Y DISEÑO */
         .balance-card {
             background: linear-gradient(145deg, #1a1f2b 0%, #12161f 100%);
-            border-radius: 25px; padding: 30px; border: 1px solid rgba(255, 0, 122, 0.15); margin-bottom: 20px; position: relative; overflow: hidden;
+            border-radius: 25px; padding: 30px; border: 1px solid rgba(255, 0, 122, 0.15); margin-bottom: 20px;
         }
 
-        .label { color: var(--text-muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; position: relative; }
-        .amount { font-size: 36px; font-weight: 800; letter-spacing: -1px; margin-bottom: 25px; position: relative; }
+        .label { color: var(--text-muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+        .amount { font-size: 36px; font-weight: 800; }
         .amount span { color: var(--main-pink); font-size: 16px; margin-left: 5px; }
 
         .btn-action { 
             background: var(--main-pink); color: #fff; border: none; width: 100%; padding: 20px; 
             border-radius: 15px; font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; 
         }
-        .btn-action:disabled { background: #1c222d; color: #4b5563; cursor: not-allowed; }
+        .btn-action:disabled { background: #1c222d; color: #4b5563; }
 
-        .p-container { background: rgba(255,255,255,0.05); height: 8px; border-radius: 10px; margin: 15px 0; display: none; overflow: hidden; }
-        .p-fill { height: 100%; background: var(--main-pink); width: 0%; transition: width 0.5s; }
+        /* HISTORIAL DE RETIRO ESTILIZADO */
+        .history-item { 
+            background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 10px; border-left: 4px solid #10b981;
+        }
+        .hist-info b { font-size: 14px; display: block; }
+        .hist-info span { font-size: 11px; color: var(--text-muted); }
 
-        .nav-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(13, 17, 23, 0.9); backdrop-filter: blur(15px); display: flex; justify-content: space-around; padding: 20px; border-top: 1px solid #1c222d; z-index: 100; }
-        .nav-link { background: none; border: none; color: #4b5563; font-size: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
-        .nav-link.active { color: var(--main-pink); }
+        .nav-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(13, 17, 23, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 20px; border-top: 1px solid #1c222d; }
+        .nav-link { background: none; border: none; color: #4b5563; font-size: 10px; font-weight: 800; cursor: pointer; }
+        .nav-link.active { color: var(--main-pink); text-shadow: 0 0 10px var(--main-pink); }
 
-        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #fff; color: #000; padding: 12px 25px; border-radius: 10px; font-weight: 800; font-size: 13px; transition: 0.4s; z-index: 10000; }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #fff; color: #000; padding: 15px 30px; border-radius: 50px; font-weight: 800; transition: 0.5s; z-index: 10000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .toast.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
 
-<div id="toast" class="toast">System Active</div>
+<div id="toast" class="toast">Action Verified</div>
 
 <div class="app-container">
-    <div class="header"><div class="logo"><div class="dot"></div> CANDY STAKING</div></div>
-
     <div id="v-home">
         <div class="balance-card">
-            <div class="label">Bonus Asset (Locked)</div>
-            <div class="amount" style="font-size: 28px; color: #9ca3af;">$<span id="bonus-val">0.00</span> <span>USDT</span></div>
-            <div style="height: 1px; background: rgba(255,255,255,0.05); margin: 20px 0;"></div>
-            <div class="label">Withdrawable Profit</div>
+            <div class="label">Balance Available</div>
             <div class="amount">$<span id="profit-val">0.0000</span> <span>USDT</span></div>
         </div>
-        <button class="btn-action" onclick="openWithdraw()">Withdraw Money</button>
+        <button class="btn-action" onclick="openWithdraw()">Withdraw Profit</button>
+
+        <div style="margin-top:30px;">
+            <div class="label">Withdrawal History</div>
+            <div id="hist-list">
+                <p style="color:var(--text-muted); font-size:12px; text-align:center; margin-top:20px;">No recent transactions.</p>
+            </div>
+        </div>
     </div>
 
     <div id="v-stake" style="display:none;">
         <div class="balance-card" style="text-align: center;">
             <div style="font-size: 40px; margin-bottom: 15px;">⛏️</div>
             <div class="label">Mining Center</div>
-            <div class="p-container" id="p-cont"><div class="p-fill" id="p-fill"></div></div>
-            <p id="st-desc" style="font-size: 14px; color: #9ca3af;">Activate staking once to start receiving daily rewards.</p>
-            <button class="btn-action" id="st-btn" style="margin-top: 15px;" onclick="activateMining()">Activate Automatic Staking</button>
+            <p id="st-desc" style="font-size: 14px; color: #9ca3af;">Click once to start your daily rewards cycle.</p>
+            <button class="btn-action" id="st-btn" onclick="activateMining()">Stake Bonus</button>
         </div>
-    </div>
-
-    <div id="v-earn" style="display:none;">
-        <div class="mission-item" style="background:#12161f; padding:20px; border-radius:18px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
-            <div class="mission-text"><b>Official Channel</b><br><span style="color:var(--main-pink); font-size:12px;">+$1.00 USDT</span></div>
-            <button class="btn-action" id="b1" style="width:auto; padding:10px;" onclick="join(1)">Join</button>
-        </div>
-        <div class="mission-item" style="background:#12161f; padding:20px; border-radius:18px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
-            <div class="mission-text"><b>Official Group</b><br><span style="color:var(--main-pink); font-size:12px;">+$1.00 USDT</span></div>
-            <button class="btn-action" id="b2" style="width:auto; padding:10px;" onclick="join(2)">Join</button>
-        </div>
-    </div>
-
-    <div id="v-guide" style="display:none; font-size: 13px; color: #9ca3af; line-height: 1.8;">
-        1. <b>Earn:</b> Join groups to get $2.00 Bonus.<br>
-        2. <b>Staking:</b> Activate once. Rewards are added automatically every 24h.<br>
-        3. <b>Yields:</b> Day 1: $0.01 | Day 2: $0.002 | Day 3: $0.01...
     </div>
 </div>
 
 <nav class="nav-bar">
     <button class="nav-link active" id="n-home" onclick="view('home')">Home</button>
     <button class="nav-link" id="n-stake" onclick="view('stake')">Stake</button>
-    <button class="nav-link" id="n-earn" onclick="view('earn')">Boost</button>
     <button class="nav-link" id="n-guide" onclick="view('guide')">Info</button>
 </nav>
 
@@ -113,125 +93,88 @@
     const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
     const CHISMOSO = "@ALSKSNNSLSMS";
     
-    // active: indica si el staking ya fue activado una vez
-    // lastAutoClaim: guarda el timestamp de la última vez que se entregó el bono
-    let db = { bonus: 0.00, profit: 0.0000, ch1: false, ch2: false, total: 0, active: false, lastAutoClaim: 0 };
+    let db = { bonus: 0, profit: 0.0000, history: [], active: false, lastAutoClaim: 0, total: 0 };
 
-    function save() { localStorage.setItem('_candy_v7_final_pro', JSON.stringify(db)); }
-    
+    function save() { localStorage.setItem('_candy_pro_v8', JSON.stringify(db)); }
     function load() { 
-        const data = localStorage.getItem('_candy_v7_final_pro');
+        const data = localStorage.getItem('_candy_pro_v8');
         if(data) db = JSON.parse(data);
-        update();
-        // Revisar recompensas cada segundo
+        updateUI();
         setInterval(checkAutoRewards, 1000); 
     }
 
     function checkAutoRewards() {
-        if (!db.active) {
-            updateStakeUI(false);
-            return;
-        }
-
+        if (!db.active) return;
         const now = Date.now();
         const dayMs = 24 * 60 * 60 * 1000;
 
-        // Si ha pasado más de 24 horas desde el último cobro automático
         if (now - db.lastAutoClaim >= dayMs) {
             const cycle = [0.01, 0.002, 0.01, 0.008, 0.01];
-            db.profit += cycle[db.total % 5];
+            let reward = cycle[db.total % 5];
+            db.profit += reward;
             db.total++;
-            db.lastAutoClaim = now; // Reinicia el ciclo de 24h
-            save();
-            update();
-            showToast("Daily Reward Added! 🎁");
-        }
-        
-        updateStakeUI(true);
-    }
-
-    function updateStakeUI(isActive) {
-        const btn = document.getElementById('st-btn');
-        const desc = document.getElementById('st-desc');
-        const pCont = document.getElementById('p-cont');
-        const pFill = document.getElementById('p-fill');
-
-        if (isActive) {
-            pCont.style.display = "block";
-            const now = Date.now();
-            const dayMs = 24 * 60 * 60 * 1000;
-            const elapsed = now - db.lastAutoClaim;
-            const percent = (elapsed / dayMs) * 100;
-            pFill.style.width = Math.min(100, percent) + "%";
-
-            let diff = dayMs - elapsed;
-            let h = Math.floor(diff / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
-            
-            btn.innerText = `NEXT REWARD IN ${h}h ${m}m`;
-            btn.disabled = true;
-            desc.innerText = "Automatic staking is active. Rewards arrive every 24h.";
-        } else {
-            pCont.style.display = "none";
-            btn.innerText = "Activate Automatic Staking";
-            btn.disabled = false;
+            db.lastAutoClaim = now;
+            save(); updateUI();
+            showToast("🎁 Reward Auto-Credited!");
         }
     }
 
     function activateMining() {
-        if(db.bonus < 2.0) return showToast("Need $2.00 Bonus 🔒");
-        
+        if(db.active) return showToast("⚠️ Already Mining");
         show_10763886().then(() => {
             db.active = true;
-            db.lastAutoClaim = Date.now(); // Inicia el conteo de 24h desde ahora
-            // Primera recompensa inmediata al activar
-            const cycle = [0.01, 0.002, 0.01, 0.008, 0.01];
-            db.profit += cycle[db.total % 5];
-            db.total++;
-            
-            save(); 
-            update();
-            showToast("Staking Activated! ✅");
+            db.lastAutoClaim = Date.now();
+            db.profit += 0.01; // Primer pago guía
+            db.total = 1;
+            save(); updateUI();
+            showToast("⛏️ Mining Cycle Started!");
             view('home');
-        }).catch(() => { showToast("Ads Error ❌"); });
+        });
     }
 
-    function update() {
-        document.getElementById('bonus-val').innerText = db.bonus.toFixed(2);
+    function updateUI() {
         document.getElementById('profit-val').innerText = db.profit.toFixed(4);
-        if(db.ch1) setDone('b1'); if(db.ch2) setDone('b2');
-    }
-
-    function setDone(id) {
-        const el = document.getElementById(id);
-        el.innerText = "Verified"; el.disabled = true; el.style.background = "#1c222d";
-    }
-
-    function join(n) {
-        if(n===1 && !db.ch1) { window.open('https://t.me/CandyCloudoficial'); db.ch1=true; db.bonus += 1.0; }
-        else if(n===2 && !db.ch2) { window.open('https://t.me/CandyCloudgroup'); db.ch2=true; db.bonus += 1.0; }
-        save(); update();
-    }
-
-    function openWithdraw() {
-        if(db.profit < 0.02) return showToast("Min: $0.02 USDT");
-        let w = prompt("Enter Wallet:");
-        if(w && w.length > 15) {
-            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🚀 RETIRO: $'+db.profit.toFixed(4)+'\nWallet: '+w)}`);
-            db.profit = 0; save(); update();
-            showToast("Sent! ✅");
+        
+        // Renderizar Historial
+        const hList = document.getElementById('hist-list');
+        if(db.history.length > 0) {
+            hList.innerHTML = db.history.map(item => `
+                <div class="history-item">
+                    <div class="hist-info"><b>USDT Withdrawal</b><span>${item.date}</span></div>
+                    <div style="text-align:right;"><b>$${item.amt}</b><br><small style="color:#10b981;font-weight:800;">SUCCESS</small></div>
+                </div>
+            `).join('');
         }
     }
 
-    function view(v) {
-        ['home','stake','earn','guide'].forEach(x => document.getElementById('v-'+x).style.display = (x===v?'block':'none'));
-        document.querySelectorAll('.nav-link').forEach(i => i.classList.remove('active'));
-        document.getElementById('n-'+v).classList.add('active');
+    function openWithdraw() {
+        if(db.profit < 0.02) return showToast("❌ Minimum $0.02 USDT");
+        let w = prompt("Enter your USDT Wallet:");
+        if(w && w.length > 15) {
+            const amount = db.profit.toFixed(4);
+            // Mensaje Profesional al Bot Chismoso
+            const msg = `🚀 *NUEVO RETIRO DETECTADO*\n\n💰 Monto: *${amount} USDT*\n👤 Wallet: \`${w}\`\n📅 Fecha: ${new Date().toLocaleString()}\n\n✅ _Estado: Procesando automático_`;
+            
+            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&parse_mode=Markdown&text=${encodeURIComponent(msg)}`);
+            
+            // Guardar en historial local
+            db.history.unshift({ amt: amount, date: new Date().toLocaleDateString() });
+            db.profit = 0;
+            save(); updateUI();
+            showToast("✅ Withdrawal Request Sent!");
+        }
     }
 
     function showToast(m) {
         const t = document.getElementById('toast');
         t.innerText = m; t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    function view(v) {
+        ['home','stake','guide'].forEach(x => document.getElementById('v-'+x).style.display = (x===v?'block':'none'));
+        document.querySelectorAll('.nav-link').forEach(i => i.classList.remove('active'));
+        document.getElementById('n-'+v).classList.add('active');
     }
 
     window.onload = load;
