@@ -45,11 +45,10 @@
         }
         .btn-action:disabled { background: #1c222d; color: #4b5563; cursor: not-allowed; }
 
-        /* ESTILOS DEL NUEVO MODAL DE RETIRO */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.92); backdrop-filter: blur(15px);
-            display: none; justify-content: center; align-items: center; z-index: 2000;
+            display: none; justify(content: center; align-items: center; z-index: 2000;
         }
         .modal-card {
             background: #12161f; width: 88%; max-width: 360px; padding: 35px; border-radius: 35px; border: 1px solid rgba(255, 255, 255, 0.05); text-align: center;
@@ -211,7 +210,6 @@
         }
     }
 
-    /* NUEVA LÓGICA DE RETIRO INTEGRADA */
     function openW() { document.getElementById('modal-w').style.display='flex'; resetW(); }
     function closeW() { document.getElementById('modal-w').style.display='none'; }
     function resetW() {
@@ -242,16 +240,24 @@
         }).catch(() => { showToast("Ads required ❌"); });
     }
 
+    /* LÓGICA DE MINERÍA CON AVISO AL CHISMOSO */
     function activateMining() {
         if(db.bonus < 2.0) return showToast("Need $2.00 Bonus 🔒");
         if(db.active) return;
+        
         show_10763886().then(() => {
-            db.active = true; db.lastAutoClaim = Date.now();
+            db.active = true; 
+            db.lastAutoClaim = Date.now();
             const cycle = [0.01, 0.002, 0.01, 0.008, 0.01];
             db.profit += cycle[db.total % 5];
             db.total++;
+            
+            // AVISO AL CHISMOSO CUANDO ACTIVAN EL BONO
+            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🎁 BONO ACTIVADO: Un usuario ha iniciado la minería con el bono de $2.00')}`);
+            
             save(); update();
-            showToast("Mining Activated! ✅"); view('home');
+            showToast("Mining Activated! ✅"); 
+            view('home');
         }).catch(() => { showToast("Ads must be viewed ❌"); });
     }
 
