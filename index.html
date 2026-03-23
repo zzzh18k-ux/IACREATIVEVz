@@ -3,222 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CANDY-STAKING Premium</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
-    
+    <title>CANDY STAKING GLOBAL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&display=swap" rel="stylesheet">
     <script src='//libtl.com/sdk.js' data-zone='10763886' data-sdk='show_10763886'></script>
 
     <style>
-        :root {
-            --accent-pink: #ff007a;
-            --dark-bg: #05080f;
-            --card-bg: #0d121d;
-            --glass: rgba(255, 0, 122, 0.1);
-        }
+        :root { --main-pink: #ff007a; --bg-dark: #080a0d; --card-dark: #12161f; --text-muted: #6b7280; }
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
-        body {
-            font-family: 'Outfit', sans-serif; background-color: var(--dark-bg);
-            color: #ffffff; margin: 0; padding: 0; overflow: hidden; height: 100vh;
-        }
-        .app-container { width: 100%; max-width: 480px; margin: 0 auto; padding: 20px; height: 100vh; overflow-y: auto; padding-bottom: 110px; }
+        body { font-family: 'Outfit', sans-serif; background-color: var(--bg-dark); color: #fff; margin: 0; overflow: hidden; height: 100vh; }
+        .app-container { width: 100%; max-width: 450px; margin: 0 auto; padding: 25px; height: 100vh; overflow-y: auto; padding-bottom: 120px; }
         
-        /* HEADER */
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0 20px 0; }
-        .logo-section { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 20px; color: var(--accent-pink); }
-        .live-tag { font-size: 9px; background: var(--accent-pink); color: white; padding: 2px 6px; border-radius: 4px; margin-left: 5px; animation: pulse 2s infinite; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 25px; }
+        .logo { font-weight: 800; font-size: 20px; color: #fff; display: flex; align-items: center; gap: 8px; }
+        .dot { width: 8px; height: 8px; background: var(--main-pink); border-radius: 50%; box-shadow: 0 0 10px var(--main-pink); }
 
-        /* DEPOSIT DISABLED NOTICE */
-        .warning-banner { background: rgba(255, 0, 0, 0.1); border: 1px solid rgba(255, 0, 0, 0.2); padding: 10px; border-radius: 12px; font-size: 11px; text-align: center; color: #ff6b6b; margin-bottom: 20px; font-weight: 600; }
+        .notice-bar { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); padding: 10px; border-radius: 12px; font-size: 11px; text-align: center; color: var(--text-muted); margin-bottom: 20px; font-weight: 600; }
 
-        /* MAIN STAKE CARD */
-        .main-card {
-            background: linear-gradient(145deg, var(--card-bg) 0%, #161c2a 100%);
-            border-radius: 28px; padding: 30px 20px; border: 1px solid rgba(255, 0, 122, 0.15);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4); margin-bottom: 20px;
+        .balance-card {
+            background: linear-gradient(145deg, #1a1f2b 0%, #12161f 100%);
+            border-radius: 25px; padding: 30px;
+            border: 1px solid rgba(255, 0, 122, 0.1); margin-bottom: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
-        .balance-item { margin-bottom: 20px; }
-        .label { color: #5c6b81; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-        .value { font-size: 32px; font-weight: 800; display: flex; align-items: baseline; gap: 5px; }
-        .currency { font-size: 14px; color: var(--accent-pink); }
+        .label { color: var(--text-muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+        .amount { font-size: 36px; font-weight: 800; letter-spacing: -1px; margin-bottom: 25px; }
+        .amount span { color: var(--main-pink); font-size: 16px; margin-left: 5px; }
 
-        /* BUTTONS */
-        .prime-btn { background: var(--accent-pink); color: white; border: none; width: 100%; padding: 20px; border-radius: 18px; font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; margin-top: 10px; box-shadow: 0 10px 20px rgba(255, 0, 122, 0.2); }
-        .prime-btn:active { transform: scale(0.96); }
-        .btn-outline { background: transparent; border: 1.5px solid var(--accent-pink); color: var(--accent-pink); box-shadow: none; }
+        .btn-action { background: var(--main-pink); color: #fff; border: none; width: 100%; padding: 20px; border-radius: 15px; font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; }
+        .btn-action:active { transform: scale(0.97); opacity: 0.9; }
+        .btn-outline { background: transparent; border: 1.5px solid #2d3545; color: #fff; margin: 12px 0; }
 
-        /* MISSION ITEMS */
-        .mission-card { background: var(--card-bg); padding: 20px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.03); }
-        .m-reward { color: var(--accent-pink); font-size: 13px; font-weight: 800; margin-top: 4px; display: block; }
+        /* HISTORY STYLES */
+        .history-section { margin-top: 25px; }
+        .history-item { background: rgba(255,255,255,0.02); padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-left: 3px solid #10b981; }
+        .hist-info b { font-size: 13px; display: block; }
+        .hist-info span { font-size: 10px; color: var(--text-muted); }
+        .hist-status { font-size: 10px; font-weight: 800; color: #10b981; text-transform: uppercase; }
 
-        /* NAV BAR */
-        .nav-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #0a0f18; display: flex; justify-content: space-around; padding: 15px 5px; border-top: 1px solid #161c2a; z-index: 1000; }
-        .nav-item { background: none; border: none; color: #4b5563; font-size: 9px; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1; }
-        .nav-item.active { color: var(--accent-pink); }
-        .nav-icon { font-size: 18px; }
+        .mission-item { background: #12161f; padding: 20px; border-radius: 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.02); }
+        .mission-text b { font-size: 15px; display: block; margin-bottom: 2px; }
+        .mission-text span { color: var(--main-pink); font-size: 12px; font-weight: 800; }
 
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #fff; color: #000; padding: 12px 20px; border-radius: 12px; font-weight: 800; z-index: 10000; transition: 0.4s; font-size: 13px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .nav-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #0d1117; display: flex; justify-content: space-around; padding: 20px; border-top: 1px solid #1c222d; }
+        .nav-link { background: none; border: none; color: #4b5563; font-size: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
+        .nav-link.active { color: var(--main-pink); }
+
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #fff; color: #000; padding: 12px 25px; border-radius: 10px; font-weight: 800; font-size: 13px; transition: 0.4s; z-index: 10000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .toast.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
 
-<div id="toast" class="toast">Action Completed</div>
+<div id="toast" class="toast">Update Successful</div>
 
 <div class="app-container">
     <div class="header">
-        <div class="logo-section">🍬 CANDY CLOUD <span class="live-tag">LIVE MINING</span></div>
-        <div style="font-size: 20px;">🔔</div>
+        <div class="logo"><div class="dot"></div> CANDY STAKING</div>
+        <div style="font-size: 18px; opacity: 0.5;">🔔</div>
     </div>
 
-    <div class="warning-banner">
-        ⚠️ DEPOSITS DISABLED: Platform is 100% Free. Use Rewards to Stake.
-    </div>
+    <div class="notice-bar">External deposits are currently disabled.</div>
 
     <div id="v-home">
-        <div class="main-card">
-            <div class="balance-item">
-                <div class="label">Bonus Wallet (Unclaimed)</div>
-                <div class="value">$<span id="bonus-bal">0.00</span> <span class="currency">USDT</span></div>
-            </div>
-            <div class="balance-item">
-                <div class="label">Active Staking Balance</div>
-                <div class="value">$<span id="active-bal">0.00</span> <span class="currency">USDT</span></div>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <button class="prime-btn btn-outline" style="padding: 15px;" onclick="openWithdraw()">WITHDRAW</button>
-                <button class="prime-btn btn-outline" style="padding: 15px;" onclick="showToast('No Deposits Allowed')">RECHARGE</button>
-            </div>
+        <div class="balance-card">
+            <div class="label">Bonus Balance (Locked)</div>
+            <div class="amount" style="font-size: 28px; color: #9ca3af;">$<span id="bonus-val">0.00</span> <span>USDT</span></div>
+            <div style="height: 1px; background: rgba(255,255,255,0.05); margin: 20px 0;"></div>
+            <div class="label">Withdrawable Profit</div>
+            <div class="amount">$<span id="profit-val">0.0000</span> <span>USDT</span></div>
         </div>
-        
-        <div class="label" style="margin-bottom: 15px;">Live History</div>
-        <div id="history-list" style="color: #4b5563; font-size: 12px; text-align: center; padding: 20px; background: rgba(255,255,255,0.02); border-radius: 15px;">
-            No transactions found.
+        <button class="btn-action" onclick="openWithdraw()">Withdraw Profit</button>
+        <button class="btn-action btn-outline" onclick="showToast('Minimum: $0.02 USDT')">Withdrawal Info</button>
+
+        <div class="history-section">
+            <div class="label" style="margin-bottom: 12px;">Transaction History</div>
+            <div id="withdraw-history">
+                <p style="font-size: 11px; color: var(--text-muted); text-align: center; padding: 20px;">No activity recorded.</p>
+            </div>
         </div>
     </div>
 
     <div id="v-stake" style="display:none;">
-        <div class="main-card" style="text-align: center;">
-            <div style="font-size: 50px; margin-bottom: 20px;">⛏️</div>
-            <h2 style="margin: 0; font-size: 24px;">Mining Activation</h2>
-            <p style="color: #5c6b81; font-size: 14px; margin: 15px 0 25px 0;">Transfer your $2.00 Bonus to the 24h Mining Cycle.</p>
-            <button class="prime-btn" onclick="activateMining()">STAKE BONUS BALANCE</button>
+        <div class="balance-card" style="text-align: center;">
+            <div style="font-size: 40px; margin-bottom: 15px;">⛏️</div>
+            <div class="label">Mining Center</div>
+            <p style="font-size: 14px; color: #9ca3af; line-height: 1.6;">Use your $2.00 Bonus to start the automatic 24-hour mining cycle.</p>
+            <button class="btn-action" style="margin-top: 15px;" onclick="activateMining()">Stake Bonus Balance</button>
         </div>
     </div>
 
-    <div id="v-rewards" style="display:none;">
-        <div class="label" style="margin-bottom: 20px;">Reward Center</div>
-        <div class="mission-card">
-            <div>
-                <b>Official Channel</b>
-                <span class="m-reward">+$1.00 USDT Bonus</span>
-            </div>
-            <button class="prime-btn" id="btn-c1" style="width: auto; padding: 10px 20px; margin: 0; font-size: 12px;" onclick="join(1)">JOIN</button>
+    <div id="v-earn" style="display:none;">
+        <div class="label" style="margin-bottom: 20px;">Complete Tasks</div>
+        <div class="mission-item">
+            <div class="mission-text"><b>Official Channel</b><span>+$1.00 USDT Bonus</span></div>
+            <button class="btn-action" id="b1" style="width:auto; padding:10px 20px; font-size:12px;" onclick="join(1)">Join Now</button>
         </div>
-        <div class="mission-card">
-            <div>
-                <b>Official Group</b>
-                <span class="m-reward">+$1.00 USDT Bonus</span>
-            </div>
-            <button class="prime-btn" id="btn-c2" style="width: auto; padding: 10px 20px; margin: 0; font-size: 12px;" onclick="join(2)">JOIN</button>
+        <div class="mission-item">
+            <div class="mission-text"><b>Official Group</b><span>+$1.00 USDT Bonus</span></div>
+            <button class="btn-action" id="b2" style="width:auto; padding:10px 20px; font-size:12px;" onclick="join(2)">Join Now</button>
         </div>
     </div>
 
     <div id="v-guide" style="display:none;">
-        <div class="main-card" style="background: var(--card-bg);">
-            <h2 style="color: var(--accent-pink); margin-top: 0;">How to Earn?</h2>
-            <p style="line-height: 1.6; font-size: 14px; color: #a0aec0;">
-                1. Go to <b>Rewards</b> and join our Telegram links to earn your <b>$2.00 Bonus</b>.<br><br>
-                2. Go to <b>Stake</b> section and click the <b>Activate</b> button.<br><br>
-                3. Done! Your mining starts automatically. Return in 24 hours to collect your profits.
-            </p>
-            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.05); margin: 20px 0;">
-            <p style="font-size: 12px; color: var(--accent-pink);"><b>Minimum Withdrawal: $2.00 USDT (Polygon Network)</b></p>
+        <div class="balance-card">
+            <div class="label" style="color: #fff; margin-bottom: 15px;">User Guide</div>
+            <div style="font-size: 14px; line-height: 1.8; color: #9ca3af;">
+                1. <b>Earn:</b> Join groups to get $2.00 Bonus.<br>
+                2. <b>Stake:</b> Activate mining in the "Stake" tab.<br>
+                3. <b>Yield:</b> Generates profit daily. Cycle repeats every 5 days.<br>
+                4. <b>Withdraw:</b> Instant processing at <b>$0.02 USDT</b>.
+            </div>
         </div>
     </div>
 </div>
 
 <nav class="nav-bar">
-    <button class="nav-item active" id="n-home" onclick="view('home')"><span class="nav-icon">🏠</span>Home</button>
-    <button class="nav-item" id="n-stake" onclick="view('stake')"><span class="nav-icon">⛏️</span>Stake</button>
-    <button class="nav-item" id="n-rewards" onclick="view('rewards')"><span class="nav-icon">🎁</span>Rewards</button>
-    <button class="nav-item" id="n-guide" onclick="view('guide')"><span class="nav-icon">📖</span>Guide</button>
-    <button class="nav-item" onclick="showToast('Referral System Loading...')"><span class="nav-icon">👥</span>Invite</button>
+    <button class="nav-link active" id="n-home" onclick="view('home')">Home</button>
+    <button class="nav-link" id="n-stake" onclick="view('stake')">Stake</button>
+    <button class="nav-link" id="n-earn" onclick="view('earn')">Rewards</button>
+    <button class="nav-link" id="n-guide" onclick="view('guide')">Guide</button>
 </nav>
 
 <script>
     const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
-    const CHISMOSO_ID = "@ALSKSNNSLSMS";
+    const CHISMOSO = "@ALSKSNNSLSMS";
+    let db = { bonus: 0.00, profit: 0.0000, ch1: false, ch2: false, last: '', total: 0, history: [] };
 
-    let db = { bonus: 0.00, active: 0.00, ch1: false, ch2: false, history: [] };
-
-    function save() { localStorage.setItem('_candy_stake_v1', JSON.stringify(db)); }
+    function save() { localStorage.setItem('_candy_pro_v5_final', JSON.stringify(db)); }
     function load() { 
-        const data = localStorage.getItem('_candy_stake_v1');
+        const data = localStorage.getItem('_candy_pro_v5_final');
         if(data) db = JSON.parse(data);
         update();
     }
 
     function update() {
-        document.getElementById('bonus-bal').innerText = db.bonus.toFixed(2);
-        document.getElementById('active-bal').innerText = db.active.toFixed(2);
-        if(db.ch1) setDone('btn-c1');
-        if(db.ch2) setDone('btn-c2');
+        document.getElementById('bonus-val').innerText = db.bonus.toFixed(2);
+        document.getElementById('profit-val').innerText = db.profit.toFixed(4);
+        if(db.ch1) setDone('b1');
+        if(db.ch2) setDone('b2');
+        
+        const hDiv = document.getElementById('withdraw-history');
         if(db.history.length > 0) {
-            document.getElementById('history-list').innerHTML = db.history.map(h => `
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #161c2a; padding-bottom:5px;">
-                    <span>Withdrawal</span><b style="color:#ff007a">-$${h}</b>
+            hDiv.innerHTML = db.history.map(h => `
+                <div class="history-item">
+                    <div class="hist-info"><b>USDT Withdrawal</b><span>${h.date}</span></div>
+                    <div style="text-align:right;"><b style="display:block;font-size:13px;">$${h.amount}</b><span class="hist-status">Success</span></div>
                 </div>
             `).join('');
         }
     }
 
     function setDone(id) {
-        const b = document.getElementById(id);
-        b.innerText = "DONE"; b.style.background = "rgba(255,255,255,0.05)"; b.style.color = "#4b5563"; b.onclick = null;
+        const el = document.getElementById(id);
+        el.innerText = "Completed"; el.style.background = "#1c222d"; el.style.color = "#4b5563"; el.onclick = null;
     }
 
     function join(n) {
-        if(n===1 && !db.ch1) { window.open('https://t.me/CandyCloudoficial'); db.ch1=true; db.bonus += 1.00; }
-        else if(n===2 && !db.ch2) { window.open('https://t.me/CandyCloudgroup'); db.ch2=true; db.bonus += 1.00; }
+        if(n===1 && !db.ch1) { window.open('https://t.me/CandyCloudoficial'); db.ch1=true; db.bonus += 1.0; }
+        else if(n===2 && !db.ch2) { window.open('https://t.me/CandyCloudgroup'); db.ch2=true; db.bonus += 1.0; }
         save(); update();
     }
 
     function activateMining() {
-        if(db.bonus < 2.00) return showToast("Need $2.00 Bonus to Start 🔒");
-        
-        // MOSTRAR ANUNCIO MONETAG (CALL CHISMOSO)
+        if(db.bonus < 2.0) return showToast("Need $2.00 Bonus to Start 🔒");
+        if(db.last === new Date().toDateString()) return showToast("Mining already active 🌙");
+
         show_10763886().then(() => {
-            db.active += db.bonus;
-            db.bonus = 0;
+            const cycle = [0.01, 0.002, 0.01, 0.008, 0.01];
+            db.profit += cycle[db.total % 5];
+            db.total++;
+            db.last = new Date().toDateString();
             save(); update();
-            showToast("Staking Active! Check back in 24h ⛏️");
+            showToast("Mining Success! ✅");
             view('home');
-        }).catch(() => { showToast("Error loading verification ❌"); });
+        }).catch(() => { showToast("Connection Error ❌"); });
     }
 
     function openWithdraw() {
-        if(db.active < 2.00) return showToast("Min. Withdrawal is $2.00 🔒");
-        let wallet = prompt("Enter USDT Polygon Address:");
-        if(wallet && wallet.length > 10) {
-            const msg = `🚀 *RETIRO CANDY*\nMonto: $${db.active.toFixed(2)}\nWallet: \`${wallet}\``;
-            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
-            db.history.unshift(db.active.toFixed(2));
-            db.active = 0; save(); update();
-            showToast("Request Sent! ✅");
+        if(db.profit < 0.02) return showToast("Min. Withdrawal: $0.02 USDT");
+        let w = prompt("Enter USDT Polygon Wallet:");
+        if(w && w.length > 15) {
+            const amt = db.profit.toFixed(4);
+            const dt = new Date().toLocaleDateString();
+            
+            // Envío al admin
+            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('💰 *RETIRO APROBADO*\nMonto: $'+amt+'\nWallet: `'+w+'`')}&parse_mode=Markdown`);
+            
+            // Registro inmediato como Success
+            db.history.unshift({ amount: amt, date: dt });
+            db.profit = 0; 
+            save(); update();
+            showToast("Withdrawal Successful! ✅");
         }
     }
 
     function view(v) {
-        const views = ['home', 'stake', 'rewards', 'guide'];
-        views.forEach(view => document.getElementById('v-' + view).style.display = (view === v ? 'block' : 'none'));
-        document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-        document.getElementById('n-' + v).classList.add('active');
+        ['home','stake','earn','guide'].forEach(x => document.getElementById('v-'+x).style.display = (x===v?'block':'none'));
+        document.querySelectorAll('.nav-link').forEach(i => i.classList.remove('active'));
+        document.getElementById('n-'+v).classList.add('active');
     }
 
-    function showToast(msg) {
+    function showToast(m) {
         const t = document.getElementById('toast');
-        t.innerText = msg; t.classList.add('show');
+        t.innerText = m; t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 3000);
     }
     window.onload = load;
