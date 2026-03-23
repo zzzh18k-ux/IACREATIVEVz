@@ -132,12 +132,13 @@
 
         const now = Date.now();
         const dayMs = 24 * 60 * 60 * 1000;
+        const cycle = [0.01, 0.002, 0.01, 0.008, 0.01];
 
-        if (now - db.lastAutoClaim >= dayMs) {
-            const cycle = [0.01, 0.002, 0.01, 0.008, 0.01];
+        // Lógica de recuperación: si el usuario cerró la app por días, entrega lo acumulado
+        while (now - db.lastAutoClaim >= dayMs) {
             db.profit += cycle[db.total % 5];
             db.total++;
-            db.lastAutoClaim = now; 
+            db.lastAutoClaim += dayMs; // Suma 24h exactas al marcador
             save();
             update();
             showToast("Daily Reward Added! 🎁");
@@ -175,11 +176,9 @@
 
     function activateMining() {
         if(db.bonus < 2.0) return showToast("Need $2.00 Bonus 🔒");
-        if(db.active) return; // PROTECCIÓN: Si ya está activo, no hace nada más.
+        if(db.active) return;
 
         show_10763886().then(() => {
-            if(db.active) return; // DOBLE CHEQUEO: Evita el disparo del saldo si el anuncio tarda.
-            
             db.active = true;
             db.lastAutoClaim = Date.now(); 
             const cycle = [0.01, 0.002, 0.01, 0.008, 0.01];
