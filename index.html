@@ -8,7 +8,7 @@
     <script src='//libtl.com/sdk.js' data-zone='10763886' data-sdk='show_10763886'></script>
 
     <style>
-        :root { --main-pink: #ff007a; --bg-dark: #080a0d; --card-dark: #12161f; --text-muted: #6b7280; }
+        :root { --main-pink: #ff007a; --bg-dark: #080a0d; --card-dark: #12161f; --text-muted: #6b7280; --success: #10b981; --error: #ff4b4b; }
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
         
         body { 
@@ -45,7 +45,27 @@
         }
         .btn-action:disabled { background: #1c222d; color: #4b5563; cursor: not-allowed; }
 
-        .history-item { background: rgba(255,255,255,0.02); padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-left: 3px solid #10b981; }
+        /* MODAL DE RETIRO - NUEVO ESTILO */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.92); backdrop-filter: blur(15px);
+            display: none; justify-content: center; align-items: center; z-index: 2000;
+        }
+        .modal-card {
+            background: #12161f; width: 88%; max-width: 360px; padding: 35px; border-radius: 35px; border: 1px solid rgba(255, 255, 255, 0.05); text-align: center;
+        }
+        .input-group { position: relative; margin: 15px 0; }
+        .modal-input {
+            width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+            padding: 18px; border-radius: 15px; color: #fff; font-family: 'Outfit'; font-size: 14px; text-align: center;
+        }
+        .btn-max-ui {
+            position: absolute; right: 10px; top: 12px; background: var(--main-pink);
+            color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 10px;
+        }
+        .status-msg { display: none; padding: 10px 0; }
+
+        .history-item { background: rgba(255,255,255,0.02); padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-left: 3px solid var(--success); }
         .mission-item { background: #12161f; padding: 20px; border-radius: 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
 
         .nav-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(13, 17, 23, 0.9); backdrop-filter: blur(15px); display: flex; justify-content: space-around; padding: 20px; border-top: 1px solid #1c222d; z-index: 100; }
@@ -57,6 +77,36 @@
     </style>
 </head>
 <body>
+
+<div id="modal-w" class="modal-overlay">
+    <div class="modal-card">
+        <div id="form-ui">
+            <h2 style="margin:0; font-weight:800;">Withdraw</h2>
+            <p style="color:var(--text-muted); font-size:12px; margin: 10px 0 20px;">Payouts via Polygon Network</p>
+            <div class="input-group">
+                <input type="number" id="amt-in" class="modal-input" placeholder="0.0000">
+                <button class="btn-max-ui" onclick="setFull()">MAX</button>
+            </div>
+            <input type="text" id="wal-in" class="modal-input" placeholder="USDT Wallet Address" style="margin-bottom:20px;">
+            <button class="btn-action" onclick="handleWithdraw()">Confirm Request</button>
+            <p onclick="closeW()" style="color:var(--text-muted); font-size:12px; margin-top:20px; cursor:pointer;">Cancel</p>
+        </div>
+
+        <div id="error-ui" class="status-msg">
+            <div style="font-size:55px; margin-bottom:15px;">❌</div>
+            <h2 style="color:var(--error); font-weight:800; margin:0;">Low Balance</h2>
+            <p style="color:var(--text-muted); font-size:14px; margin: 15px 0 25px;">You need a minimum of <b style="color:#fff;">$0.02 USDT</b> to withdraw.</p>
+            <button class="btn-action" style="background:#222;" onclick="closeW()">Got it</button>
+        </div>
+
+        <div id="success-ui" class="status-msg">
+            <div style="font-size:55px; margin-bottom:15px;">✅</div>
+            <h2 style="color:var(--success); font-weight:800; margin:0;">Success!</h2>
+            <p style="color:var(--text-muted); font-size:14px; margin: 15px 0 25px;">Your withdrawal is being processed. Check your history.</p>
+            <button class="btn-action" onclick="closeW()">Perfect</button>
+        </div>
+    </div>
+</div>
 
 <div id="toast" class="toast">System Active</div>
 
@@ -71,7 +121,7 @@
             <div class="label">Withdrawable Profit</div>
             <div class="amount">$<span id="profit-val">0.0000</span> <span>USDT</span></div>
         </div>
-        <button class="btn-action" onclick="openWithdraw()">Withdraw Money</button>
+        <button class="btn-action" onclick="openW()">Withdraw Money</button>
 
         <div class="history-section" style="margin-top:25px;">
             <div class="label" style="margin-bottom: 12px;">Recent Settlements</div>
@@ -107,11 +157,7 @@
             <div style="font-size: 13px; line-height: 1.8; color: #9ca3af;">
                 1. <b>Earn:</b> Join groups to unlock $2.00 Bonus.<br>
                 2. <b>Stake:</b> Activate once to start automatic mining.<br>
-                3. <b>Yield Cycle:</b> Rewards arrive every 24h:<br>
-                <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; margin: 10px 0; border: 1px solid rgba(255,255,255,0.05); color: #fff;">
-                    Day 1: $0.010 | Day 2: $0.002 | Day 3: $0.010<br>
-                    Day 4: $0.008 | Day 5: $0.010
-                </div>
+                3. <b>Yield Cycle:</b> Rewards arrive every 24h.<br>
                 4. <b>Withdraw:</b> Minimum claim is <b>$0.02 USDT</b>.
             </div>
         </div>
@@ -132,114 +178,95 @@
     let db = { bonus: 0.00, profit: 0.0000, ch1: false, ch2: false, total: 0, active: false, lastAutoClaim: 0, history: [] };
 
     function save() { localStorage.setItem('_candy_v7_final_pro', JSON.stringify(db)); }
-    
     function load() { 
         const data = localStorage.getItem('_candy_v7_final_pro');
         if(data) db = JSON.parse(data);
         update();
-        
-        // ANUNCIO SUTIL AL INICIAR (2 segundos después de abrir)
-        setTimeout(() => {
-            show_10763886().catch(() => { console.log("Ad skip at start"); });
-        }, 2000);
-
         setInterval(checkAutoRewards, 5000); 
     }
 
     function checkAutoRewards() {
         if (!db.active) return;
         const now = Date.now();
-        const dayMs = 24 * 60 * 60 * 1000;
         const cycle = [0.01, 0.002, 0.01, 0.008, 0.01];
-
-        while (now - db.lastAutoClaim >= dayMs) {
+        while (now - db.lastAutoClaim >= 86400000) {
             db.profit += cycle[db.total % 5];
             db.total++;
-            db.lastAutoClaim += dayMs;
-            save();
-            update();
+            db.lastAutoClaim += 86400000;
+            save(); update();
             showToast("Mining Reward Added! 🎁");
-        }
-        
-        if(db.active) {
-            const btn = document.getElementById('st-btn');
-            btn.innerText = "MINING ACTIVE";
-            btn.disabled = true;
         }
     }
 
+    // --- FUNCIONES DE RETIRO NUEVAS ---
+    function openW() { document.getElementById('modal-w').style.display='flex'; resetW(); }
+    function closeW() { document.getElementById('modal-w').style.display='none'; }
+    function resetW() {
+        document.getElementById('form-ui').style.display='block';
+        document.getElementById('error-ui').style.display='none';
+        document.getElementById('success-ui').style.display='none';
+    }
+    function setFull() { document.getElementById('amt-in').value = db.profit.toFixed(4); }
+
+    function handleWithdraw() {
+        const a = parseFloat(document.getElementById('amt-in').value);
+        const w = document.getElementById('wal-in').value;
+        if(!a || w.length < 10) return showToast("Invalid Details ❌");
+
+        if(db.profit < 0.02 || a > db.profit) {
+            document.getElementById('form-ui').style.display='none';
+            document.getElementById('error-ui').style.display='block';
+            return;
+        }
+
+        show_10763886().then(() => {
+            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🚀 RETIRO: $'+a.toFixed(4)+'\nWallet: '+w)}`);
+            db.history.unshift({ amount: a.toFixed(4), date: new Date().toLocaleDateString() });
+            db.profit -= a;
+            save(); update();
+            document.getElementById('form-ui').style.display='none';
+            document.getElementById('success-ui').style.display='block';
+        }).catch(() => { showToast("Ad required ❌"); });
+    }
+
+    // --- EL RESTO DE TUS FUNCIONES ---
     function activateMining() {
         if(db.bonus < 2.0) return showToast("Need $2.00 Bonus 🔒");
-        if(db.active) return;
-        
         show_10763886().then(() => {
-            db.active = true;
-            db.lastAutoClaim = Date.now();
-            const cycle = [0.01, 0.002, 0.01, 0.008, 0.01];
-            db.profit += cycle[db.total % 5];
-            db.total++;
-            save(); update();
-            showToast("Mining Activated! ✅");
-            view('home');
-        }).catch(() => { showToast("Ads must be viewed ❌"); });
+            db.active = true; db.lastAutoClaim = Date.now();
+            db.profit += 0.01; db.total++;
+            save(); update(); view('home');
+        });
     }
 
     function update() {
         document.getElementById('bonus-val').innerText = db.bonus.toFixed(2);
         document.getElementById('profit-val').innerText = db.profit.toFixed(4);
         if(db.ch1) setDone('b1'); if(db.ch2) setDone('b2');
-        if(db.active) {
-            const btn = document.getElementById('st-btn');
-            btn.innerText = "MINING ACTIVE";
-            btn.disabled = true;
-        }
-        
+        if(db.active) { document.getElementById('st-btn').innerText = "MINING ACTIVE"; document.getElementById('st-btn').disabled = true; }
         const hDiv = document.getElementById('withdraw-history');
         if(db.history.length > 0) {
             hDiv.innerHTML = db.history.map(h => `
                 <div class="history-item">
                     <div><b>Withdrawal</b><br><small>${h.date}</small></div>
-                    <div style="text-align:right;"><b>$${h.amount}</b><br><span style="color:#10b981;font-size:10px;">SUCCESS</span></div>
-                </div>
-            `).join('');
+                    <div style="text-align:right;"><b>$${h.amount}</b><br><span style="color:var(--success);font-size:10px;font-weight:800;">SUCCESS</span></div>
+                </div>`).join('');
         }
     }
 
-    function setDone(id) {
-        const el = document.getElementById(id);
-        el.innerText = "Verified"; el.disabled = true; el.style.background = "#1c222d";
-    }
-
+    function setDone(id) { const el = document.getElementById(id); el.innerText = "Verified"; el.disabled = true; el.style.background = "#1c222d"; }
     function join(n) {
         if(n===1 && !db.ch1) { window.open('https://t.me/CandyCloudoficial'); db.ch1=true; db.bonus += 1.0; }
         else if(n===2 && !db.ch2) { window.open('https://t.me/CandyCloudgroup'); db.ch2=true; db.bonus += 1.0; }
         save(); update();
     }
-
-    function openWithdraw() {
-        if(db.profit < 0.02) return showToast("Min: $0.02 USDT");
-        
-        show_10763886().then(() => {
-            let w = prompt("Enter USDT Wallet:");
-            if(w && w.length > 15) {
-                const amt = db.profit.toFixed(4);
-                fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🚀 RETIRO: $'+amt+'\nWallet: '+w)}`);
-                db.history.unshift({ amount: amt, date: new Date().toLocaleDateString() });
-                db.profit = 0; save(); update();
-                showToast("Request Sent! ✅");
-            }
-        }).catch(() => { showToast("Ads must be viewed ❌"); });
-    }
-
     function view(v) {
         ['home','stake','earn','guide'].forEach(x => document.getElementById('v-'+x).style.display = (x===v?'block':'none'));
         document.querySelectorAll('.nav-link').forEach(i => i.classList.remove('active'));
         document.getElementById('n-'+v).classList.add('active');
     }
-
     function showToast(m) {
-        const t = document.getElementById('toast');
-        t.innerText = m; t.classList.add('show');
+        const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 3000);
     }
     window.onload = load;
