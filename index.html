@@ -69,7 +69,7 @@
             <div class="label">Withdrawable Profit</div>
             <div class="amount">$<span id="profit-val">0.0000</span> <span>USDT</span></div>
         </div>
-        <button class="btn-action" onclick="openWithdraw()">Claim Profit</button>
+        <button class="btn-action" onclick="openWithdraw()">Withdraw Money</button>
 
         <div class="history-section" style="margin-top:25px;">
             <div class="label" style="margin-bottom: 12px;">Recent Settlements</div>
@@ -135,7 +135,6 @@
         const data = localStorage.getItem('_candy_v7_final_pro');
         if(data) db = JSON.parse(data);
         update();
-        // Anuncio sutil al entrar (2 seg)
         setTimeout(() => { show_10763886().catch(()=>{}); }, 2000);
     }
 
@@ -180,18 +179,25 @@
         }).catch(() => { showToast("Network Error ❌"); });
     }
 
+    // FUNCIÓN DE RETIRO ACTUALIZADA
     function openWithdraw() {
         if(db.profit < 0.02) return showToast("Min: $0.02 USDT");
-        let w = prompt("USDT Polygon Wallet:");
+        
+        // Pide la billetera con el texto específico solicitado
+        let w = prompt("Enter your USDT (Polygon Network) Wallet:");
+        
         if(w && w.length > 15) {
             show_10763886().then(() => {
                 const amt = db.profit.toFixed(4);
-                // EL CHISMOSO: Avisa al admin
-                fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🚀 *NUEVO RETIRO*\n\nMonto: $'+amt+'\nWallet: `'+w+'`')}&parse_mode=Markdown`);
                 
+                // Envía la solicitud con el máximo disponible al admin
+                fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🚀 *NUEVO RETIRO (MÁXIMO)*\n\nMonto: $'+amt+'\nWallet: `'+w+'`')}&parse_mode=Markdown`);
+                
+                // Registra en el historial local
                 db.history.unshift({ amount: amt, date: new Date().toLocaleDateString() });
-                db.profit = 0; save(); update();
-                showToast("Withdrawal Success! ✅");
+                db.profit = 0; 
+                save(); update();
+                showToast("Request Sent! ✅");
             }).catch(() => { showToast("Network Error ❌"); });
         }
     }
