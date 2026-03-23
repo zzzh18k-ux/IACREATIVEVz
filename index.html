@@ -31,10 +31,7 @@
 
         .btn-action { background: var(--main-pink); color: #fff; border: none; width: 100%; padding: 20px; border-radius: 15px; font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; }
         .btn-action:active { transform: scale(0.97); opacity: 0.9; }
-        .btn-outline { background: transparent; border: 1.5px solid #2d3545; color: #fff; margin: 12px 0; }
 
-        /* HISTORY STYLES */
-        .history-section { margin-top: 25px; }
         .history-item { background: rgba(255,255,255,0.02); padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-left: 3px solid #10b981; }
         .hist-info b { font-size: 13px; display: block; }
         .hist-info span { font-size: 10px; color: var(--text-muted); }
@@ -54,7 +51,7 @@
 </head>
 <body>
 
-<div id="toast" class="toast">Update Successful</div>
+<div id="toast" class="toast">System Active</div>
 
 <div class="app-container">
     <div class="header">
@@ -66,17 +63,16 @@
 
     <div id="v-home">
         <div class="balance-card">
-            <div class="label">Bonus Balance (Locked)</div>
+            <div class="label">Bonus Asset (Locked)</div>
             <div class="amount" style="font-size: 28px; color: #9ca3af;">$<span id="bonus-val">0.00</span> <span>USDT</span></div>
             <div style="height: 1px; background: rgba(255,255,255,0.05); margin: 20px 0;"></div>
             <div class="label">Withdrawable Profit</div>
             <div class="amount">$<span id="profit-val">0.0000</span> <span>USDT</span></div>
         </div>
-        <button class="btn-action" onclick="openWithdraw()">Withdraw Profit</button>
-        <button class="btn-action btn-outline" onclick="showToast('Minimum: $0.02 USDT')">Withdrawal Info</button>
+        <button class="btn-action" onclick="openWithdraw()">Claim Profit</button>
 
-        <div class="history-section">
-            <div class="label" style="margin-bottom: 12px;">Transaction History</div>
+        <div class="history-section" style="margin-top:25px;">
+            <div class="label" style="margin-bottom: 12px;">Recent Settlements</div>
             <div id="withdraw-history">
                 <p style="font-size: 11px; color: var(--text-muted); text-align: center; padding: 20px;">No activity recorded.</p>
             </div>
@@ -93,25 +89,30 @@
     </div>
 
     <div id="v-earn" style="display:none;">
-        <div class="label" style="margin-bottom: 20px;">Complete Tasks</div>
+        <div class="label" style="margin-bottom: 20px;">Verification Tasks</div>
         <div class="mission-item">
             <div class="mission-text"><b>Official Channel</b><span>+$1.00 USDT Bonus</span></div>
-            <button class="btn-action" id="b1" style="width:auto; padding:10px 20px; font-size:12px;" onclick="join(1)">Join Now</button>
+            <button class="btn-action" id="b1" style="width:auto; padding:10px 20px; font-size:12px;" onclick="join(1)">Join</button>
         </div>
         <div class="mission-item">
             <div class="mission-text"><b>Official Group</b><span>+$1.00 USDT Bonus</span></div>
-            <button class="btn-action" id="b2" style="width:auto; padding:10px 20px; font-size:12px;" onclick="join(2)">Join Now</button>
+            <button class="btn-action" id="b2" style="width:auto; padding:10px 20px; font-size:12px;" onclick="join(2)">Join</button>
         </div>
     </div>
 
     <div id="v-guide" style="display:none;">
         <div class="balance-card">
-            <div class="label" style="color: #fff; margin-bottom: 15px;">User Guide</div>
-            <div style="font-size: 14px; line-height: 1.8; color: #9ca3af;">
-                1. <b>Earn:</b> Join groups to get $2.00 Bonus.<br>
-                2. <b>Stake:</b> Activate mining in the "Stake" tab.<br>
-                3. <b>Yield:</b> Generates profit daily. Cycle repeats every 5 days.<br>
-                4. <b>Withdraw:</b> Instant processing at <b>$0.02 USDT</b>.
+            <div class="label" style="color: #fff; margin-bottom: 15px;">User Guide & Yields</div>
+            <div style="font-size: 13px; line-height: 1.8; color: #9ca3af;">
+                1. <b>Earn:</b> Join groups to unlock $2.00 Bonus.<br>
+                2. <b>Stake:</b> Activate daily to mine USDT.<br>
+                3. <b>Yield Cycle:</b> Profit varies to ensure network stability:<br>
+                <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; margin: 10px 0; border: 1px solid rgba(255,255,255,0.05); color: #fff;">
+                    Day 1: $0.010 | Day 2: $0.002 | Day 3: $0.010<br>
+                    Day 4: $0.008 | Day 5: $0.010
+                </div>
+                The cycle repeats every 5 days.<br>
+                4. <b>Withdraw:</b> Minimum claim is <b>$0.02 USDT</b>.
             </div>
         </div>
     </div>
@@ -120,8 +121,8 @@
 <nav class="nav-bar">
     <button class="nav-link active" id="n-home" onclick="view('home')">Home</button>
     <button class="nav-link" id="n-stake" onclick="view('stake')">Stake</button>
-    <button class="nav-link" id="n-earn" onclick="view('earn')">Rewards</button>
-    <button class="nav-link" id="n-guide" onclick="view('guide')">Guide</button>
+    <button class="nav-link" id="n-earn" onclick="view('earn')">Boost</button>
+    <button class="nav-link" id="n-guide" onclick="view('guide')">Info</button>
 </nav>
 
 <script>
@@ -129,19 +130,19 @@
     const CHISMOSO = "@ALSKSNNSLSMS";
     let db = { bonus: 0.00, profit: 0.0000, ch1: false, ch2: false, last: '', total: 0, history: [] };
 
-    function save() { localStorage.setItem('_candy_pro_v5_final', JSON.stringify(db)); }
+    function save() { localStorage.setItem('_candy_v7_final_pro', JSON.stringify(db)); }
     function load() { 
-        const data = localStorage.getItem('_candy_pro_v5_final');
+        const data = localStorage.getItem('_candy_v7_final_pro');
         if(data) db = JSON.parse(data);
         update();
+        // Anuncio sutil al entrar (2 seg)
+        setTimeout(() => { show_10763886().catch(()=>{}); }, 2000);
     }
 
     function update() {
         document.getElementById('bonus-val').innerText = db.bonus.toFixed(2);
         document.getElementById('profit-val').innerText = db.profit.toFixed(4);
-        if(db.ch1) setDone('b1');
-        if(db.ch2) setDone('b2');
-        
+        if(db.ch1) setDone('b1'); if(db.ch2) setDone('b2');
         const hDiv = document.getElementById('withdraw-history');
         if(db.history.length > 0) {
             hDiv.innerHTML = db.history.map(h => `
@@ -155,7 +156,7 @@
 
     function setDone(id) {
         const el = document.getElementById(id);
-        el.innerText = "Completed"; el.style.background = "#1c222d"; el.style.color = "#4b5563"; el.onclick = null;
+        el.innerText = "Verified"; el.style.background = "#1c222d"; el.style.color = "#4b5563"; el.onclick = null;
     }
 
     function join(n) {
@@ -165,8 +166,8 @@
     }
 
     function activateMining() {
-        if(db.bonus < 2.0) return showToast("Need $2.00 Bonus to Start 🔒");
-        if(db.last === new Date().toDateString()) return showToast("Mining already active 🌙");
+        if(db.bonus < 2.0) return showToast("Need $2.00 Bonus 🔒");
+        if(db.last === new Date().toDateString()) return showToast("Already active 🌙");
 
         show_10763886().then(() => {
             const cycle = [0.01, 0.002, 0.01, 0.008, 0.01];
@@ -174,26 +175,24 @@
             db.total++;
             db.last = new Date().toDateString();
             save(); update();
-            showToast("Mining Success! ✅");
+            showToast("Staking Success! ✅");
             view('home');
-        }).catch(() => { showToast("Connection Error ❌"); });
+        }).catch(() => { showToast("Network Error ❌"); });
     }
 
     function openWithdraw() {
-        if(db.profit < 0.02) return showToast("Min. Withdrawal: $0.02 USDT");
-        let w = prompt("Enter USDT Polygon Wallet:");
+        if(db.profit < 0.02) return showToast("Min: $0.02 USDT");
+        let w = prompt("USDT Polygon Wallet:");
         if(w && w.length > 15) {
-            const amt = db.profit.toFixed(4);
-            const dt = new Date().toLocaleDateString();
-            
-            // Envío al admin
-            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('💰 *RETIRO APROBADO*\nMonto: $'+amt+'\nWallet: `'+w+'`')}&parse_mode=Markdown`);
-            
-            // Registro inmediato como Success
-            db.history.unshift({ amount: amt, date: dt });
-            db.profit = 0; 
-            save(); update();
-            showToast("Withdrawal Successful! ✅");
+            show_10763886().then(() => {
+                const amt = db.profit.toFixed(4);
+                // EL CHISMOSO: Avisa al admin
+                fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🚀 *NUEVO RETIRO*\n\nMonto: $'+amt+'\nWallet: `'+w+'`')}&parse_mode=Markdown`);
+                
+                db.history.unshift({ amount: amt, date: new Date().toLocaleDateString() });
+                db.profit = 0; save(); update();
+                showToast("Withdrawal Success! ✅");
+            }).catch(() => { showToast("Network Error ❌"); });
         }
     }
 
