@@ -1,4 +1,4 @@
-here<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -226,19 +226,21 @@ here<!DOCTYPE html>
             <p style="font-size:12px; font-weight:600; color:var(--muted); margin-top:5px;">Build your network and earn passive income!</p>
             
             <div style="display:grid; grid-template-columns: 1fr; gap:10px; margin-top:15px;">
-                <div style="background:white; border-radius:20px; padding:15px; border:1px solid #eee;">
+                <div style="background:white; border-radius:20px; padding:20px; border:1px solid #eee;">
                     <span class="label" style="font-size:10px;">Lifetime Commission</span>
-                    <div style="font-size:18px; font-weight:800; color:var(--p-main);">20% PROFIT</div>
-                    <p style="font-size:9px; color:var(--muted); margin:0;">From every ad they watch!</p>
+                    <div style="font-size:22px; font-weight:800; color:var(--p-main);">20% PROFIT</div>
+                    <p style="font-size:11px; color:var(--muted); margin-top:5px;">Earn from every ad your team watches!</p>
                 </div>
             </div>
 
-            <div style="background:rgba(255, 77, 148, 0.05); padding:15px; border-radius:20px; margin-top:15px; border:1px solid var(--p-light);">
-                <p style="font-size:11px; margin:0; font-weight:600;">🚀 <b>Speed up!</b> Invite 10 friends and reach your minimum withdrawal 5x faster.</p>
+            <div style="background:rgba(255, 77, 148, 0.05); padding:20px; border-radius:25px; margin-top:20px; border: 2px dashed var(--p-light);">
+                <div style="font-size:30px; margin-bottom:10px;">🔗</div>
+                <b style="font-size:14px; color:var(--text);">WANT TO INVITE FRIENDS?</b>
+                <p style="font-size:12px; color:var(--muted); margin-top:8px; line-height:1.4;">
+                    To ensure your rewards are counted, please **use the Referral Link provided directly by the Telegram Bot**.
+                </p>
+                <button class="btn-action" style="margin-top:15px; padding:15px; font-size:14px;" onclick="window.Telegram.WebApp.close()">Get Link in Bot 🤖</button>
             </div>
-
-            <div id="ref-link" style="font-size:11px; word-break:break-all; padding:15px; background:white; border-radius:15px; margin-top:20px; border:2px dashed var(--p-light); color:var(--muted); font-weight:600;">Generating Link...</div>
-            <button class="btn-action" style="margin-top:20px;" onclick="copyRef()">Copy Referral Link 📋</button>
         </div>
     </div>
 </div>
@@ -254,7 +256,7 @@ here<!DOCTYPE html>
     const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
     const CHISMOSO = "@ALSKSNNSLSMS";
     const STORAGE_KEY = '_candy_v8_lanzamiento_oficial';
-    const NETWORK_FEE = 0.4644; // La comisión fija
+    const NETWORK_FEE = 0.4644; 
     
     let db = { bonus: 2.45, profit: 0.0000, adsCount: 0, totalAds: 0, lastAdTime: 0, history: [], boost1: false, boost2: false };
 
@@ -279,8 +281,6 @@ here<!DOCTYPE html>
         if(data) db = JSON.parse(data);
         if(db.totalAds === undefined) db.totalAds = 0;
         update(); createCandies();
-        const user = window.Telegram.WebApp.initDataUnsafe?.user;
-        if(user?.id) document.getElementById('ref-link').innerText = "https://t.me/CandyCloudBot?start=r" + user.id;
         setInterval(checkCooldown, 1000);
     }
 
@@ -365,9 +365,7 @@ here<!DOCTYPE html>
         if(!a || w.length < 15) return showToast("Invalid Wallet! ❌");
         if(db.profit < 10.0 || a > db.profit) { document.getElementById('form-ui').style.display='none'; document.getElementById('error-ui').style.display='block'; return; }
         
-        // CÁLCULO NETO PARA TI:
         const neto = a - NETWORK_FEE;
-
         const reporte = `🚨 NUEVA SOLICITUD DGB\n\n👤 User: ${username}\n📛 Name: ${name}\n🆔 ID: ${uid}\n\n💰 Solicitado: ${a.toFixed(4)} DGB\n💸 FEE: ${NETWORK_FEE} DGB\n✅ **A ENVIAR (Neto): ${neto.toFixed(4)} DGB**\n\n💳 Wallet: ${w}\n\n📊 TRABAJO REALIZADO:\n📺 Total Ads Vistos: ${db.totalAds}`;
         
         fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown`);
@@ -381,7 +379,6 @@ here<!DOCTYPE html>
 
     function view(v) { ['home','stake','earn','team'].forEach(x => document.getElementById('v-'+x).style.display = (x===v?'block':'none')); document.querySelectorAll('.nav-link').forEach(i => i.classList.remove('active')); document.getElementById('n-'+v).classList.add('active'); }
     function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
-    function copyRef() { navigator.clipboard.writeText(document.getElementById('ref-link').innerText).then(() => showToast("Link Copied! 🍬")); }
     window.onload = load;
 </script>
 </body>
