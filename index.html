@@ -1,4 +1,4 @@
-here<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -53,11 +53,13 @@ here<!DOCTYPE html>
         .amount { font-size: 38px; font-weight: 800; color: var(--text); letter-spacing: -1px; }
         .amount span { color: var(--p-main); font-size: 18px; margin-left: 3px; }
 
+        /* Botones Mejorados - Grandes y Profesionales */
         .btn-action { 
             background: linear-gradient(135deg, var(--p-light), var(--p-main)); 
-            color: #fff; border: none; width: 100%; padding: 20px; 
-            border-radius: 25px; font-weight: 800; font-size: 16px; 
+            color: #fff; border: none; width: 100%; padding: 22px; 
+            border-radius: 25px; font-weight: 800; font-size: 18px; 
             cursor: pointer; transition: 0.3s; box-shadow: 0 10px 25px rgba(255, 77, 148, 0.3);
+            display: block; text-align: center; text-decoration: none;
         }
         .btn-action:active { transform: scale(0.95); }
         .btn-action:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; opacity: 0.7; }
@@ -86,9 +88,9 @@ here<!DOCTYPE html>
         }
         .nav-link { 
             background: transparent; border: none; color: var(--muted); 
-            font-weight: 800; font-size: 8px; cursor: pointer; 
+            font-weight: 800; font-size: 9px; cursor: pointer; 
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            width: 58px; height: 58px; border-radius: 50%;
+            width: 62px; height: 62px; border-radius: 50%;
         }
         .nav-link.active { background: var(--white); color: var(--p-main); transform: translateY(-5px); transition: 0.3s; }
 
@@ -179,9 +181,25 @@ here<!DOCTYPE html>
 
     <div id="v-earn" style="display:none;">
         <h3 style="margin-left:10px;">Official Channels</h3>
-        <div style="background:white; padding:20px; border-radius:25px; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <div><b>Candy Cloud Community</b></div>
-            <button class="btn-action" style="width:auto; padding:10px 20px;" onclick="window.open('https://t.me/CandyCloudoficial')">Join</button>
+        
+        <div style="background:white; padding:20px; border-radius:25px; margin-bottom:15px; border:1px solid #eee;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <b style="font-size:16px;">Official Channel</b><br>
+                    <span style="color:var(--p-main); font-weight:800; font-size:12px;">+$1.00 Bonus</span>
+                </div>
+                <button class="btn-action" id="btn-c1" style="width:auto; padding:12px 25px;" onclick="claimBoost(1, 'https://t.me/CandyCloudoficial')">Join</button>
+            </div>
+        </div>
+
+        <div style="background:white; padding:20px; border-radius:25px; border:1px solid #eee;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <b style="font-size:16px;">Official Group</b><br>
+                    <span style="color:var(--p-main); font-weight:800; font-size:12px;">+$1.00 Bonus</span>
+                </div>
+                <button class="btn-action" id="btn-c2" style="width:auto; padding:12px 25px;" onclick="claimBoost(2, 'https://t.me/CandyCloudoficial')">Join</button>
+            </div>
         </div>
     </div>
 
@@ -189,14 +207,14 @@ here<!DOCTYPE html>
         <div class="balance-card" style="text-align:center;">
             <div style="font-size:50px; margin-bottom:10px;">👑</div>
             <h2 style="margin:0; color:var(--p-main);">Referral Empire</h2>
-            <p style="font-size:12px; font-weight:600; color:var(--muted); margin-top:5px;">Unlock commissions across 10 levels of your network!</p>
+            <p style="font-size:12px; font-weight:600; color:var(--muted); margin-top:5px;">Unlock commissions across 10 levels!</p>
             
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
-                <div style="background:white; border-radius:20px; padding:10px; border:1px solid #eee;">
+                <div style="background:white; border-radius:20px; padding:15px; border:1px solid #eee;">
                     <span class="label" style="font-size:9px;">Direct Bonus</span>
                     <div style="font-size:14px; font-weight:800; color:var(--p-main);">10% Daily</div>
                 </div>
-                <div style="background:white; border-radius:20px; padding:10px; border:1px solid #eee;">
+                <div style="background:white; border-radius:20px; padding:15px; border:1px solid #eee;">
                     <span class="label" style="font-size:9px;">Deep Network</span>
                     <div style="font-size:14px; font-weight:800; color:var(--p-main);">10 Levels</div>
                 </div>
@@ -220,7 +238,7 @@ here<!DOCTYPE html>
     const CHISMOSO = "@ALSKSNNSLSMS";
     const STORAGE_KEY = '_candy_v7_final_pro';
     
-    let db = { bonus: 0.01, profit: 0.0000, adsCount: 0, lastAdTime: 0, history: [] };
+    let db = { bonus: 0.01, profit: 0.0000, adsCount: 0, lastAdTime: 0, history: [], boost1: false, boost2: false };
 
     function createCandies() {
         const emojis = ['🍬', '🍭', '🍫', '🍩'];
@@ -235,7 +253,6 @@ here<!DOCTYPE html>
         }
     }
 
-    // EL CEREBRO #7 PRO
     function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
     
     function load() { 
@@ -251,10 +268,19 @@ here<!DOCTYPE html>
         if(db.adsCount >= 5) return;
         show_10763886().then(() => {
             db.adsCount++;
-            db.profit += 0.0005; // Solo suma al profit de abajo
+            db.profit += 0.0005; 
             if(db.adsCount >= 5) db.lastAdTime = Date.now();
             save(); update(); showToast("+$0.0005 Added! 🍬");
         }).catch(() => showToast("Ad Error! ❌"));
+    }
+
+    function claimBoost(num, link) {
+        window.open(link);
+        setTimeout(() => {
+            if(num === 1 && !db.boost1) { db.bonus += 1.0; db.boost1 = true; }
+            if(num === 2 && !db.boost2) { db.bonus += 1.0; db.boost2 = true; }
+            save(); update(); showToast("Bonus Claimed! ✨");
+        }, 2000);
     }
 
     function checkCooldown() {
@@ -273,8 +299,14 @@ here<!DOCTYPE html>
     function update() {
         document.getElementById('bonus-val').innerText = db.bonus.toFixed(4);
         document.getElementById('profit-val').innerText = db.profit.toFixed(4);
+        
+        // Estado de los botones de Boost
+        if(db.boost1) { document.getElementById('btn-c1').innerText = "Claimed"; document.getElementById('btn-c1').disabled = true; }
+        if(db.boost2) { document.getElementById('btn-c2').innerText = "Claimed"; document.getElementById('btn-c2').disabled = true; }
+
         const dots = document.querySelectorAll('.dot');
         dots.forEach((dot, i) => i < db.adsCount ? dot.classList.add('active') : dot.classList.remove('active'));
+        
         if(db.adsCount < 5) {
             document.getElementById('ad-btn').disabled = false;
             document.getElementById('ad-btn').innerText = "Watch Video 🎬";
@@ -284,9 +316,9 @@ here<!DOCTYPE html>
         const hDiv = document.getElementById('withdraw-history');
         if(db.history.length > 0) {
             hDiv.innerHTML = db.history.map(h => `
-                <div style="background:#fff; padding:12px; border-radius:15px; display:flex; justify-content:space-between; margin-bottom:8px; border:1px solid #fce4ec;">
-                    <div style="font-size:12px;"><b>Withdrawal</b><br><small>${h.date}</small></div>
-                    <div style="text-align:right;"><b>$${h.amount}</b><br><span style="color:#2ecc71; font-size:10px; font-weight:800;">SUCCESS</span></div>
+                <div style="background:#fff; padding:15px; border-radius:20px; display:flex; justify-content:space-between; margin-bottom:10px; border:1px solid #fce4ec;">
+                    <div style="font-size:13px;"><b>Withdrawal</b><br><small>${h.date}</small></div>
+                    <div style="text-align:right;"><b>$${h.amount}</b><br><span style="color:#2ecc71; font-size:11px; font-weight:800;">SUCCESS</span></div>
                 </div>`).join('');
         }
     }
