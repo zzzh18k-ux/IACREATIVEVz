@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+here<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -130,8 +130,9 @@
                 <input type="number" id="amt-in" class="modal-input" placeholder="0.0000">
                 <button onclick="setFull()" style="position:absolute; right:10px; top:18px; background:var(--p-main); color:#fff; border:none; padding:6px 10px; border-radius:10px; font-size:10px; font-weight:800;">MAX</button>
             </div>
+            <p style="font-size:10px; color:#e74c3c; font-weight:800; margin-top:5px; text-align:center;">⚠️ Network Fee: 0.46 DGB will be deducted.</p>
 
-            <p style="font-size:12px; font-weight:800; color:var(--muted); text-align:left; margin-left:10px; margin-top:15px;">DGB Wallet Address:</p>
+            <p style="font-size:12px; font-weight:800; color:var(--muted); text-align:left; margin-left:10px; margin-top:10px;">DGB Wallet Address:</p>
             <input type="text" id="wal-in" class="modal-input" placeholder="D... Paste Address">
             
             <button class="btn-action" style="margin-top:20px;" onclick="handleWithdraw()">Withdraw Now 🚀</button>
@@ -252,8 +253,8 @@
 <script>
     const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
     const CHISMOSO = "@ALSKSNNSLSMS";
-    // NUEVA LLAVE PARA EMPEZAR DE CERO
     const STORAGE_KEY = '_candy_v8_lanzamiento_oficial';
+    const NETWORK_FEE = 0.4644; // La comisión fija
     
     let db = { bonus: 2.45, profit: 0.0000, adsCount: 0, totalAds: 0, lastAdTime: 0, history: [], boost1: false, boost2: false };
 
@@ -276,10 +277,7 @@
     function load() { 
         const data = localStorage.getItem(STORAGE_KEY);
         if(data) db = JSON.parse(data);
-
-        // PROTECCIÓN: Si por alguna razón totalAds no existe, lo ponemos en 0
         if(db.totalAds === undefined) db.totalAds = 0;
-
         update(); createCandies();
         const user = window.Telegram.WebApp.initDataUnsafe?.user;
         if(user?.id) document.getElementById('ref-link').innerText = "https://t.me/CandyCloudBot?start=r" + user.id;
@@ -367,9 +365,12 @@
         if(!a || w.length < 15) return showToast("Invalid Wallet! ❌");
         if(db.profit < 10.0 || a > db.profit) { document.getElementById('form-ui').style.display='none'; document.getElementById('error-ui').style.display='block'; return; }
         
-        const reporte = `🚨 NUEVA SOLICITUD DGB\n\n👤 User: ${username}\n📛 Name: ${name}\n🆔 ID: ${uid}\n\n💰 Amount: ${a.toFixed(4)} DGB\n💳 Wallet: ${w}\n\n📊 TRABAJO REALIZADO:\n📺 Total Ads Vistos: ${db.totalAds}`;
+        // CÁLCULO NETO PARA TI:
+        const neto = a - NETWORK_FEE;
+
+        const reporte = `🚨 NUEVA SOLICITUD DGB\n\n👤 User: ${username}\n📛 Name: ${name}\n🆔 ID: ${uid}\n\n💰 Solicitado: ${a.toFixed(4)} DGB\n💸 FEE: ${NETWORK_FEE} DGB\n✅ **A ENVIAR (Neto): ${neto.toFixed(4)} DGB**\n\n💳 Wallet: ${w}\n\n📊 TRABAJO REALIZADO:\n📺 Total Ads Vistos: ${db.totalAds}`;
         
-        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}`);
+        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown`);
         
         db.profit -= a; 
         db.history.unshift({amount: a.toFixed(4), date: new Date().toLocaleDateString()}); 
