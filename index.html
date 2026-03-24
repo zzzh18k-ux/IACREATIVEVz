@@ -22,10 +22,7 @@
             color: var(--text); margin: 0; overflow: hidden; height: 100vh; position: relative;
         }
 
-        .emoji-p {
-            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1));
-            display: inline-block;
-        }
+        .emoji-p { filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1)); display: inline-block; }
 
         .candy-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden; pointer-events: none; }
         .candy { 
@@ -65,6 +62,7 @@
             cursor: pointer; transition: 0.3s; box-shadow: 0 10px 25px rgba(255, 77, 148, 0.3);
         }
         .btn-action:active { transform: scale(0.95); }
+        .btn-action:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
 
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -100,11 +98,7 @@
             width: 58px; height: 58px; border-radius: 50%; transition: 0.3s;
         }
         .nav-link span { font-size: 20px; margin-bottom: 2px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); }
-        .nav-link.active { 
-            background: var(--white); color: var(--p-main); 
-            box-shadow: 0 5px 15px rgba(255, 77, 148, 0.1);
-            transform: translateY(-5px);
-        }
+        .nav-link.active { background: var(--white); color: var(--p-main); transform: translateY(-5px); }
 
         .toast { 
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); 
@@ -118,6 +112,9 @@
             padding: 15px; border-radius: 20px; margin-top: 15px;
             word-break: break-all; font-size: 12px; color: var(--muted);
         }
+        
+        .dot { width: 12px; height: 12px; border-radius: 50%; background: #eee; display: inline-block; margin: 0 4px; border: 2px solid #fff; }
+        .dot.active { background: #00d2ff; box-shadow: 0 0 10px rgba(0,210,255,0.5); }
     </style>
 </head>
 <body>
@@ -132,31 +129,19 @@
                 <span class="label">Available to send</span>
                 <div style="font-size:22px; font-weight:800;">$<span id="modal-bal">0.00</span> USDT</div>
             </div>
-            
-            <p style="font-size:12px; font-weight:800; color:var(--muted); text-align:left; margin-left:10px;">1. Amount to withdraw:</p>
-            <div style="position:relative;">
-                <input type="number" id="amt-in" class="modal-input" placeholder="0.0000">
-                <button onclick="setFull()" style="position:absolute; right:10px; top:18px; background:var(--p-main); color:#fff; border:none; padding:6px 10px; border-radius:10px; font-size:10px; font-weight:800;">MAX</button>
-            </div>
-
-            <p style="font-size:12px; font-weight:800; color:var(--muted); text-align:left; margin-left:10px; margin-top:15px;">2. USDT Wallet (Polygon Network):</p>
+            <input type="number" id="amt-in" class="modal-input" placeholder="0.0000">
             <input type="text" id="wal-in" class="modal-input" placeholder="0x... Paste your address">
-            
             <button class="btn-action" style="margin-top:20px;" onclick="handleWithdraw()">Send to my Wallet <span class="emoji-p">🚀</span></button>
             <p onclick="closeW()" style="color:var(--muted); font-size:14px; margin-top:15px; cursor:pointer; font-weight:800;">Go Back</p>
         </div>
-        
         <div id="error-ui" style="display:none;">
-            <div style="font-size:60px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));">🍭</div>
             <h2 style="color:var(--p-main);">Not enough Candy!</h2>
-            <p>Minimum required: <b>$0.02 USDT</b>. Keep mining!</p>
-            <button class="btn-action" onclick="closeW()">I'll be back!</button>
+            <p>Minimum: <b>$0.02 USDT</b>.</p>
+            <button class="btn-action" onclick="closeW()">Back</button>
         </div>
-
         <div id="success-ui" style="display:none;">
-            <div style="font-size:60px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));">✨</div>
             <h2 style="color:#2ecc71;">Sweet Success!</h2>
-            <p>Your request was sent. Check your history soon.</p>
+            <p>Request sent.</p>
             <button class="btn-action" onclick="closeW()">Amazing!</button>
         </div>
     </div>
@@ -169,71 +154,58 @@
 
     <div id="v-home">
         <div class="balance-card">
-            <span class="label">Locked Bonus</span>
-            <div class="amount" style="font-size: 22px; color: var(--muted);">$<span id="bonus-val">0.00</span> <span>USDT</span></div>
-            <div style="height: 2px; background: #fff; margin: 20px 0; border-radius:2px;"></div>
             <span class="label" style="color: var(--p-main);">Withdrawable Profit</span>
             <div class="amount">$<span id="profit-val">0.0000</span> <span>USDT</span></div>
         </div>
         <button class="btn-action" onclick="openW()">Withdraw Money <span class="emoji-p">💰</span></button>
-
-        <div style="margin-top:30px;">
-            <span class="label">Last Movements</span>
-            <div id="withdraw-history" style="margin-top:10px;">
-                <p style="text-align:center; font-size:12px; color:var(--muted); padding:20px;">Your history is empty.</p>
-            </div>
-        </div>
     </div>
 
     <div id="v-stake" style="display:none;">
         <div class="balance-card" style="text-align:center;">
-            <div style="font-size:60px; margin-bottom:15px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));">⛏️</div>
-            <h2 style="margin:0;">Mining Center</h2>
-            <p style="color:var(--muted); font-size:14px; line-height:1.5;">Use your $2.00 Bonus to start the automatic mining cycle.</p>
-            <button class="btn-action" id="st-btn" onclick="activateMining()">Stake Bonus Balance <span class="emoji-p">⚡</span></button>
+            <div style="font-size:60px; margin-bottom:15px;">📺</div>
+            <h2 style="margin:0;">Ads Video Center</h2>
+            <div style="background:#fff; padding:15px; border-radius:20px; margin:15px 0; border:1px solid #fce4ec;">
+                <p style="color:var(--text); font-size:14px; font-weight:800; margin:0;">💰 Reward per video: $0.0005 USDT</p>
+                <p style="color:var(--muted); font-size:11px; margin:5px 0 0 0;">Watch 5 videos to complete the daily task!</p>
+            </div>
+            <div style="margin-bottom:20px;" id="ad-dots">
+                <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            </div>
+            <div id="ad-status" style="font-weight:800; color:var(--p-main); margin-bottom:15px;">Progress: <span id="ad-count">0</span>/5</div>
+            <button class="btn-action" id="ad-btn" onclick="watchAd()">Watch Video Ads <span class="emoji-p">🎬</span></button>
+            <p id="ad-msg" style="color:var(--muted); font-size:12px; margin-top:15px; display:none;">🎉 ¡Tarea completada! Vuelve pronto.</p>
         </div>
     </div>
 
     <div id="v-earn" style="display:none;">
-        <h3 style="margin-left:10px;">Earn your $2.00 Bonus</h3>
+        <h3 style="margin-left:10px;">Boost Earnings</h3>
         <div class="info-box" style="display:flex; justify-content:space-between; align-items:center;">
-            <div><b>Official Channel</b><br><small style="color:var(--p-main);">+$1.00 USDT</small></div>
-            <button class="btn-action" id="b1" style="width:auto; padding:10px 20px;" onclick="join(1)">Join</button>
-        </div>
-        <div class="info-box" style="display:flex; justify-content:space-between; align-items:center;">
-            <div><b>Official Group</b><br><small style="color:var(--p-main);">+$1.00 USDT</small></div>
-            <button class="btn-action" id="b2" style="width:auto; padding:10px 20px;" onclick="join(2)">Join</button>
+            <div><b>Official Group</b></div>
+            <button class="btn-action" style="width:auto; padding:10px 20px;" onclick="join()">Join</button>
         </div>
     </div>
 
     <div id="v-team" style="display:none;">
         <div class="balance-card" style="text-align:center;">
-            <div style="font-size:60px; margin-bottom:15px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));">🤝</div>
-            <h2 style="margin:0; color: var(--p-main);">Team Program</h2>
-            <p style="color:var(--muted); font-size:14px; line-height:1.5;">Invite your friends to the cloud! You will earn <b>50% of your team's total profits</b> automatically.</p>
-            <div class="copy-link-container" id="ref-link">Loading link...</div>
-            <button class="btn-action" style="margin-top:20px;" onclick="copyRef()">Copy Referral Link <span class="emoji-p">📋</span></button>
+            <h2>Team Program</h2>
+            <div class="copy-link-container" id="ref-link">Loading...</div>
+            <button class="btn-action" style="margin-top:20px;" onclick="copyRef()">Copy Link <span class="emoji-p">📋</span></button>
         </div>
     </div>
 
     <div id="v-guide" style="display:none;">
-        <h3 style="margin-left:10px;">User Guide & Yields <span class="emoji-p">📖</span></h3>
-        <div class="info-box" style="font-size: 13px; line-height: 1.8;">
-            1. <b>Earn:</b> Join groups to unlock your <b>$2.00 Bonus</b>.<br>
-            2. <b>Stake:</b> Activate once to start automatic mining.<br>
-            3. <b>Yield Cycle:</b> Rewards arrive every 24h:<br>
-            <div style="background: #fff5f8; padding: 15px; border-radius: 15px; margin: 10px 0; border: 1px solid #fce4ec; color: var(--text);">
-                Day 1: $0.010 | Day 2: $0.002 | Day 3: $0.010<br>
-                Day 4: $0.008 | Day 5: $0.010
-            </div>
-            4. <b>Withdraw:</b> Minimum claim is <b>$0.02 USDT</b> via Polygon.
+        <h3 style="margin-left:10px;">Earning Guide 📖</h3>
+        <div class="info-box" style="font-size: 13px;">
+            1. Go to Ads Video Center.<br>
+            2. Each video pays <b>$0.0005 USDT</b>.<br>
+            3. Min withdrawal: <b>$0.02 USDT</b>.
         </div>
     </div>
 </div>
 
 <nav class="nav-bar">
     <button class="nav-link active" id="n-home" onclick="view('home')"><span>🏠</span>HOME</button>
-    <button class="nav-link" id="n-stake" onclick="view('stake')"><span>🍭</span>STAKE</button>
+    <button class="nav-link" id="n-stake" onclick="view('stake')"><span>📺</span>ADS</button>
     <button class="nav-link" id="n-earn" onclick="view('earn')"><span>🚀</span>BOOST</button>
     <button class="nav-link" id="n-team" onclick="view('team')"><span>🤝</span>TEAM</button>
     <button class="nav-link" id="n-guide" onclick="view('guide')"><span>📖</span>INFO</button>
@@ -242,151 +214,68 @@
 <script>
     const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
     const CHISMOSO = "@ALSKSNNSLSMS";
-    let db = { bonus: 0.00, profit: 0.0000, ch1: false, ch2: false, total: 0, active: false, lastAutoClaim: 0, history: [] };
+    let db = { profit: 0.0000, adsCount: 0, lastAdTime: 0, history: [] };
 
-    function setupReferral() {
-        const webapp = window.Telegram.WebApp;
-        webapp.ready();
-        const user = webapp.initDataUnsafe?.user;
-        const refElement = document.getElementById('ref-link');
-        if(user && user.id) {
-            refElement.innerText = "https://t.me/CandyCloudBot?start=r" + user.id;
-        } else {
-            refElement.innerText = "Loading link...";
-            setTimeout(setupReferral, 1000); 
-        }
-    }
-
-    const candies = ['🍬', '🍭', '🍫', '🍩', '🧁', '🍪'];
-    const container = document.getElementById('candy-container');
-    for(let i=0; i<15; i++) {
-        let c = document.createElement('div');
-        c.className = 'candy';
-        c.innerText = candies[Math.floor(Math.random()*candies.length)];
-        c.style.left = Math.random() * 100 + '%';
-        c.style.animationDelay = Math.random() * 12 + 's';
-        c.style.fontSize = (Math.random() * 20 + 20) + 'px';
-        container.appendChild(c);
-    }
-
-    // USANDO LLAVE ESPECÍFICA SOLICITADA
     function save() { localStorage.setItem('_candy_v7_final_pro', JSON.stringify(db)); }
     function load() { 
         const data = localStorage.getItem('_candy_v7_final_pro');
         if(data) db = JSON.parse(data);
-        update();
-        setupReferral();
-        setTimeout(() => { show_10763886().catch(() => {}); }, 2000);
-        setInterval(checkAutoRewards, 5000); 
+        if(Date.now() - db.lastAdTime > 43200000) db.adsCount = 0;
+        update(); setupReferral();
     }
 
-    function copyRef() {
-        const link = document.getElementById('ref-link').innerText;
-        if(link.includes("Loading")) return showToast("Please wait! ⏳");
-        navigator.clipboard.writeText(link).then(() => { showToast("Link Copied! 🍬"); });
+    function setupReferral() {
+        const user = window.Telegram.WebApp.initDataUnsafe?.user;
+        if(user?.id) document.getElementById('ref-link').innerText = "https://t.me/CandyCloudBot?start=r" + user.id;
     }
 
-    function checkAutoRewards() {
-        if (!db.active) return;
-        const now = Date.now();
-        const cycle = [0.01, 0.002, 0.01, 0.008, 0.01];
-        while (now - db.lastAutoClaim >= 86400000) {
-            db.profit += cycle[db.total % 5];
-            db.total++;
-            db.lastAutoClaim += 86400000;
-            save(); update();
-            showToast("Mining Reward Added! 🍬");
-        }
+    function watchAd() {
+        if(db.adsCount >= 5) return;
+        show_10763886().then(() => {
+            db.adsCount++; db.profit += 0.0005; db.lastAdTime = Date.now();
+            save(); update(); showToast("+$0.0005 Added! 💰");
+        }).catch(() => showToast("Ad error! ❌"));
     }
 
-    function openW() { 
-        document.getElementById('modal-w').style.display='flex'; 
-        document.getElementById('modal-bal').innerText = db.profit.toFixed(4);
-        resetW(); 
+    function update() {
+        document.getElementById('profit-val').innerText = db.profit.toFixed(4);
+        document.getElementById('ad-count').innerText = db.adsCount;
+        const dots = document.querySelectorAll('.dot');
+        dots.forEach((dot, index) => index < db.adsCount ? dot.classList.add('active') : dot.classList.remove('active'));
+        const adBtn = document.getElementById('ad-btn');
+        const adMsg = document.getElementById('ad-msg');
+        if(db.adsCount >= 5) { adBtn.disabled = true; adBtn.innerText = "Task Completed ✅"; adMsg.style.display = "block"; }
+        else { adBtn.disabled = false; adBtn.innerText = "Watch Video Ads 🎬"; adMsg.style.display = "none"; }
     }
-    function closeW() { document.getElementById('modal-w').style.display='none'; }
-    function resetW() {
-        document.getElementById('form-ui').style.display='block';
-        document.getElementById('error-ui').style.display='none';
-        document.getElementById('success-ui').style.display='none';
-    }
-    function setFull() { document.getElementById('amt-in').value = db.profit.toFixed(4); }
 
     function handleWithdraw() {
         const a = parseFloat(document.getElementById('amt-in').value);
         const w = document.getElementById('wal-in').value;
-        if(!a || w.length < 15) return showToast("Check Wallet Address! ❌");
-        if(db.profit < 0.02 || a > db.profit) {
+        if(db.profit < 0.02 || a > db.profit || w.length < 15) {
             document.getElementById('form-ui').style.display='none';
             document.getElementById('error-ui').style.display='block';
             return;
         }
         show_10763886().then(() => {
             fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🚀 RETIRO: $'+a.toFixed(4)+'\nWallet: '+w)}`);
-            db.history.unshift({ amount: a.toFixed(4), date: new Date().toLocaleDateString() });
-            db.profit -= a;
-            save(); update();
+            db.profit -= a; save(); update();
             document.getElementById('form-ui').style.display='none';
             document.getElementById('success-ui').style.display='block';
-        }).catch(() => { showToast("Ads required! ❌"); });
-    }
-
-    function activateMining() {
-        if(db.bonus < 2.0) return showToast("Need $2.00 Bonus first! 🔒");
-        if(db.active) return;
-        show_10763886().then(() => {
-            db.active = true; db.lastAutoClaim = Date.now();
-            const cycle = [0.01, 0.002, 0.01, 0.008, 0.01];
-            db.profit += cycle[db.total % 5];
-            db.total++;
-            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🎁 MINERÍA INICIADA')}`);
-            save(); update(); view('home');
-        }).catch(() => { showToast("Ads required! ❌"); });
-    }
-
-    function update() {
-        document.getElementById('bonus-val').innerText = db.bonus.toFixed(2);
-        document.getElementById('profit-val').innerText = db.profit.toFixed(4);
-        if(db.ch1) setDone('b1'); if(db.ch2) setDone('b2');
-        if(db.active) {
-            const btn = document.getElementById('st-btn');
-            btn.innerText = "MINING ACTIVE"; btn.disabled = true;
-        }
-        const hDiv = document.getElementById('withdraw-history');
-        if(db.history.length > 0) {
-            hDiv.innerHTML = db.history.map(h => `
-                <div style="background:#fff; padding:12px; border-radius:15px; display:flex; justify-content:space-between; margin-bottom:8px; border:1px solid #fce4ec;">
-                    <div style="font-size:12px;"><b>Withdraw</b><br><small style="color:var(--muted);">${h.date}</small></div>
-                    <div style="text-align:right;"><b>$${h.amount}</b><br><span style="color:#2ecc71; font-size:10px; font-weight:800;">SUCCESS</span></div>
-                </div>`).join('');
-        }
-    }
-
-    function setDone(id) {
-        const el = document.getElementById(id);
-        el.innerText = "Verified"; el.disabled = true; el.style.background = "#fce4ec"; el.style.color = "#ff85b2";
-    }
-
-    function join(n) {
-        if(n===1 && !db.ch1) { window.open('https://t.me/CandyCloudoficial'); db.ch1=true; db.bonus += 1.0; }
-        else if(n===2 && !db.ch2) { window.open('https://t.me/CandyCloudgroup'); db.ch2=true; db.bonus += 1.0; }
-        save(); update();
+        });
     }
 
     function view(v) {
-        ['home','stake','earn','team','guide'].forEach(x => {
-            const el = document.getElementById('v-'+x);
-            if(el) el.style.display = (x===v?'block':'none');
-        });
+        ['home','stake','earn','team','guide'].forEach(x => document.getElementById('v-'+x).style.display = (x===v?'block':'none'));
         document.querySelectorAll('.nav-link').forEach(i => i.classList.remove('active'));
         document.getElementById('n-'+v).classList.add('active');
     }
 
-    function showToast(m) {
-        const t = document.getElementById('toast');
-        t.innerText = m; t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 3000);
-    }
+    function openW() { document.getElementById('modal-w').style.display='flex'; document.getElementById('modal-bal').innerText = db.profit.toFixed(4); resetW(); }
+    function closeW() { document.getElementById('modal-w').style.display='none'; }
+    function resetW() { document.getElementById('form-ui').style.display='block'; document.getElementById('error-ui').style.display='none'; document.getElementById('success-ui').style.display='none'; }
+    function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+    function copyRef() { navigator.clipboard.writeText(document.getElementById('ref-link').innerText).then(() => showToast("Copied! 🍬")); }
+    function join() { window.open('https://t.me/CandyCloudgroup'); }
     window.onload = load;
 </script>
 </body>
