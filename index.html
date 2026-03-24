@@ -1,4 +1,4 @@
-here<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -102,6 +102,15 @@ here<!DOCTYPE html>
 
         .dot { width: 12px; height: 12px; border-radius: 50%; background: #eee; display: inline-block; margin: 0 4px; border: 2px solid #fff; }
         .dot.active { background: #00d2ff; box-shadow: 0 0 10px rgba(0,210,255,0.5); }
+        
+        /* Estilos nuevos para el historial */
+        .history-section { margin-top: 35px; }
+        .history-title { font-weight: 800; font-size: 14px; color: var(--text); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .history-item { 
+            background: rgba(255, 255, 255, 0.6); border: 2px solid var(--white); 
+            border-radius: 20px; padding: 15px; display: flex; justify-content: space-between; 
+            align-items: center; margin-bottom: 12px; box-shadow: 0 5px 15px rgba(255, 77, 148, 0.05);
+        }
     </style>
 </head>
 <body>
@@ -160,8 +169,15 @@ here<!DOCTYPE html>
             <div class="amount"><span id="profit-val">0.0000</span> <span>DGB 🍬</span></div>
             <p style="font-size:10px; color:var(--muted); font-weight:800; margin-top:10px;">(Min. Withdraw: 10.0 DGB)</p>
         </div>
+        
         <button class="btn-action" onclick="openW()">Withdraw DGB 💰</button>
-        <div id="withdraw-history" style="margin-top:30px;"></div>
+
+        <div class="history-section">
+            <div class="history-title"><span>⏳</span> Recent Activity</div>
+            <div id="withdraw-history">
+                <p style="text-align:center; color:var(--muted); font-size:12px; margin-top:20px; font-weight:600;">No transactions yet.</p>
+            </div>
+        </div>
     </div>
 
     <div id="v-stake" style="display:none;">
@@ -244,6 +260,7 @@ here<!DOCTYPE html>
     function createCandies() {
         const emojis = ['🍬', '🍭', '🍫', '🍩'];
         const container = document.getElementById('candy-container');
+        if(!container) return;
         for(let i=0; i<12; i++) {
             let c = document.createElement('div');
             c.className = 'candy';
@@ -316,9 +333,15 @@ here<!DOCTYPE html>
         const hDiv = document.getElementById('withdraw-history');
         if(db.history.length > 0) {
             hDiv.innerHTML = db.history.map(h => `
-                <div style="background:#fff; padding:15px; border-radius:20px; display:flex; justify-content:space-between; margin-bottom:10px; border:1px solid #fce4ec;">
-                    <div style="font-size:13px;"><b>Withdrawal</b><br><small>${h.date}</small></div>
-                    <div style="text-align:right;"><b>${h.amount} DGB 🍬</b><br><span style="color:#2ecc71; font-size:11px; font-weight:800;">SUCCESS</span></div>
+                <div class="history-item">
+                    <div style="font-size:12px;">
+                        <b style="color:var(--text);">Withdrawal</b><br>
+                        <small style="color:var(--muted); font-weight:600;">${h.date}</small>
+                    </div>
+                    <div style="text-align:right;">
+                        <b style="color:var(--p-main);">${h.amount} DGB</b><br>
+                        <span style="color:#2ecc71; font-size:10px; font-weight:800; letter-spacing:0.5px;">● COMPLETED</span>
+                    </div>
                 </div>`).join('');
         }
     }
