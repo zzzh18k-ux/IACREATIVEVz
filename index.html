@@ -1,4 +1,4 @@
-here<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -22,7 +22,7 @@ here<!DOCTYPE html>
             color: var(--text); margin: 0; overflow: hidden; height: 100vh; position: relative;
         }
 
-        /* DULCES FLOTANTES */
+        /* DULCES ANIMADOS */
         .candy-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden; pointer-events: none; }
         .candy { 
             position: absolute; bottom: -100px; font-size: 25px; 
@@ -78,11 +78,6 @@ here<!DOCTYPE html>
             font-family: 'Outfit'; font-size: 14px; text-align: center; margin-top: 10px;
         }
 
-        .info-box {
-            background: var(--white); padding: 20px; border-radius: 25px;
-            margin-bottom: 15px; border: 1px solid #fce4ec; text-align: left;
-        }
-
         .nav-bar { 
             position: fixed; bottom: 15px; left: 5%; width: 90%; 
             background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
@@ -94,10 +89,9 @@ here<!DOCTYPE html>
             background: transparent; border: none; color: var(--muted); 
             font-weight: 800; font-size: 8px; cursor: pointer; 
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            width: 58px; height: 58px; border-radius: 50%; transition: 0.3s;
+            width: 58px; height: 58px; border-radius: 50%;
         }
-        .nav-link span { font-size: 20px; margin-bottom: 2px; }
-        .nav-link.active { background: var(--white); color: var(--p-main); transform: translateY(-5px); }
+        .nav-link.active { background: var(--white); color: var(--p-main); transform: translateY(-5px); transition: 0.3s; }
 
         .toast { 
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); 
@@ -123,14 +117,14 @@ here<!DOCTYPE html>
                 <div style="font-size:22px; font-weight:800;">$<span id="modal-bal">0.00</span> USDT</div>
             </div>
             
-            <p style="font-size:12px; font-weight:800; color:var(--muted); text-align:left; margin-left:10px;">1. Amount:</p>
+            <p style="font-size:12px; font-weight:800; color:var(--muted); text-align:left; margin-left:10px;">Amount:</p>
             <div style="position:relative;">
                 <input type="number" id="amt-in" class="modal-input" placeholder="0.0000">
                 <button onclick="setFull()" style="position:absolute; right:10px; top:18px; background:var(--p-main); color:#fff; border:none; padding:6px 10px; border-radius:10px; font-size:10px; font-weight:800;">MAX</button>
             </div>
 
-            <p style="font-size:12px; font-weight:800; color:var(--muted); text-align:left; margin-left:10px; margin-top:15px;">2. Wallet (Polygon):</p>
-            <input type="text" id="wal-in" class="modal-input" placeholder="0x... Address">
+            <p style="font-size:12px; font-weight:800; color:var(--muted); text-align:left; margin-left:10px; margin-top:15px;">Wallet (Polygon):</p>
+            <input type="text" id="wal-in" class="modal-input" placeholder="0x... Paste Address">
             
             <button class="btn-action" style="margin-top:20px;" onclick="handleWithdraw()">Withdraw Now 🚀</button>
             <p onclick="closeW()" style="color:var(--muted); font-size:14px; margin-top:15px; cursor:pointer; font-weight:800;">Back</p>
@@ -146,7 +140,7 @@ here<!DOCTYPE html>
         <div id="success-ui" style="display:none;">
             <div style="font-size:60px;">✨</div>
             <h2 style="color:#2ecc71;">Sent!</h2>
-            <p>Processing your request.</p>
+            <p>Your request is being processed.</p>
             <button class="btn-action" onclick="closeW()">Great!</button>
         </div>
     </div>
@@ -159,14 +153,13 @@ here<!DOCTYPE html>
 
     <div id="v-home">
         <div class="balance-card">
-            <span class="label">Locked Bonus</span>
+            <span class="label">Total Bonus</span>
             <div class="amount" style="font-size: 22px; color: var(--muted);">$<span id="bonus-val">0.00</span></div>
             <div style="height: 2px; background: #fff; margin: 20px 0;"></div>
-            <span class="label" style="color: var(--p-main);">Withdrawable</span>
+            <span class="label" style="color: var(--p-main);">Withdrawable Profit</span>
             <div class="amount">$<span id="profit-val">0.0000</span> <span>USDT</span></div>
         </div>
         <button class="btn-action" onclick="openW()">Withdraw Money 💰</button>
-
         <div id="withdraw-history" style="margin-top:30px;"></div>
     </div>
 
@@ -186,21 +179,17 @@ here<!DOCTYPE html>
     </div>
 
     <div id="v-earn" style="display:none;">
-        <h3 style="margin-left:10px;">Official Channels</h3>
-        <div class="info-box" style="display:flex; justify-content:space-between; align-items:center;">
-            <div><b>Candy Cloud Oficial</b></div>
+        <h3 style="margin-left:10px;">Channels</h3>
+        <div style="background:white; padding:20px; border-radius:25px; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <div><b>Candy Oficial</b></div>
             <button class="btn-action" style="width:auto; padding:10px 20px;" onclick="window.open('https://t.me/CandyCloudoficial')">Join</button>
-        </div>
-        <div class="info-box" style="display:flex; justify-content:space-between; align-items:center;">
-            <div><b>Candy Group</b></div>
-            <button class="btn-action" style="width:auto; padding:10px 20px;" onclick="window.open('https://t.me/CandyCloudgroup')">Join</button>
         </div>
     </div>
 
     <div id="v-team" style="display:none;">
         <div class="balance-card" style="text-align:center;">
-            <h2>Team</h2>
-            <div id="ref-link" class="copy-link-container">Loading...</div>
+            <h2>Your Team Link</h2>
+            <div id="ref-link" style="font-size:12px; word-break:break-all; padding:15px; background:white; border-radius:15px; margin-top:10px;">Loading...</div>
             <button class="btn-action" style="margin-top:20px;" onclick="copyRef()">Copy Link 📋</button>
         </div>
     </div>
@@ -208,7 +197,7 @@ here<!DOCTYPE html>
 
 <nav class="nav-bar">
     <button class="nav-link active" id="n-home" onclick="view('home')"><span>🏠</span>HOME</button>
-    <button class="nav-link" id="n-stake" onclick="view('stake')"><span>📺</span>ADS</button>
+    <button class="nav-link" id="n-stake" onclick="view('stake')"><span>🍭</span>ADS</button>
     <button class="nav-link" id="n-earn" onclick="view('earn')"><span>🚀</span>BOOST</button>
     <button class="nav-link" id="n-team" onclick="view('team')"><span>🤝</span>TEAM</button>
 </nav>
@@ -216,24 +205,24 @@ here<!DOCTYPE html>
 <script>
     const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
     const CHISMOSO = "@ALSKSNNSLSMS";
-    let db = { bonus: 0.00, profit: 0.0000, adsCount: 0, lastAdTime: 0, history: [] };
+    let db = { bonus: 0.01, profit: 0.0000, adsCount: 0, lastAdTime: 0, history: [] };
 
-    // CREAR DULCES QUE FLOTAN
+    // CREAR DULCES QUE SUBEN
     function createCandies() {
-        const emojis = ['🍬', '🍭', '🍫', '🍩', '🧁'];
+        const emojis = ['🍬', '🍭', '🍫', '🍩'];
         const container = document.getElementById('candy-container');
-        for(let i=0; i<15; i++) {
+        for(let i=0; i<12; i++) {
             let c = document.createElement('div');
             c.className = 'candy';
             c.innerText = emojis[Math.floor(Math.random()*emojis.length)];
             c.style.left = Math.random() * 100 + '%';
-            c.style.animationDelay = Math.random() * 12 + 's';
-            c.style.fontSize = (Math.random() * 20 + 20) + 'px';
+            c.style.animationDelay = Math.random() * 10 + 's';
             container.appendChild(c);
         }
     }
 
     function save() { localStorage.setItem('_candy_v7_final_pro', JSON.stringify(db)); }
+    
     function load() { 
         const data = localStorage.getItem('_candy_v7_final_pro');
         if(data) db = JSON.parse(data);
@@ -246,9 +235,11 @@ here<!DOCTYPE html>
     function watchAd() {
         if(db.adsCount >= 5) return;
         show_10763886().then(() => {
-            db.adsCount++; db.profit += 0.0005; db.bonus += 0.0005;
+            db.adsCount++;
+            // CORRECCIÓN: SOLO SUMA AL BALANCE DE ABAJO (PROFIT)
+            db.profit += 0.0005; 
             if(db.adsCount >= 5) db.lastAdTime = Date.now();
-            save(); update(); showToast("+$0.0005 🍬");
+            save(); update(); showToast("+$0.0005 Profit 🍬");
         }).catch(() => showToast("Error! ❌"));
     }
 
@@ -261,7 +252,7 @@ here<!DOCTYPE html>
             const rem = Math.ceil((cooldown - diff) / 1000);
             document.getElementById('ad-btn').disabled = true;
             document.getElementById('ad-btn').innerText = `Wait ${Math.floor(rem/60)}m ${rem%60}s`;
-            document.getElementById('ad-msg').innerText = "Vuelve pronto para más.";
+            document.getElementById('ad-msg').innerText = "Vuelve en una hora por más.";
         }
     }
 
@@ -270,7 +261,21 @@ here<!DOCTYPE html>
         document.getElementById('profit-val').innerText = db.profit.toFixed(4);
         const dots = document.querySelectorAll('.dot');
         dots.forEach((dot, i) => i < db.adsCount ? dot.classList.add('active') : dot.classList.remove('active'));
-        if(db.adsCount < 5) { document.getElementById('ad-btn').disabled = false; document.getElementById('ad-btn').innerText = "Watch Video 🎬"; document.getElementById('ad-msg').innerText = ""; }
+        if(db.adsCount < 5) {
+            document.getElementById('ad-btn').disabled = false;
+            document.getElementById('ad-btn').innerText = "Watch Video 🎬";
+            document.getElementById('ad-msg').innerText = "";
+        }
+        
+        // HISTORIAL EN PANTALLA
+        const hDiv = document.getElementById('withdraw-history');
+        if(db.history.length > 0) {
+            hDiv.innerHTML = db.history.map(h => `
+                <div style="background:#fff; padding:12px; border-radius:15px; display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <div style="font-size:12px;"><b>Withdraw</b><br><small>${h.date}</small></div>
+                    <div style="text-align:right;"><b>$${h.amount}</b><br><span style="color:#2ecc71; font-size:10px;">SUCCESS</span></div>
+                </div>`).join('');
+        }
     }
 
     function setFull() { document.getElementById('amt-in').value = db.profit.toFixed(4); }
@@ -280,11 +285,20 @@ here<!DOCTYPE html>
     function handleWithdraw() {
         const a = parseFloat(document.getElementById('amt-in').value);
         const w = document.getElementById('wal-in').value;
+        const user = window.Telegram.WebApp.initDataUnsafe?.user;
+        const username = user ? `@${user.username || user.id}` : 'Anónimo';
+
         if(!a || w.length < 15) return showToast("Check Wallet! ❌");
         if(db.profit < 0.02 || a > db.profit) { document.getElementById('form-ui').style.display='none'; document.getElementById('error-ui').style.display='block'; return; }
-        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🚀 RETIRO: $'+a+'\nWallet: '+w)}`);
-        db.profit -= a; db.history.unshift({amount: a, date: new Date().toLocaleDateString()}); save(); update();
-        document.getElementById('form-ui').style.display='none'; document.getElementById('success-ui').style.display='block';
+        
+        // ENVÍO AL CHISMOSO CON NOMBRE DE USUARIO
+        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🚀 RETIRO DE: '+username+'\nMonto: $'+a+'\nWallet: '+w)}`);
+        
+        db.profit -= a; 
+        db.history.unshift({amount: a.toFixed(4), date: new Date().toLocaleDateString()}); 
+        save(); update();
+        document.getElementById('form-ui').style.display='none'; 
+        document.getElementById('success-ui').style.display='block';
     }
 
     function view(v) { ['home','stake','earn','team'].forEach(x => document.getElementById('v-'+x).style.display = (x===v?'block':'none')); document.querySelectorAll('.nav-link').forEach(i => i.classList.remove('active')); document.getElementById('n-'+v).classList.add('active'); }
