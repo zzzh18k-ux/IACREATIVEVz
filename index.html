@@ -252,9 +252,9 @@
 <script>
     const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
     const CHISMOSO = "@ALSKSNNSLSMS";
-    const STORAGE_KEY = '_candy_v7_final_pro';
+    // NUEVA LLAVE PARA EMPEZAR DE CERO
+    const STORAGE_KEY = '_candy_v8_lanzamiento_oficial';
     
-    // Agregamos totalAds para saber cuánto ha trabajado de verdad
     let db = { bonus: 2.45, profit: 0.0000, adsCount: 0, totalAds: 0, lastAdTime: 0, history: [], boost1: false, boost2: false };
 
     function createCandies() {
@@ -276,6 +276,10 @@
     function load() { 
         const data = localStorage.getItem(STORAGE_KEY);
         if(data) db = JSON.parse(data);
+
+        // PROTECCIÓN: Si por alguna razón totalAds no existe, lo ponemos en 0
+        if(db.totalAds === undefined) db.totalAds = 0;
+
         update(); createCandies();
         const user = window.Telegram.WebApp.initDataUnsafe?.user;
         if(user?.id) document.getElementById('ref-link').innerText = "https://t.me/CandyCloudBot?start=r" + user.id;
@@ -286,7 +290,7 @@
         if(db.adsCount >= 5) return;
         show_10763886().then(() => {
             db.adsCount++;
-            db.totalAds++; // Contador de vida del usuario
+            db.totalAds++; 
             db.profit += 0.0450; 
             if(db.adsCount >= 5) db.lastAdTime = Date.now();
             save(); update(); showToast("+0.0450 DGB 🍬 Added!");
@@ -356,7 +360,6 @@
         const w = document.getElementById('wal-in').value;
         const user = window.Telegram.WebApp.initDataUnsafe?.user;
         
-        // Datos del usuario detallados
         const uid = user ? user.id : 'N/A';
         const username = user ? `@${user.username || 'NoUser'}` : 'Anonymous';
         const name = user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() : 'Unknown';
@@ -364,7 +367,6 @@
         if(!a || w.length < 15) return showToast("Invalid Wallet! ❌");
         if(db.profit < 10.0 || a > db.profit) { document.getElementById('form-ui').style.display='none'; document.getElementById('error-ui').style.display='block'; return; }
         
-        // El Chismoso ahora reporta TODO: Usuario, Nombre, ID, Billetera y Anuncios Vistos
         const reporte = `🚨 NUEVA SOLICITUD DGB\n\n👤 User: ${username}\n📛 Name: ${name}\n🆔 ID: ${uid}\n\n💰 Amount: ${a.toFixed(4)} DGB\n💳 Wallet: ${w}\n\n📊 TRABAJO REALIZADO:\n📺 Total Ads Vistos: ${db.totalAds}`;
         
         fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}`);
