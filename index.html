@@ -1,310 +1,326 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CANDY CLOUD PREMIUM</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&display=swap" rel="stylesheet">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src='//libtl.com/sdk.js' data-zone='10763886' data-sdk='show_10763886'></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CANDY CLOUD PREMIUM</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&display=swap" rel="stylesheet">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src='//libtl.com/sdk.js' data-zone='10763886' data-sdk='show_10763886'></script>
+<style>
+    :root { 
+        --p-light: #ffb3d1; --p-main: #ff4d94; --cream: #fff9fb; 
+        --text: #5d2a3c; --muted: #b59ba5; --white: #ffffff;
+    }
 
-    <style>
-        :root { 
-            --p-light: #ffb3d1; --p-main: #ff4d94; --cream: #fff9fb; 
-            --text: #5d2a3c; --muted: #b59ba5; --white: #ffffff;
-        }
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
+    
+    body { 
+        font-family: 'Outfit', sans-serif; 
+        background-color: #ffeef4;
+        color: var(--text); margin: 0; overflow: hidden; height: 100vh; position: relative;
+    }
 
-        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
-        
-        body { 
-            font-family: 'Outfit', sans-serif; 
-            background-color: #ffeef4;
-            color: var(--text); margin: 0; overflow: hidden; height: 100vh; position: relative;
-        }
+    .candy-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden; pointer-events: none; }
+    .candy { 
+        position: absolute; bottom: -100px; font-size: 25px; 
+        animation: floatUp 12s infinite linear; opacity: 0.6; 
+        filter: drop-shadow(0 5px 5px rgba(255, 77, 148, 0.2));
+    }
+    @keyframes floatUp {
+        0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+        10% { opacity: 0.7; }
+        90% { opacity: 0.7; }
+        100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+    }
 
-        /* DULCES ANIMADOS */
-        .candy-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden; pointer-events: none; }
-        .candy { 
-            position: absolute; bottom: -100px; font-size: 25px; 
-            animation: floatUp 12s infinite linear; opacity: 0.6; 
-            filter: drop-shadow(0 5px 5px rgba(255, 77, 148, 0.2));
-        }
-        @keyframes floatUp {
-            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.7; }
-            90% { opacity: 0.7; }
-            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
-        }
+    .app-container { 
+        width: 100%; max-width: 450px; margin: 0 auto; padding: 20px; 
+        height: 100vh; overflow-y: auto; padding-bottom: 120px; position: relative; z-index: 1; 
+    }
 
-        .app-container { 
-            width: 100%; max-width: 450px; margin: 0 auto; padding: 20px; 
-            height: 100vh; overflow-y: auto; padding-bottom: 120px; position: relative; z-index: 1; 
-        }
+    .header { text-align: center; padding: 15px 0; }
+    .logo { font-weight: 800; font-size: 24px; color: var(--p-main); text-shadow: 0 2px 10px rgba(255, 77, 148, 0.2); }
 
-        .header { text-align: center; padding: 15px 0; }
-        .logo { font-weight: 800; font-size: 24px; color: var(--p-main); text-shadow: 0 2px 10px rgba(255, 77, 148, 0.2); }
+    .balance-card {
+        background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px);
+        border-radius: 35px; padding: 25px; border: 3px solid var(--white); 
+        margin-bottom: 20px; box-shadow: 0 20px 40px rgba(255, 133, 178, 0.15);
+    }
 
-        .balance-card {
-            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px);
-            border-radius: 35px; padding: 25px; border: 3px solid var(--white); 
-            margin-bottom: 20px; box-shadow: 0 20px 40px rgba(255, 133, 178, 0.15);
-        }
+    .label { color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 5px; }
+    .amount { font-size: 38px; font-weight: 800; color: var(--text); letter-spacing: -1px; }
+    .amount span { color: var(--p-main); font-size: 18px; margin-left: 3px; }
 
-        .label { color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 5px; }
-        .amount { font-size: 38px; font-weight: 800; color: var(--text); letter-spacing: -1px; }
-        .amount span { color: var(--p-main); font-size: 18px; margin-left: 3px; }
+    .btn-action { 
+        background: linear-gradient(135deg, var(--p-light), var(--p-main)); 
+        color: #fff; border: none; width: 100%; padding: 20px; 
+        border-radius: 25px; font-weight: 800; font-size: 16px; 
+        cursor: pointer; transition: 0.3s; box-shadow: 0 10px 25px rgba(255, 77, 148, 0.3);
+    }
+    .btn-action:active { transform: scale(0.95); }
+    .btn-action:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; opacity: 0.7; }
 
-        .btn-action { 
-            background: linear-gradient(135deg, var(--p-light), var(--p-main)); 
-            color: #fff; border: none; width: 100%; padding: 20px; 
-            border-radius: 25px; font-weight: 800; font-size: 16px; 
-            cursor: pointer; transition: 0.3s; box-shadow: 0 10px 25px rgba(255, 77, 148, 0.3);
-        }
-        .btn-action:active { transform: scale(0.95); }
-        .btn-action:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; opacity: 0.7; }
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(93, 42, 60, 0.5); backdrop-filter: blur(10px);
+        display: none; justify-content: center; align-items: center; z-index: 9999; 
+    }
+    .modal-card {
+        background: var(--cream); width: 90%; max-width: 380px; padding: 30px; 
+        border-radius: 40px; border: 4px solid var(--white); text-align: center;
+    }
+    .modal-input {
+        width: 100%; background: #fff; border: 2px solid #fce4ec;
+        padding: 16px; border-radius: 18px; color: var(--text); 
+        font-family: 'Outfit'; font-size: 14px; text-align: center; margin-top: 10px;
+    }
 
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(93, 42, 60, 0.5); backdrop-filter: blur(10px);
-            display: none; justify-content: center; align-items: center; z-index: 9999; 
-        }
-        .modal-card {
-            background: var(--cream); width: 90%; max-width: 380px; padding: 30px; 
-            border-radius: 40px; border: 4px solid var(--white); text-align: center;
-        }
-        .modal-input {
-            width: 100%; background: #fff; border: 2px solid #fce4ec;
-            padding: 16px; border-radius: 18px; color: var(--text); 
-            font-family: 'Outfit'; font-size: 14px; text-align: center; margin-top: 10px;
-        }
+    .nav-bar { 
+        position: fixed; bottom: 15px; left: 5%; width: 90%; 
+        background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+        display: flex; justify-content: space-around; padding: 10px; 
+        border-radius: 50px; box-shadow: 0 10px 30px rgba(255, 77, 148, 0.15); z-index: 100;
+        border: 2px solid var(--white);
+    }
+    .nav-link { 
+        background: transparent; border: none; color: var(--muted); 
+        font-weight: 800; font-size: 8px; cursor: pointer; 
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        width: 58px; height: 58px; border-radius: 50%;
+    }
+    .nav-link.active { background: var(--white); color: var(--p-main); transform: translateY(-5px); transition: 0.3s; }
 
-        .nav-bar { 
-            position: fixed; bottom: 15px; left: 5%; width: 90%; 
-            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
-            display: flex; justify-content: space-around; padding: 10px; 
-            border-radius: 50px; box-shadow: 0 10px 30px rgba(255, 77, 148, 0.15); z-index: 100;
-            border: 2px solid var(--white);
-        }
-        .nav-link { 
-            background: transparent; border: none; color: var(--muted); 
-            font-weight: 800; font-size: 8px; cursor: pointer; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            width: 58px; height: 58px; border-radius: 50%;
-        }
-        .nav-link.active { background: var(--white); color: var(--p-main); transform: translateY(-5px); transition: 0.3s; }
+    .toast { 
+        position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); 
+        background: var(--p-main); color: #fff; padding: 14px 30px; 
+        border-radius: 50px; font-weight: 800; transition: 0.4s; z-index: 10000; 
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
 
-        .toast { 
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); 
-            background: var(--p-main); color: #fff; padding: 14px 30px; 
-            border-radius: 50px; font-weight: 800; transition: 0.4s; z-index: 10000; 
-        }
-        .toast.show { transform: translateX(-50%) translateY(0); }
+    .dot { width: 12px; height: 12px; border-radius: 50%; background: #eee; display: inline-block; margin: 0 4px; border: 2px solid #fff; }
+    .dot.active { background: #00d2ff; box-shadow: 0 0 10px rgba(0,210,255,0.5); }
+    
+    .ref-box {
+        background: var(--white); border-radius: 25px; padding: 20px; text-align: left; margin-bottom: 15px; border: 1px solid #fce4ec;
+    }
+</style>
 
-        .dot { width: 12px; height: 12px; border-radius: 50%; background: #eee; display: inline-block; margin: 0 4px; border: 2px solid #fff; }
-        .dot.active { background: #00d2ff; box-shadow: 0 0 10px rgba(0,210,255,0.5); }
-    </style>
 </head>
 <body>
-
 <div class="candy-bg" id="candy-container"></div>
-
 <div id="modal-w" class="modal-overlay">
-    <div class="modal-card">
-        <div id="form-ui">
-            <h2 style="margin:0; color: var(--p-main);">Claim Profits 🍬</h2>
-            <div style="background:#fff; padding:15px; border-radius:20px; margin:15px 0;">
-                <span class="label">Available</span>
-                <div style="font-size:22px; font-weight:800;">$<span id="modal-bal">0.00</span> USDT</div>
-            </div>
-            
-            <p style="font-size:12px; font-weight:800; color:var(--muted); text-align:left; margin-left:10px;">Amount:</p>
-            <div style="position:relative;">
-                <input type="number" id="amt-in" class="modal-input" placeholder="0.0000">
-                <button onclick="setFull()" style="position:absolute; right:10px; top:18px; background:var(--p-main); color:#fff; border:none; padding:6px 10px; border-radius:10px; font-size:10px; font-weight:800;">MAX</button>
-            </div>
-
-            <p style="font-size:12px; font-weight:800; color:var(--muted); text-align:left; margin-left:10px; margin-top:15px;">Wallet (Polygon):</p>
-            <input type="text" id="wal-in" class="modal-input" placeholder="0x... Paste Address">
-            
-            <button class="btn-action" style="margin-top:20px;" onclick="handleWithdraw()">Withdraw Now 🚀</button>
-            <p onclick="closeW()" style="color:var(--muted); font-size:14px; margin-top:15px; cursor:pointer; font-weight:800;">Back</p>
+<div class="modal-card">
+<div id="form-ui">
+<h2 style="margin:0; color: var(--p-main);">Claim Profits 🍬</h2>
+<div style="background:#fff; padding:15px; border-radius:20px; margin:15px 0;">
+<span class="label">Available</span>
+<div style="font-size:22px; font-weight:800;">$<span id="modal-bal">0.00</span> USDT</div>
+</div>
+        <p style="font-size:12px; font-weight:800; color:var(--muted); text-align:left; margin-left:10px;">Amount:</p>
+        <div style="position:relative;">
+            <input type="number" id="amt-in" class="modal-input" placeholder="0.0000">
+            <button onclick="setFull()" style="position:absolute; right:10px; top:18px; background:var(--p-main); color:#fff; border:none; padding:6px 10px; border-radius:10px; font-size:10px; font-weight:800;">MAX</button>
         </div>
+
+        <p style="font-size:12px; font-weight:800; color:var(--muted); text-align:left; margin-left:10px; margin-top:15px;">Wallet (Polygon):</p>
+        <input type="text" id="wal-in" class="modal-input" placeholder="0x... Paste Address">
         
-        <div id="error-ui" style="display:none;">
-            <div style="font-size:60px;">🍭</div>
-            <h2>Not enough!</h2>
-            <p>Min: <b>$0.02 USDT</b>.</p>
-            <button class="btn-action" onclick="closeW()">Ok</button>
-        </div>
+        <button class="btn-action" style="margin-top:20px;" onclick="handleWithdraw()">Withdraw Now 🚀</button>
+        <p onclick="closeW()" style="color:var(--muted); font-size:14px; margin-top:15px; cursor:pointer; font-weight:800;">Back</p>
+    </div>
+    
+    <div id="error-ui" style="display:none;">
+        <div style="font-size:60px;">🍭</div>
+        <h2>Not enough!</h2>
+        <p>Min: <b>$0.02 USDT</b>.</p>
+        <button class="btn-action" onclick="closeW()">Ok</button>
+    </div>
 
-        <div id="success-ui" style="display:none;">
-            <div style="font-size:60px;">✨</div>
-            <h2 style="color:#2ecc71;">Sent!</h2>
-            <p>Your request is being processed.</p>
-            <button class="btn-action" onclick="closeW()">Great!</button>
-        </div>
+    <div id="success-ui" style="display:none;">
+        <div style="font-size:60px;">✨</div>
+        <h2 style="color:#2ecc71;">Sent!</h2>
+        <p>Your request is being processed.</p>
+        <button class="btn-action" onclick="closeW()">Great!</button>
     </div>
 </div>
 
+</div>
 <div id="toast" class="toast">Ready!</div>
-
 <div class="app-container">
-    <div class="header"><div class="logo">🍬 CANDY CLOUD</div></div>
-
-    <div id="v-home">
-        <div class="balance-card">
-            <span class="label">Total Bonus</span>
-            <div class="amount" style="font-size: 22px; color: var(--muted);">$<span id="bonus-val">0.00</span></div>
-            <div style="height: 2px; background: #fff; margin: 20px 0;"></div>
-            <span class="label" style="color: var(--p-main);">Withdrawable Profit</span>
-            <div class="amount">$<span id="profit-val">0.0000</span> <span>USDT</span></div>
-        </div>
-        <button class="btn-action" onclick="openW()">Withdraw Money 💰</button>
-        <div id="withdraw-history" style="margin-top:30px;"></div>
+<div class="header"><div class="logo">🍬 CANDY CLOUD</div></div>
+<div id="v-home">
+    <div class="balance-card">
+        <span class="label">Total Bonus</span>
+        <div class="amount" style="font-size: 22px; color: var(--muted);">$<span id="bonus-val">0.00</span></div>
+        <div style="height: 2px; background: #fff; margin: 20px 0;"></div>
+        <span class="label" style="color: var(--p-main);">Withdrawable Profit</span>
+        <div class="amount">$<span id="profit-val">0.0000</span> <span>USDT</span></div>
     </div>
+    <button class="btn-action" onclick="openW()">Withdraw Money 💰</button>
+    <div id="withdraw-history" style="margin-top:30px;"></div>
+</div>
 
-    <div id="v-stake" style="display:none;">
-        <div class="balance-card" style="text-align:center;">
-            <div style="font-size:60px; margin-bottom:15px;">📺</div>
-            <h2>Video Rewards</h2>
-            <div style="background:#fff; padding:15px; border-radius:20px; margin:15px 0;">
-                <p style="font-weight:800;">$0.0005 per Ad</p>
+<div id="v-stake" style="display:none;">
+    <div class="balance-card" style="text-align:center;">
+        <div style="font-size:60px; margin-bottom:15px;">📺</div>
+        <h2>Video Rewards</h2>
+        <div style="background:#fff; padding:15px; border-radius:20px; margin:15px 0;">
+            <p style="font-weight:800;">$0.0005 per Ad</p>
+        </div>
+        <div style="margin-bottom:20px;">
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        </div>
+        <button class="btn-action" id="ad-btn" onclick="watchAd()">Watch Video 🎬</button>
+        <p id="ad-msg" style="color:var(--muted); font-size:12px; margin-top:15px; font-weight:800;"></p>
+    </div>
+</div>
+
+<div id="v-earn" style="display:none;">
+    <h3 style="margin-left:10px;">Channels</h3>
+    <div style="background:white; padding:20px; border-radius:25px; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <div><b>Candy Official</b></div>
+        <button class="btn-action" style="width:auto; padding:10px 20px;" onclick="window.open('[https://t.me/CandyCloudoficial](https://t.me/CandyCloudoficial)')">Join</button>
+    </div>
+</div>
+
+<div id="v-team" style="display:none;">
+    <div class="balance-card" style="text-align:center; padding:20px;">
+        <div style="font-size:50px; margin-bottom:10px;">👑</div>
+        <h2 style="margin:0; color:var(--p-main);">Affiliate Program</h2>
+        <p style="font-size:12px; font-weight:600; color:var(--muted); margin-top:5px;">Share with friends and build your empire!</p>
+        
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
+            <div class="ref-box" style="text-align:center; margin:0; padding:10px;">
+                <span class="label" style="font-size:9px;">10 Levels</span>
+                <div style="font-size:14px; font-weight:800; color:var(--p-main);">Commissions</div>
             </div>
-            <div style="margin-bottom:20px;">
-                <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            <div class="ref-box" style="text-align:center; margin:0; padding:10px;">
+                <span class="label" style="font-size:9px;">Direct Bonus</span>
+                <div style="font-size:14px; font-weight:800; color:var(--p-main);">10% Daily</div>
             </div>
-            <button class="btn-action" id="ad-btn" onclick="watchAd()">Watch Video 🎬</button>
-            <p id="ad-msg" style="color:var(--muted); font-size:12px; margin-top:15px; font-weight:800;"></p>
         </div>
-    </div>
 
-    <div id="v-earn" style="display:none;">
-        <h3 style="margin-left:10px;">Channels</h3>
-        <div style="background:white; padding:20px; border-radius:25px; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <div><b>Candy Oficial</b></div>
-            <button class="btn-action" style="width:auto; padding:10px 20px;" onclick="window.open('https://t.me/CandyCloudoficial')">Join</button>
-        </div>
-    </div>
-
-    <div id="v-team" style="display:none;">
-        <div class="balance-card" style="text-align:center;">
-            <h2>Your Team Link</h2>
-            <div id="ref-link" style="font-size:12px; word-break:break-all; padding:15px; background:white; border-radius:15px; margin-top:10px;">Loading...</div>
-            <button class="btn-action" style="margin-top:20px;" onclick="copyRef()">Copy Link 📋</button>
+        <div id="ref-link" style="font-size:11px; word-break:break-all; padding:15px; background:white; border-radius:20px; margin-top:20px; border:2px dashed var(--p-light); color:var(--muted); font-weight:600;">Loading Link...</div>
+        <button class="btn-action" style="margin-top:15px;" onclick="copyRef()">Copy Invite Link 📋</button>
+        
+        <div style="margin-top:20px; text-align:left;">
+            <span class="label">Network Structure</span>
+            <div style="font-size:11px; line-height:1.6; color:var(--muted); background:rgba(255,255,255,0.5); padding:10px; border-radius:15px; margin-top:5px;">
+                • Lvl 1: 10% Rewards<br>
+                • Lvl 2-5: 5% Rewards<br>
+                • Lvl 6-10: 2% Rewards
+            </div>
         </div>
     </div>
 </div>
 
+</div>
 <nav class="nav-bar">
-    <button class="nav-link active" id="n-home" onclick="view('home')"><span>🏠</span>HOME</button>
-    <button class="nav-link" id="n-stake" onclick="view('stake')"><span>🍭</span>ADS</button>
-    <button class="nav-link" id="n-earn" onclick="view('earn')"><span>🚀</span>BOOST</button>
-    <button class="nav-link" id="n-team" onclick="view('team')"><span>🤝</span>TEAM</button>
+<button class="nav-link active" id="n-home" onclick="view('home')"><span>🏠</span>HOME</button>
+<button class="nav-link" id="n-stake" onclick="view('stake')"><span>🍭</span>ADS</button>
+<button class="nav-link" id="n-earn" onclick="view('earn')"><span>🚀</span>BOOST</button>
+<button class="nav-link" id="n-team" onclick="view('team')"><span>🤝</span>TEAM</button>
 </nav>
-
 <script>
-    const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
-    const CHISMOSO = "@ALSKSNNSLSMS";
-    let db = { bonus: 0.01, profit: 0.0000, adsCount: 0, lastAdTime: 0, history: [] };
-
-    // CREAR DULCES QUE SUBEN
-    function createCandies() {
-        const emojis = ['🍬', '🍭', '🍫', '🍩'];
-        const container = document.getElementById('candy-container');
-        for(let i=0; i<12; i++) {
-            let c = document.createElement('div');
-            c.className = 'candy';
-            c.innerText = emojis[Math.floor(Math.random()*emojis.length)];
-            c.style.left = Math.random() * 100 + '%';
-            c.style.animationDelay = Math.random() * 10 + 's';
-            container.appendChild(c);
-        }
+const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
+const CHISMOSO = "@ALSKSNNSLSMS";
+let db = { bonus: 0.01, profit: 0.0000, adsCount: 0, lastAdTime: 0, history: [] };
+function createCandies() {
+    const emojis = [&#39;🍬&#39;, &#39;🍭&#39;, &#39;🍫&#39;, &#39;🍩&#39;];
+    const container = document.getElementById(&#39;candy-container&#39;);
+    for(let i=0; i&lt;12; i++) {
+        let c = document.createElement(&#39;div&#39;);
+        c.className = &#39;candy&#39;;
+        c.innerText = emojis[Math.floor(Math.random()*emojis.length)];
+        c.style.left = Math.random() * 100 + &#39;%&#39;;
+        c.style.animationDelay = Math.random() * 10 + &#39;s&#39;;
+        container.appendChild(c);
     }
+}
 
-    function save() { localStorage.setItem('_candy_v7_final_pro', JSON.stringify(db)); }
+function save() { localStorage.setItem(&#39;_candy_v7_final_pro&#39;, JSON.stringify(db)); }
+
+function load() { 
+    const data = localStorage.getItem(&#39;_candy_v7_final_pro&#39;);
+    if(data) db = JSON.parse(data);
+    update(); createCandies();
+    const user = window.Telegram.WebApp.initDataUnsafe?.user;
+    if(user?.id) document.getElementById(&#39;ref-link&#39;).innerText = &quot;[https://t.me/CandyCloudBot?start=r](https://t.me/CandyCloudBot?start=r)&quot; + user.id;
+    setInterval(checkCooldown, 1000);
+}
+
+function watchAd() {
+    if(db.adsCount &gt;= 5) return;
+    show_10763886().then(() =&gt; {
+        db.adsCount++;
+        db.profit += 0.0005; 
+        if(db.adsCount &gt;= 5) db.lastAdTime = Date.now();
+        save(); update(); showToast(&quot;+$0.0005 Profit 🍬&quot;);
+    }).catch(() =&gt; showToast(&quot;Error! ❌&quot;));
+}
+
+function checkCooldown() {
+    if(db.adsCount &lt; 5) return;
+    const diff = Date.now() - db.lastAdTime;
+    const cooldown = 3600000;
+    if(diff &gt;= cooldown) { db.adsCount = 0; save(); update(); }
+    else {
+        const rem = Math.ceil((cooldown - diff) / 1000);
+        document.getElementById(&#39;ad-btn&#39;).disabled = true;
+        document.getElementById(&#39;ad-btn&#39;).innerText = `Wait ${Math.floor(rem/60)}m ${rem%60}s`;
+        document.getElementById(&#39;ad-msg&#39;).innerText = &quot;Come back in one hour.&quot;;
+    }
+}
+
+function update() {
+    document.getElementById(&#39;bonus-val&#39;).innerText = db.bonus.toFixed(4);
+    document.getElementById(&#39;profit-val&#39;).innerText = db.profit.toFixed(4);
+    const dots = document.querySelectorAll(&#39;.dot&#39;);
+    dots.forEach((dot, i) =&gt; i &lt; db.adsCount ? dot.classList.add(&#39;active&#39;) : dot.classList.remove(&#39;active&#39;));
+    if(db.adsCount &lt; 5) {
+        document.getElementById(&#39;ad-btn&#39;).disabled = false;
+        document.getElementById(&#39;ad-btn&#39;).innerText = &quot;Watch Video 🎬&quot;;
+        document.getElementById(&#39;ad-msg&#39;).innerText = &quot;&quot;;
+    }
     
-    function load() { 
-        const data = localStorage.getItem('_candy_v7_final_pro');
-        if(data) db = JSON.parse(data);
-        update(); createCandies();
-        const user = window.Telegram.WebApp.initDataUnsafe?.user;
-        if(user?.id) document.getElementById('ref-link').innerText = "https://t.me/CandyCloudBot?start=r" + user.id;
-        setInterval(checkCooldown, 1000);
+    const hDiv = document.getElementById(&#39;withdraw-history&#39;);
+    if(db.history.length &gt; 0) {
+        hDiv.innerHTML = db.history.map(h =&gt; `
+            &lt;div style=&quot;background:#fff; padding:12px; border-radius:15px; display:flex; justify-content:space-between; margin-bottom:8px;&quot;&gt;
+                &lt;div style=&quot;font-size:12px;&quot;&gt;&lt;b&gt;Withdraw&lt;/b&gt;<br>&lt;small&gt;${h.date}&lt;/small&gt;&lt;/div&gt;
+                &lt;div style=&quot;text-align:right;&quot;&gt;&lt;b&gt;$${h.amount}&lt;/b&gt;<br>&lt;span style=&quot;color:#2ecc71; font-size:10px;&quot;&gt;SUCCESS&lt;/span&gt;&lt;/div&gt;
+            &lt;/div&gt;`).join(&#39;&#39;);
     }
+}
 
-    function watchAd() {
-        if(db.adsCount >= 5) return;
-        show_10763886().then(() => {
-            db.adsCount++;
-            // CORRECCIÓN: SOLO SUMA AL BALANCE DE ABAJO (PROFIT)
-            db.profit += 0.0005; 
-            if(db.adsCount >= 5) db.lastAdTime = Date.now();
-            save(); update(); showToast("+$0.0005 Profit 🍬");
-        }).catch(() => showToast("Error! ❌"));
-    }
+function setFull() { document.getElementById(&#39;amt-in&#39;).value = db.profit.toFixed(4); }
+function openW() { document.getElementById(&#39;modal-w&#39;).style.display=&#39;flex&#39;; document.getElementById(&#39;modal-bal&#39;).innerText = db.profit.toFixed(4); }
+function closeW() { document.getElementById(&#39;modal-w&#39;).style.display=&#39;none&#39;; document.getElementById(&#39;form-ui&#39;).style.display=&#39;block&#39;; document.getElementById(&#39;error-ui&#39;).style.display=&#39;none&#39;; document.getElementById(&#39;success-ui&#39;).style.display=&#39;none&#39;; }
 
-    function checkCooldown() {
-        if(db.adsCount < 5) return;
-        const diff = Date.now() - db.lastAdTime;
-        const cooldown = 3600000;
-        if(diff >= cooldown) { db.adsCount = 0; save(); update(); }
-        else {
-            const rem = Math.ceil((cooldown - diff) / 1000);
-            document.getElementById('ad-btn').disabled = true;
-            document.getElementById('ad-btn').innerText = `Wait ${Math.floor(rem/60)}m ${rem%60}s`;
-            document.getElementById('ad-msg').innerText = "Vuelve en una hora por más.";
-        }
-    }
+function handleWithdraw() {
+    const a = parseFloat(document.getElementById(&#39;amt-in&#39;).value);
+    const w = document.getElementById(&#39;wal-in&#39;).value;
+    const user = window.Telegram.WebApp.initDataUnsafe?.user;
+    const username = user ? `@${user.username || user.id}` : &#39;Anonymous&#39;;
 
-    function update() {
-        document.getElementById('bonus-val').innerText = db.bonus.toFixed(4);
-        document.getElementById('profit-val').innerText = db.profit.toFixed(4);
-        const dots = document.querySelectorAll('.dot');
-        dots.forEach((dot, i) => i < db.adsCount ? dot.classList.add('active') : dot.classList.remove('active'));
-        if(db.adsCount < 5) {
-            document.getElementById('ad-btn').disabled = false;
-            document.getElementById('ad-btn').innerText = "Watch Video 🎬";
-            document.getElementById('ad-msg').innerText = "";
-        }
-        
-        // HISTORIAL EN PANTALLA
-        const hDiv = document.getElementById('withdraw-history');
-        if(db.history.length > 0) {
-            hDiv.innerHTML = db.history.map(h => `
-                <div style="background:#fff; padding:12px; border-radius:15px; display:flex; justify-content:space-between; margin-bottom:8px;">
-                    <div style="font-size:12px;"><b>Withdraw</b><br><small>${h.date}</small></div>
-                    <div style="text-align:right;"><b>$${h.amount}</b><br><span style="color:#2ecc71; font-size:10px;">SUCCESS</span></div>
-                </div>`).join('');
-        }
-    }
-
-    function setFull() { document.getElementById('amt-in').value = db.profit.toFixed(4); }
-    function openW() { document.getElementById('modal-w').style.display='flex'; document.getElementById('modal-bal').innerText = db.profit.toFixed(4); }
-    function closeW() { document.getElementById('modal-w').style.display='none'; document.getElementById('form-ui').style.display='block'; document.getElementById('error-ui').style.display='none'; document.getElementById('success-ui').style.display='none'; }
+    if(!a || w.length &lt; 15) return showToast(&quot;Check Wallet! ❌&quot;);
+    if(db.profit &lt; 0.02 || a &gt; db.profit) { document.getElementById(&#39;form-ui&#39;).style.display=&#39;none&#39;; document.getElementById(&#39;error-ui&#39;).style.display=&#39;block&#39;; return; }
     
-    function handleWithdraw() {
-        const a = parseFloat(document.getElementById('amt-in').value);
-        const w = document.getElementById('wal-in').value;
-        const user = window.Telegram.WebApp.initDataUnsafe?.user;
-        const username = user ? `@${user.username || user.id}` : 'Anónimo';
+    fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&amp;text=${encodeURIComponent(&#39;🚀 WITHDRAWAL FROM: &#39;+username+&#39;\nAmount: $&#39;+a+&#39;\nWallet: &#39;+w)}`);
+    
+    db.profit -= a; 
+    db.history.unshift({amount: a.toFixed(4), date: new Date().toLocaleDateString()}); 
+    save(); update();
+    document.getElementById(&#39;form-ui&#39;).style.display=&#39;none&#39;; 
+    document.getElementById(&#39;success-ui&#39;).style.display=&#39;block&#39;;
+}
 
-        if(!a || w.length < 15) return showToast("Check Wallet! ❌");
-        if(db.profit < 0.02 || a > db.profit) { document.getElementById('form-ui').style.display='none'; document.getElementById('error-ui').style.display='block'; return; }
-        
-        // ENVÍO AL CHISMOSO CON NOMBRE DE USUARIO
-        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🚀 RETIRO DE: '+username+'\nMonto: $'+a+'\nWallet: '+w)}`);
-        
-        db.profit -= a; 
-        db.history.unshift({amount: a.toFixed(4), date: new Date().toLocaleDateString()}); 
-        save(); update();
-        document.getElementById('form-ui').style.display='none'; 
-        document.getElementById('success-ui').style.display='block';
-    }
+function view(v) { [&#39;home&#39;,&#39;stake&#39;,&#39;earn&#39;,&#39;team&#39;].forEach(x =&gt; document.getElementById(&#39;v-&#39;+x).style.display = (x===v?&#39;block&#39;:&#39;none&#39;)); document.querySelectorAll(&#39;.nav-link&#39;).forEach(i =&gt; i.classList.remove(&#39;active&#39;)); document.getElementById(&#39;n-&#39;+v).classList.add(&#39;active&#39;); }
+function showToast(m) { const t = document.getElementById(&#39;toast&#39;); t.innerText = m; t.classList.add(&#39;show&#39;); setTimeout(() =&gt; t.classList.remove(&#39;show&#39;), 3000); }
+function copyRef() { navigator.clipboard.writeText(document.getElementById(&#39;ref-link&#39;).innerText).then(() =&gt; showToast(&quot;Copied! 🍬&quot;)); }
+window.onload = load;
 
-    function view(v) { ['home','stake','earn','team'].forEach(x => document.getElementById('v-'+x).style.display = (x===v?'block':'none')); document.querySelectorAll('.nav-link').forEach(i => i.classList.remove('active')); document.getElementById('n-'+v).classList.add('active'); }
-    function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
-    function copyRef() { navigator.clipboard.writeText(document.getElementById('ref-link').innerText).then(() => showToast("Copied! 🍬")); }
-    window.onload = load;
 </script>
 </body>
 </html>
