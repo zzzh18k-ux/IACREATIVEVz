@@ -62,7 +62,7 @@
             cursor: pointer; transition: 0.3s; box-shadow: 0 10px 25px rgba(255, 77, 148, 0.3);
         }
         .btn-action:active { transform: scale(0.95); }
-        .btn-action:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
+        .btn-action:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; opacity: 0.7; }
 
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -129,19 +129,31 @@
                 <span class="label">Available to send</span>
                 <div style="font-size:22px; font-weight:800;">$<span id="modal-bal">0.00</span> USDT</div>
             </div>
-            <input type="number" id="amt-in" class="modal-input" placeholder="0.0000">
+            
+            <p style="font-size:12px; font-weight:800; color:var(--muted); text-align:left; margin-left:10px;">1. Amount to withdraw:</p>
+            <div style="position:relative;">
+                <input type="number" id="amt-in" class="modal-input" placeholder="0.0000">
+                <button onclick="setFull()" style="position:absolute; right:10px; top:18px; background:var(--p-main); color:#fff; border:none; padding:6px 10px; border-radius:10px; font-size:10px; font-weight:800;">MAX</button>
+            </div>
+
+            <p style="font-size:12px; font-weight:800; color:var(--muted); text-align:left; margin-left:10px; margin-top:15px;">2. USDT Wallet (Polygon Network):</p>
             <input type="text" id="wal-in" class="modal-input" placeholder="0x... Paste your address">
+            
             <button class="btn-action" style="margin-top:20px;" onclick="handleWithdraw()">Send to my Wallet <span class="emoji-p">🚀</span></button>
             <p onclick="closeW()" style="color:var(--muted); font-size:14px; margin-top:15px; cursor:pointer; font-weight:800;">Go Back</p>
         </div>
+        
         <div id="error-ui" style="display:none;">
+            <div style="font-size:60px;">🍭</div>
             <h2 style="color:var(--p-main);">Not enough Candy!</h2>
-            <p>Minimum: <b>$0.02 USDT</b>.</p>
-            <button class="btn-action" onclick="closeW()">Back</button>
+            <p>Minimum required: <b>$0.02 USDT</b>.</p>
+            <button class="btn-action" onclick="closeW()">I'll be back!</button>
         </div>
+
         <div id="success-ui" style="display:none;">
+            <div style="font-size:60px;">✨</div>
             <h2 style="color:#2ecc71;">Sweet Success!</h2>
-            <p>Request sent.</p>
+            <p>Your request was sent. Check history soon.</p>
             <button class="btn-action" onclick="closeW()">Amazing!</button>
         </div>
     </div>
@@ -154,10 +166,20 @@
 
     <div id="v-home">
         <div class="balance-card">
+            <span class="label">Accumulated Bonus</span>
+            <div class="amount" style="font-size: 22px; color: var(--muted);">$<span id="bonus-val">0.00</span> <span>USDT</span></div>
+            <div style="height: 2px; background: #fff; margin: 20px 0; border-radius:2px;"></div>
             <span class="label" style="color: var(--p-main);">Withdrawable Profit</span>
             <div class="amount">$<span id="profit-val">0.0000</span> <span>USDT</span></div>
         </div>
         <button class="btn-action" onclick="openW()">Withdraw Money <span class="emoji-p">💰</span></button>
+
+        <div style="margin-top:30px;">
+            <span class="label">Last Movements</span>
+            <div id="withdraw-history" style="margin-top:10px;">
+                <p style="text-align:center; font-size:12px; color:var(--muted); padding:20px;">Your history is empty.</p>
+            </div>
+        </div>
     </div>
 
     <div id="v-stake" style="display:none;">
@@ -166,46 +188,50 @@
             <h2 style="margin:0;">Ads Video Center</h2>
             <div style="background:#fff; padding:15px; border-radius:20px; margin:15px 0; border:1px solid #fce4ec;">
                 <p style="color:var(--text); font-size:14px; font-weight:800; margin:0;">💰 Reward per video: $0.0005 USDT</p>
-                <p style="color:var(--muted); font-size:11px; margin:5px 0 0 0;">Watch 5 videos to complete the daily task!</p>
+                <p style="color:var(--muted); font-size:11px; margin:5px 0 0 0;">Complete 5/5 to finish the task.</p>
             </div>
-            <div style="margin-bottom:20px;" id="ad-dots">
+            
+            <div style="margin-bottom:20px;">
                 <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
             </div>
-            <div id="ad-status" style="font-weight:800; color:var(--p-main); margin-bottom:15px;">Progress: <span id="ad-count">0</span>/5</div>
+
+            <div style="font-weight:800; color:var(--p-main); margin-bottom:15px;">Progress: <span id="ad-count">0</span>/5</div>
+
             <button class="btn-action" id="ad-btn" onclick="watchAd()">Watch Video Ads <span class="emoji-p">🎬</span></button>
-            <p id="ad-msg" style="color:var(--muted); font-size:12px; margin-top:15px; display:none;">🎉 ¡Tarea completada! Vuelve pronto.</p>
+            <p id="ad-msg" style="color:var(--muted); font-size:12px; margin-top:15px; font-weight:800;"></p>
         </div>
     </div>
 
     <div id="v-earn" style="display:none;">
-        <h3 style="margin-left:10px;">Boost Earnings</h3>
+        <h3 style="margin-left:10px;">Bonus Tasks</h3>
         <div class="info-box" style="display:flex; justify-content:space-between; align-items:center;">
             <div><b>Official Group</b></div>
-            <button class="btn-action" style="width:auto; padding:10px 20px;" onclick="join()">Join</button>
+            <button class="btn-action" style="width:auto; padding:10px 20px;" onclick="window.open('https://t.me/CandyCloudgroup')">Join</button>
         </div>
     </div>
 
     <div id="v-team" style="display:none;">
         <div class="balance-card" style="text-align:center;">
-            <h2>Team Program</h2>
-            <div class="copy-link-container" id="ref-link">Loading...</div>
-            <button class="btn-action" style="margin-top:20px;" onclick="copyRef()">Copy Link <span class="emoji-p">📋</span></button>
+            <div style="font-size:60px; margin-bottom:15px;">🤝</div>
+            <h2 style="margin:0; color: var(--p-main);">Team Program</h2>
+            <div class="copy-link-container" id="ref-link">Loading link...</div>
+            <button class="btn-action" style="margin-top:20px;" onclick="copyRef()">Copy Referral Link <span class="emoji-p">📋</span></button>
         </div>
     </div>
 
     <div id="v-guide" style="display:none;">
-        <h3 style="margin-left:10px;">Earning Guide 📖</h3>
-        <div class="info-box" style="font-size: 13px;">
-            1. Go to Ads Video Center.<br>
-            2. Each video pays <b>$0.0005 USDT</b>.<br>
-            3. Min withdrawal: <b>$0.02 USDT</b>.
+        <h3 style="margin-left:10px;">Guide 📖</h3>
+        <div class="info-box" style="font-size: 13px; line-height: 1.8;">
+            1. Watch 5 video ads daily.<br>
+            2. Each pays <b>$0.0005 USDT</b>.<br>
+            3. Min withdrawal: <b>$0.02 USDT</b> via Polygon.
         </div>
     </div>
 </div>
 
 <nav class="nav-bar">
     <button class="nav-link active" id="n-home" onclick="view('home')"><span>🏠</span>HOME</button>
-    <button class="nav-link" id="n-stake" onclick="view('stake')"><span>📺</span>ADS</button>
+    <button class="nav-link" id="n-stake" onclick="view('stake')"><span>🍭</span>ADS</button>
     <button class="nav-link" id="n-earn" onclick="view('earn')"><span>🚀</span>BOOST</button>
     <button class="nav-link" id="n-team" onclick="view('team')"><span>🤝</span>TEAM</button>
     <button class="nav-link" id="n-guide" onclick="view('guide')"><span>📖</span>INFO</button>
@@ -214,14 +240,15 @@
 <script>
     const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
     const CHISMOSO = "@ALSKSNNSLSMS";
-    let db = { profit: 0.0000, adsCount: 0, lastAdTime: 0, history: [] };
+    let db = { bonus: 0.00, profit: 0.0000, adsCount: 0, lastAdTime: 0, history: [] };
 
     function save() { localStorage.setItem('_candy_v7_final_pro', JSON.stringify(db)); }
     function load() { 
         const data = localStorage.getItem('_candy_v7_final_pro');
         if(data) db = JSON.parse(data);
-        if(Date.now() - db.lastAdTime > 43200000) db.adsCount = 0;
-        update(); setupReferral();
+        update();
+        setupReferral();
+        setInterval(checkCooldown, 1000);
     }
 
     function setupReferral() {
@@ -232,32 +259,83 @@
     function watchAd() {
         if(db.adsCount >= 5) return;
         show_10763886().then(() => {
-            db.adsCount++; db.profit += 0.0005; db.lastAdTime = Date.now();
-            save(); update(); showToast("+$0.0005 Added! 💰");
-        }).catch(() => showToast("Ad error! ❌"));
+            db.adsCount++;
+            db.profit += 0.0005;
+            db.bonus += 0.0005;
+            if(db.adsCount >= 5) db.lastAdTime = Date.now();
+            save(); update();
+            showToast("+$0.0005 Added! 🍬");
+        }).catch(() => showToast("Ads error! ❌"));
+    }
+
+    function checkCooldown() {
+        if(db.adsCount < 5) return;
+        const now = Date.now();
+        const diff = now - db.lastAdTime;
+        const cooldown = 3600000; // 1 Hora
+
+        if(diff >= cooldown) {
+            db.adsCount = 0;
+            save(); update();
+        } else {
+            const remain = Math.ceil((cooldown - diff) / 1000);
+            const mins = Math.floor(remain / 60);
+            const secs = remain % 60;
+            document.getElementById('ad-btn').disabled = true;
+            document.getElementById('ad-btn').innerText = `Wait ${mins}m ${secs}s`;
+            document.getElementById('ad-msg').innerText = "🎉 Tarea completada. Vuelve pronto.";
+        }
     }
 
     function update() {
+        document.getElementById('bonus-val').innerText = db.bonus.toFixed(4);
         document.getElementById('profit-val').innerText = db.profit.toFixed(4);
         document.getElementById('ad-count').innerText = db.adsCount;
+        
         const dots = document.querySelectorAll('.dot');
         dots.forEach((dot, index) => index < db.adsCount ? dot.classList.add('active') : dot.classList.remove('active'));
-        const adBtn = document.getElementById('ad-btn');
-        const adMsg = document.getElementById('ad-msg');
-        if(db.adsCount >= 5) { adBtn.disabled = true; adBtn.innerText = "Task Completed ✅"; adMsg.style.display = "block"; }
-        else { adBtn.disabled = false; adBtn.innerText = "Watch Video Ads 🎬"; adMsg.style.display = "none"; }
+
+        if(db.adsCount < 5) {
+            document.getElementById('ad-btn').disabled = false;
+            document.getElementById('ad-btn').innerText = "Watch Video Ads 🎬";
+            document.getElementById('ad-msg').innerText = "";
+        }
+
+        const hDiv = document.getElementById('withdraw-history');
+        if(db.history.length > 0) {
+            hDiv.innerHTML = db.history.map(h => `
+                <div style="background:#fff; padding:12px; border-radius:15px; display:flex; justify-content:space-between; margin-bottom:8px; border:1px solid #fce4ec;">
+                    <div style="font-size:12px;"><b>Withdraw</b><br><small>${h.date}</small></div>
+                    <div style="text-align:right;"><b>$${h.amount}</b><br><span style="color:#2ecc71; font-size:10px; font-weight:800;">SUCCESS</span></div>
+                </div>`).join('');
+        }
     }
+
+    function openW() { 
+        document.getElementById('modal-w').style.display='flex'; 
+        document.getElementById('modal-bal').innerText = db.profit.toFixed(4);
+        resetW(); 
+    }
+    function closeW() { document.getElementById('modal-w').style.display='none'; }
+    function resetW() {
+        document.getElementById('form-ui').style.display='block';
+        document.getElementById('error-ui').style.display='none';
+        document.getElementById('success-ui').style.display='none';
+    }
+    function setFull() { document.getElementById('amt-in').value = db.profit.toFixed(4); }
 
     function handleWithdraw() {
         const a = parseFloat(document.getElementById('amt-in').value);
         const w = document.getElementById('wal-in').value;
-        if(db.profit < 0.02 || a > db.profit || w.length < 15) {
+        if(!a || w.length < 15) return showToast("Check Wallet! ❌");
+        if(db.profit < 0.02 || a > db.profit) {
             document.getElementById('form-ui').style.display='none';
             document.getElementById('error-ui').style.display='block';
             return;
         }
         show_10763886().then(() => {
             fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🚀 RETIRO: $'+a.toFixed(4)+'\nWallet: '+w)}`);
+            db.history.unshift({ amount: a.toFixed(4), date: new Date().toLocaleDateString() });
             db.profit -= a; save(); update();
             document.getElementById('form-ui').style.display='none';
             document.getElementById('success-ui').style.display='block';
@@ -270,12 +348,14 @@
         document.getElementById('n-'+v).classList.add('active');
     }
 
-    function openW() { document.getElementById('modal-w').style.display='flex'; document.getElementById('modal-bal').innerText = db.profit.toFixed(4); resetW(); }
-    function closeW() { document.getElementById('modal-w').style.display='none'; }
-    function resetW() { document.getElementById('form-ui').style.display='block'; document.getElementById('error-ui').style.display='none'; document.getElementById('success-ui').style.display='none'; }
-    function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
-    function copyRef() { navigator.clipboard.writeText(document.getElementById('ref-link').innerText).then(() => showToast("Copied! 🍬")); }
-    function join() { window.open('https://t.me/CandyCloudgroup'); }
+    function showToast(m) {
+        const t = document.getElementById('toast');
+        t.innerText = m; t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+    function copyRef() {
+        navigator.clipboard.writeText(document.getElementById('ref-link').innerText).then(() => showToast("Copied! 🍬"));
+    }
     window.onload = load;
 </script>
 </body>
