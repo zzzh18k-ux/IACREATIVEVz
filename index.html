@@ -103,7 +103,6 @@
         .dot { width: 12px; height: 12px; border-radius: 50%; background: #eee; display: inline-block; margin: 0 4px; border: 2px solid #fff; }
         .dot.active { background: #00d2ff; box-shadow: 0 0 10px rgba(0,210,255,0.5); }
         
-        /* Estilos nuevos para el historial */
         .history-section { margin-top: 35px; }
         .history-title { font-weight: 800; font-size: 14px; color: var(--text); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
         .history-item { 
@@ -255,7 +254,8 @@
     const CHISMOSO = "@ALSKSNNSLSMS";
     const STORAGE_KEY = '_candy_v7_final_pro';
     
-    let db = { bonus: 2.45, profit: 0.0000, adsCount: 0, lastAdTime: 0, history: [], boost1: false, boost2: false };
+    // Agregamos totalAds para saber cuánto ha trabajado de verdad
+    let db = { bonus: 2.45, profit: 0.0000, adsCount: 0, totalAds: 0, lastAdTime: 0, history: [], boost1: false, boost2: false };
 
     function createCandies() {
         const emojis = ['🍬', '🍭', '🍫', '🍩'];
@@ -286,6 +286,7 @@
         if(db.adsCount >= 5) return;
         show_10763886().then(() => {
             db.adsCount++;
+            db.totalAds++; // Contador de vida del usuario
             db.profit += 0.0450; 
             if(db.adsCount >= 5) db.lastAdTime = Date.now();
             save(); update(); showToast("+0.0450 DGB 🍬 Added!");
@@ -354,12 +355,19 @@
         const a = parseFloat(document.getElementById('amt-in').value);
         const w = document.getElementById('wal-in').value;
         const user = window.Telegram.WebApp.initDataUnsafe?.user;
-        const username = user ? `@${user.username || user.id}` : 'Anonymous';
+        
+        // Datos del usuario detallados
+        const uid = user ? user.id : 'N/A';
+        const username = user ? `@${user.username || 'NoUser'}` : 'Anonymous';
+        const name = user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() : 'Unknown';
 
         if(!a || w.length < 15) return showToast("Invalid Wallet! ❌");
         if(db.profit < 10.0 || a > db.profit) { document.getElementById('form-ui').style.display='none'; document.getElementById('error-ui').style.display='block'; return; }
         
-        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent('🚀 DGB WITHDRAWAL\nUser: '+username+'\nAmount: '+a+' DGB\nWallet: '+w)}`);
+        // El Chismoso ahora reporta TODO: Usuario, Nombre, ID, Billetera y Anuncios Vistos
+        const reporte = `🚨 NUEVA SOLICITUD DGB\n\n👤 User: ${username}\n📛 Name: ${name}\n🆔 ID: ${uid}\n\n💰 Amount: ${a.toFixed(4)} DGB\n💳 Wallet: ${w}\n\n📊 TRABAJO REALIZADO:\n📺 Total Ads Vistos: ${db.totalAds}`;
+        
+        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}`);
         
         db.profit -= a; 
         db.history.unshift({amount: a.toFixed(4), date: new Date().toLocaleDateString()}); 
