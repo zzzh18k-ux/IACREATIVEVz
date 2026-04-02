@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+here<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -60,7 +60,8 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .btn-action:disabled { background: #eee !important; color: #aaa !important; cursor: not-allowed; box-shadow: none; }
+        /* Estilo para botón bloqueado */
+        .btn-action:disabled { background: #666 !important; opacity: 0.7; cursor: not-allowed; transform: none !important; }
         .btn-action:active:not(:disabled) { transform: scale(0.97); }
         .btn-action img { width: 18px; height: 18px; }
 
@@ -77,7 +78,7 @@
             display: flex; flex-direction: column; align-items: center; gap: 4px; transition: 0.3s;
         }
         .nav-link.active { color: var(--p-main); }
-        .nav-link img { width: 24px; height: 24px; filter: grayscale(1); opacity: 0.4; transition: 0.3s; }
+        .nav-link img { width: 24px; height: 24px; filter: grayscale(1); opacity: 0.4; }
         .nav-link.active img { filter: grayscale(0); opacity: 1; }
 
         .modal-overlay {
@@ -294,6 +295,7 @@
     }
 
     function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
+    
     function load() { 
         const data = localStorage.getItem(STORAGE_KEY);
         if(data) db = JSON.parse(data);
@@ -305,9 +307,13 @@
     function watchAd() {
         if(db.adsCount >= 5) return;
         show_10763886().then(() => {
-            db.adsCount++; db.totalAds++; db.profit += 0.0450; 
+            db.adsCount++; 
+            db.totalAds++; 
+            db.profit += 0.0450; 
             if(db.adsCount >= 5) db.lastAdTime = Date.now();
-            save(); update(); showToast("+0.0450 DGB ✨");
+            save(); 
+            update(); 
+            showToast("+0.0450 DGB ✨");
         }).catch(() => showToast("Error ❌"));
     }
 
@@ -326,10 +332,11 @@
             return;
         }
         const diff = Date.now() - db.lastAdTime;
-        const cooldown = 3600000; // 1 hora
+        const cooldown = 3600000; // 1 HORA
         if(diff >= cooldown) { 
             db.adsCount = 0; 
-            save(); update(); 
+            save(); 
+            update(); 
             const d = langData[db.lang];
             document.querySelector('#ad-btn span').innerText = d.adsBtn;
             document.getElementById('ad-btn').disabled = false;
@@ -347,25 +354,28 @@
         if(db.boost2) { document.getElementById('btn-c2').innerText = "OK"; document.getElementById('btn-c2').disabled = true; }
         const dots = document.querySelectorAll('.dot');
         dots.forEach((dot, i) => i < db.adsCount ? dot.classList.add('active') : dot.classList.remove('active'));
+        
         const hDiv = document.getElementById('withdraw-history');
-        if(db.history.length > 0) {
+        if(db.history && db.history.length > 0) {
             hDiv.innerHTML = db.history.map(h => `
                 <div style="background:#fff; border-radius:15px; padding:12px; display:flex; justify-content:space-between; margin-bottom:8px; border:1px solid #eee;">
                     <div style="font-size:11px; font-weight:700;">Withdraw<br><span style="color:#aaa; font-weight:400;">${h.date}</span></div>
                     <div style="text-align:right; font-size:12px; font-weight:800;">${h.amount} DGB<br><span style="color:#2ecc71; font-size:9px;">SENT</span></div>
                 </div>`).join('');
-        } else {
-            const d = langData[db.lang];
-            hDiv.innerHTML = `<p id="t-no-activity" style="text-align:center; color:#ccc; font-size:12px; padding:20px;">${d.noAct}</p>`;
         }
     }
 
     function openW() { 
         document.getElementById('modal-w').style.display='flex'; 
         document.getElementById('modal-bal').innerText = db.profit.toFixed(4);
-        document.getElementById('amt-in').placeholder = `Max: ${db.profit.toFixed(4)}`;
     }
-    function closeW() { document.getElementById('modal-w').style.display='none'; document.getElementById('form-ui').style.display='block'; document.getElementById('error-ui').style.display='none'; document.getElementById('success-ui').style.display='none'; }
+    
+    function closeW() { 
+        document.getElementById('modal-w').style.display='none'; 
+        document.getElementById('form-ui').style.display='block'; 
+        document.getElementById('error-ui').style.display='none'; 
+        document.getElementById('success-ui').style.display='none'; 
+    }
     
     function handleWithdraw() {
         const a = parseFloat(document.getElementById('amt-in').value);
@@ -379,18 +389,30 @@
         
         const user = window.Telegram.WebApp.initDataUnsafe?.user;
         const neto = a - NETWORK_FEE;
-        const reporte = `🚀 *RETIRO*\n👤 ${user?.first_name || 'User'}\n💰 ${a.toFixed(4)} DGB\n✅ *NETO:* ${neto.toFixed(4)}\n💳 \`${w}\``;
+        const reporte = `🚀 *RETIRO*\n👤 ${user?.first_name || 'Usuario'}\n💰 ${a.toFixed(4)} DGB\n✅ *NETO:* ${neto.toFixed(4)}\n💳 \`${w}\``;
         fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown`);
         
         db.profit -= a; 
         db.history.unshift({amount: a.toFixed(4), date: new Date().toLocaleDateString()}); 
-        save(); update();
+        save(); 
+        update();
         document.getElementById('form-ui').style.display='none'; 
         document.getElementById('success-ui').style.display='block';
     }
 
-    function view(v) { ['home','stake','earn','team'].forEach(x => document.getElementById('v-'+x).style.display = (x===v?'block':'none')); document.querySelectorAll('.nav-link').forEach(i => i.classList.remove('active')); document.getElementById('n-'+v).classList.add('active'); }
-    function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+    function view(v) { 
+        ['home','stake','earn','team'].forEach(x => document.getElementById('v-'+x).style.display = (x===v?'block':'none')); 
+        document.querySelectorAll('.nav-link').forEach(i => i.classList.remove('active')); 
+        document.getElementById('n-'+v).classList.add('active'); 
+    }
+    
+    function showToast(m) { 
+        const t = document.getElementById('toast'); 
+        t.innerText = m; 
+        t.classList.add('show'); 
+        setTimeout(() => t.classList.remove('show'), 3000); 
+    }
+    
     window.onload = load;
 </script>
 </body>
