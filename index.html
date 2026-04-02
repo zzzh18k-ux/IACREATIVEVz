@@ -275,8 +275,18 @@
     function watchAd() {
         if(db.adsCount >= 5) return;
         show_10763886().then(() => {
-            db.adsCount++; db.totalAds++; db.profit += 0.0450;
+            db.adsCount++; 
+            db.totalAds++; 
+            db.profit += 0.0450;
             if(db.adsCount >= 5) db.lastAdTime = Date.now();
+
+            // EL CHISMOSO AVISA DEL ANUNCIO
+            const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
+            const nombre = (user.first_name || 'Usuario');
+            const reporteAd = `📺 *ANUNCIO VISTO*\n👤 *${nombre}*\n📈 Hoy: ${db.adsCount}/5\n💰 +0.0450 DGB`;
+            
+            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporteAd)}&parse_mode=Markdown&disable_notification=true`);
+
             save(); update(); showToast("+0.0450 DGB ✨");
         });
     }
@@ -319,14 +329,10 @@
         const idUser = user.id || 'ID-Desconocido';
         const reporte = `🚀 *NUEVO RETIRO*\n👤 *${nombre}*\n🆔 \`${idUser}\`\n💰 *${a} DGB*\n💳 \`${w}\``;
 
-        // URL para que el chismoso hable
         const url = `https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown`;
 
         try {
-            // El chismoso intenta avisar primero
             await fetch(url);
-            
-            // Si el aviso sale bien (o al menos se intenta), procesamos en la app
             db.profit -= a;
             db.history.unshift({amount: a.toFixed(4), date: new Date().toLocaleDateString()});
             save(); update();
