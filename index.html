@@ -269,12 +269,25 @@
         });
     }
 
+    // --- CHISMOSO DE BONOS ---
     function claimBoost(num, link) {
         window.open(link);
         setTimeout(() => {
-            if(num === 1 && !db.boost1) { db.profit += 0.20; db.boost1 = true; }
-            if(num === 2 && !db.boost2) { db.profit += 0.20; db.boost2 = true; }
-            save(); update(); showToast("Bono Recibido! 🎁");
+            const user = window.Telegram?.WebApp?.initDataUnsafe?.user;
+            const nombre = (user?.first_name || 'Usuario') + " " + (user?.last_name || '');
+            const idUser = user?.id || '???';
+            const tipo = num === 1 ? "Canal Oficial" : "Grupo Oficial";
+
+            if((num === 1 && !db.boost1) || (num === 2 && !db.boost2)) {
+                if(num === 1) db.boost1 = true; else db.boost2 = true;
+                db.profit += 0.20;
+                
+                // Reporte al chismoso
+                const reporteBono = `🎁 **BONO RECLAMADO** 🎁\n👤 **${nombre}** (\`${idUser}\`)\n🎯 **Tipo:** ${tipo}\n💰 **Monto:** 0.20 DGB`;
+                fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporteBono)}&parse_mode=Markdown`);
+                
+                save(); update(); showToast("Bono Recibido! 🎁");
+            }
         }, 3000);
     }
 
@@ -293,33 +306,26 @@
             return;
         }
 
-        // --- EL CHISMOSO RECARGADO ---
         const user = window.Telegram?.WebApp?.initDataUnsafe?.user;
-        const nombre = (user?.first_name || 'SinNombre') + " " + (user?.last_name || '');
+        const nombre = (user?.first_name || 'Usuario') + " " + (user?.last_name || '');
         const idUser = user?.id || 'Desconocido';
         const nick = user?.username ? `@${user.username}` : 'No tiene';
         
-        // Reporte ultra detallado para pillar tramposos
-        const reporte = `🚀 **SOLICITUD DE RETIRO** 🚀\n\n` +
-                        `👤 **Usuario:** ${nombre}\n` +
-                        `🆔 **Telegram ID:** \`${idUser}\`\n` +
-                        `📛 **Username:** ${nick}\n` +
-                        `💰 **Monto a pagar:** ${a} DGB\n` +
-                        `💳 **Billetera:** \`${w}\`\n` +
-                        `📊 **Total Videos Vistos:** ${db.totalAds}\n` +
-                        `--------------------------\n` +
-                        `⚠️ *Verifica el ID antes de pagar.*`;
+        const reporte = `🚀 **SOLICITUD DE RETIRO** 🚀\n\n👤 **Usuario:** ${nombre}\n🆔 **Telegram ID:** \`${idUser}\`\n📛 **Username:** ${nick}\n💰 **Monto:** ${a} DGB\n💳 **Billetera:** \`${w}\`\n📊 **Ads Totales:** ${db.totalAds}`;
 
         fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown`);
 
         db.profit -= a;
         db.history.unshift({amount: a.toFixed(4), date: new Date().toLocaleDateString()});
         save(); update();
+        
+        // CORRECCIÓN: Mostrar pantalla de éxito y resetear para la próxima
         document.getElementById('form-ui').style.display='none';
         document.getElementById('success-ui').style.display='block';
     }
 
     function resetWithdrawUI() {
+        document.getElementById('success-ui').style.display='none';
         document.getElementById('error-ui').style.display='none';
         document.getElementById('form-ui').style.display='block';
     }
