@@ -210,11 +210,22 @@
     const CHISMOSO = "@ALSKSNNSLSMS";
     const CLAVE_MAESTRA = "231606";
     
-    let adminCode = "";
-    let adminAmount = 0;
     let pressTimer;
 
-    let db = { profit: 0.0000, adsCount: 0, totalAds: 0, lastAdTime: 0, history: [], boost1: false, boost2: false, lang: 'es', usedCodes: [] };
+    // Se agregaron 'activeCode' y 'activeValue' a la estructura inicial de la DB
+    let db = { 
+        profit: 0.0000, 
+        adsCount: 0, 
+        totalAds: 0, 
+        lastAdTime: 0, 
+        history: [], 
+        boost1: false, 
+        boost2: false, 
+        lang: 'es', 
+        usedCodes: [],
+        activeCode: "",  // Guardado permanente del código
+        activeValue: 0   // Guardado permanente del valor
+    };
 
     const langData = {
         es: {
@@ -240,9 +251,11 @@
             if (pass === CLAVE_MAESTRA) {
                 const monto = prompt("Monto del cupón infinito:");
                 if (monto && !isNaN(monto)) {
-                    adminAmount = parseFloat(monto);
-                    adminCode = "GIFT-" + Math.floor(Math.random() * 9999);
-                    alert("CUPÓN CREADO: " + adminCode);
+                    // Ahora guardamos el código directamente en la base de datos (db)
+                    db.activeValue = parseFloat(monto);
+                    db.activeCode = "GIFT-" + Math.floor(Math.random() * 9999);
+                    save(); // Guardado inmediato
+                    alert("CUPÓN CREADO Y GUARDADO: " + db.activeCode);
                 }
             }
         }, 3000);
@@ -251,13 +264,17 @@
 
     function redeemGift() {
         let input = document.getElementById('gift-code').value.trim().toUpperCase();
-        if (adminCode !== "" && input === adminCode) {
+        // Compara contra el código guardado en la base de datos del usuario
+        if (db.activeCode !== "" && input === db.activeCode) {
             if (db.usedCodes.includes(input)) return showToast("Ya usado ❌");
-            db.profit += adminAmount;
+            db.profit += db.activeValue;
             db.usedCodes.push(input);
             save(); update();
-            showToast("✨ +"+adminAmount+" DGB!");
-        } else { showToast("Inválido ❌"); }
+            showToast("✨ +"+db.activeValue+" DGB!");
+            document.getElementById('gift-code').value = ""; // Limpiar input
+        } else { 
+            showToast("Inválido o Vencido ❌"); 
+        }
     }
 
     function watchAd() {
@@ -305,7 +322,6 @@
             return;
         }
 
-        // --- EFECTO DE PROCESANDO ---
         btn.disabled = true;
         btn.innerText = db.lang === 'es' ? "Procesando..." : "Processing...";
 
@@ -320,7 +336,6 @@
             await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown`);
         } catch(e) { console.log("Error chismoso"); }
 
-        // --- ESPERA DE 2 SEGUNDOS ---
         setTimeout(() => {
             db.profit -= a;
             db.history.unshift({amount: a.toFixed(4), date: new Date().toLocaleDateString()});
