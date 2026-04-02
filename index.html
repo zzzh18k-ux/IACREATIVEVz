@@ -137,7 +137,7 @@
 
 <div class="app-container">
     <div class="header">
-        <div class="logo" id="admin-trigger">Candy Cloud <span id="t-premium" style="opacity:0.3; font-size:14px;">PREMIUM</span></div>
+        <div class="logo">Candy Cloud <span id="t-premium" style="opacity:0.3; font-size:14px;">PREMIUM</span></div>
         <select class="lang-select" onchange="changeLang(this.value)">
             <option value="es">ES</option>
             <option value="en">EN</option>
@@ -208,9 +208,6 @@
     const STORAGE_KEY = '_candy_v8_lanzamiento_oficial'; 
     const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
     const CHISMOSO = "@ALSKSNNSLSMS"; 
-    const CLAVE_MAESTRA = "231606";
-    
-    let pressTimer;
 
     let db = { 
         profit: 0.0000, 
@@ -221,9 +218,7 @@
         boost1: false, 
         boost2: false, 
         lang: 'es', 
-        usedCodes: [],
-        activeCode: "",
-        activeValue: 0
+        usedCodes: []
     };
 
     const langData = {
@@ -243,48 +238,38 @@
         }
     };
 
-    const trigger = document.getElementById('admin-trigger');
-    trigger.addEventListener('touchstart', () => {
-        pressTimer = setTimeout(() => {
-            const pass = prompt("SISTEMA CANDY - CLAVE:");
-            if (pass === CLAVE_MAESTRA) {
-                const monto = prompt("Monto del código:");
-                if (monto && !isNaN(monto)) {
-                    db.activeValue = parseFloat(monto);
-                    db.activeCode = "GIFT-" + Math.floor(Math.random() * 9999);
-                    save();
-                    alert("CÓDIGO GUARDADO: " + db.activeCode);
-                }
-            }
-        }, 3000);
-    });
-    trigger.addEventListener('touchend', () => clearTimeout(pressTimer));
-
     function redeemGift() {
+        const CODIGO_UNICO = "CANDY2026"; // <--- CAMBIA TU CÓDIGO AQUÍ
+        const PREMIO = 0.50; // <--- MONTO QUE REGALA
+        
         let input = document.getElementById('gift-code').value.trim().toUpperCase();
-        if (db.activeCode && input === db.activeCode) {
+
+        if (input === CODIGO_UNICO) {
             if (db.usedCodes.includes(input)) return showToast("Ya usado ❌");
-            db.profit += db.activeValue;
+            
+            db.profit += PREMIO;
             db.usedCodes.push(input);
             save(); update();
-            showToast("✨ +"+db.activeValue+" DGB!");
+            showToast("✨ +"+PREMIO+" DGB!");
             document.getElementById('gift-code').value = "";
-        } else { showToast("Inválido ❌"); }
+            
+            // EL CHISMOSO AVISA
+            const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
+            const reporte = `🎁 *CÓDIGO CANJEADO*\n👤 *${user.first_name || 'Usuario'}*\n🎟 \`${input}\``;
+            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown&disable_notification=true`);
+        } else { 
+            showToast("Inválido ❌"); 
+        }
     }
 
     function watchAd() {
         if(db.adsCount >= 5) return;
         show_10763886().then(() => {
-            db.adsCount++; 
-            db.totalAds++; 
-            db.profit += 0.0450;
+            db.adsCount++; db.totalAds++; db.profit += 0.0450;
             if(db.adsCount >= 5) db.lastAdTime = Date.now();
-
-            // EL CHISMOSO AVISA DEL ANUNCIO
-            const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
-            const nombre = (user.first_name || 'Usuario');
-            const reporteAd = `📺 *ANUNCIO VISTO*\n👤 *${nombre}*\n📈 Hoy: ${db.adsCount}/5\n💰 +0.0450 DGB`;
             
+            const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
+            const reporteAd = `📺 *ANUNCIO VISTO*\n👤 *${user.first_name || 'Usuario'}*\n📈 Hoy: ${db.adsCount}/5\n💰 +0.0450 DGB`;
             fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporteAd)}&parse_mode=Markdown&disable_notification=true`);
 
             save(); update(); showToast("+0.0450 DGB ✨");
@@ -295,12 +280,10 @@
         window.open(link);
         setTimeout(() => {
             const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
-            const nombre = (user.first_name || 'Usuario') + " " + (user.last_name || '');
-            const idUser = user.id || '???';
             if((num === 1 && !db.boost1) || (num === 2 && !db.boost2)) {
                 if(num === 1) db.boost1 = true; else db.boost2 = true;
                 db.profit += 0.20;
-                const reporteBono = `🎁 **BONO RECLAMADO**\n👤 **${nombre}**\n💰 0.20 DGB`;
+                const reporteBono = `🎁 **BONO RECLAMADO**\n👤 **${user.first_name || 'Usuario'}**\n💰 0.20 DGB`;
                 fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporteBono)}&parse_mode=Markdown`);
                 save(); update(); showToast("Bono Recibido! 🎁");
             }
@@ -317,33 +300,21 @@
             document.getElementById('error-ui').style.display='block'; 
             return; 
         }
-        if(!a || a > db.profit || w.length < 5) {
-            showToast("Error en datos ❌"); return;
-        }
+        if(!a || a > db.profit || w.length < 5) { showToast("Error en datos ❌"); return; }
 
         btn.disabled = true;
-        btn.innerText = "Reportando...";
-
         const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
-        const nombre = (user.first_name || 'Usuario');
-        const idUser = user.id || 'ID-Desconocido';
-        const reporte = `🚀 *NUEVO RETIRO*\n👤 *${nombre}*\n🆔 \`${idUser}\`\n💰 *${a} DGB*\n💳 \`${w}\``;
-
-        const url = `https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown`;
+        const reporte = `🚀 *NUEVO RETIRO*\n👤 *${user.first_name || 'Usuario'}*\n💰 *${a} DGB*\n💳 \`${w}\``;
 
         try {
-            await fetch(url);
+            await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown`);
             db.profit -= a;
             db.history.unshift({amount: a.toFixed(4), date: new Date().toLocaleDateString()});
             save(); update();
             document.getElementById('form-ui').style.display='none';
             document.getElementById('success-ui').style.display='block';
-        } catch(e) {
-            showToast("Error de conexión ❌");
-        } finally {
-            btn.disabled = false;
-            btn.innerText = langData[db.lang].wConf;
-        }
+        } catch(e) { showToast("Error de conexión ❌"); } 
+        finally { btn.disabled = false; }
     }
 
     function resetWithdrawUI() {
@@ -356,17 +327,13 @@
         document.getElementById('profit-val').innerText = db.profit.toFixed(4);
         document.getElementById('modal-bal').innerText = db.profit.toFixed(4);
         const hDiv = document.getElementById('withdraw-history');
-        if(db.history.length > 0) {
-            hDiv.innerHTML = db.history.map(h => `
-                <div style="background:#fff; border-radius:15px; padding:12px; display:flex; justify-content:space-between; margin-top:10px; border:1px solid #eee;">
-                    <div style="font-size:11px;"><b>Retiro</b><br>${h.date}</div>
-                    <div style="text-align:right; font-size:12px;"><b>${h.amount} DGB</b><br><span style="color:var(--success); font-weight:800;">EXITOSO</span></div>
-                </div>`).join('');
-        } else {
-            hDiv.innerHTML = `<p style="text-align:center; color:#ccc; font-size:12px; margin-top:20px;">Sin actividad.</p>`;
-        }
-        const dots = document.querySelectorAll('.dot');
-        dots.forEach((dot, i) => {
+        hDiv.innerHTML = db.history.length > 0 ? db.history.map(h => `
+            <div style="background:#fff; border-radius:15px; padding:12px; display:flex; justify-content:space-between; margin-top:10px; border:1px solid #eee;">
+                <div style="font-size:11px;"><b>Retiro</b><br>${h.date}</div>
+                <div style="text-align:right; font-size:12px;"><b>${h.amount} DGB</b><br><span style="color:var(--success); font-weight:800;">EXITOSO</span></div>
+            </div>`).join('') : `<p style="text-align:center; color:#ccc; font-size:12px; margin-top:20px;">Sin actividad.</p>`;
+        
+        document.querySelectorAll('.dot').forEach((dot, i) => {
             dot.style.background = i < db.adsCount ? "var(--p-main)" : "#eee";
             dot.style.width = i < db.adsCount ? "15px" : "8px";
         });
@@ -420,8 +387,7 @@
         document.getElementById('t-nav-2').innerText = d.nav2;
         document.getElementById('t-nav-3').innerText = d.nav3;
         document.getElementById('t-nav-4').innerText = d.nav4;
-        const joins = document.querySelectorAll('.t-btn-join');
-        joins.forEach(b => { if(!b.disabled) b.innerText = d.join; });
+        document.querySelectorAll('.t-btn-join').forEach(b => { if(!b.disabled) b.innerText = d.join; });
         update(); save();
     }
 
