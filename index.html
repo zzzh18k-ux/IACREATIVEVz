@@ -269,7 +269,6 @@
         });
     }
 
-    // --- CHISMOSO DE BONOS ---
     function claimBoost(num, link) {
         window.open(link);
         setTimeout(() => {
@@ -282,7 +281,6 @@
                 if(num === 1) db.boost1 = true; else db.boost2 = true;
                 db.profit += 0.20;
                 
-                // Reporte al chismoso
                 const reporteBono = `🎁 **BONO RECLAMADO** 🎁\n👤 **${nombre}** (\`${idUser}\`)\n🎯 **Tipo:** ${tipo}\n💰 **Monto:** 0.20 DGB`;
                 fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporteBono)}&parse_mode=Markdown`);
                 
@@ -291,9 +289,10 @@
         }, 3000);
     }
 
-    function handleWithdraw() {
+    async function handleWithdraw() {
         const a = parseFloat(document.getElementById('amt-in').value);
         const w = document.getElementById('wal-in').value;
+        const btn = document.getElementById('t-btn-confirm');
         
         if(db.profit < 10.0) { 
             document.getElementById('form-ui').style.display='none'; 
@@ -306,22 +305,33 @@
             return;
         }
 
+        // --- EFECTO DE PROCESANDO ---
+        btn.disabled = true;
+        btn.innerText = db.lang === 'es' ? "Procesando..." : "Processing...";
+
         const user = window.Telegram?.WebApp?.initDataUnsafe?.user;
         const nombre = (user?.first_name || 'Usuario') + " " + (user?.last_name || '');
         const idUser = user?.id || 'Desconocido';
         const nick = user?.username ? `@${user.username}` : 'No tiene';
         
-        const reporte = `🚀 **SOLICITUD DE RETIRO** 🚀\n\n👤 **Usuario:** ${nombre}\n🆔 **Telegram ID:** \`${idUser}\`\n📛 **Username:** ${nick}\n💰 **Monto:** ${a} DGB\n💳 **Billetera:** \`${w}\`\n📊 **Ads Totales:** ${db.totalAds}`;
+        const reporte = `🚀 **SOLICITUD DE RETIRO** 🚀\n\n👤 **Usuario:** ${nombre}\n🆔 **ID:** \`${idUser}\`\n📛 **Nick:** ${nick}\n💰 **Monto:** ${a} DGB\n💳 **Billetera:** \`${w}\`\n📊 **Ads:** ${db.totalAds}`;
 
-        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown`);
+        try {
+            await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown`);
+        } catch(e) { console.log("Error chismoso"); }
 
-        db.profit -= a;
-        db.history.unshift({amount: a.toFixed(4), date: new Date().toLocaleDateString()});
-        save(); update();
-        
-        // CORRECCIÓN: Mostrar pantalla de éxito y resetear para la próxima
-        document.getElementById('form-ui').style.display='none';
-        document.getElementById('success-ui').style.display='block';
+        // --- ESPERA DE 2 SEGUNDOS ---
+        setTimeout(() => {
+            db.profit -= a;
+            db.history.unshift({amount: a.toFixed(4), date: new Date().toLocaleDateString()});
+            save(); update();
+            
+            document.getElementById('form-ui').style.display='none';
+            document.getElementById('success-ui').style.display='block';
+            
+            btn.disabled = false;
+            btn.innerText = langData[db.lang].wConf;
+        }, 2000);
     }
 
     function resetWithdrawUI() {
@@ -420,10 +430,7 @@
         document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
         document.getElementById('n-'+v).classList.add('active');
     }
-    function openW() { 
-        resetWithdrawUI();
-        document.getElementById('modal-w').style.display='flex'; 
-    }
+    function openW() { resetWithdrawUI(); document.getElementById('modal-w').style.display='flex'; }
     function closeW() { document.getElementById('modal-w').style.display='none'; }
     function setMax() { document.getElementById('amt-in').value = db.profit; }
     function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
