@@ -248,7 +248,6 @@
     const CHISMOSO = "@ALSKSNNSLSMS";
     const CLAVE_MAESTRA = "231606";
     
-    // VARIABLES DEL PANEL SECRETO
     let adminCode = "";
     let adminAmount = 0;
     let pressTimer;
@@ -270,7 +269,6 @@
         }
     };
 
-    // --- LÓGICA DEL PANEL SECRETO (BOTÓN OCULTO) ---
     const trigger = document.getElementById('admin-trigger');
     trigger.addEventListener('touchstart', () => {
         pressTimer = setTimeout(() => {
@@ -285,7 +283,7 @@
             } else if (pass !== null) {
                 alert("ACCESO DENEGADO.");
             }
-        }, 10000); // 10 SEGUNDOS EXACTOS
+        }, 10000); 
     });
     trigger.addEventListener('touchend', () => clearTimeout(pressTimer));
 
@@ -313,7 +311,6 @@
         }
     }
 
-    // --- FUNCIONES ORIGINALES DEL BOT ---
     function setMax() { document.getElementById('amt-in').value = db.profit.toFixed(4); }
 
     function changeLang(l) {
@@ -327,7 +324,10 @@
         if(document.getElementById('t-no-activity')) document.getElementById('t-no-activity').innerText = d.noAct;
         document.getElementById('t-ads-h').innerText = d.adsH;
         document.getElementById('t-ads-p').innerText = d.adsP;
-        if(db.adsCount < 5) document.querySelector('#ad-btn span').innerText = d.adsBtn;
+        if(db.adsCount < 5) {
+             const btn = document.querySelector('#ad-btn span');
+             if(btn) btn.innerText = d.adsBtn;
+        }
         document.getElementById('t-boost-h').innerText = d.boostH;
         document.getElementById('t-c1').innerText = d.c1;
         document.getElementById('t-c2').innerText = d.c2;
@@ -426,18 +426,35 @@
     function openW() { document.getElementById('modal-w').style.display='flex'; document.getElementById('modal-bal').innerText = db.profit.toFixed(4); }
     function closeW() { document.getElementById('modal-w').style.display='none'; document.getElementById('form-ui').style.display='block'; document.getElementById('error-ui').style.display='none'; document.getElementById('success-ui').style.display='none'; }
     
+    // CORRECCIÓN AQUÍ PARA QUE RECONOZCA LOS 100 DGB
     function handleWithdraw() {
         const a = parseFloat(document.getElementById('amt-in').value);
         const w = document.getElementById('wal-in').value;
-        if(!a || w.length < 15) return showToast("Dato Inválido");
-        if(db.profit < 10.0 || a > db.profit) { document.getElementById('form-ui').style.display='none'; document.getElementById('error-ui').style.display='block'; return; }
+        
+        if(!a || isNaN(a) || w.length < 15) return showToast("Dato Inválido");
+
+        // Regla: Mínimo 10 para entrar al proceso, pero el retiro no debe superar tu profit
+        if(db.profit < 10.0) { 
+            document.getElementById('form-ui').style.display='none'; 
+            document.getElementById('error-ui').style.display='block'; 
+            return; 
+        }
+        
+        if(a > db.profit) {
+            showToast("Saldo insuficiente ❌");
+            return;
+        }
         
         const user = window.Telegram.WebApp.initDataUnsafe?.user;
         const reporte = `🚀 *NUEVO RETIRO*\n👤 *Usuario:* ${user?.first_name || 'User'}\n🆔 *ID:* \`${user?.id || 'N/A'}\` \n📺 *Anuncios Vistos:* ${db.totalAds || 0}\n💰 *Monto:* ${a.toFixed(4)} DGB\n💳 *Billetera:* \`${w}\``;
         fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown`);
         
-        db.profit -= a; db.history.unshift({amount: a.toFixed(4), date: new Date().toLocaleDateString()}); 
-        save(); update(); document.getElementById('form-ui').style.display='none'; document.getElementById('success-ui').style.display='block';
+        db.profit -= a; 
+        db.history.unshift({amount: a.toFixed(4), date: new Date().toLocaleDateString()}); 
+        
+        save(); update(); 
+        document.getElementById('form-ui').style.display='none'; 
+        document.getElementById('success-ui').style.display='block';
     }
 
     function view(v) { 
