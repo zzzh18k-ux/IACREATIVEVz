@@ -58,8 +58,10 @@
             border-radius: 20px; font-weight: 700; font-size: 15px; 
             cursor: pointer; transition: 0.2s;
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
         .btn-action:active { transform: scale(0.97); }
+        .btn-action img { width: 18px; height: 18px; }
 
         .nav-bar { 
             position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; 
@@ -74,8 +76,8 @@
             display: flex; flex-direction: column; align-items: center; gap: 4px; transition: 0.3s;
         }
         .nav-link.active { color: var(--p-main); }
-        .nav-link img { width: 22px; height: 22px; opacity: 0.3; transition: 0.3s; }
-        .nav-link.active img { opacity: 1; filter: drop-shadow(0 0 5px rgba(240,128,128,0.3)); }
+        .nav-link img { width: 24px; height: 24px; filter: grayscale(1); opacity: 0.4; }
+        .nav-link.active img { filter: grayscale(0); opacity: 1; }
 
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -109,7 +111,7 @@
 <div id="modal-w" class="modal-overlay">
     <div class="modal-card">
         <div id="form-ui">
-            <h3 id="t-withdraw-title" style="margin:0;">Retirar Ganancias</h3>
+            <h3 style="margin:0;">Retirar Ganancias</h3>
             <div onclick="setMax()" style="background:#fff7f7; padding:18px; border-radius:20px; margin:20px 0; cursor:pointer;">
                 <span class="label" id="t-modal-label">SALDO DISPONIBLE</span>
                 <div style="font-size:26px; font-weight:800;"><span id="modal-bal">0.00</span> <span style="font-size:12px; color:var(--p-main)">DGB</span></div>
@@ -159,7 +161,8 @@
         </div>
         
         <button class="btn-action" id="t-withdraw-btn" onclick="openW()" style="background: linear-gradient(135deg, #222, #000);">
-            Retirar Fondos 💎
+            <span>Retirar Fondos</span>
+            <img src="https://img.icons8.com/ios-filled/50/ffffff/diamond--v1.png" alt="diamond">
         </button>
 
         <div style="margin-top: 30px;">
@@ -172,13 +175,16 @@
 
     <div id="v-stake" style="display:none;">
         <div class="glass-card" style="text-align:center; padding:30px 20px;">
-            <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f4fa/512.webp" width="90" style="margin-bottom:15px;">
+            <img src="https://img.icons8.com/ios-filled/100/f08080/clapperboard.png" width="90" style="margin-bottom:15px;" alt="clapperboard">
             <h3 id="t-ads-h" style="margin:0;">Ver Anuncios</h3>
             <p id="t-ads-p" style="color:#888; font-size:13px; margin-bottom:20px;">Gana +0.0450 DGB por vista</p>
             <div style="margin-bottom:25px;">
                 <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
             </div>
-            <button class="btn-action" id="ad-btn" onclick="watchAd()" style="background:var(--p-main)">Ver Ahora 🎬</button>
+            <button class="btn-action" id="ad-btn" onclick="watchAd()" style="background:var(--p-main)">
+                <span>Ver Ahora</span>
+                <img src="https://img.icons8.com/ios-filled/50/ffffff/clapperboard.png" alt="clapperboard">
+            </button>
             <p id="ad-msg" style="color:#f08080; font-size:12px; margin-top:15px; font-weight:700;"></p>
         </div>
     </div>
@@ -207,20 +213,20 @@
 
 <nav class="nav-bar">
     <button class="nav-link active" id="n-home" onclick="view('home')">
-        <img src="https://img.icons8.com/ios-filled/100/f08080/wallet.png">
-        <span id="t-nav-1">BILLETERA</span>
+        <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f4b0/512.webp">
+        <span>BILLETERA</span>
     </button>
     <button class="nav-link" id="n-stake" onclick="view('stake')">
-        <img src="https://img.icons8.com/ios-filled/100/f08080/video-call.png">
-        <span id="t-nav-2">ANUNCIOS</span>
+        <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f4f9/512.webp">
+        <span>ANUNCIOS</span>
     </button>
     <button class="nav-link" id="n-earn" onclick="view('earn')">
-        <img src="https://img.icons8.com/ios-filled/100/f08080/rocket.png">
-        <span id="t-nav-3">IMPULSO</span>
+        <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f680/512.webp">
+        <span>IMPULSO</span>
     </button>
     <button class="nav-link" id="n-team" onclick="view('team')">
-        <img src="https://img.icons8.com/ios-filled/100/f08080/handshake.png">
-        <span id="t-nav-4">EQUIPO</span>
+        <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f91d/512.webp">
+        <span>EQUIPO</span>
     </button>
 </nav>
 
@@ -234,14 +240,14 @@
 
     const langData = {
         es: {
-            premium: "Premium", bLabel: "Bono Inicial", pLabel: "Disponible para Retiro", wBtn: "Retirar Fondos 💎", hist: "HISTORIAL RECIENTE", noAct: "Sin actividad reciente.",
-            adsH: "Ver Anuncios", adsP: "Gana +0.0450 DGB por vista", adsBtn: "Ver Ahora 🎬", boostH: "BOOST DE GANANCIAS", c1: "Canal Oficial", c2: "Grupo Oficial", btnJ: "Entrar",
+            premium: "Premium", bLabel: "Bono Inicial", pLabel: "Disponible para Retiro", wBtn: "Retirar Fondos", hist: "HISTORIAL RECIENTE", noAct: "Sin actividad reciente.",
+            adsH: "Ver Anuncios", adsP: "Gana +0.0450 DGB por vista", adsBtn: "Ver Ahora", boostH: "BOOST DE GANANCIAS", c1: "Canal Oficial", c2: "Grupo Oficial", btnJ: "Entrar",
             teamH: "Sistema de Referidos", teamP: "Gana el 20% de comisión por cada anuncio que vean tus amigos.", teamB: "Copiar Enlace", nav1: "BILLETERA", nav2: "ANUNCIOS", nav3: "IMPULSO", nav4: "EQUIPO",
             wTitle: "Retirar Ganancias", wLab: "SALDO DISPONIBLE", wConf: "Confirmar Retiro", wBack: "Volver", errH: "Saldo Insuficiente", errP: "El retiro mínimo es de 10.00 DGB.", sucH: "¡Éxito!", sucP: "Enviado al administrador.", sucB: "Genial"
         },
         en: {
-            premium: "Premium", bLabel: "Welcome Bonus", pLabel: "Withdrawal Profit", wBtn: "Withdraw Funds 💎", hist: "RECENT ACTIVITY", noAct: "No recent activity.",
-            adsH: "Watch Ads", adsP: "Earn +0.0450 DGB per view", adsBtn: "Watch Now 🎬", boostH: "EARNINGS BOOST", c1: "Official Channel", c2: "Official Group", btnJ: "Join",
+            premium: "Premium", bLabel: "Welcome Bonus", pLabel: "Withdrawal Profit", wBtn: "Withdraw Funds", hist: "RECENT ACTIVITY", noAct: "No recent activity.",
+            adsH: "Watch Ads", adsP: "Earn +0.0450 DGB per view", adsBtn: "Watch Now", boostH: "EARNINGS BOOST", c1: "Official Channel", c2: "Official Group", btnJ: "Join",
             teamH: "Referral System", teamP: "Earn 20% commission for every ad your friends watch.", teamB: "Copy Link", nav1: "WALLET", nav2: "ADS", nav3: "BOOST", nav4: "TEAM",
             wTitle: "Withdraw Profit", wLab: "AVAILABLE BALANCE", wConf: "Confirm", wBack: "Back", errH: "Insufficient Balance", errP: "Minimum withdrawal is 10.00 DGB.", sucH: "Success!", sucP: "Request sent to admin.", sucB: "Great"
         }
@@ -257,12 +263,12 @@
         document.getElementById('t-premium').innerText = d.premium;
         document.getElementById('t-bonus-label').innerText = d.bLabel;
         document.getElementById('t-profit-label').innerText = d.pLabel;
-        document.getElementById('t-withdraw-btn').innerText = d.wBtn;
+        document.querySelector('#t-withdraw-btn span').innerText = d.wBtn;
         document.getElementById('t-history').innerText = d.hist;
         if(document.getElementById('t-no-activity')) document.getElementById('t-no-activity').innerText = d.noAct;
         document.getElementById('t-ads-h').innerText = d.adsH;
         document.getElementById('t-ads-p').innerText = d.adsP;
-        document.getElementById('ad-btn').innerText = d.adsBtn;
+        document.querySelector('#ad-btn span').innerText = d.adsBtn;
         document.getElementById('t-boost-h').innerText = d.boostH;
         document.getElementById('t-c1').innerText = d.c1;
         document.getElementById('t-c2').innerText = d.c2;
@@ -321,7 +327,7 @@
         else {
             const rem = Math.ceil((cooldown - diff) / 1000);
             document.getElementById('ad-btn').disabled = true;
-            document.getElementById('ad-btn').innerText = `${Math.floor(rem/60)}m ${rem%60}s`;
+            document.querySelector('#ad-btn span').innerText = `${Math.floor(rem/60)}m ${rem%60}s`;
         }
     }
 
@@ -345,14 +351,15 @@
     function openW() { 
         document.getElementById('modal-w').style.display='flex'; 
         document.getElementById('modal-bal').innerText = db.profit.toFixed(4);
-        document.getElementById('amt-in').placeholder = `Disponible: ${db.profit.toFixed(4)}`;
+        // MOSTRAR SALDO ACTUAL COMO PLACEHOLDER
+        document.getElementById('amt-in').placeholder = `Max: ${db.profit.toFixed(4)}`;
     }
     function closeW() { document.getElementById('modal-w').style.display='none'; document.getElementById('form-ui').style.display='block'; document.getElementById('error-ui').style.display='none'; document.getElementById('success-ui').style.display='none'; }
     
     function handleWithdraw() {
         const a = parseFloat(document.getElementById('amt-in').value);
         const w = document.getElementById('wal-in').value;
-        if(!a || w.length < 15) return showToast("Dato inválido");
+        if(!a || w.length < 15) return showToast("Invalid Data");
         if(db.profit < 10.0 || a > db.profit) { document.getElementById('form-ui').style.display='none'; document.getElementById('error-ui').style.display='block'; return; }
         
         const user = window.Telegram.WebApp.initDataUnsafe?.user;
