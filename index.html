@@ -14,7 +14,6 @@
             --bg-grad: linear-gradient(180deg, #fff5f6 0%, #ffffff 100%);
             --card-bg: rgba(255, 255, 255, 0.85);
             --text: #3d2b2b;
-            --accent: #ff8fa3;
         }
 
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
@@ -27,80 +26,80 @@
 
         .app-container { 
             width: 100%; max-width: 450px; margin: 0 auto; padding: 20px; 
-            height: 100vh; overflow-y: auto; padding-bottom: 100px; position: relative; z-index: 1; 
+            height: 100vh; overflow-y: auto; padding-bottom: 110px; position: relative; z-index: 1; 
         }
 
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0 15px; }
         .logo { font-weight: 800; font-size: 20px; color: var(--p-main); letter-spacing: -0.5px; }
 
         .lang-select {
-            background: var(--card-bg); border: 1px solid #eee;
-            border-radius: 10px; padding: 6px 12px; font-size: 11px; font-weight: 700;
-            color: var(--text); backdrop-filter: blur(5px);
+            background: var(--card-bg); border: 1.5px solid #f0f0f0;
+            border-radius: 12px; padding: 6px 10px; font-size: 11px; font-weight: 700;
+            color: var(--text);
         }
 
         .glass-card {
             background: var(--card-bg);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
-            border-radius: 24px; padding: 22px; 
+            border-radius: 24px; padding: 20px; 
             border: 1px solid rgba(255, 255, 255, 1);
             margin-bottom: 15px; 
-            box-shadow: 0 12px 24px rgba(0,0,0,0.03);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.03);
         }
 
-        .label { color: #a58e8e; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; display: block; }
-        .amount { font-size: 34px; font-weight: 800; color: var(--text); letter-spacing: -1px; }
+        .label { color: #a58e8e; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; display: block; }
+        .amount { font-size: 32px; font-weight: 800; color: var(--text); letter-spacing: -1px; }
         .amount span { color: var(--p-main); font-size: 14px; margin-left: 4px; }
 
         .btn-action { 
-            background: #222; 
+            background: #1a1a1a; 
             color: #fff; border: none; width: 100%; padding: 16px; 
-            border-radius: 18px; font-weight: 700; font-size: 15px; 
+            border-radius: 20px; font-weight: 700; font-size: 15px; 
             cursor: pointer; transition: 0.2s;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
-        .btn-action:active { transform: scale(0.98); opacity: 0.9; }
+        .btn-action:active { transform: scale(0.97); }
 
         .nav-bar { 
             position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; 
-            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
             display: flex; justify-content: space-around; padding: 10px; 
-            border-radius: 22px; box-shadow: 0 8px 30px rgba(0,0,0,0.06); z-index: 100;
-            border: 1px solid #f0f0f0;
+            border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); z-index: 100;
+            border: 1px solid #f5f5f5;
         }
         .nav-link { 
-            background: transparent; border: none; color: #ccc; 
-            font-weight: 700; font-size: 9px; cursor: pointer; 
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            background: transparent; border: none; color: #bbb; 
+            font-weight: 800; font-size: 9px; cursor: pointer; 
+            display: flex; flex-direction: column; align-items: center; gap: 4px; transition: 0.3s;
         }
         .nav-link.active { color: var(--p-main); }
-        .nav-link img { width: 22px; height: 22px; filter: grayscale(1); opacity: 0.5; }
+        .nav-link img { width: 24px; height: 24px; filter: grayscale(1); opacity: 0.4; }
         .nav-link.active img { filter: grayscale(0); opacity: 1; }
 
-        /* Modales Compactos */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.3); backdrop-filter: blur(8px);
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(10px);
             display: none; justify-content: center; align-items: center; z-index: 9999; padding: 20px;
         }
         .modal-card {
-            background: #fff; width: 100%; max-width: 360px; padding: 25px; 
-            border-radius: 28px; text-align: center;
+            background: #fff; width: 100%; max-width: 360px; padding: 30px; 
+            border-radius: 30px; text-align: center;
         }
         .modal-input {
-            width: 100%; background: #f8f8f8; border: 1.5px solid #eee;
-            padding: 14px; border-radius: 14px; color: var(--text); 
-            font-size: 14px; text-align: center; margin-top: 10px;
+            width: 100%; background: #f9f9f9; border: 2.5px solid #eee;
+            padding: 14px; border-radius: 16px; color: var(--text); 
+            font-size: 14px; text-align: center; margin-top: 10px; transition: 0.3s;
         }
+        .modal-input:focus { border-color: var(--p-main); background: #fff; }
 
-        .dot { width: 8px; height: 8px; border-radius: 50%; background: #eee; display: inline-block; margin: 0 4px; }
-        .dot.active { background: var(--p-main); width: 18px; border-radius: 4px; }
+        .dot { width: 8px; height: 8px; border-radius: 4px; background: #eee; display: inline-block; margin: 0 4px; transition: 0.4s; }
+        .dot.active { background: var(--p-main); width: 20px; }
         
         .toast { 
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); 
-            background: #222; color: #fff; padding: 10px 20px; 
-            border-radius: 12px; font-weight: 600; font-size: 13px; transition: 0.3s; z-index: 10000; 
+            position: fixed; top: 25px; left: 50%; transform: translateX(-50%) translateY(-100px); 
+            background: #333; color: #fff; padding: 12px 24px; 
+            border-radius: 15px; font-weight: 700; font-size: 13px; transition: 0.4s; z-index: 10000; 
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
     </style>
@@ -110,30 +109,30 @@
 <div id="modal-w" class="modal-overlay">
     <div class="modal-card">
         <div id="form-ui">
-            <h3 id="t-withdraw-title" style="margin:0; color: var(--text);">Retirar Fondos</h3>
-            <div style="background:#fff9f9; padding:15px; border-radius:18px; margin:15px 0;">
-                <span class="label" id="t-modal-avail">DISPONIBLE</span>
-                <div style="font-size:24px; font-weight:800;"><span id="modal-bal">0.00</span> <span style="font-size:12px; color:var(--p-main)">DGB</span></div>
+            <h3 style="margin:0;">Retirar Ganancias</h3>
+            <div style="background:#fff7f7; padding:18px; border-radius:20px; margin:20px 0;">
+                <span class="label">SALDO DISPONIBLE</span>
+                <div style="font-size:26px; font-weight:800;"><span id="modal-bal">0.00</span> <span style="font-size:12px; color:var(--p-main)">DGB</span></div>
             </div>
-            <input type="number" id="amt-in" class="modal-input" placeholder="Monto a retirar">
-            <input type="text" id="wal-in" class="modal-input" placeholder="Dirección Wallet DGB">
-            <p style="font-size:10px; color:#999; margin:15px 0;" id="t-modal-fee">Comisión de red: 0.46 DGB</p>
-            <button class="btn-action" onclick="handleWithdraw()" id="t-btn-confirm" style="background:var(--p-main)">Confirmar Retiro</button>
-            <p onclick="closeW()" style="color:#bbb; font-size:12px; margin-top:15px; cursor:pointer; font-weight:700;">Cancelar</p>
+            <input type="number" id="amt-in" class="modal-input" placeholder="Monto (Ej: 10.5)">
+            <input type="text" id="wal-in" class="modal-input" placeholder="Dirección de Billetera DGB">
+            <p style="font-size:10px; color:#999; margin:15px 0;">Network Fee: 0.46 DGB</p>
+            <button class="btn-action" onclick="handleWithdraw()" style="background:var(--p-main)">Confirmar Retiro</button>
+            <p onclick="closeW()" style="color:#bbb; font-size:13px; margin-top:15px; cursor:pointer; font-weight:700;">Volver</p>
         </div>
         
         <div id="error-ui" style="display:none;">
-            <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/26a0_fe0f/512.webp" width="60">
-            <h3 id="t-err-title">Saldo Insuficiente</h3>
-            <p id="t-err-msg" style="font-size:13px; color:#888;">El mínimo para retirar son 10.00 DGB.</p>
-            <button class="btn-action" onclick="closeW()">Entendido</button>
+            <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/26a0_fe0f/512.webp" width="70">
+            <h3>Saldo Insuficiente</h3>
+            <p style="font-size:14px; color:#888;">El retiro mínimo es de **10.00 DGB**.</p>
+            <button class="btn-action" onclick="closeW()">Cerrar</button>
         </div>
 
         <div id="success-ui" style="display:none;">
-            <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/2728/512.webp" width="60">
-            <h3 style="color:#2ecc71;">¡Solicitud Enviada!</h3>
-            <p style="font-size:13px; color:#888;">Tu pago está siendo procesado por el nodo.</p>
-            <button class="btn-action" onclick="closeW()">Excelente</button>
+            <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/2728/512.webp" width="70">
+            <h3 style="color:#2ecc71;">¡Éxito!</h3>
+            <p style="font-size:14px; color:#888;">Tu solicitud ha sido enviada al administrador.</p>
+            <button class="btn-action" onclick="closeW()">Genial</button>
         </div>
     </div>
 </div>
@@ -142,7 +141,7 @@
 
 <div class="app-container">
     <div class="header">
-        <div class="logo">Candy Cloud <span style="font-weight:400; opacity:0.5">Luxe</span></div>
+        <div class="logo">Candy Cloud <span style="font-weight:400; opacity:0.4">Premium</span></div>
         <select class="lang-select" onchange="changeLang(this.value)">
             <option value="es">ES</option>
             <option value="en">EN</option>
@@ -151,59 +150,56 @@
 
     <div id="v-home">
         <div class="glass-card">
-            <span class="label">Bono de Bienvenida</span>
-            <div class="amount" style="font-size: 20px; color: #bbb; margin-bottom: 12px;"><span id="bonus-val">0.00</span> <span>DGB</span></div>
+            <span class="label">Bono Inicial</span>
+            <div class="amount" style="font-size: 20px; color: #ccc; margin-bottom: 12px;"><span id="bonus-val">0.00</span> <span>DGB</span></div>
             <div style="height: 1px; background: #f0f0f0; margin-bottom: 15px;"></div>
-            <span class="label" style="color: var(--p-main);">Ganancias Retirables</span>
+            <span class="label" style="color: var(--p-main);">Disponible para Retiro</span>
             <div class="amount"><span id="profit-val">0.0000</span> <span>DGB</span></div>
         </div>
         
-        <button class="btn-action" onclick="openW()" style="background: linear-gradient(135deg, #444, #111);">
-            Retirar Activos
+        <button class="btn-action" onclick="openW()" style="background: linear-gradient(135deg, #222, #000);">
+            Retirar Fondos 💎
         </button>
 
         <div style="margin-top: 30px;">
-            <div style="font-weight: 800; font-size: 13px; margin-bottom: 15px; color:#999;" id="t-history-title">ACTIVIDAD RECIENTE</div>
+            <div style="font-weight: 800; font-size: 13px; margin-bottom: 12px; color:#aaa;">HISTORIAL RECIENTE</div>
             <div id="withdraw-history">
-                <p style="text-align:center; color:#ccc; font-size:12px; padding:20px;">Sin transacciones.</p>
+                <p style="text-align:center; color:#ccc; font-size:12px; padding:20px;">Sin actividad reciente.</p>
             </div>
         </div>
     </div>
 
     <div id="v-stake" style="display:none;">
-        <div class="glass-card" style="text-align:center;">
-            <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f4fa/512.webp" width="80" style="margin-bottom:15px;">
-            <h3 style="margin:0;">Video Rewards</h3>
-            <p style="color:#888; font-size:13px; margin-bottom:20px;">Gana 0.0450 DGB por video</p>
-            <div style="margin-bottom:20px;">
+        <div class="glass-card" style="text-align:center; padding:30px 20px;">
+            <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f4fa/512.webp" width="90" style="margin-bottom:15px;">
+            <h3 style="margin:0;">Ver Anuncios</h3>
+            <p style="color:#888; font-size:13px; margin-bottom:20px;">Gana +0.0450 DGB por vista</p>
+            <div style="margin-bottom:25px;">
                 <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
             </div>
-            <button class="btn-action" id="ad-btn" onclick="watchAd()" style="background:var(--p-main)">Ver Video Ahora</button>
-            <p id="ad-msg" style="color:#f08080; font-size:11px; margin-top:15px; font-weight:700;"></p>
+            <button class="btn-action" id="ad-btn" onclick="watchAd()" style="background:var(--p-main)">Ver Ahora 🎬</button>
+            <p id="ad-msg" style="color:#f08080; font-size:12px; margin-top:15px; font-weight:700;"></p>
         </div>
     </div>
 
     <div id="v-earn" style="display:none;">
-        <h4 style="margin: 0 0 15px 5px; color:#999;">TAREAS DE IMPULSO</h4>
-        <div class="glass-card" style="display:flex; justify-content:space-between; align-items:center; padding:15px 20px;">
-            <div style="font-size:13px; font-weight:700;">Canal Oficial<br><span style="color:var(--p-main); font-size:11px;">+10.0 DGB</span></div>
-            <button class="btn-action" id="btn-c1" style="width:auto; padding:8px 18px; font-size:12px;" onclick="claimBoost(1, 'https://t.me/CandyCloudoficial')">Unirse</button>
+        <h4 style="margin: 0 0 15px 5px; color:#999;">BOOST DE GANANCIAS</h4>
+        <div class="glass-card" style="display:flex; justify-content:space-between; align-items:center; padding:18px;">
+            <div style="font-size:13px; font-weight:700;">Canal Oficial<br><span style="color:var(--p-main); font-size:11px;">+10.0 DGB Bonus</span></div>
+            <button class="btn-action" id="btn-c1" style="width:auto; padding:10px 20px; font-size:12px;" onclick="claimBoost(1, 'https://t.me/CandyCloudoficial')">Entrar</button>
         </div>
-        <div class="glass-card" style="display:flex; justify-content:space-between; align-items:center; padding:15px 20px;">
-            <div style="font-size:13px; font-weight:700;">Grupo de Apoyo<br><span style="color:var(--p-main); font-size:11px;">+10.0 DGB</span></div>
-            <button class="btn-action" id="btn-c2" style="width:auto; padding:8px 18px; font-size:12px;" onclick="claimBoost(2, 'https://t.me/CandyCloudoficial')">Unirse</button>
+        <div class="glass-card" style="display:flex; justify-content:space-between; align-items:center; padding:18px;">
+            <div style="font-size:13px; font-weight:700;">Grupo Oficial<br><span style="color:var(--p-main); font-size:11px;">+10.0 DGB Bonus</span></div>
+            <button class="btn-action" id="btn-c2" style="width:auto; padding:10px 20px; font-size:12px;" onclick="claimBoost(2, 'https://t.me/CandyCloudoficial')">Entrar</button>
         </div>
     </div>
 
     <div id="v-team" style="display:none;">
         <div class="glass-card" style="text-align:center;">
-            <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f451/512.webp" width="60" style="margin-bottom:10px;">
-            <h3 style="margin:0;">Sistema de Afiliados</h3>
-            <p style="font-size:12px; color:#888; margin:10px 0 20px;">Obtén el 20% de lo que generen tus referidos de por vida.</p>
-            <div style="padding: 15px; border-radius:15px; background: #fdfdfd; border: 1px solid #eee;">
-                <p style="font-size:11px; color:#aaa; margin-bottom:10px;">Tu enlace está en el bot principal</p>
-                <button class="btn-action" onclick="window.open('https://t.me/CandyCloudBot?start=r')" style="font-size:13px; background:#333;">Copiar mi Link</button>
-            </div>
+            <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f451/512.webp" width="70" style="margin-bottom:10px;">
+            <h3 style="margin:0;">Sistema de Referidos</h3>
+            <p style="font-size:13px; color:#888; margin:10px 0 25px;">Gana el 20% de comisión por cada anuncio que vean tus amigos.</p>
+            <button class="btn-action" onclick="window.open('https://t.me/CandyCloudBot?start=r')" style="background:#333;">Copiar Enlace de Invitación</button>
         </div>
     </div>
 </div>
@@ -228,24 +224,18 @@
 </nav>
 
 <script>
-    const i18n = {
-        es: { wait: "Espera", limit: "Vuelve en una hora" },
-        en: { wait: "Wait", limit: "Back in 1 hour" }
-    };
-
-    let currentLang = 'es';
+    // LLAVE DE MEMORIA ORIGINAL (NO TOCAR PARA NO PERDER SALDOS)
+    const STORAGE_KEY = '_candy_v8_lanzamiento_oficial'; 
     const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
     const CHISMOSO = "@ALSKSNNSLSMS";
-    const STORAGE_KEY = '_candy_v9_luxe';
     const NETWORK_FEE = 0.4644; 
     
     let db = { bonus: 2.45, profit: 0.0000, adsCount: 0, totalAds: 0, lastAdTime: 0, history: [], boost1: false, boost2: false, lang: 'es' };
 
-    function save() { db.lang = currentLang; localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
+    function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
     function load() { 
         const data = localStorage.getItem(STORAGE_KEY);
         if(data) db = JSON.parse(data);
-        currentLang = db.lang || 'es';
         update();
         setInterval(checkCooldown, 1000);
     }
@@ -255,8 +245,8 @@
         show_10763886().then(() => {
             db.adsCount++; db.totalAds++; db.profit += 0.0450; 
             if(db.adsCount >= 5) db.lastAdTime = Date.now();
-            save(); update(); showToast("+0.0450 DGB");
-        }).catch(() => showToast("Error de Red ❌"));
+            save(); update(); showToast("+0.0450 DGB Añadido! ✨");
+        }).catch(() => showToast("Error de conexión ❌"));
     }
 
     function claimBoost(num, link) {
@@ -264,8 +254,8 @@
         setTimeout(() => {
             if(num === 1 && !db.boost1) { db.bonus += 10.0; db.boost1 = true; }
             if(num === 2 && !db.boost2) { db.bonus += 10.0; db.boost2 = true; }
-            save(); update(); showToast("Bono Reclamado! ✨");
-        }, 2500);
+            save(); update(); showToast("Bono Reclamado! 🎁");
+        }, 3000);
     }
 
     function checkCooldown() {
@@ -276,24 +266,24 @@
         else {
             const rem = Math.ceil((cooldown - diff) / 1000);
             document.getElementById('ad-btn').disabled = true;
-            document.getElementById('ad-btn').innerText = `${i18n[currentLang].wait} ${Math.floor(rem/60)}m ${rem%60}s`;
-            document.getElementById('ad-msg').innerText = i18n[currentLang].limit;
+            document.getElementById('ad-btn').innerText = `Espera ${Math.floor(rem/60)}m ${rem%60}s`;
+            document.getElementById('ad-msg').innerText = "Límite por hora alcanzado";
         }
     }
 
     function update() {
         document.getElementById('bonus-val').innerText = db.bonus.toFixed(2);
         document.getElementById('profit-val').innerText = db.profit.toFixed(4);
-        if(db.boost1) { document.getElementById('btn-c1').innerText = "Listo"; document.getElementById('btn-c1').disabled = true; }
-        if(db.boost2) { document.getElementById('btn-c2').innerText = "Listo"; document.getElementById('btn-c2').disabled = true; }
+        if(db.boost1) { document.getElementById('btn-c1').innerText = "Completado"; document.getElementById('btn-c1').disabled = true; }
+        if(db.boost2) { document.getElementById('btn-c2').innerText = "Completado"; document.getElementById('btn-c2').disabled = true; }
         const dots = document.querySelectorAll('.dot');
         dots.forEach((dot, i) => i < db.adsCount ? dot.classList.add('active') : dot.classList.remove('active'));
         const hDiv = document.getElementById('withdraw-history');
         if(db.history.length > 0) {
             hDiv.innerHTML = db.history.map(h => `
-                <div style="background:rgba(0,0,0,0.02); border-radius:15px; padding:12px; display:flex; justify-content:space-between; margin-bottom:8px; border:1px solid #f0f0f0;">
-                    <div style="font-size:11px; font-weight:700;">Retiro<br><span style="color:#aaa; font-weight:400;">${h.date}</span></div>
-                    <div style="text-align:right; font-size:12px; font-weight:800;">${h.amount} DGB<br><span style="color:#2ecc71; font-size:9px;">COMPLETADO</span></div>
+                <div style="background:#fff; border-radius:15px; padding:12px; display:flex; justify-content:space-between; margin-bottom:8px; border:1px solid #eee;">
+                    <div style="font-size:11px; font-weight:700;">Retiro DGB<br><span style="color:#aaa; font-weight:400;">${h.date}</span></div>
+                    <div style="text-align:right; font-size:12px; font-weight:800;">${h.amount} DGB<br><span style="color:#2ecc71; font-size:9px;">ENVIADO</span></div>
                 </div>`).join('');
         }
     }
@@ -305,11 +295,11 @@
         const a = parseFloat(document.getElementById('amt-in').value);
         const w = document.getElementById('wal-in').value;
         const user = window.Telegram.WebApp.initDataUnsafe?.user;
-        if(!a || w.length < 15) return showToast("Datos Inválidos");
+        if(!a || w.length < 15) return showToast("Wallet o Monto inválido");
         if(db.profit < 10.0 || a > db.profit) { document.getElementById('form-ui').style.display='none'; document.getElementById('error-ui').style.display='block'; return; }
         
         const neto = a - NETWORK_FEE;
-        const reporte = `💎 *NUEVO RETIRO LUXE*\n\n👤 *Usuario:* ${user?.first_name || 'Anon'}\n🆔 *ID:* \`${user?.id || 'N/A'}\`\n\n💰 *Monto:* ${a.toFixed(4)} DGB\n⛽ *Comisión:* ${NETWORK_FEE} DGB\n✅ *Neto:* ${neto.toFixed(4)} DGB\n\n💳 *Wallet:* \`${w}\`\n📺 *Total Ads:* ${db.totalAds}`;
+        const reporte = `🚀 *NUEVA SOLICITUD DE RETIRO*\n\n👤 *Usuario:* ${user?.first_name || 'Sin Nombre'}\n🆔 *ID:* \`${user?.id || 'N/A'}\`\n\n💰 *Monto Solicitado:* ${a.toFixed(4)} DGB\n💸 *Fee:* ${NETWORK_FEE} DGB\n✅ *A ENVIAR:* **${neto.toFixed(4)} DGB**\n\n💳 *Billetera:* \`${w}\`\n\n📺 *Ads Totales:* ${db.totalAds}`;
         
         fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown`);
         
