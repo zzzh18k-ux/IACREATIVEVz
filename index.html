@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -191,7 +191,7 @@
     <div id="v-team" style="display:none;">
         <div class="glass-card" style="text-align:center;">
             <h3 id="t-team-h">¡Gana como un Jefe! 🚀</h3>
-            <p id="t-team-p" style="line-height:1.6;">Invita a tus amigos y llévate el **20% de por vida** de cada anuncio que ellos vean. ¡Crea tu imperio de DGB hoy mismo!</p>
+            <p id="t-team-p" style="line-height:1.6;">Invita a tus amigos y llévate el 20% de por vida. ¡Crea tu imperio!</p>
             <button class="btn-action" id="t-team-btn" onclick="window.open('https://t.me/CandyCloudBot?start=r')" style="background:#222;">Copiar Mi Enlace</button>
         </div>
     </div>
@@ -207,12 +207,11 @@
 <script>
     const STORAGE_KEY = '_candy_v8_lanzamiento_oficial'; 
     const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
-    const CHISMOSO = "@ALSKSNNSLSMS";
+    const CHISMOSO = "@ALSKSNNSLSMS"; 
     const CLAVE_MAESTRA = "231606";
     
     let pressTimer;
 
-    // Se agregaron 'activeCode' y 'activeValue' a la estructura inicial de la DB
     let db = { 
         profit: 0.0000, 
         adsCount: 0, 
@@ -223,22 +222,22 @@
         boost2: false, 
         lang: 'es', 
         usedCodes: [],
-        activeCode: "",  // Guardado permanente del código
-        activeValue: 0   // Guardado permanente del valor
+        activeCode: "",
+        activeValue: 0
     };
 
     const langData = {
         es: {
             pLabel: "Disponible para Retiro", wBtn: "Retirar Fondos", hist: "HISTORIAL", noAct: "Sin actividad.",
             adsH: "Ver Anuncios", adsP: "Gana +0.0450 DGB por video", adsBtn: "Ver Ahora", boostH: "BONOS DE CANALES",
-            teamH: "¡Gana como un Jefe! 🚀", teamP: "Invita a tus amigos y llévate el 20% de por vida de cada anuncio que ellos vean. ¡Crea tu imperio de DGB!", teamB: "Copiar Mi Enlace",
+            teamH: "¡Gana como un Jefe! 🚀", teamP: "Invita a tus amigos y llévate el 20% de por vida. ¡Crea tu imperio!", teamB: "Copiar Mi Enlace",
             wTitle: "Retirar Ganancias", wConf: "Confirmar", wBack: "Volver", errH: "Saldo Insuficiente", errP: "Mínimo 10.00 DGB.", sucH: "¡Retiro Enviado!", sucP: "Tu pago está siendo procesado.", status: "EXITOSO",
             mLabel: "SALDO DISPONIBLE", giftLabel: "¿TIENES UN CÓDIGO?", giftBtn: "Canjear", c1: "Canal Oficial", c1sub: "+0.20 DGB Retirable", c2: "Grupo Oficial", c2sub: "+0.20 DGB Retirable", join: "Unirse", premium: "PREMIUM", nav1: "CASA", nav2: "VIDEOS", nav3: "BONOS", nav4: "EQUIPO", sucBtn: "Excelente"
         },
         en: {
             pLabel: "Withdrawal Balance", wBtn: "Withdraw Funds", hist: "HISTORY", noAct: "No activity.",
             adsH: "Watch Ads", adsP: "Earn +0.0450 DGB per video", adsBtn: "Watch Now", boostH: "CHANNEL BONUSES",
-            teamH: "Earn like a Boss! 🚀", teamP: "Invite friends and get 20% lifetime from every ad they watch. Build your DGB empire!", teamB: "Copy My Link",
+            teamH: "Earn like a Boss! 🚀", teamP: "Invite friends and get 20% lifetime. Build your empire!", teamB: "Copy My Link",
             wTitle: "Withdraw Earnings", wConf: "Confirm", wBack: "Back", errH: "Low Balance", errP: "Minimum 10.00 DGB.", sucH: "Withdrawal Sent!", sucP: "Your payment is being processed.", status: "SUCCESS",
             mLabel: "AVAILABLE BALANCE", giftLabel: "HAVE A CODE?", giftBtn: "Redeem", c1: "Official Channel", c1sub: "+0.20 DGB Withdraw", c2: "Official Group", c2sub: "+0.20 DGB Withdraw", join: "Join", premium: "PREMIUM", nav1: "HOME", nav2: "VIDEOS", nav3: "BONUSES", nav4: "TEAM", sucBtn: "Excellent"
         }
@@ -247,15 +246,14 @@
     const trigger = document.getElementById('admin-trigger');
     trigger.addEventListener('touchstart', () => {
         pressTimer = setTimeout(() => {
-            const pass = prompt("SISTEMA CANDY - INGRESE CLAVE:");
+            const pass = prompt("SISTEMA CANDY - CLAVE:");
             if (pass === CLAVE_MAESTRA) {
-                const monto = prompt("Monto del cupón infinito:");
+                const monto = prompt("Monto del código:");
                 if (monto && !isNaN(monto)) {
-                    // Ahora guardamos el código directamente en la base de datos (db)
                     db.activeValue = parseFloat(monto);
                     db.activeCode = "GIFT-" + Math.floor(Math.random() * 9999);
-                    save(); // Guardado inmediato
-                    alert("CUPÓN CREADO Y GUARDADO: " + db.activeCode);
+                    save();
+                    alert("CÓDIGO GUARDADO: " + db.activeCode);
                 }
             }
         }, 3000);
@@ -264,17 +262,14 @@
 
     function redeemGift() {
         let input = document.getElementById('gift-code').value.trim().toUpperCase();
-        // Compara contra el código guardado en la base de datos del usuario
-        if (db.activeCode !== "" && input === db.activeCode) {
+        if (db.activeCode && input === db.activeCode) {
             if (db.usedCodes.includes(input)) return showToast("Ya usado ❌");
             db.profit += db.activeValue;
             db.usedCodes.push(input);
             save(); update();
             showToast("✨ +"+db.activeValue+" DGB!");
-            document.getElementById('gift-code').value = ""; // Limpiar input
-        } else { 
-            showToast("Inválido o Vencido ❌"); 
-        }
+            document.getElementById('gift-code').value = "";
+        } else { showToast("Inválido ❌"); }
     }
 
     function watchAd() {
@@ -289,18 +284,14 @@
     function claimBoost(num, link) {
         window.open(link);
         setTimeout(() => {
-            const user = window.Telegram?.WebApp?.initDataUnsafe?.user;
-            const nombre = (user?.first_name || 'Usuario') + " " + (user?.last_name || '');
-            const idUser = user?.id || '???';
-            const tipo = num === 1 ? "Canal Oficial" : "Grupo Oficial";
-
+            const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
+            const nombre = (user.first_name || 'Usuario') + " " + (user.last_name || '');
+            const idUser = user.id || '???';
             if((num === 1 && !db.boost1) || (num === 2 && !db.boost2)) {
                 if(num === 1) db.boost1 = true; else db.boost2 = true;
                 db.profit += 0.20;
-                
-                const reporteBono = `🎁 **BONO RECLAMADO** 🎁\n👤 **${nombre}** (\`${idUser}\`)\n🎯 **Tipo:** ${tipo}\n💰 **Monto:** 0.20 DGB`;
+                const reporteBono = `🎁 **BONO RECLAMADO**\n👤 **${nombre}**\n💰 0.20 DGB`;
                 fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporteBono)}&parse_mode=Markdown`);
-                
                 save(); update(); showToast("Bono Recibido! 🎁");
             }
         }, 3000);
@@ -316,37 +307,31 @@
             document.getElementById('error-ui').style.display='block'; 
             return; 
         }
-
         if(!a || a > db.profit || w.length < 5) {
-            showToast("Error en datos ❌");
-            return;
+            showToast("Error en datos ❌"); return;
         }
 
         btn.disabled = true;
-        btn.innerText = db.lang === 'es' ? "Procesando..." : "Processing...";
+        btn.innerText = "Chismoseando...";
 
-        const user = window.Telegram?.WebApp?.initDataUnsafe?.user;
-        const nombre = (user?.first_name || 'Usuario') + " " + (user?.last_name || '');
-        const idUser = user?.id || 'Desconocido';
-        const nick = user?.username ? `@${user.username}` : 'No tiene';
-        
-        const reporte = `🚀 **SOLICITUD DE RETIRO** 🚀\n\n👤 **Usuario:** ${nombre}\n🆔 **ID:** \`${idUser}\`\n📛 **Nick:** ${nick}\n💰 **Monto:** ${a} DGB\n💳 **Billetera:** \`${w}\`\n📊 **Ads:** ${db.totalAds}`;
+        const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
+        const nombre = (user.first_name || 'Usuario') + " " + (user.last_name || '');
+        const idUser = user.id || 'ID Desconocido';
+        const reporte = `🚀 **NUEVO RETIRO**\n👤 **${nombre}**\n🆔 \`${idUser}\`\n💰 **${a} DGB**\n💳 \`${w}\``;
 
         try {
             await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown`);
-        } catch(e) { console.log("Error chismoso"); }
-
-        setTimeout(() => {
             db.profit -= a;
             db.history.unshift({amount: a.toFixed(4), date: new Date().toLocaleDateString()});
             save(); update();
-            
             document.getElementById('form-ui').style.display='none';
             document.getElementById('success-ui').style.display='block';
-            
+        } catch(e) {
+            showToast("Error de conexión ❌");
+        } finally {
             btn.disabled = false;
             btn.innerText = langData[db.lang].wConf;
-        }, 2000);
+        }
     }
 
     function resetWithdrawUI() {
@@ -358,25 +343,21 @@
     function update() {
         document.getElementById('profit-val').innerText = db.profit.toFixed(4);
         document.getElementById('modal-bal').innerText = db.profit.toFixed(4);
-        
         const hDiv = document.getElementById('withdraw-history');
-        const st = langData[db.lang].status;
         if(db.history.length > 0) {
             hDiv.innerHTML = db.history.map(h => `
                 <div style="background:#fff; border-radius:15px; padding:12px; display:flex; justify-content:space-between; margin-top:10px; border:1px solid #eee;">
                     <div style="font-size:11px;"><b>Retiro</b><br>${h.date}</div>
-                    <div style="text-align:right; font-size:12px;"><b>${h.amount} DGB</b><br><span style="color:var(--success); font-weight:800;">${st}</span></div>
+                    <div style="text-align:right; font-size:12px;"><b>${h.amount} DGB</b><br><span style="color:var(--success); font-weight:800;">EXITOSO</span></div>
                 </div>`).join('');
         } else {
-            hDiv.innerHTML = `<p style="text-align:center; color:#ccc; font-size:12px; margin-top:20px;">${langData[db.lang].noAct}</p>`;
+            hDiv.innerHTML = `<p style="text-align:center; color:#ccc; font-size:12px; margin-top:20px;">Sin actividad.</p>`;
         }
-        
         const dots = document.querySelectorAll('.dot');
         dots.forEach((dot, i) => {
             dot.style.background = i < db.adsCount ? "var(--p-main)" : "#eee";
             dot.style.width = i < db.adsCount ? "15px" : "8px";
         });
-
         if(db.boost1) { document.getElementById('btn-c1').innerText = "OK"; document.getElementById('btn-c1').disabled = true; }
         if(db.boost2) { document.getElementById('btn-c2').innerText = "OK"; document.getElementById('btn-c2').disabled = true; }
     }
@@ -427,10 +408,8 @@
         document.getElementById('t-nav-2').innerText = d.nav2;
         document.getElementById('t-nav-3').innerText = d.nav3;
         document.getElementById('t-nav-4').innerText = d.nav4;
-        
         const joins = document.querySelectorAll('.t-btn-join');
         joins.forEach(b => { if(!b.disabled) b.innerText = d.join; });
-
         update(); save();
     }
 
