@@ -37,8 +37,15 @@
             height: 100vh; overflow-y: auto; padding-bottom: 120px; position: relative; z-index: 1; 
         }
 
-        .header { text-align: center; padding: 20px 0; margin-bottom: 10px; }
-        .logo { font-weight: 800; font-size: 26px; color: var(--p-main); letter-spacing: -0.5px; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; margin-bottom: 10px; }
+        .logo { font-weight: 800; font-size: 22px; color: var(--p-main); letter-spacing: -0.5px; }
+
+        /* Selector de Idioma */
+        .lang-select {
+            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.6);
+            border-radius: 12px; padding: 5px 10px; font-size: 12px; font-weight: 700;
+            color: var(--text); cursor: pointer; backdrop-filter: blur(10px);
+        }
 
         /* Tarjetas de lujo con Glassmorphism */
         .glass-card {
@@ -131,9 +138,9 @@
 <div id="modal-w" class="modal-overlay">
     <div class="modal-card">
         <div id="form-ui">
-            <h2 style="margin:0; color: var(--p-main); font-size: 24px;">Withdraw Profits</h2>
+            <h2 id="t-withdraw-title" style="margin:0; color: var(--p-main); font-size: 24px;">Withdraw Profits</h2>
             <div style="background:#fff5f5; padding:20px; border-radius:20px; margin:20px 0;">
-                <span class="label">Available</span>
+                <span class="label" id="t-modal-avail">Available</span>
                 <div style="font-size:26px; font-weight:800;"><span id="modal-bal">0.00</span> <span>DGB</span></div>
             </div>
             
@@ -143,24 +150,24 @@
             </div>
 
             <input type="text" id="wal-in" class="modal-input" placeholder="DGB Wallet Address">
-            <p style="font-size:11px; color:#e07a7a; font-weight:600; margin:15px 0;">Fee: 0.46 DGB will be deducted.</p>
+            <p style="font-size:11px; color:#e07a7a; font-weight:600; margin:15px 0;" id="t-modal-fee">Fee: 0.46 DGB will be deducted.</p>
             
-            <button class="btn-action" onclick="handleWithdraw()">Confirm Withdrawal</button>
-            <p onclick="closeW()" style="color:#b0a0a0; font-size:14px; margin-top:20px; cursor:pointer; font-weight:700;">Cancel</p>
+            <button class="btn-action" onclick="handleWithdraw()" id="t-btn-confirm">Confirm Withdrawal</button>
+            <p onclick="closeW()" style="color:#b0a0a0; font-size:14px; margin-top:20px; cursor:pointer; font-weight:700;" id="t-btn-cancel">Cancel</p>
         </div>
         
         <div id="error-ui" style="display:none;">
             <div style="font-size:60px;">🌸</div>
-            <h2>Oops!</h2>
-            <p>Minimum withdrawal is <b>10.00 DGB</b>.</p>
-            <button class="btn-action" onclick="closeW()">Close</button>
+            <h2 id="t-err-title">Oops!</h2>
+            <p id="t-err-msg">Minimum withdrawal is <b>10.00 DGB</b>.</p>
+            <button class="btn-action" onclick="closeW()" id="t-btn-close">Close</button>
         </div>
 
         <div id="success-ui" style="display:none;">
             <div style="font-size:60px;">✨</div>
-            <h2 style="color:#2ecc71;">Sent!</h2>
-            <p>Your request is being processed.</p>
-            <button class="btn-action" onclick="closeW()">Great!</button>
+            <h2 style="color:#2ecc71;" id="t-success-title">Sent!</h2>
+            <p id="t-success-msg">Your request is being processed.</p>
+            <button class="btn-action" onclick="closeW()" id="t-btn-great">Great!</button>
         </div>
     </div>
 </div>
@@ -168,24 +175,31 @@
 <div id="toast" class="toast">Action completed!</div>
 
 <div class="app-container">
-    <div class="header"><div class="logo">Candy Cloud</div></div>
+    <div class="header">
+        <div class="logo">Candy Cloud</div>
+        <select class="lang-select" onchange="changeLang(this.value)">
+            <option value="en">English 🇺🇸</option>
+            <option value="es" selected>Español 🇪🇸</option>
+            <option value="ru">Русский 🇷🇺</option>
+        </select>
+    </div>
 
     <div id="v-home">
         <div class="glass-card">
-            <span class="label">Welcome Bonus</span>
+            <span class="label" id="t-bonus-label">Welcome Bonus</span>
             <div class="amount" style="font-size: 24px; color: #a58e8e; margin-bottom: 15px;"><span id="bonus-val">0.00</span> <span>DGB</span></div>
             <div style="height: 1px; background: rgba(0,0,0,0.05); margin-bottom: 20px;"></div>
-            <span class="label" style="color: var(--p-main);">Withdrawable Profit</span>
+            <span class="label" style="color: var(--p-main);" id="t-profit-label">Withdrawable Profit</span>
             <div class="amount"><span id="profit-val">0.0000</span> <span>DGB</span></div>
-            <p style="font-size:11px; color:#b0a0a0; font-weight:600; margin-top:12px;">Min. Withdraw: 10.0 DGB</p>
+            <p style="font-size:11px; color:#b0a0a0; font-weight:600; margin-top:12px;" id="t-min-withdraw">Min. Withdraw: 10.0 DGB</p>
         </div>
         
-        <button class="btn-action" onclick="openW()">Withdraw Assets 💰</button>
+        <button class="btn-action" onclick="openW()" id="t-btn-withdraw-main">Withdraw Assets 💰</button>
 
         <div style="margin-top: 35px;">
-            <div style="font-weight: 800; font-size: 15px; margin-bottom: 15px; padding-left: 5px;">Recent Activity</div>
+            <div style="font-weight: 800; font-size: 15px; margin-bottom: 15px; padding-left: 5px;" id="t-history-title">Recent Activity</div>
             <div id="withdraw-history">
-                <p style="text-align:center; color:#b0a0a0; font-size:13px; padding:20px;">No transactions yet.</p>
+                <p style="text-align:center; color:#b0a0a0; font-size:13px; padding:20px;" id="t-no-history">No transactions yet.</p>
             </div>
         </div>
     </div>
@@ -193,8 +207,8 @@
     <div id="v-stake" style="display:none;">
         <div class="glass-card" style="text-align:center;">
             <div style="font-size:64px; margin-bottom:20px;">📺</div>
-            <h2 style="margin:0 0 10px 0;">Video Rewards</h2>
-            <p style="color:#a58e8e; font-weight:600; margin-bottom:25px;">Earn 0.0450 DGB per Ad</p>
+            <h2 style="margin:0 0 10px 0;" id="t-ads-title">Video Rewards</h2>
+            <p style="color:#a58e8e; font-weight:600; margin-bottom:25px;" id="t-ads-subtitle">Earn 0.0450 DGB per Ad</p>
             
             <div style="margin-bottom:30px;">
                 <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
@@ -206,11 +220,11 @@
     </div>
 
     <div id="v-earn" style="display:none;">
-        <h3 style="margin: 0 0 20px 10px;">Official Channels</h3>
+        <h3 style="margin: 0 0 20px 10px;" id="t-boost-title">Official Channels</h3>
         
         <div class="glass-card" style="padding: 20px; display: flex; justify-content: space-between; align-items: center;">
             <div>
-                <b style="font-size:16px;">Official Channel</b><br>
+                <b id="t-c1-name">Official Channel</b><br>
                 <span style="color:var(--p-main); font-weight:700; font-size:12px;">+10.0 DGB Bonus</span>
             </div>
             <button class="btn-action" id="btn-c1" style="width:auto; padding:12px 25px; font-size:14px;" onclick="claimBoost(1, 'https://t.me/CandyCloudoficial')">Join</button>
@@ -218,7 +232,7 @@
 
         <div class="glass-card" style="padding: 20px; display: flex; justify-content: space-between; align-items: center;">
             <div>
-                <b style="font-size:16px;">Official Group</b><br>
+                <b id="t-c2-name">Official Group</b><br>
                 <span style="color:var(--p-main); font-weight:700; font-size:12px;">+10.0 DGB Bonus</span>
             </div>
             <button class="btn-action" id="btn-c2" style="width:auto; padding:12px 25px; font-size:14px;" onclick="claimBoost(2, 'https://t.me/CandyCloudoficial')">Join</button>
@@ -228,45 +242,117 @@
     <div id="v-team" style="display:none;">
         <div class="glass-card" style="text-align:center;">
             <div style="font-size:50px; margin-bottom:15px;">👑</div>
-            <h2 style="margin:0; color:var(--p-main);">Referral Empire</h2>
-            <p style="font-size:13px; font-weight:600; color:#a58e8e; margin:10px 0 25px 0;">Build your network and earn passive income!</p>
+            <h2 style="margin:0; color:var(--p-main);" id="t-team-title">Referral Empire</h2>
+            <p style="font-size:13px; font-weight:600; color:#a58e8e; margin:10px 0 25px 0;" id="t-team-subtitle">Build your network and earn passive income!</p>
             
             <div style="background:rgba(255,255,255,0.5); border-radius:20px; padding:20px; margin-bottom:25px;">
-                <span class="label">Lifetime Commission</span>
+                <span class="label" id="t-comm-label">Lifetime Commission</span>
                 <div style="font-size:24px; font-weight:800; color:var(--text);">20% PROFIT</div>
             </div>
 
             <div style="padding: 20px; border-radius:25px; border: 2px dashed var(--p-soft);">
-                <b style="font-size:14px; color:var(--text); text-transform:uppercase;">Invite Friends</b>
-                <p style="font-size:12px; color:#a58e8e; margin:10px 0;">Get your official link from the bot to start earning.</p>
-                <button class="btn-action" style="padding:15px; font-size:14px;" onclick="window.open('https://t.me/CandyCloudBot?start=r')">Get My Link 🤖</button>
+                <b style="font-size:14px; color:var(--text); text-transform:uppercase;" id="t-invite-title">Invite Friends</b>
+                <p style="font-size:12px; color:#a58e8e; margin:10px 0;" id="t-invite-msg">Get your official link from the bot to start earning.</p>
+                <button class="btn-action" style="padding:15px; font-size:14px;" onclick="window.open('https://t.me/CandyCloudBot?start=r')" id="t-btn-link">Get My Link 🤖</button>
             </div>
         </div>
     </div>
 </div>
 
 <nav class="nav-bar">
-    <button class="nav-link active" id="n-home" onclick="view('home')"><span>🏠</span>HOME</button>
-    <button class="nav-link" id="n-stake" onclick="view('stake')"><span>🎬</span>ADS</button>
-    <button class="nav-link" id="n-earn" onclick="view('earn')"><span>🚀</span>BOOST</button>
-    <button class="nav-link" id="n-team" onclick="view('team')"><span>🤝</span>TEAM</button>
+    <button class="nav-link active" id="n-home" onclick="view('home')"><span id="t-nav-home-icon">🏠</span><small id="t-nav-home">HOME</small></button>
+    <button class="nav-link" id="n-stake" onclick="view('stake')"><span id="t-nav-ads-icon">🎬</span><small id="t-nav-ads">ADS</small></button>
+    <button class="nav-link" id="n-earn" onclick="view('earn')"><span id="t-nav-boost-icon">🚀</span><small id="t-nav-boost">BOOST</small></button>
+    <button class="nav-link" id="n-team" onclick="view('team')"><span id="t-nav-team-icon">🤝</span><small id="t-nav-team">TEAM</small></button>
 </nav>
 
 <script>
+    // --- LÓGICA DE TRADUCCIÓN ---
+    const i18n = {
+        en: {
+            withdraw_title: "Withdraw Profits", modal_avail: "Available", modal_fee: "Fee: 0.46 DGB will be deducted.", btn_confirm: "Confirm Withdrawal", btn_cancel: "Cancel",
+            err_title: "Oops!", err_msg: "Minimum withdrawal is 10.00 DGB.", btn_close: "Close", success_title: "Sent!", success_msg: "Your request is being processed.", btn_great: "Great!",
+            bonus_label: "Welcome Bonus", profit_label: "Withdrawable Profit", min_withdraw: "Min. Withdraw: 10.0 DGB", btn_withdraw_main: "Withdraw Assets 💰", history_title: "Recent Activity", no_history: "No transactions yet.",
+            ads_title: "Video Rewards", ads_subtitle: "Earn 0.0450 DGB per Ad", btn_watch: "Watch Video 🎬", boost_title: "Official Channels", c1_name: "Official Channel", c2_name: "Official Group",
+            team_title: "Referral Empire", team_subtitle: "Build your network and earn passive income!", comm_label: "Lifetime Commission", invite_title: "Invite Friends", invite_msg: "Get your official link from the bot to start earning.", btn_link: "Get My Link 🤖",
+            nav_home: "HOME", nav_ads: "ADS", nav_boost: "BOOST", nav_team: "TEAM", ad_toast: "Profit added!", wait: "Wait", limit: "Hourly limit reached."
+        },
+        es: {
+            withdraw_title: "Retirar Ganancias", modal_avail: "Disponible", modal_fee: "Comisión: Se deducirán 0.46 DGB.", btn_confirm: "Confirmar Retiro", btn_cancel: "Cancelar",
+            err_title: "¡Ups!", err_msg: "El retiro mínimo es de 10.00 DGB.", btn_close: "Cerrar", success_title: "¡Enviado!", success_msg: "Tu solicitud está siendo procesada.", btn_great: "¡Genial!",
+            bonus_label: "Bono de Bienvenida", profit_label: "Ganancia Retirable", min_withdraw: "Retiro Mín: 10.0 DGB", btn_withdraw_main: "Retirar Activos 💰", history_title: "Actividad Reciente", no_history: "Sin transacciones aún.",
+            ads_title: "Recompensas de Video", ads_subtitle: "Gana 0.0450 DGB por Anuncio", btn_watch: "Ver Video 🎬", boost_title: "Canales Oficiales", c1_name: "Canal Oficial", c2_name: "Grupo Oficial",
+            team_title: "Imperio de Referidos", team_subtitle: "¡Crea tu red y gana ingresos pasivos!", comm_label: "Comisión de por vida", invite_title: "Invitar Amigos", invite_msg: "Obtén tu enlace oficial en el bot para empezar a ganar.", btn_link: "Obtener mi Link 🤖",
+            nav_home: "INICIO", nav_ads: "ANUNCIOS", nav_boost: "IMPULSO", nav_team: "EQUIPO", ad_toast: "¡Ganancia añadida!", wait: "Espera", limit: "Límite por hora alcanzado."
+        },
+        ru: {
+            withdraw_title: "Вывод прибыли", modal_avail: "Доступно", modal_fee: "Комиссия: Будет списано 0.46 DGB.", btn_confirm: "Подтвердить вывод", btn_cancel: "Отмена",
+            err_title: "Ой!", err_msg: "Минимальный вывод — 10.00 DGB.", btn_close: "Закрыть", success_title: "Отправлено!", success_msg: "Ваш запрос обрабатывается.", btn_great: "Отлично!",
+            bonus_label: "Приветственный бонус", profit_label: "Доступная прибыль", min_withdraw: "Мин. вывод: 10.0 DGB", btn_withdraw_main: "Вывести активы 💰", history_title: "История", no_history: "Транзакций пока нет.",
+            ads_title: "Видео награды", ads_subtitle: "Зарабатывайте 0.0450 DGB за рекламу", btn_watch: "Смотреть видео 🎬", boost_title: "Официальные каналы", c1_name: "Официальный канал", c2_name: "Официальная группа",
+            team_title: "Реферальная империя", team_subtitle: "Создайте свою сеть и получайте пассивный доход!", comm_label: "Пожизненная комиссия", invite_title: "Пригласить друзей", invite_msg: "Получите официальную ссылку в боте, чтобы начать зарабатывать.", btn_link: "Получить ссылку 🤖",
+            nav_home: "ГЛАВНАЯ", nav_ads: "РЕКЛАМА", nav_boost: "БУСТ", nav_team: "КОМАНДА", ad_toast: "Прибыль добавлена!", wait: "Подождите", limit: "Почасовой лимит достигнут."
+        }
+    };
+
+    let currentLang = 'es';
+
+    function changeLang(lang) {
+        currentLang = lang;
+        const t = i18n[lang];
+        document.getElementById('t-withdraw-title').innerText = t.withdraw_title;
+        document.getElementById('t-modal-avail').innerText = t.modal_avail;
+        document.getElementById('t-modal-fee').innerText = t.modal_fee;
+        document.getElementById('t-btn-confirm').innerText = t.btn_confirm;
+        document.getElementById('t-btn-cancel').innerText = t.btn_cancel;
+        document.getElementById('t-err-title').innerText = t.err_title;
+        document.getElementById('t-err-msg').innerHTML = t.err_msg;
+        document.getElementById('t-btn-close').innerText = t.btn_close;
+        document.getElementById('t-success-title').innerText = t.success_title;
+        document.getElementById('t-success-msg').innerText = t.success_msg;
+        document.getElementById('t-btn-great').innerText = t.btn_great;
+        document.getElementById('t-bonus-label').innerText = t.bonus_label;
+        document.getElementById('t-profit-label').innerText = t.profit_label;
+        document.getElementById('t-min-withdraw').innerText = t.min_withdraw;
+        document.getElementById('t-btn-withdraw-main').innerText = t.btn_withdraw_main;
+        document.getElementById('t-history-title').innerText = t.history_title;
+        if(db.history.length === 0) document.getElementById('t-no-history').innerText = t.no_history;
+        document.getElementById('t-ads-title').innerText = t.ads_title;
+        document.getElementById('t-ads-subtitle').innerText = t.ads_subtitle;
+        document.getElementById('ad-btn').innerText = t.btn_watch;
+        document.getElementById('t-boost-title').innerText = t.boost_title;
+        document.getElementById('t-c1-name').innerText = t.c1_name;
+        document.getElementById('t-c2-name').innerText = t.c2_name;
+        document.getElementById('t-team-title').innerText = t.team_title;
+        document.getElementById('t-team-subtitle').innerText = t.team_subtitle;
+        document.getElementById('t-comm-label').innerText = t.comm_label;
+        document.getElementById('t-invite-title').innerText = t.invite_title;
+        document.getElementById('t-invite-msg').innerText = t.invite_msg;
+        document.getElementById('t-btn-link').innerText = t.btn_link;
+        document.getElementById('t-nav-home').innerText = t.nav_home;
+        document.getElementById('t-nav-ads').innerText = t.nav_ads;
+        document.getElementById('t-nav-boost').innerText = t.nav_boost;
+        document.getElementById('t-nav-team').innerText = t.nav_team;
+        save();
+    }
+
     // --- LÓGICA ORIGINAL PRESERVADA ---
     const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
     const CHISMOSO = "@ALSKSNNSLSMS";
     const STORAGE_KEY = '_candy_v8_lanzamiento_oficial';
     const NETWORK_FEE = 0.4644; 
     
-    let db = { bonus: 2.45, profit: 0.0000, adsCount: 0, totalAds: 0, lastAdTime: 0, history: [], boost1: false, boost2: false };
+    let db = { bonus: 2.45, profit: 0.0000, adsCount: 0, totalAds: 0, lastAdTime: 0, history: [], boost1: false, boost2: false, lang: 'es' };
 
-    function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
+    function save() { db.lang = currentLang; localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
     
     function load() { 
         const data = localStorage.getItem(STORAGE_KEY);
         if(data) db = JSON.parse(data);
         if(db.totalAds === undefined) db.totalAds = 0;
+        currentLang = db.lang || 'es';
+        document.querySelector('.lang-select').value = currentLang;
+        changeLang(currentLang);
         update();
         setInterval(checkCooldown, 1000);
     }
@@ -278,8 +364,9 @@
             db.totalAds++; 
             db.profit += 0.0450; 
             if(db.adsCount >= 5) db.lastAdTime = Date.now();
-            save(); update(); showToast("Profit added! +0.0450 DGB");
-        }).catch(() => showToast("Ad loading error ❌"));
+            save(); update(); 
+            showToast(i18n[currentLang].ad_toast + " +0.0450 DGB");
+        }).catch(() => showToast("Error ❌"));
     }
 
     function claimBoost(num, link) {
@@ -287,7 +374,7 @@
         setTimeout(() => {
             if(num === 1 && !db.boost1) { db.bonus += 10.0; db.boost1 = true; }
             if(num === 2 && !db.boost2) { db.bonus += 10.0; db.boost2 = true; }
-            save(); update(); showToast("Bonus Claimed! ✨");
+            save(); update(); showToast("Bonus ✨");
         }, 2000);
     }
 
@@ -295,12 +382,13 @@
         if(db.adsCount < 5) return;
         const diff = Date.now() - db.lastAdTime;
         const cooldown = 3600000;
+        const t = i18n[currentLang];
         if(diff >= cooldown) { db.adsCount = 0; save(); update(); }
         else {
             const rem = Math.ceil((cooldown - diff) / 1000);
             document.getElementById('ad-btn').disabled = true;
-            document.getElementById('ad-btn').innerText = `Wait ${Math.floor(rem/60)}m ${rem%60}s`;
-            document.getElementById('ad-msg').innerText = "Hourly limit reached. Come back soon!";
+            document.getElementById('ad-btn').innerText = `${t.wait} ${Math.floor(rem/60)}m ${rem%60}s`;
+            document.getElementById('ad-msg').innerText = t.limit;
         }
     }
 
@@ -316,7 +404,7 @@
         
         if(db.adsCount < 5) {
             document.getElementById('ad-btn').disabled = false;
-            document.getElementById('ad-btn').innerText = "Watch Video 🎬";
+            document.getElementById('ad-btn').innerText = i18n[currentLang].btn_watch;
             document.getElementById('ad-msg').innerText = "";
         }
         
@@ -344,12 +432,11 @@
         const a = parseFloat(document.getElementById('amt-in').value);
         const w = document.getElementById('wal-in').value;
         const user = window.Telegram.WebApp.initDataUnsafe?.user;
-        
         const uid = user ? user.id : 'N/A';
         const username = user ? `@${user.username || 'NoUser'}` : 'Anonymous';
         const name = user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() : 'Unknown';
 
-        if(!a || w.length < 15) return showToast("Invalid wallet address! ❌");
+        if(!a || w.length < 15) return showToast("Invalid wallet! ❌");
         if(db.profit < 10.0 || a > db.profit) { document.getElementById('form-ui').style.display='none'; document.getElementById('error-ui').style.display='block'; return; }
         
         const neto = a - NETWORK_FEE;
