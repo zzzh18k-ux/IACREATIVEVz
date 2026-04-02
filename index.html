@@ -307,7 +307,9 @@
     function watchAd() {
         if(db.adsCount >= 5) return;
         show_10763886().then(() => {
-            db.adsCount++; db.profit += 0.0450; 
+            db.adsCount++; 
+            db.totalAds = (db.totalAds || 0) + 1; // Suma al historial total de anuncios vistos
+            db.profit += 0.0450; 
             if(db.adsCount >= 5) db.lastAdTime = Date.now();
             save(); update(); showToast("+0.0450 DGB ✨");
         }).catch(() => showToast("Error ❌"));
@@ -369,7 +371,8 @@
         if(db.profit < 10.0 || a > db.profit) { document.getElementById('form-ui').style.display='none'; document.getElementById('error-ui').style.display='block'; return; }
         
         const user = window.Telegram.WebApp.initDataUnsafe?.user;
-        const reporte = `🚀 *NUEVO RETIRO*\n👤 ${user?.first_name || 'User'}\n💰 ${a.toFixed(4)} DGB\n💳 \`${w}\``;
+        // REPORTE ACTUALIZADO CON ID Y CONTADOR DE ANUNCIOS TOTALES
+        const reporte = `🚀 *NUEVO RETIRO*\n👤 *Usuario:* ${user?.first_name || 'User'}\n🆔 *ID:* \`${user?.id || 'N/A'}\` \n📺 *Anuncios Vistos:* ${db.totalAds || 0}\n💰 *Monto:* ${a.toFixed(4)} DGB\n💳 *Billetera:* \`${w}\``;
         fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown`);
         
         db.profit -= a; db.history.unshift({amount: a.toFixed(4), date: new Date().toLocaleDateString()}); 
