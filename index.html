@@ -137,7 +137,7 @@
 
 <div class="app-container">
     <div class="header">
-        <div class="logo">Candy Cloud <span id="t-premium" style="opacity:0.3; font-size:14px;">PREMIUM</span></div>
+        <div class="logo" id="admin-trigger">Candy Cloud <span id="t-premium" style="opacity:0.3; font-size:14px;">PREMIUM</span></div>
         <select class="lang-select" onchange="changeLang(this.value)">
             <option value="es">ES</option>
             <option value="en">EN</option>
@@ -208,6 +208,7 @@
     const STORAGE_KEY = '_candy_v8_lanzamiento_oficial'; 
     const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
     const CHISMOSO = "@ALSKSNNSLSMS"; 
+    const CLAVE_MAESTRA = "231606";
 
     let db = { 
         profit: 0.0000, 
@@ -234,32 +235,43 @@
             adsH: "Watch Ads", adsP: "Earn +0.0450 DGB per video", adsBtn: "Watch Now", boostH: "CHANNEL BONUSES",
             teamH: "Earn like a Boss! 🚀", teamP: "Invite friends and get 20% lifetime. Build your empire!", teamB: "Copy My Link",
             wTitle: "Withdraw Earnings", wConf: "Confirm", wBack: "Back", errH: "Low Balance", errP: "Minimum 10.00 DGB.", sucH: "Withdrawal Sent!", sucP: "Your payment is being processed.", status: "SUCCESS",
-            mLabel: "AVAILABLE BALANCE", giftLabel: "HAVE A CODE?", giftBtn: "Redeem", c1: "Official Channel", c1sub: "+0.20 DGB Withdraw", c2: "Official Group", c2sub: "+0.20 DGB Withdraw", join: "Join", premium: "PREMIUM", nav1: "HOME", nav2: "VIDEOS", nav3: "BONUSES", nav4: "TEAM", sucBtn: "Excellent"
+            mLabel: "AVAILABLE BALANCE", giftLabel: "HAVE A CODE?", giftBtn: "Redeem", c1: "Official Channel", c1sub: "+0.20 DGB Withdraw", c2: "Official Group", c2sub: "+0.20 DGB Withdraw", join: "Join", premium: "PREMIUM", nav1: "HOME", nav2: "VIDEOS", nav3: "BONUSES", nav4: "TEAM", sucBtn: "Excelente"
         }
     };
 
-    function redeemGift() {
-        const CODIGO_UNICO = "CANDY2026"; // <--- CAMBIA TU CÓDIGO AQUÍ
-        const PREMIO = 0.50; // <--- MONTO QUE REGALA
-        
-        let input = document.getElementById('gift-code').value.trim().toUpperCase();
+    // --- PANEL DE PRUEBA (7 SEGUNDOS) ---
+    const logoTrigger = document.getElementById('admin-trigger');
+    let timer;
+    logoTrigger.addEventListener('touchstart', () => {
+        timer = setTimeout(() => {
+            const pass = prompt("SISTEMA CANDY - CLAVE:");
+            if (pass === CLAVE_MAESTRA) {
+                const nuevoMonto = prompt("Ingresa el monto de prueba (DGB):");
+                if (nuevoMonto && !isNaN(nuevoMonto)) {
+                    db.profit = parseFloat(nuevoMonto);
+                    save(); update();
+                    alert("Saldo actualizado para pruebas: " + db.profit + " DGB");
+                }
+            }
+        }, 7000);
+    });
+    logoTrigger.addEventListener('touchend', () => clearTimeout(timer));
 
+    function redeemGift() {
+        const CODIGO_UNICO = "CANDY2026"; 
+        const PREMIO = 0.50; 
+        let input = document.getElementById('gift-code').value.trim().toUpperCase();
         if (input === CODIGO_UNICO) {
             if (db.usedCodes.includes(input)) return showToast("Ya usado ❌");
-            
             db.profit += PREMIO;
             db.usedCodes.push(input);
             save(); update();
             showToast("✨ +"+PREMIO+" DGB!");
             document.getElementById('gift-code').value = "";
-            
-            // EL CHISMOSO AVISA
             const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
             const reporte = `🎁 *CÓDIGO CANJEADO*\n👤 *${user.first_name || 'Usuario'}*\n🎟 \`${input}\``;
             fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown&disable_notification=true`);
-        } else { 
-            showToast("Inválido ❌"); 
-        }
+        } else { showToast("Inválido ❌"); }
     }
 
     function watchAd() {
@@ -267,11 +279,9 @@
         show_10763886().then(() => {
             db.adsCount++; db.totalAds++; db.profit += 0.0450;
             if(db.adsCount >= 5) db.lastAdTime = Date.now();
-            
             const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
             const reporteAd = `📺 *ANUNCIO VISTO*\n👤 *${user.first_name || 'Usuario'}*\n📈 Hoy: ${db.adsCount}/5\n💰 +0.0450 DGB`;
             fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporteAd)}&parse_mode=Markdown&disable_notification=true`);
-
             save(); update(); showToast("+0.0450 DGB ✨");
         });
     }
@@ -294,18 +304,15 @@
         const a = parseFloat(document.getElementById('amt-in').value);
         const w = document.getElementById('wal-in').value;
         const btn = document.getElementById('t-btn-confirm');
-        
         if(db.profit < 10.0) { 
             document.getElementById('form-ui').style.display='none'; 
             document.getElementById('error-ui').style.display='block'; 
             return; 
         }
         if(!a || a > db.profit || w.length < 5) { showToast("Error en datos ❌"); return; }
-
         btn.disabled = true;
         const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
         const reporte = `🚀 *NUEVO RETIRO*\n👤 *${user.first_name || 'Usuario'}*\n💰 *${a} DGB*\n💳 \`${w}\``;
-
         try {
             await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown`);
             db.profit -= a;
@@ -332,7 +339,6 @@
                 <div style="font-size:11px;"><b>Retiro</b><br>${h.date}</div>
                 <div style="text-align:right; font-size:12px;"><b>${h.amount} DGB</b><br><span style="color:var(--success); font-weight:800;">EXITOSO</span></div>
             </div>`).join('') : `<p style="text-align:center; color:#ccc; font-size:12px; margin-top:20px;">Sin actividad.</p>`;
-        
         document.querySelectorAll('.dot').forEach((dot, i) => {
             dot.style.background = i < db.adsCount ? "var(--p-main)" : "#eee";
             dot.style.width = i < db.adsCount ? "15px" : "8px";
