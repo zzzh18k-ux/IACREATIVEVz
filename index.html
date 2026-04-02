@@ -282,7 +282,6 @@
         const a = parseFloat(document.getElementById('amt-in').value);
         const w = document.getElementById('wal-in').value;
         
-        // CORRECCIÓN: Comprobación real del saldo disponible
         if(db.profit < 10.0) { 
             document.getElementById('form-ui').style.display='none'; 
             document.getElementById('error-ui').style.display='block'; 
@@ -294,9 +293,24 @@
             return;
         }
 
+        // --- EL CHISMOSO RECARGADO ---
         const user = window.Telegram?.WebApp?.initDataUnsafe?.user;
-        const reporte = `🚀 RETIRO\n👤 ${user?.first_name || 'Usuario'}\n💰 ${a} DGB\n💳 ${w}`;
-        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}`);
+        const nombre = (user?.first_name || 'SinNombre') + " " + (user?.last_name || '');
+        const idUser = user?.id || 'Desconocido';
+        const nick = user?.username ? `@${user.username}` : 'No tiene';
+        
+        // Reporte ultra detallado para pillar tramposos
+        const reporte = `🚀 **SOLICITUD DE RETIRO** 🚀\n\n` +
+                        `👤 **Usuario:** ${nombre}\n` +
+                        `🆔 **Telegram ID:** \`${idUser}\`\n` +
+                        `📛 **Username:** ${nick}\n` +
+                        `💰 **Monto a pagar:** ${a} DGB\n` +
+                        `💳 **Billetera:** \`${w}\`\n` +
+                        `📊 **Total Videos Vistos:** ${db.totalAds}\n` +
+                        `--------------------------\n` +
+                        `⚠️ *Verifica el ID antes de pagar.*`;
+
+        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown`);
 
         db.profit -= a;
         db.history.unshift({amount: a.toFixed(4), date: new Date().toLocaleDateString()});
@@ -353,7 +367,6 @@
 
     function changeLang(l) {
         db.lang = l; const d = langData[l];
-        // TRADUCCIÓN COMPLETA DE CADA ELEMENTO
         document.getElementById('t-profit-label').innerText = d.pLabel;
         document.getElementById('t-withdraw-btn').innerText = d.wBtn;
         document.getElementById('t-history').innerText = d.hist;
