@@ -61,6 +61,7 @@
         }
         
         .btn-action:active { transform: scale(0.96); }
+        .btn-action:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .nav-bar { 
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; 
@@ -120,7 +121,7 @@
             <div style="font-size:50px;">⚠️</div>
             <h3 id="t-err-h">Saldo Insuficiente</h3>
             <p id="t-err-p">Mínimo 10.00 DGB.</p>
-            <button class="btn-action" onclick="closeW()">Ok</button>
+            <button class="btn-action" onclick="resetWithdrawUI()">Ok</button>
         </div>
 
         <div id="success-ui" style="display:none;">
@@ -154,7 +155,7 @@
             <span class="label" id="t-gift-label">¿TIENES UN CÓDIGO?</span>
             <div style="display: flex; gap: 10px; margin-top: 8px;">
                 <input type="text" id="gift-code" class="modal-input" placeholder="..." style="margin-top:0;">
-                <button class="btn-action" onclick="redeemGift()" style="width: auto; background: #222;">Canjear</button>
+                <button class="btn-action" id="t-gift-btn" onclick="redeemGift()" style="width: auto; background: #222;">Canjear</button>
             </div>
         </div>
 
@@ -171,18 +172,18 @@
             <div style="margin:20px 0;">
                 <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
             </div>
-            <button class="btn-action" id="ad-btn" onclick="watchAd()" style="background:var(--p-main)">Ver Ahora</button>
+            <button class="btn-action" id="ad-btn" onclick="watchAd()" style="background:var(--p-main)"><span>Ver Ahora</span></button>
         </div>
     </div>
 
     <div id="v-earn" style="display:none;">
         <h4 id="t-boost-h" style="color:#bbb; font-size:12px;">BONOS DE CANALES</h4>
         <div class="glass-card" style="display:flex; justify-content:space-between; align-items:center;">
-            <div><div id="t-c1" style="font-weight:800;">Canal Oficial</div><div style="color:var(--p-main); font-size:12px;">+0.20 DGB Retirable</div></div>
+            <div><div id="t-c1" style="font-weight:800;">Canal Oficial</div><div id="t-c1-sub" style="color:var(--p-main); font-size:12px;">+0.20 DGB Retirable</div></div>
             <button class="btn-action t-btn-join" id="btn-c1" style="width:auto; padding:10px 20px;" onclick="claimBoost(1, 'https://t.me/CandyCloudoficial')">Unirse</button>
         </div>
         <div class="glass-card" style="display:flex; justify-content:space-between; align-items:center;">
-            <div><div id="t-c2" style="font-weight:800;">Grupo Oficial</div><div style="color:var(--p-main); font-size:12px;">+0.20 DGB Retirable</div></div>
+            <div><div id="t-c2" style="font-weight:800;">Grupo Oficial</div><div id="t-c2-sub" style="color:var(--p-main); font-size:12px;">+0.20 DGB Retirable</div></div>
             <button class="btn-action t-btn-join" id="btn-c2" style="width:auto; padding:10px 20px;" onclick="claimBoost(2, 'https://t.me/CandyCloudoficial')">Unirse</button>
         </div>
     </div>
@@ -220,17 +221,18 @@
             pLabel: "Disponible para Retiro", wBtn: "Retirar Fondos", hist: "HISTORIAL", noAct: "Sin actividad.",
             adsH: "Ver Anuncios", adsP: "Gana +0.0450 DGB por video", adsBtn: "Ver Ahora", boostH: "BONOS DE CANALES",
             teamH: "¡Gana como un Jefe! 🚀", teamP: "Invita a tus amigos y llévate el 20% de por vida de cada anuncio que ellos vean. ¡Crea tu imperio de DGB!", teamB: "Copiar Mi Enlace",
-            wTitle: "Retirar Ganancias", wConf: "Confirmar", wBack: "Volver", errH: "Saldo Insuficiente", errP: "Mínimo 10.00 DGB.", sucH: "¡Retiro Enviado!", sucP: "Tu pago está siendo procesado.", status: "EXITOSO"
+            wTitle: "Retirar Ganancias", wConf: "Confirmar", wBack: "Volver", errH: "Saldo Insuficiente", errP: "Mínimo 10.00 DGB.", sucH: "¡Retiro Enviado!", sucP: "Tu pago está siendo procesado.", status: "EXITOSO",
+            mLabel: "SALDO DISPONIBLE", giftLabel: "¿TIENES UN CÓDIGO?", giftBtn: "Canjear", c1: "Canal Oficial", c1sub: "+0.20 DGB Retirable", c2: "Grupo Oficial", c2sub: "+0.20 DGB Retirable", join: "Unirse", premium: "PREMIUM", nav1: "CASA", nav2: "VIDEOS", nav3: "BONOS", nav4: "EQUIPO", sucBtn: "Excelente"
         },
         en: {
             pLabel: "Withdrawal Balance", wBtn: "Withdraw Funds", hist: "HISTORY", noAct: "No activity.",
             adsH: "Watch Ads", adsP: "Earn +0.0450 DGB per video", adsBtn: "Watch Now", boostH: "CHANNEL BONUSES",
             teamH: "Earn like a Boss! 🚀", teamP: "Invite friends and get 20% lifetime from every ad they watch. Build your DGB empire!", teamB: "Copy My Link",
-            wTitle: "Withdraw Earnings", wConf: "Confirm", wBack: "Back", errH: "Low Balance", errP: "Minimum 10.00 DGB.", sucH: "Withdrawal Sent!", sucP: "Your payment is being processed.", status: "SUCCESS"
+            wTitle: "Withdraw Earnings", wConf: "Confirm", wBack: "Back", errH: "Low Balance", errP: "Minimum 10.00 DGB.", sucH: "Withdrawal Sent!", sucP: "Your payment is being processed.", status: "SUCCESS",
+            mLabel: "AVAILABLE BALANCE", giftLabel: "HAVE A CODE?", giftBtn: "Redeem", c1: "Official Channel", c1sub: "+0.20 DGB Withdraw", c2: "Official Group", c2sub: "+0.20 DGB Withdraw", join: "Join", premium: "PREMIUM", nav1: "HOME", nav2: "VIDEOS", nav3: "BONUSES", nav4: "TEAM", sucBtn: "Excellent"
         }
     };
 
-    // BOTON OCULTO LOGICA
     const trigger = document.getElementById('admin-trigger');
     trigger.addEventListener('touchstart', () => {
         pressTimer = setTimeout(() => {
@@ -243,7 +245,7 @@
                     alert("CUPÓN CREADO: " + adminCode);
                 }
             }
-        }, 3000); // 3 segundos presionado para activar
+        }, 3000);
     });
     trigger.addEventListener('touchend', () => clearTimeout(pressTimer));
 
@@ -279,11 +281,21 @@
     function handleWithdraw() {
         const a = parseFloat(document.getElementById('amt-in').value);
         const w = document.getElementById('wal-in').value;
-        if(db.profit < 10.0) { document.getElementById('form-ui').style.display='none'; document.getElementById('error-ui').style.display='block'; return; }
-        if(!a || a > db.profit || w.length < 5) return showToast("Error ❌");
+        
+        // CORRECCIÓN: Comprobación real del saldo disponible
+        if(db.profit < 10.0) { 
+            document.getElementById('form-ui').style.display='none'; 
+            document.getElementById('error-ui').style.display='block'; 
+            return; 
+        }
+
+        if(!a || a > db.profit || w.length < 5) {
+            showToast("Error en datos ❌");
+            return;
+        }
 
         const user = window.Telegram?.WebApp?.initDataUnsafe?.user;
-        const reporte = `🚀 RETIRO\n👤 ${user?.first_name}\n💰 ${a} DGB\n💳 ${w}`;
+        const reporte = `🚀 RETIRO\n👤 ${user?.first_name || 'Usuario'}\n💰 ${a} DGB\n💳 ${w}`;
         fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}`);
 
         db.profit -= a;
@@ -293,11 +305,15 @@
         document.getElementById('success-ui').style.display='block';
     }
 
+    function resetWithdrawUI() {
+        document.getElementById('error-ui').style.display='none';
+        document.getElementById('form-ui').style.display='block';
+    }
+
     function update() {
         document.getElementById('profit-val').innerText = db.profit.toFixed(4);
         document.getElementById('modal-bal').innerText = db.profit.toFixed(4);
         
-        // HISTORIAL CON "EXITOSO"
         const hDiv = document.getElementById('withdraw-history');
         const st = langData[db.lang].status;
         if(db.history.length > 0) {
@@ -306,6 +322,8 @@
                     <div style="font-size:11px;"><b>Retiro</b><br>${h.date}</div>
                     <div style="text-align:right; font-size:12px;"><b>${h.amount} DGB</b><br><span style="color:var(--success); font-weight:800;">${st}</span></div>
                 </div>`).join('');
+        } else {
+            hDiv.innerHTML = `<p style="text-align:center; color:#ccc; font-size:12px; margin-top:20px;">${langData[db.lang].noAct}</p>`;
         }
         
         const dots = document.querySelectorAll('.dot');
@@ -319,28 +337,56 @@
     }
 
     function checkCooldown() {
-        if(db.adsCount < 5) { document.getElementById('ad-btn').disabled = false; return; }
+        if(db.adsCount < 5) { 
+            document.getElementById('ad-btn').disabled = false; 
+            document.querySelector('#ad-btn span').innerText = langData[db.lang].adsBtn;
+            return; 
+        }
         const diff = Date.now() - db.lastAdTime;
         if(diff >= 3600000) { db.adsCount = 0; save(); update(); }
         else {
             const rem = Math.ceil((3600000 - diff) / 1000);
             document.getElementById('ad-btn').disabled = true;
-            document.querySelector('#ad-btn span').innerText = `${Math.floor(rem/60)}m`;
+            document.querySelector('#ad-btn span').innerText = `${Math.floor(rem/60)}m ${rem%60}s`;
         }
     }
 
     function changeLang(l) {
         db.lang = l; const d = langData[l];
+        // TRADUCCIÓN COMPLETA DE CADA ELEMENTO
         document.getElementById('t-profit-label').innerText = d.pLabel;
         document.getElementById('t-withdraw-btn').innerText = d.wBtn;
+        document.getElementById('t-history').innerText = d.hist;
         document.getElementById('t-ads-h').innerText = d.adsH;
         document.getElementById('t-ads-p').innerText = d.adsP;
+        document.getElementById('t-boost-h').innerText = d.boostH;
         document.getElementById('t-team-h').innerText = d.teamH;
         document.getElementById('t-team-p').innerText = d.teamP;
         document.getElementById('t-team-btn').innerText = d.teamB;
         document.getElementById('t-withdraw-title').innerText = d.wTitle;
+        document.getElementById('t-modal-label').innerText = d.mLabel;
+        document.getElementById('t-btn-confirm').innerText = d.wConf;
+        document.getElementById('t-back').innerText = d.wBack;
+        document.getElementById('t-err-h').innerText = d.errH;
+        document.getElementById('t-err-p').innerText = d.errP;
         document.getElementById('t-suc-h').innerText = d.sucH;
         document.getElementById('t-suc-p').innerText = d.sucP;
+        document.getElementById('t-suc-btn').innerText = d.sucBtn;
+        document.getElementById('t-gift-label').innerText = d.giftLabel;
+        document.getElementById('t-gift-btn').innerText = d.giftBtn;
+        document.getElementById('t-c1').innerText = d.c1;
+        document.getElementById('t-c1-sub').innerText = d.c1sub;
+        document.getElementById('t-c2').innerText = d.c2;
+        document.getElementById('t-c2-sub').innerText = d.c2sub;
+        document.getElementById('t-premium').innerText = d.premium;
+        document.getElementById('t-nav-1').innerText = d.nav1;
+        document.getElementById('t-nav-2').innerText = d.nav2;
+        document.getElementById('t-nav-3').innerText = d.nav3;
+        document.getElementById('t-nav-4').innerText = d.nav4;
+        
+        const joins = document.querySelectorAll('.t-btn-join');
+        joins.forEach(b => { if(!b.disabled) b.innerText = d.join; });
+
         update(); save();
     }
 
@@ -355,7 +401,10 @@
         document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
         document.getElementById('n-'+v).classList.add('active');
     }
-    function openW() { document.getElementById('modal-w').style.display='flex'; }
+    function openW() { 
+        resetWithdrawUI();
+        document.getElementById('modal-w').style.display='flex'; 
+    }
     function closeW() { document.getElementById('modal-w').style.display='none'; }
     function setMax() { document.getElementById('amt-in').value = db.profit; }
     function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
