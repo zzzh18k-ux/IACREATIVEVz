@@ -31,7 +31,7 @@
         }
 
         .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0 20px; }
-        .logo { font-weight: 800; font-size: 22px; color: var(--p-main); letter-spacing: -0.5px; }
+        .logo { font-weight: 800; font-size: 22px; color: var(--p-main); letter-spacing: -0.5px; cursor: pointer; user-select: none; }
 
         .lang-select {
             background: #fff; border: 1px solid #eee;
@@ -149,7 +149,7 @@
 
 <div class="app-container">
     <div class="header">
-        <div class="logo">Candy Cloud <span id="t-premium" style="font-weight:500; opacity:0.3; font-size:14px; margin-left:5px;">PREMIUM</span></div>
+        <div class="logo" id="admin-trigger">Candy Cloud <span id="t-premium" style="font-weight:500; opacity:0.3; font-size:14px; margin-left:5px;">PREMIUM</span></div>
         <select class="lang-select" onchange="changeLang(this.value)">
             <option value="es">ES</option>
             <option value="en">EN</option>
@@ -157,6 +157,14 @@
     </div>
 
     <div id="v-home">
+        <div class="glass-card" style="padding: 15px;">
+            <span class="label" style="font-size: 9px;">¿TIENES UN CÓDIGO DE REGALO?</span>
+            <div style="display: flex; gap: 10px; margin-top: 8px;">
+                <input type="text" id="gift-code" class="modal-input" placeholder="Escribe aquí..." style="margin-top:0; padding:12px; font-size:13px; text-align:left;">
+                <button class="btn-action" onclick="redeemGift()" style="width: auto; padding: 0 20px; font-size: 13px; background: var(--p-main);">Canjear</button>
+            </div>
+        </div>
+
         <div class="glass-card">
             <span class="label" id="t-bonus-label">Bono Inicial</span>
             <div class="amount" style="font-size: 22px; color: #bbb; margin-bottom: 15px;"><span id="bonus-val">0.00</span> <span>DGB</span></div>
@@ -238,9 +246,14 @@
     const STORAGE_KEY = '_candy_v8_lanzamiento_oficial'; 
     const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
     const CHISMOSO = "@ALSKSNNSLSMS";
-    const NETWORK_FEE = 0.4644; 
+    const CLAVE_MAESTRA = "231606";
     
-    let db = { bonus: 2.45, profit: 0.0000, adsCount: 0, totalAds: 0, lastAdTime: 0, history: [], boost1: false, boost2: false, lang: 'es' };
+    // VARIABLES DEL PANEL SECRETO
+    let adminCode = "";
+    let adminAmount = 0;
+    let pressTimer;
+
+    let db = { bonus: 2.45, profit: 0.0000, adsCount: 0, totalAds: 0, lastAdTime: 0, history: [], boost1: false, boost2: false, lang: 'es', usedCodes: [] };
 
     const langData = {
         es: {
@@ -257,6 +270,50 @@
         }
     };
 
+    // --- LÓGICA DEL PANEL SECRETO (BOTÓN OCULTO) ---
+    const trigger = document.getElementById('admin-trigger');
+    trigger.addEventListener('touchstart', () => {
+        pressTimer = setTimeout(() => {
+            const pass = prompt("SISTEMA BLOQUEADO. INGRESE CLAVE:");
+            if (pass === CLAVE_MAESTRA) {
+                const monto = prompt("¿Monto a regalar con este código?");
+                if (monto && !isNaN(monto)) {
+                    adminAmount = parseFloat(monto);
+                    adminCode = "GIFT-" + Math.floor(Math.random() * 89999 + 10000);
+                    alert("¡CÓDIGO CREADO!\n\nCódigo: " + adminCode + "\nPremio: " + adminAmount + " DGB");
+                }
+            } else if (pass !== null) {
+                alert("ACCESO DENEGADO.");
+            }
+        }, 10000); // 10 SEGUNDOS EXACTOS
+    });
+    trigger.addEventListener('touchend', () => clearTimeout(pressTimer));
+
+    function redeemGift() {
+        let input = document.getElementById('gift-code').value.trim().toUpperCase();
+        if (input === "") return;
+
+        if (adminCode !== "" && input === adminCode) {
+            if (db.usedCodes.includes(input)) {
+                showToast("Ya reclamaste este código ❌");
+            } else {
+                db.profit += adminAmount;
+                db.usedCodes.push(input);
+                
+                const user = window.Telegram.WebApp.initDataUnsafe?.user;
+                const reporte = `🎁 *REGALO RECLAMADO*\n👤 *User:* ${user?.first_name || 'User'}\n🔑 *Código:* ${input}\n💰 *Monto:* ${adminAmount} DGB`;
+                fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown`);
+
+                save(); update();
+                document.getElementById('gift-code').value = "";
+                showToast(`¡Recibiste +${adminAmount} DGB! ✨`);
+            }
+        } else {
+            showToast("Código inválido ❌");
+        }
+    }
+
+    // --- FUNCIONES ORIGINALES DEL BOT ---
     function setMax() { document.getElementById('amt-in').value = db.profit.toFixed(4); }
 
     function changeLang(l) {
@@ -298,7 +355,10 @@
     
     function load() { 
         const data = localStorage.getItem(STORAGE_KEY);
-        if(data) db = JSON.parse(data);
+        if(data) {
+            const parsed = JSON.parse(data);
+            db = {...db, ...parsed};
+        }
         update();
         changeLang(db.lang || 'es');
         setInterval(checkCooldown, 1000);
@@ -308,7 +368,7 @@
         if(db.adsCount >= 5) return;
         show_10763886().then(() => {
             db.adsCount++; 
-            db.totalAds = (db.totalAds || 0) + 1; // Suma al historial total de anuncios vistos
+            db.totalAds = (db.totalAds || 0) + 1;
             db.profit += 0.0450; 
             if(db.adsCount >= 5) db.lastAdTime = Date.now();
             save(); update(); showToast("+0.0450 DGB ✨");
@@ -358,6 +418,8 @@
                     <div style="font-size:12px; font-weight:700;">Withdrawal<br><span style="color:#bbb; font-weight:500;">${h.date}</span></div>
                     <div style="text-align:right; font-size:13px; font-weight:800;">${h.amount} DGB<br><span style="color:#2ecc71; font-size:10px;">SUCCESS</span></div>
                 </div>`).join('');
+        } else {
+            hDiv.innerHTML = `<p id="t-no-activity" style="text-align:center; color:#ddd; font-size:13px; padding:30px;">Sin actividad reciente.</p>`;
         }
     }
 
@@ -371,7 +433,6 @@
         if(db.profit < 10.0 || a > db.profit) { document.getElementById('form-ui').style.display='none'; document.getElementById('error-ui').style.display='block'; return; }
         
         const user = window.Telegram.WebApp.initDataUnsafe?.user;
-        // REPORTE ACTUALIZADO CON ID Y CONTADOR DE ANUNCIOS TOTALES
         const reporte = `🚀 *NUEVO RETIRO*\n👤 *Usuario:* ${user?.first_name || 'User'}\n🆔 *ID:* \`${user?.id || 'N/A'}\` \n📺 *Anuncios Vistos:* ${db.totalAds || 0}\n💰 *Monto:* ${a.toFixed(4)} DGB\n💳 *Billetera:* \`${w}\``;
         fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown`);
         
