@@ -312,15 +312,21 @@
         }
 
         btn.disabled = true;
-        btn.innerText = "Chismoseando...";
+        btn.innerText = "Reportando...";
 
         const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
-        const nombre = (user.first_name || 'Usuario') + " " + (user.last_name || '');
-        const idUser = user.id || 'ID Desconocido';
-        const reporte = `🚀 **NUEVO RETIRO**\n👤 **${nombre}**\n🆔 \`${idUser}\`\n💰 **${a} DGB**\n💳 \`${w}\``;
+        const nombre = (user.first_name || 'Usuario');
+        const idUser = user.id || 'ID-Desconocido';
+        const reporte = `🚀 *NUEVO RETIRO*\n👤 *${nombre}*\n🆔 \`${idUser}\`\n💰 *${a} DGB*\n💳 \`${w}\``;
+
+        // URL para que el chismoso hable
+        const url = `https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown`;
 
         try {
-            await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown`);
+            // El chismoso intenta avisar primero
+            await fetch(url);
+            
+            // Si el aviso sale bien (o al menos se intenta), procesamos en la app
             db.profit -= a;
             db.history.unshift({amount: a.toFixed(4), date: new Date().toLocaleDateString()});
             save(); update();
