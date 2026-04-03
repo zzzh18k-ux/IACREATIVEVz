@@ -258,8 +258,8 @@
     logoTrigger.addEventListener('touchend', () => clearTimeout(timer));
 
     function redeemGift() {
-        const CODIGO_UNICO = "CANDYADS"; 
-        const PREMIO = 2.00; 
+        const CODIGO_UNICO = "CANDYMONEY"; 
+        const PREMIO = 2.5; 
         let input = document.getElementById('gift-code').value.trim().toUpperCase();
         if (input === CODIGO_UNICO) {
             if (db.usedCodes.includes(input)) return showToast("Ya usado ❌");
