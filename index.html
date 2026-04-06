@@ -172,12 +172,32 @@
             font-size: 16px;
             font-weight: bold;
             width: 100%;
-            margin-top: 15px;
+            margin-top: 10px;
             cursor: pointer;
             transition: transform 0.1s;
         }
         .double-btn:active { transform: scale(0.97); }
         .double-btn.disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        /* BOTÓN VER ANUNCIO */
+        .ad-btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .ad-btn:active { transform: scale(0.97); }
+        .ad-btn.disabled {
             background: #95a5a6;
             cursor: not-allowed;
         }
@@ -295,7 +315,7 @@
 
 <div id="app-container">
 
-    <!-- HOME SCREEN (NUEVA CON OBJETO Y DOBLAR) -->
+    <!-- HOME SCREEN -->
     <div id="home-screen" class="screen active">
         <div class="top-nav">
             <div class="streak-badge"><i class="fas fa-fire"></i> <span id="streak-count">0</span> DIAS</div>
@@ -325,6 +345,12 @@
         <button class="double-btn" id="doubleBtn">
             <i class="fas fa-chart-line"></i> DOBLAR GANANCIA
         </button>
+
+        <!-- BOTÓN VER ANUNCIO PARA DOBLAR -->
+        <button class="ad-btn" id="watchAdBtn">
+            <i class="fas fa-video"></i> VER ANUNCIO (x2 multiplicador)
+        </button>
+
         <div class="multiplier-info" id="multiplierInfo">Multiplicador: 1x | Anuncios vistos: 0/5</div>
         <div class="reset-timer" id="resetTimer"></div>
 
@@ -440,7 +466,6 @@
     let currentMultiplier = 1;
     let watchedAds = 0;
     let lastResetTime = 0;
-    let pendingReward = 0;
 
     async function initUser() {
         if(!userId) return;
@@ -470,6 +495,10 @@
                 ccwallet_id: "",
                 withdrawHistory: [],
                 redeemedCodes: [],
+                gameClicks: 0,
+                gameMultiplier: 1,
+                gameWatchedAds: 0,
+                gameLastReset: 0,
                 id: userId
             });
         }
@@ -510,14 +539,13 @@
         }
         const diffMinutes = (now - lastResetTime) / (1000 * 60);
         if (diffMinutes >= 50) {
-            // Resetear todo
             currentClicks = 0;
             currentMultiplier = 1;
             watchedAds = 0;
             lastResetTime = now;
             updateClickUI();
             saveGameState();
-            showToast("¡Nuevo ciclo! Vuelve a juntar 10 clicks");
+            showToast("Nuevo ciclo. 10 clicks = 0.0001 USDT");
         } else {
             updateResetTimer();
         }
@@ -540,31 +568,41 @@
         document.getElementById('multiplierInfo').innerHTML = `Multiplicador: ${currentMultiplier}x | Anuncios vistos: ${watchedAds}/5`;
         
         const doubleBtn = document.getElementById('doubleBtn');
+        const watchAdBtn = document.getElementById('watchAdBtn');
+        
         if (currentClicks >= 10) {
             doubleBtn.disabled = false;
             doubleBtn.classList.remove('disabled');
+            watchAdBtn.disabled = false;
+            watchAdBtn.classList.remove('disabled');
         } else {
             doubleBtn.disabled = true;
             doubleBtn.classList.add('disabled');
+            watchAdBtn.disabled = true;
+            watchAdBtn.classList.add('disabled');
+        }
+        
+        if (watchedAds >= 5) {
+            watchAdBtn.disabled = true;
+            watchAdBtn.classList.add('disabled');
         }
     }
 
     async function handleClick() {
         if (currentClicks >= 10) {
-            showToast("Ya completaste 10 clicks. Reclama tu recompensa con DOBLAR");
+            showToast("Ya completaste 10 clicks. Reclama tu recompensa");
             return;
         }
         
         currentClicks++;
         updateClickUI();
         
-        // Animación del objeto
         const obj = document.getElementById('clickObject');
         gsap.to(obj, { scale: 0.95, duration: 0.05, yoyo: true, repeat: 1 });
         playSound('coin');
         
         if (currentClicks === 10) {
-            showToast("¡Completaste 10 clicks! Usa DOBLAR para reclamar");
+            showToast("10 clicks completados. Usa DOBLAR para reclamar");
             canvasConfetti({ particleCount: 100, spread: 50, origin: { y: 0.5 } });
         }
         
@@ -579,18 +617,15 @@
         
         const reward = 0.0001 * currentMultiplier;
         
-        // Guardar en Firebase el balance
         const userRef = db.collection("usuarios").doc(userId);
         await userRef.update({
             balance: firebase.firestore.FieldValue.increment(reward)
         });
         
-        // Animación y confeti
         playSound('coin');
         canvasConfetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
         showToast(`+${reward.toFixed(6)} USDT (x${currentMultiplier})`);
         
-        // Resetear después de reclamar
         currentClicks = 0;
         currentMultiplier = 1;
         watchedAds = 0;
@@ -611,22 +646,21 @@
             return;
         }
         
-        // SIMULACIÓN DE ANUNCIO (Aquí iría el código real de Adsgram/Monetag)
-        showToast("📺 Anuncio en reproducción... (simulado)");
+        showToast("Anuncio en reproduccion...");
         
-        // Simular delay del anuncio
+        // SIMULACIÓN - Aquí va el código real de Adsgram/Monetag
         setTimeout(async () => {
             watchedAds++;
             currentMultiplier = Math.pow(2, watchedAds);
             updateClickUI();
             await saveGameState();
-            showToast(`✅ Anuncio completado! Multiplicador x${currentMultiplier}`);
+            showToast(`Multiplicador x${currentMultiplier}`);
             
             if (watchedAds === 5) {
-                showToast("🎉 ¡Máximo multiplicador! Reclama tu recompensa");
+                showToast("Maximo multiplicador. Reclama tu recompensa");
                 canvasConfetti({ particleCount: 300, spread: 80, origin: { y: 0.5 } });
             }
-        }, 2000);
+        }, 1500);
     }
 
     async function updateUI() {
@@ -833,6 +867,7 @@
     // Event listeners
     document.getElementById('clickObject').onclick = handleClick;
     document.getElementById('doubleBtn').onclick = claimWithMultiplier;
+    document.getElementById('watchAdBtn').onclick = watchAdForDouble;
     document.getElementById('inviteNavBtn').onclick = () => navigate('invite-screen');
     document.getElementById('withdrawNavBtn').onclick = () => { navigate('withdraw-screen'); loadHistory(); };
     document.getElementById('redeemNavBtn').onclick = () => navigate('redeem-screen');
@@ -848,9 +883,7 @@
     document.getElementById('withdrawSubmitBtn').onclick = handleWithdraw;
     document.getElementById('redeemSubmitBtn').onclick = handleRedeem;
 
-    // Timer para reset
     setInterval(() => checkAndResetIfNeeded(), 1000);
-
     initUser();
 </script>
 </body>
