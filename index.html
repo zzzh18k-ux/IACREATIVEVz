@@ -1,637 +1,88 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CANDY CLOUD LUXE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src='//libtl.com/sdk.js' data-zone='10763886' data-sdk='show_10763886'></script>
-
-    <style>
-        :root { 
-            --p-main: #f08080; 
-            --bg-grad: linear-gradient(180deg, #fff5f6 0%, #ffffff 100%);
-            --card-bg: rgba(255, 255, 255, 0.9);
-            --text: #3d2b2b;
-            --nav-inactive: #b0b0b0;
-            --success: #2ecc71;
-        }
-
-        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
-        
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: var(--bg-grad);
-            color: var(--text); margin: 0; overflow: hidden; height: 100vh;
-        }
-
-        .app-container { 
-            width: 100%; max-width: 450px; margin: 0 auto; padding: 20px; 
-            height: 100vh; overflow-y: auto; padding-bottom: 120px; position: relative;
-        }
-
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0 20px; }
-        .logo { font-weight: 800; font-size: 22px; color: var(--p-main); letter-spacing: -0.5px; cursor: pointer; user-select: none; }
-
-        .lang-select {
-            background: #fff; border: 1px solid #eee;
-            border-radius: 10px; padding: 5px 8px; font-size: 11px; font-weight: 700;
-        }
-
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 28px; padding: 22px; 
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            margin-bottom: 18px; 
-            box-shadow: 0 10px 25px rgba(240, 128, 128, 0.08);
-        }
-
-        .label { color: #a58e8e; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 8px; display: block; }
-        .amount { font-size: 34px; font-weight: 800; color: var(--text); letter-spacing: -1px; }
-        .amount span { color: var(--p-main); font-size: 16px; margin-left: 5px; }
-
-        .btn-action { 
-            background: #222; 
-            color: #fff; border: none; width: 100%; padding: 18px; 
-            border-radius: 22px; font-weight: 700; font-size: 16px; 
-            cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
-        
-        .btn-action:active { transform: scale(0.96); }
-        .btn-action:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .nav-bar { 
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; 
-            background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(15px);
-            display: flex; justify-content: space-around; padding: 12px; 
-            border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); z-index: 100;
-        }
-
-        .nav-link { 
-            background: transparent; border: none; color: var(--nav-inactive); 
-            font-weight: 700; font-size: 10px; cursor: pointer; 
-            display: flex; flex-direction: column; align-items: center; gap: 6px; 
-            width: 25%;
-        }
-
-        .nav-link.active { color: var(--p-main); }
-
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
-            display: none; justify-content: center; align-items: center; z-index: 9999; padding: 20px;
-        }
-        .modal-card { background: #fff; width: 100%; max-width: 380px; padding: 35px; border-radius: 35px; text-align: center; }
-        .modal-input {
-            width: 100%; background: #f7f7f7; border: 2px solid #eee;
-            padding: 16px; border-radius: 18px; color: var(--text); 
-            font-size: 15px; text-align: center; margin-top: 12px;
-        }
-
-        .dot { 
-            width: 12px; height: 12px; border-radius: 50%; background: #ddd; 
-            display: inline-block; margin: 0 6px; transition: 0.3s; 
-        }
-        .dot.active { background: var(--p-main); transform: scale(1.2); }
-
-        .toast { 
-            position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px); 
-            background: #222; color: #fff; padding: 14px 28px; 
-            border-radius: 20px; font-weight: 700; font-size: 14px; transition: 0.5s; z-index: 10000; 
-        }
-        .toast.show { transform: translateX(-50%) translateY(0); }
-
-        #confetti-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 10001;
-        }
-
-        .timer-text {
-            font-size: 12px;
-            color: var(--p-main);
-            margin-top: 10px;
-            font-weight: 700;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Under Maintenance</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-<canvas id="confetti-canvas"></canvas>
-
-<div id="modal-w" class="modal-overlay">
-    <div class="modal-card">
-        <div id="form-ui">
-            <h3 id="t-withdraw-title">Retirar Ganancias</h3>
-            <div onclick="setMax()" style="background:#fff5f5; padding:20px; border-radius:24px; margin:25px 0; border: 1px dashed var(--p-main);">
-                <span class="label" id="t-modal-label">SALDO DISPONIBLE</span>
-                <div style="font-size:28px; font-weight:800;"><span id="modal-bal">0.00</span> <span style="font-size:14px; color:var(--p-main)">DGB</span></div>
-            </div>
-            <input type="number" id="amt-in" class="modal-input" placeholder="Monto">
-            <input type="text" id="wal-in" class="modal-input" placeholder="Billetera DGB">
-            <button class="btn-action" id="t-btn-confirm" onclick="handleWithdraw()" style="background:var(--p-main); margin-top:15px;">Confirmar</button>
-            <p onclick="closeW()" id="t-back" style="color:#bbb; font-size:14px; margin-top:20px; cursor:pointer;">Volver</p>
+    <div class="container">
+        <h1>We're Under Maintenance!</h1>
+        <p>We'll be back soon with an improved experience.</p>
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
         </div>
-        
-        <div id="error-ui" style="display:none;">
-            <div style="font-size:50px;">⚠️</div>
-            <h3 id="t-err-h">Saldo Insuficiente</h3>
-            <p id="t-err-p">Mínimo 10.00 DGB.</p>
-            <button class="btn-action" onclick="resetWithdrawUI()">Ok</button>
-        </div>
-
-        <div id="success-ui" style="display:none;">
-            <div style="font-size:50px;">✅</div>
-            <h3 id="t-suc-h">¡Retiro Enviado!</h3>
-            <p id="t-suc-p">Tu pago está siendo procesado.</p>
-            <button class="btn-action" id="t-suc-btn" onclick="closeW()">Excelente</button>
-        </div>
-    </div>
-</div>
-
-<div id="toast" class="toast">¡Hecho!</div>
-
-<div class="app-container">
-    <div class="header">
-        <div class="logo" id="admin-trigger">Candy Cloud <span id="t-premium" style="opacity:0.3; font-size:14px;">PREMIUM</span></div>
-        <select class="lang-select" onchange="changeLang(this.value)">
-            <option value="es">ES</option>
-            <option value="en">EN</option>
-        </select>
+        <p id="percentage">0%</p>
     </div>
 
-    <div id="v-home">
-        <div class="glass-card">
-            <span class="label" id="t-profit-label">Disponible para Retiro</span>
-            <div class="amount"><span id="profit-val">0.0000</span> <span>DGB</span></div>
-        </div>
-        <button class="btn-action" id="t-withdraw-btn" onclick="openW()" style="background:var(--p-main)">Retirar Fondos</button>
-
-        <div class="glass-card" style="margin-top:20px;">
-            <span class="label" id="t-gift-label">¿TIENES UN CÓDIGO?</span>
-            <div style="display: flex; gap: 10px; margin-top: 8px;">
-                <input type="text" id="gift-code" class="modal-input" placeholder="CANDY2026" style="margin-top:0;">
-                <button class="btn-action" id="t-gift-btn" onclick="redeemGift()" style="width: auto; background: #222;">Canjear</button>
-            </div>
-        </div>
-
-        <div style="margin-top: 35px;">
-            <div id="t-history" style="font-weight: 800; font-size: 12px; color:#bbb;">HISTORIAL</div>
-            <div id="withdraw-history"></div>
-        </div>
-    </div>
-
-    <div id="v-stake" style="display:none;">
-        <div class="glass-card" style="text-align:center;">
-            <h3 id="t-ads-h">Ver Anuncios</h3>
-            <p id="t-ads-p">Gana 0.02 DGB por video</p>
-            <p id="t-progress" style="font-size:12px; color:var(--p-main); margin:5px 0;">Progreso: 0/5 videos (0.1 DGB total)</p>
-            <div style="margin:20px 0;">
-                <div class="dot" id="dot1"></div>
-                <div class="dot" id="dot2"></div>
-                <div class="dot" id="dot3"></div>
-                <div class="dot" id="dot4"></div>
-                <div class="dot" id="dot5"></div>
-            </div>
-            <button class="btn-action" id="ad-btn" onclick="watchAd()" style="background:var(--p-main)"><span>Ver Video</span></button>
-            <div id="timer-display" class="timer-text"></div>
-        </div>
-    </div>
-
-    <div id="v-earn" style="display:none;">
-        <h4 id="t-boost-h" style="color:#bbb; font-size:12px;">BONOS DE CANALES</h4>
-        <div class="glass-card" style="display:flex; justify-content:space-between; align-items:center;">
-            <div><div id="t-c1" style="font-weight:800;">Canal Oficial</div><div id="t-c1-sub" style="color:var(--p-main); font-size:12px;">+0.20 DGB Retirable</div></div>
-            <button class="btn-action t-btn-join" id="btn-c1" style="width:auto; padding:10px 20px;" onclick="claimBoost(1, 'https://t.me/CandyCloudoficial')">Unirse</button>
-        </div>
-        <div class="glass-card" style="display:flex; justify-content:space-between; align-items:center;">
-            <div><div id="t-c2" style="font-weight:800;">Grupo Oficial</div><div id="t-c2-sub" style="color:var(--p-main); font-size:12px;">+0.20 DGB Retirable</div></div>
-            <button class="btn-action t-btn-join" id="btn-c2" style="width:auto; padding:10px 20px;" onclick="claimBoost(2, 'https://t.me/CandyCloudoficial')">Unirse</button>
-        </div>
-    </div>
-
-    <div id="v-team" style="display:none;">
-        <div class="glass-card" style="text-align:center;">
-            <h3 id="t-team-h">¡Gana como un Jefe! 🚀</h3>
-            <p id="t-team-p" style="line-height:1.6;">Invita a tus amigos y llévate el 20% de por vida. ¡Crea tu imperio!</p>
-            <button class="btn-action" id="t-team-btn" onclick="window.open('https://t.me/CandyCloudBot?start=r')" style="background:#222;">Copiar Mi Enlace</button>
-        </div>
-    </div>
-</div>
-
-<nav class="nav-bar">
-    <button class="nav-link active" id="n-home" onclick="view('home')"><span id="t-nav-1">CASA</span></button>
-    <button class="nav-link" id="n-stake" onclick="view('stake')"><span id="t-nav-2">VIDEOS</span></button>
-    <button class="nav-link" id="n-earn" onclick="view('earn')"><span id="t-nav-3">BONOS</span></button>
-    <button class="nav-link" id="n-team" onclick="view('team')"><span id="t-nav-4">EQUIPO</span></button>
-</nav>
-
-<script>
-    const STORAGE_KEY = '_candy_v9_correcta'; 
-    const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
-    const CHISMOSO = "@ALSKSNNSLSMS"; 
-    const CLAVE_MAESTRA = "231606";
-
-    let db = { 
-        profit: 0.0000, 
-        adsWatchedToday: 0,
-        lastAdResetDate: new Date().toDateString(),
-        lastAdTime: 0,
-        history: [], 
-        boost1: false, 
-        boost2: false, 
-        lang: 'es', 
-        usedCodes: []
-    };
-
-    const langData = {
-        es: {
-            pLabel: "Disponible para Retiro", wBtn: "Retirar Fondos", hist: "HISTORIAL", noAct: "Sin actividad.",
-            adsH: "Ver Anuncios", adsP: "Gana 0.02 DGB por video", adsBtn: "Ver Video", boostH: "BONOS DE CANALES",
-            teamH: "¡Gana como un Jefe! 🚀", teamP: "Invita a tus amigos y llévate el 20% de por vida. ¡Crea tu imperio!", teamB: "Copiar Mi Enlace",
-            wTitle: "Retirar Ganancias", wConf: "Confirmar", wBack: "Volver", errH: "Saldo Insuficiente", errP: "Mínimo 10.00 DGB.", sucH: "¡Retiro Enviado!", sucP: "Tu pago está siendo procesado.", status: "EXITOSO",
-            mLabel: "SALDO DISPONIBLE", giftLabel: "¿TIENES UN CÓDIGO?", giftBtn: "Canjear", c1: "Canal Oficial", c1sub: "+0.20 DGB Retirable", c2: "Grupo Oficial", c2sub: "+0.20 DGB Retirable", join: "Unirse", premium: "PREMIUM", nav1: "CASA", nav2: "VIDEOS", nav3: "BONOS", nav4: "EQUIPO", sucBtn: "Excelente"
-        },
-        en: {
-            pLabel: "Withdrawal Balance", wBtn: "Withdraw Funds", hist: "HISTORY", noAct: "No activity.",
-            adsH: "Watch Ads", adsP: "Earn 0.02 DGB per video", adsBtn: "Watch Video", boostH: "CHANNEL BONUSES",
-            teamH: "Earn like a Boss! 🚀", teamP: "Invite friends and get 20% lifetime. Build your empire!", teamB: "Copy My Link",
-            wTitle: "Withdraw Earnings", wConf: "Confirm", wBack: "Back", errH: "Low Balance", errP: "Minimum 10.00 DGB.", sucH: "Withdrawal Sent!", sucP: "Your payment is being processed.", status: "SUCCESS",
-            mLabel: "AVAILABLE BALANCE", giftLabel: "HAVE A CODE?", giftBtn: "Redeem", c1: "Official Channel", c1sub: "+0.20 DGB Withdraw", c2: "Official Group", c2sub: "+0.20 DGB Withdraw", join: "Join", premium: "PREMIUM", nav1: "HOME", nav2: "VIDEOS", nav3: "BONUSES", nav4: "TEAM", sucBtn: "Great"
-        }
-    };
-
-    // CONFETI
-    function startConfetti() {
-        const canvas = document.getElementById('confetti-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        
-        const particles = [];
-        const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ff8000', '#ff0080', '#ff4444', '#44ff44'];
-        
-        for(let i = 0; i < 200; i++) {
-            particles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height - canvas.height,
-                size: Math.random() * 10 + 5,
-                speedY: Math.random() * 6 + 10,
-                speedX: (Math.random() - 0.5) * 5,
-                color: colors[Math.floor(Math.random() * colors.length)],
-                rotation: Math.random() * 360,
-                rotationSpeed: (Math.random() - 0.5) * 20
-            });
-        }
-        
-        let animationId;
-        let startTime = Date.now();
-        
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            let allDone = true;
-            for(let p of particles) {
-                if(p.y < canvas.height + 100) {
-                    allDone = false;
-                    p.y += p.speedY;
-                    p.x += p.speedX;
-                    p.rotation += p.rotationSpeed;
-                    
-                    ctx.save();
-                    ctx.translate(p.x, p.y);
-                    ctx.rotate(p.rotation * Math.PI / 180);
-                    ctx.fillStyle = p.color;
-                    ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
-                    ctx.restore();
-                }
-            }
-            
-            if(!allDone && Date.now() - startTime < 4500) {
-                animationId = requestAnimationFrame(animate);
-            } else {
-                cancelAnimationFrame(animationId);
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-            }
-        }
-        
-        animate();
-    }
-
-    function showToast(msg, isSuccess = false) {
-        const t = document.getElementById('toast');
-        t.innerText = msg;
-        t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 2500);
-    }
-
-    // Verificar si es nuevo día
-    function checkNewDay() {
-        const today = new Date().toDateString();
-        if (db.lastAdResetDate !== today) {
-            db.adsWatchedToday = 0;
-            db.lastAdResetDate = today;
-            save();
-            updateAdsDisplay();
-        }
-    }
-
-    function updateAdsDisplay() {
-        // Actualizar dots
-        for(let i = 1; i <= 5; i++) {
-            const dot = document.getElementById(`dot${i}`);
-            if(dot) {
-                if(i <= db.adsWatchedToday) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
-                }
-            }
-        }
-        
-        const progressText = document.getElementById('t-progress');
-        if(progressText) {
-            progressText.innerText = `Progreso: ${db.adsWatchedToday}/5 videos (${(db.adsWatchedToday * 0.02).toFixed(2)}/0.1 DGB total)`;
-        }
-        
-        // Actualizar botón y timer
-        const btn = document.getElementById('ad-btn');
-        const timerDiv = document.getElementById('timer-display');
-        
-        if(db.adsWatchedToday >= 5) {
-            const timeUntilReset = getTimeUntilReset();
-            if(timeUntilReset > 0) {
-                btn.disabled = true;
-                const hours = Math.floor(timeUntilReset / 3600000);
-                const minutes = Math.floor((timeUntilReset % 3600000) / 60000);
-                const seconds = Math.floor((timeUntilReset % 60000) / 1000);
-                timerDiv.innerText = `⏰ Límite alcanzado. Reset en ${hours}h ${minutes}m ${seconds}s`;
-                document.querySelector('#ad-btn span').innerText = langData[db.lang].adsBtn;
-            } else {
-                db.adsWatchedToday = 0;
-                db.lastAdResetDate = new Date().toDateString();
-                save();
-                updateAdsDisplay();
-            }
-        } else {
-            btn.disabled = false;
-            timerDiv.innerText = `🎬 ${5 - db.adsWatchedToday} videos restantes hoy`;
-            document.querySelector('#ad-btn span').innerText = langData[db.lang].adsBtn;
-        }
-    }
-
-    function getTimeUntilReset() {
-        const now = new Date();
-        const tomorrow = new Date(now);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        tomorrow.setHours(0, 0, 0, 0);
-        return tomorrow - now;
-    }
-
-    async function watchAd() {
-        checkNewDay();
-        
-        if(db.adsWatchedToday >= 5) {
-            showToast("📅 Límite diario alcanzado (5 videos). Vuelve mañana!");
-            return;
-        }
-        
-        try {
-            await show_10763886();
-            
-            const reward = 0.02;
-            db.adsWatchedToday++;
-            db.profit += reward;
-            db.lastAdTime = Date.now();
-            
-            save();
-            update();
-            updateAdsDisplay();
-            
-            showToast(`🎬 +${reward} DGB (${db.adsWatchedToday}/5 videos)`);
-            
-            // Si completó los 5 videos, mostrar confeti
-            if(db.adsWatchedToday === 5) {
-                startConfetti();
-                showToast(`🎉 COMPLETASTE LOS 5 VIDEOS! +0.1 DGB TOTAL 🎉`);
-            }
-            
-            const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
-            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(`📺 VIDEO VISTO\n👤 ${user.first_name || 'Usuario'}\n📊 Hoy: ${db.adsWatchedToday}/5\n💰 +${reward} DGB`)}&parse_mode=Markdown&disable_notification=true`);
-            
-        } catch(e) {
-            console.log('Ad error:', e);
-            showToast("Error al cargar el anuncio");
-        }
-    }
-
-    async function redeemGift() {
-        const CODIGO_UNICO = "CANDY2026"; 
-        const PREMIO = 0.50; 
-        let input = document.getElementById('gift-code').value.trim().toUpperCase();
-        
-        if (input === CODIGO_UNICO) {
-            if (db.usedCodes.includes(input)) {
-                showToast("❌ Código ya usado");
-                return;
-            }
-            
-            // Mostrar anuncio antes de dar recompensa
-            try {
-                await show_10763886();
-            } catch(e) { console.log('Ad error:', e); }
-            
-            db.profit += PREMIO;
-            db.usedCodes.push(input);
-            save();
-            update();
-            startConfetti();
-            showToast(`🎁 +${PREMIO} DGB por código! 🎁`);
-            document.getElementById('gift-code').value = "";
-            
-            const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
-            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(`🎁 CÓDIGO CANJEADO\n👤 ${user.first_name || 'Usuario'}\n🎟 ${input}\n💰 +${PREMIO} DGB`)}&parse_mode=Markdown&disable_notification=true`);
-        } else { 
-            showToast("❌ Código inválido"); 
-        }
-    }
-
-    function claimBoost(num, link) {
-        window.open(link);
-        setTimeout(() => {
-            if((num === 1 && !db.boost1) || (num === 2 && !db.boost2)) {
-                if(num === 1) db.boost1 = true; 
-                else db.boost2 = true;
-                db.profit += 0.20;
-                startConfetti();
-                showToast(`🎁 +0.20 DGB por unirte!`);
-                save(); 
-                update();
-                
-                const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
-                fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(`🎁 BONO RECLAMADO\n👤 ${user.first_name || 'Usuario'}\n💰 +0.20 DGB`)}&parse_mode=Markdown`);
-            }
-        }, 3000);
-    }
-
-    async function handleWithdraw() {
-        const a = parseFloat(document.getElementById('amt-in').value);
-        const w = document.getElementById('wal-in').value;
-        const btn = document.getElementById('t-btn-confirm');
-        
-        if(db.profit < 10.0) { 
-            document.getElementById('form-ui').style.display='none'; 
-            document.getElementById('error-ui').style.display='block'; 
-            return; 
-        }
-        if(!a || a > db.profit || w.length < 5) { 
-            showToast("❌ Error en datos"); 
-            return; 
-        }
-        
-        btn.disabled = true;
-        const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
-        const reporte = `🚀 NUEVO RETIRO\n👤 ${user.first_name || 'Usuario'}\n💰 ${a} DGB\n💳 ${w}`;
-        
-        try {
-            await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown`);
-            db.profit -= a;
-            db.history.unshift({amount: a.toFixed(4), date: new Date().toLocaleDateString()});
-            save(); 
-            update();
-            startConfetti();
-            document.getElementById('form-ui').style.display='none';
-            document.getElementById('success-ui').style.display='block';
-        } catch(e) { 
-            showToast("❌ Error de conexión"); 
-        } finally { 
-            btn.disabled = false; 
-        }
-    }
-
-    function resetWithdrawUI() {
-        document.getElementById('success-ui').style.display='none';
-        document.getElementById('error-ui').style.display='none';
-        document.getElementById('form-ui').style.display='block';
-    }
-
-    function update() {
-        document.getElementById('profit-val').innerText = db.profit.toFixed(4);
-        document.getElementById('modal-bal').innerText = db.profit.toFixed(4);
-        
-        const hDiv = document.getElementById('withdraw-history');
-        hDiv.innerHTML = db.history.length > 0 ? db.history.map(h => `
-            <div style="background:#fff; border-radius:15px; padding:12px; display:flex; justify-content:space-between; margin-top:10px; border:1px solid #eee;">
-                <div style="font-size:11px;"><b>Retiro</b><br>${h.date}</div>
-                <div style="text-align:right; font-size:12px;"><b>${h.amount} DGB</b><br><span style="color:var(--success); font-weight:800;">EXITOSO</span></div>
-            </div>`).join('') : `<p style="text-align:center; color:#ccc; font-size:12px; margin-top:20px;">Sin actividad.</p>`;
-        
-        if(db.boost1) { 
-            document.getElementById('btn-c1').innerHTML = "✅"; 
-            document.getElementById('btn-c1').disabled = true; 
-        }
-        if(db.boost2) { 
-            document.getElementById('btn-c2').innerHTML = "✅"; 
-            document.getElementById('btn-c2').disabled = true; 
-        }
-    }
-
-    function changeLang(l) {
-        db.lang = l; 
-        const d = langData[l];
-        document.getElementById('t-profit-label').innerText = d.pLabel;
-        document.getElementById('t-withdraw-btn').innerText = d.wBtn;
-        document.getElementById('t-history').innerText = d.hist;
-        document.getElementById('t-ads-h').innerText = d.adsH;
-        document.getElementById('t-ads-p').innerText = d.adsP;
-        document.getElementById('t-boost-h').innerText = d.boostH;
-        document.getElementById('t-team-h').innerText = d.teamH;
-        document.getElementById('t-team-p').innerText = d.teamP;
-        document.getElementById('t-team-btn').innerText = d.teamB;
-        document.getElementById('t-withdraw-title').innerText = d.wTitle;
-        document.getElementById('t-modal-label').innerText = d.mLabel;
-        document.getElementById('t-btn-confirm').innerText = d.wConf;
-        document.getElementById('t-back').innerText = d.wBack;
-        document.getElementById('t-err-h').innerText = d.errH;
-        document.getElementById('t-err-p').innerText = d.errP;
-        document.getElementById('t-suc-h').innerText = d.sucH;
-        document.getElementById('t-suc-p').innerText = d.sucP;
-        document.getElementById('t-suc-btn').innerText = d.sucBtn;
-        document.getElementById('t-gift-label').innerText = d.giftLabel;
-        document.getElementById('t-gift-btn').innerText = d.giftBtn;
-        document.getElementById('t-c1').innerText = d.c1;
-        document.getElementById('t-c1-sub').innerText = d.c1sub;
-        document.getElementById('t-c2').innerText = d.c2;
-        document.getElementById('t-c2-sub').innerText = d.c2sub;
-        document.getElementById('t-premium').innerText = d.premium;
-        document.getElementById('t-nav-1').innerText = d.nav1;
-        document.getElementById('t-nav-2').innerText = d.nav2;
-        document.getElementById('t-nav-3').innerText = d.nav3;
-        document.getElementById('t-nav-4').innerText = d.nav4;
-        document.querySelectorAll('.t-btn-join').forEach(b => { if(!b.disabled && b.innerHTML !== '✅') b.innerText = d.join; });
-        update(); 
-        save();
-    }
-
-    function save() { 
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); 
-    }
-    
-    function load() { 
-        const data = localStorage.getItem(STORAGE_KEY);
-        if(data) db = {...db, ...JSON.parse(data)};
-        checkNewDay();
-        update(); 
-        changeLang(db.lang); 
-        setInterval(() => {
-            checkNewDay();
-            updateAdsDisplay();
-        }, 1000);
-    }
-    
-    function view(v) { 
-        ['home','stake','earn','team'].forEach(x => document.getElementById('v-'+x).style.display = (x===v?'block':'none'));
-        document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-        document.getElementById('n-'+v).classList.add('active');
-        if(v === 'stake') updateAdsDisplay();
-    }
-    
-    function openW() { resetWithdrawUI(); document.getElementById('modal-w').style.display='flex'; }
-    function closeW() { document.getElementById('modal-w').style.display='none'; }
-    function setMax() { document.getElementById('amt-in').value = db.profit; }
-
-    // Panel admin
-    const logoTrigger = document.getElementById('admin-trigger');
-    let adminTimer;
-    logoTrigger.addEventListener('touchstart', () => {
-        adminTimer = setTimeout(() => {
-            const pass = prompt("CLAVE ADMIN:");
-            if (pass === CLAVE_MAESTRA) {
-                const nuevoMonto = prompt("Monto de prueba (DGB):");
-                if (nuevoMonto && !isNaN(nuevoMonto)) {
-                    db.profit = parseFloat(nuevoMonto);
-                    save(); 
-                    update();
-                    alert("Saldo actualizado: " + db.profit + " DGB");
-                }
-            }
-        }, 7000);
-    });
-    logoTrigger.addEventListener('touchend', () => clearTimeout(adminTimer));
-
-    window.onload = load;
-    window.addEventListener('resize', () => {
-        const canvas = document.getElementById('confetti-canvas');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
-</script>
+    <script src="script.js"></script>
 </body>
 </html>
+body {
+    font-family: sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    text-align: center;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 600px;
+}
+
+h1 {
+    color: #e44d26;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 1.2em;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background-color: #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background-color: #e44d26;
+    width: 0%;
+    transition: width 1s linear;
+}
+
+#percentage {
+    font-size: 1.1em;
+    color: #777;
+    margin-top: 10px;
+}
+let progress = 0;
+const progressBar = document.getElementById('progress');
+const percentageText = document.getElementById('percentage');
+
+function updateProgress() {
+    progress += 1;
+    progressBar.style.width = progress + '%';
+    percentageText.textContent = progress + '%';
+
+    if (progress >= 100) {
+        clearInterval(interval); // Stop updating when it reaches 100%
+    }
+}
+
+const interval = setInterval(updateProgress, 50); // Update every 50 milliseconds
