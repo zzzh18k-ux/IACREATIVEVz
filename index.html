@@ -91,7 +91,11 @@
             font-size: 15px; text-align: center; margin-top: 12px;
         }
 
-        .dot { width: 8px; height: 8px; border-radius: 4px; background: #eee; display: inline-block; margin: 0 4px; transition: 0.4s; }
+        .dot { 
+            width: 12px; height: 12px; border-radius: 50%; background: #ddd; 
+            display: inline-block; margin: 0 6px; transition: 0.3s; 
+        }
+        .dot.active { background: var(--p-main); transform: scale(1.2); }
 
         .toast { 
             position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px); 
@@ -100,7 +104,6 @@
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
 
-        /* Confetti Canvas */
         #confetti-canvas {
             position: fixed;
             top: 0;
@@ -109,6 +112,13 @@
             height: 100%;
             pointer-events: none;
             z-index: 10001;
+        }
+
+        .timer-text {
+            font-size: 12px;
+            color: var(--p-main);
+            margin-top: 10px;
+            font-weight: 700;
         }
     </style>
 </head>
@@ -167,7 +177,7 @@
         <div class="glass-card" style="margin-top:20px;">
             <span class="label" id="t-gift-label">¿TIENES UN CÓDIGO?</span>
             <div style="display: flex; gap: 10px; margin-top: 8px;">
-                <input type="text" id="gift-code" class="modal-input" placeholder="..." style="margin-top:0;">
+                <input type="text" id="gift-code" class="modal-input" placeholder="CANDY2026" style="margin-top:0;">
                 <button class="btn-action" id="t-gift-btn" onclick="redeemGift()" style="width: auto; background: #222;">Canjear</button>
             </div>
         </div>
@@ -181,11 +191,17 @@
     <div id="v-stake" style="display:none;">
         <div class="glass-card" style="text-align:center;">
             <h3 id="t-ads-h">Ver Anuncios</h3>
-            <p id="t-ads-p">Gana +0.0450 DGB por video</p>
+            <p id="t-ads-p">Gana 0.02 DGB por video</p>
+            <p id="t-progress" style="font-size:12px; color:var(--p-main); margin:5px 0;">Progreso: 0/5 videos (0.1 DGB total)</p>
             <div style="margin:20px 0;">
-                <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                <div class="dot" id="dot1"></div>
+                <div class="dot" id="dot2"></div>
+                <div class="dot" id="dot3"></div>
+                <div class="dot" id="dot4"></div>
+                <div class="dot" id="dot5"></div>
             </div>
-            <button class="btn-action" id="ad-btn" onclick="watchAd()" style="background:var(--p-main)"><span>Ver Ahora</span></button>
+            <button class="btn-action" id="ad-btn" onclick="watchAd()" style="background:var(--p-main)"><span>Ver Video</span></button>
+            <div id="timer-display" class="timer-text"></div>
         </div>
     </div>
 
@@ -218,16 +234,16 @@
 </nav>
 
 <script>
-    const STORAGE_KEY = '_candy_v8_lanzamiento_oficial'; 
+    const STORAGE_KEY = '_candy_v9_correcta'; 
     const TG_TOKEN = "8746370321:AAHLrn8OHEPNqyOIqY75Q4ocBVOgsZ8GI34";
     const CHISMOSO = "@ALSKSNNSLSMS"; 
     const CLAVE_MAESTRA = "231606";
 
     let db = { 
         profit: 0.0000, 
-        adsCount: 0, 
-        totalAds: 0, 
-        lastAdTime: 0, 
+        adsWatchedToday: 0,
+        lastAdResetDate: new Date().toDateString(),
+        lastAdTime: 0,
         history: [], 
         boost1: false, 
         boost2: false, 
@@ -238,22 +254,21 @@
     const langData = {
         es: {
             pLabel: "Disponible para Retiro", wBtn: "Retirar Fondos", hist: "HISTORIAL", noAct: "Sin actividad.",
-            adsH: "Ver Anuncios", adsP: "Gana +0.0450 DGB por video", adsBtn: "Ver Ahora", boostH: "BONOS DE CANALES",
+            adsH: "Ver Anuncios", adsP: "Gana 0.02 DGB por video", adsBtn: "Ver Video", boostH: "BONOS DE CANALES",
             teamH: "¡Gana como un Jefe! 🚀", teamP: "Invita a tus amigos y llévate el 20% de por vida. ¡Crea tu imperio!", teamB: "Copiar Mi Enlace",
             wTitle: "Retirar Ganancias", wConf: "Confirmar", wBack: "Volver", errH: "Saldo Insuficiente", errP: "Mínimo 10.00 DGB.", sucH: "¡Retiro Enviado!", sucP: "Tu pago está siendo procesado.", status: "EXITOSO",
             mLabel: "SALDO DISPONIBLE", giftLabel: "¿TIENES UN CÓDIGO?", giftBtn: "Canjear", c1: "Canal Oficial", c1sub: "+0.20 DGB Retirable", c2: "Grupo Oficial", c2sub: "+0.20 DGB Retirable", join: "Unirse", premium: "PREMIUM", nav1: "CASA", nav2: "VIDEOS", nav3: "BONOS", nav4: "EQUIPO", sucBtn: "Excelente"
         },
         en: {
             pLabel: "Withdrawal Balance", wBtn: "Withdraw Funds", hist: "HISTORY", noAct: "No activity.",
-            adsH: "Watch Ads", adsP: "Earn +0.0450 DGB per video", adsBtn: "Watch Now", boostH: "CHANNEL BONUSES",
+            adsH: "Watch Ads", adsP: "Earn 0.02 DGB per video", adsBtn: "Watch Video", boostH: "CHANNEL BONUSES",
             teamH: "Earn like a Boss! 🚀", teamP: "Invite friends and get 20% lifetime. Build your empire!", teamB: "Copy My Link",
             wTitle: "Withdraw Earnings", wConf: "Confirm", wBack: "Back", errH: "Low Balance", errP: "Minimum 10.00 DGB.", sucH: "Withdrawal Sent!", sucP: "Your payment is being processed.", status: "SUCCESS",
-            mLabel: "AVAILABLE BALANCE", giftLabel: "HAVE A CODE?", giftBtn: "Redeem", c1: "Official Channel", c1sub: "+0.20 DGB Withdraw", c2: "Official Group", c2sub: "+0.20 DGB Withdraw", join: "Join", premium: "PREMIUM", nav1: "HOME", nav2: "VIDEOS", nav3: "BONUSES", nav4: "TEAM", sucBtn: "Excelente"
+            mLabel: "AVAILABLE BALANCE", giftLabel: "HAVE A CODE?", giftBtn: "Redeem", c1: "Official Channel", c1sub: "+0.20 DGB Withdraw", c2: "Official Group", c2sub: "+0.20 DGB Withdraw", join: "Join", premium: "PREMIUM", nav1: "HOME", nav2: "VIDEOS", nav3: "BONUSES", nav4: "TEAM", sucBtn: "Great"
         }
     };
 
-    // CONFETI SYSTEM
-    let confettiActive = false;
+    // CONFETI
     function startConfetti() {
         const canvas = document.getElementById('confetti-canvas');
         const ctx = canvas.getContext('2d');
@@ -261,18 +276,18 @@
         canvas.height = window.innerHeight;
         
         const particles = [];
-        const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ff8000', '#ff0080'];
+        const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ff8000', '#ff0080', '#ff4444', '#44ff44'];
         
-        for(let i = 0; i < 150; i++) {
+        for(let i = 0; i < 200; i++) {
             particles.push({
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height - canvas.height,
-                size: Math.random() * 8 + 4,
-                speedY: Math.random() * 5 + 8,
-                speedX: (Math.random() - 0.5) * 4,
+                size: Math.random() * 10 + 5,
+                speedY: Math.random() * 6 + 10,
+                speedX: (Math.random() - 0.5) * 5,
                 color: colors[Math.floor(Math.random() * colors.length)],
                 rotation: Math.random() * 360,
-                rotationSpeed: (Math.random() - 0.5) * 15
+                rotationSpeed: (Math.random() - 0.5) * 20
             });
         }
         
@@ -284,7 +299,7 @@
             
             let allDone = true;
             for(let p of particles) {
-                if(p.y < canvas.height + 50) {
+                if(p.y < canvas.height + 100) {
                     allDone = false;
                     p.y += p.speedY;
                     p.x += p.speedX;
@@ -299,7 +314,7 @@
                 }
             }
             
-            if(!allDone && Date.now() - startTime < 4000) {
+            if(!allDone && Date.now() - startTime < 4500) {
                 animationId = requestAnimationFrame(animate);
             } else {
                 cancelAnimationFrame(animationId);
@@ -310,88 +325,158 @@
         animate();
     }
 
-    function showRewardAnimation(amount) {
-        startConfetti();
-        const toast = document.getElementById('toast');
-        toast.innerText = `🎉 +${amount} DGB 🎉`;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
+    function showToast(msg, isSuccess = false) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2500);
     }
 
-    // --- PANEL DE PRUEBA ---
-    const logoTrigger = document.getElementById('admin-trigger');
-    let timer;
-    logoTrigger.addEventListener('touchstart', () => {
-        timer = setTimeout(() => {
-            const pass = prompt("SISTEMA CANDY - CLAVE:");
-            if (pass === CLAVE_MAESTRA) {
-                const nuevoMonto = prompt("Ingresa el monto de prueba (DGB):");
-                if (nuevoMonto && !isNaN(nuevoMonto)) {
-                    db.profit = parseFloat(nuevoMonto);
-                    save(); update();
-                    alert("Saldo actualizado para pruebas: " + db.profit + " DGB");
+    // Verificar si es nuevo día
+    function checkNewDay() {
+        const today = new Date().toDateString();
+        if (db.lastAdResetDate !== today) {
+            db.adsWatchedToday = 0;
+            db.lastAdResetDate = today;
+            save();
+            updateAdsDisplay();
+        }
+    }
+
+    function updateAdsDisplay() {
+        // Actualizar dots
+        for(let i = 1; i <= 5; i++) {
+            const dot = document.getElementById(`dot${i}`);
+            if(dot) {
+                if(i <= db.adsWatchedToday) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
                 }
             }
-        }, 7000);
-    });
-    logoTrigger.addEventListener('touchend', () => clearTimeout(timer));
+        }
+        
+        const progressText = document.getElementById('t-progress');
+        if(progressText) {
+            progressText.innerText = `Progreso: ${db.adsWatchedToday}/5 videos (${(db.adsWatchedToday * 0.02).toFixed(2)}/0.1 DGB total)`;
+        }
+        
+        // Actualizar botón y timer
+        const btn = document.getElementById('ad-btn');
+        const timerDiv = document.getElementById('timer-display');
+        
+        if(db.adsWatchedToday >= 5) {
+            const timeUntilReset = getTimeUntilReset();
+            if(timeUntilReset > 0) {
+                btn.disabled = true;
+                const hours = Math.floor(timeUntilReset / 3600000);
+                const minutes = Math.floor((timeUntilReset % 3600000) / 60000);
+                const seconds = Math.floor((timeUntilReset % 60000) / 1000);
+                timerDiv.innerText = `⏰ Límite alcanzado. Reset en ${hours}h ${minutes}m ${seconds}s`;
+                document.querySelector('#ad-btn span').innerText = langData[db.lang].adsBtn;
+            } else {
+                db.adsWatchedToday = 0;
+                db.lastAdResetDate = new Date().toDateString();
+                save();
+                updateAdsDisplay();
+            }
+        } else {
+            btn.disabled = false;
+            timerDiv.innerText = `🎬 ${5 - db.adsWatchedToday} videos restantes hoy`;
+            document.querySelector('#ad-btn span').innerText = langData[db.lang].adsBtn;
+        }
+    }
 
-    async function redeemGift() {
-        const CODIGO_UNICO = "CANDYHELLO"; 
-        const PREMIO = 0.50; 
-        let input = document.getElementById('gift-code').value.trim().toUpperCase();
-        if (input === CODIGO_UNICO) {
-            if (db.usedCodes.includes(input)) return showToast("Ya usado ❌");
-            
-            // Show interstitial ad before reward
-            try {
-                await show_10763886();
-            } catch(e) { console.log('Ad error:', e); }
-            
-            db.profit += PREMIO;
-            db.usedCodes.push(input);
-            save(); update();
-            showRewardAnimation(PREMIO);
-            document.getElementById('gift-code').value = "";
-            const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
-            const reporte = `🎁 *CÓDIGO CANJEADO*\n👤 *${user.first_name || 'Usuario'}*\n🎟 \`${input}\``;
-            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown&disable_notification=true`);
-        } else { showToast("Inválido ❌"); }
+    function getTimeUntilReset() {
+        const now = new Date();
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+        return tomorrow - now;
     }
 
     async function watchAd() {
-        if(db.adsCount >= 5) {
-            showToast("Límite diario alcanzado (5 videos)");
+        checkNewDay();
+        
+        if(db.adsWatchedToday >= 5) {
+            showToast("📅 Límite diario alcanzado (5 videos). Vuelve mañana!");
             return;
         }
+        
         try {
             await show_10763886();
-            db.adsCount++; 
-            db.totalAds++; 
-            db.profit += 0.0450;
-            if(db.adsCount >= 5) db.lastAdTime = Date.now();
+            
+            const reward = 0.02;
+            db.adsWatchedToday++;
+            db.profit += reward;
+            db.lastAdTime = Date.now();
+            
+            save();
+            update();
+            updateAdsDisplay();
+            
+            showToast(`🎬 +${reward} DGB (${db.adsWatchedToday}/5 videos)`);
+            
+            // Si completó los 5 videos, mostrar confeti
+            if(db.adsWatchedToday === 5) {
+                startConfetti();
+                showToast(`🎉 COMPLETASTE LOS 5 VIDEOS! +0.1 DGB TOTAL 🎉`);
+            }
+            
             const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
-            const reporteAd = `📺 *ANUNCIO VISTO*\n👤 *${user.first_name || 'Usuario'}*\n📈 Hoy: ${db.adsCount}/5\n💰 +0.0450 DGB`;
-            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporteAd)}&parse_mode=Markdown&disable_notification=true`);
-            save(); update(); 
-            showRewardAnimation("0.0450");
+            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(`📺 VIDEO VISTO\n👤 ${user.first_name || 'Usuario'}\n📊 Hoy: ${db.adsWatchedToday}/5\n💰 +${reward} DGB`)}&parse_mode=Markdown&disable_notification=true`);
+            
         } catch(e) {
             console.log('Ad error:', e);
             showToast("Error al cargar el anuncio");
         }
     }
 
+    async function redeemGift() {
+        const CODIGO_UNICO = "CANDY2026"; 
+        const PREMIO = 0.50; 
+        let input = document.getElementById('gift-code').value.trim().toUpperCase();
+        
+        if (input === CODIGO_UNICO) {
+            if (db.usedCodes.includes(input)) {
+                showToast("❌ Código ya usado");
+                return;
+            }
+            
+            // Mostrar anuncio antes de dar recompensa
+            try {
+                await show_10763886();
+            } catch(e) { console.log('Ad error:', e); }
+            
+            db.profit += PREMIO;
+            db.usedCodes.push(input);
+            save();
+            update();
+            startConfetti();
+            showToast(`🎁 +${PREMIO} DGB por código! 🎁`);
+            document.getElementById('gift-code').value = "";
+            
+            const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
+            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(`🎁 CÓDIGO CANJEADO\n👤 ${user.first_name || 'Usuario'}\n🎟 ${input}\n💰 +${PREMIO} DGB`)}&parse_mode=Markdown&disable_notification=true`);
+        } else { 
+            showToast("❌ Código inválido"); 
+        }
+    }
+
     function claimBoost(num, link) {
         window.open(link);
         setTimeout(() => {
-            const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
             if((num === 1 && !db.boost1) || (num === 2 && !db.boost2)) {
-                if(num === 1) db.boost1 = true; else db.boost2 = true;
+                if(num === 1) db.boost1 = true; 
+                else db.boost2 = true;
                 db.profit += 0.20;
-                showRewardAnimation("0.20");
-                const reporteBono = `🎁 **BONO RECLAMADO**\n👤 **${user.first_name || 'Usuario'}**\n💰 0.20 DGB`;
-                fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporteBono)}&parse_mode=Markdown`);
-                save(); update();
+                startConfetti();
+                showToast(`🎁 +0.20 DGB por unirte!`);
+                save(); 
+                update();
+                
+                const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
+                fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(`🎁 BONO RECLAMADO\n👤 ${user.first_name || 'Usuario'}\n💰 +0.20 DGB`)}&parse_mode=Markdown`);
             }
         }, 3000);
     }
@@ -400,25 +485,35 @@
         const a = parseFloat(document.getElementById('amt-in').value);
         const w = document.getElementById('wal-in').value;
         const btn = document.getElementById('t-btn-confirm');
+        
         if(db.profit < 10.0) { 
             document.getElementById('form-ui').style.display='none'; 
             document.getElementById('error-ui').style.display='block'; 
             return; 
         }
-        if(!a || a > db.profit || w.length < 5) { showToast("Error en datos ❌"); return; }
+        if(!a || a > db.profit || w.length < 5) { 
+            showToast("❌ Error en datos"); 
+            return; 
+        }
+        
         btn.disabled = true;
         const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
-        const reporte = `🚀 *NUEVO RETIRO*\n👤 *${user.first_name || 'Usuario'}*\n💰 *${a} DGB*\n💳 \`${w}\``;
+        const reporte = `🚀 NUEVO RETIRO\n👤 ${user.first_name || 'Usuario'}\n💰 ${a} DGB\n💳 ${w}`;
+        
         try {
             await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHISMOSO}&text=${encodeURIComponent(reporte)}&parse_mode=Markdown`);
             db.profit -= a;
             db.history.unshift({amount: a.toFixed(4), date: new Date().toLocaleDateString()});
-            save(); update();
+            save(); 
+            update();
+            startConfetti();
             document.getElementById('form-ui').style.display='none';
             document.getElementById('success-ui').style.display='block';
-            startConfetti();
-        } catch(e) { showToast("Error de conexión ❌"); } 
-        finally { btn.disabled = false; }
+        } catch(e) { 
+            showToast("❌ Error de conexión"); 
+        } finally { 
+            btn.disabled = false; 
+        }
     }
 
     function resetWithdrawUI() {
@@ -430,37 +525,27 @@
     function update() {
         document.getElementById('profit-val').innerText = db.profit.toFixed(4);
         document.getElementById('modal-bal').innerText = db.profit.toFixed(4);
+        
         const hDiv = document.getElementById('withdraw-history');
         hDiv.innerHTML = db.history.length > 0 ? db.history.map(h => `
             <div style="background:#fff; border-radius:15px; padding:12px; display:flex; justify-content:space-between; margin-top:10px; border:1px solid #eee;">
                 <div style="font-size:11px;"><b>Retiro</b><br>${h.date}</div>
                 <div style="text-align:right; font-size:12px;"><b>${h.amount} DGB</b><br><span style="color:var(--success); font-weight:800;">EXITOSO</span></div>
             </div>`).join('') : `<p style="text-align:center; color:#ccc; font-size:12px; margin-top:20px;">Sin actividad.</p>`;
-        document.querySelectorAll('.dot').forEach((dot, i) => {
-            dot.style.background = i < db.adsCount ? "var(--p-main)" : "#eee";
-            dot.style.width = i < db.adsCount ? "15px" : "8px";
-        });
-        if(db.boost1) { document.getElementById('btn-c1').innerText = "OK"; document.getElementById('btn-c1').disabled = true; }
-        if(db.boost2) { document.getElementById('btn-c2').innerText = "OK"; document.getElementById('btn-c2').disabled = true; }
-    }
-
-    function checkCooldown() {
-        if(db.adsCount < 5) { 
-            document.getElementById('ad-btn').disabled = false; 
-            document.querySelector('#ad-btn span').innerText = langData[db.lang].adsBtn;
-            return; 
+        
+        if(db.boost1) { 
+            document.getElementById('btn-c1').innerHTML = "✅"; 
+            document.getElementById('btn-c1').disabled = true; 
         }
-        const diff = Date.now() - db.lastAdTime;
-        if(diff >= 3600000) { db.adsCount = 0; save(); update(); }
-        else {
-            const rem = Math.ceil((3600000 - diff) / 1000);
-            document.getElementById('ad-btn').disabled = true;
-            document.querySelector('#ad-btn span').innerText = `${Math.floor(rem/60)}m ${rem%60}s`;
+        if(db.boost2) { 
+            document.getElementById('btn-c2').innerHTML = "✅"; 
+            document.getElementById('btn-c2').disabled = true; 
         }
     }
 
     function changeLang(l) {
-        db.lang = l; const d = langData[l];
+        db.lang = l; 
+        const d = langData[l];
         document.getElementById('t-profit-label').innerText = d.pLabel;
         document.getElementById('t-withdraw-btn').innerText = d.wBtn;
         document.getElementById('t-history').innerText = d.hist;
@@ -490,29 +575,58 @@
         document.getElementById('t-nav-2').innerText = d.nav2;
         document.getElementById('t-nav-3').innerText = d.nav3;
         document.getElementById('t-nav-4').innerText = d.nav4;
-        document.querySelectorAll('.t-btn-join').forEach(b => { if(!b.disabled) b.innerText = d.join; });
-        update(); save();
+        document.querySelectorAll('.t-btn-join').forEach(b => { if(!b.disabled && b.innerHTML !== '✅') b.innerText = d.join; });
+        update(); 
+        save();
     }
 
-    function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
+    function save() { 
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); 
+    }
+    
     function load() { 
         const data = localStorage.getItem(STORAGE_KEY);
         if(data) db = {...db, ...JSON.parse(data)};
-        update(); changeLang(db.lang); setInterval(checkCooldown, 1000);
+        checkNewDay();
+        update(); 
+        changeLang(db.lang); 
+        setInterval(() => {
+            checkNewDay();
+            updateAdsDisplay();
+        }, 1000);
     }
+    
     function view(v) { 
         ['home','stake','earn','team'].forEach(x => document.getElementById('v-'+x).style.display = (x===v?'block':'none'));
         document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
         document.getElementById('n-'+v).classList.add('active');
+        if(v === 'stake') updateAdsDisplay();
     }
+    
     function openW() { resetWithdrawUI(); document.getElementById('modal-w').style.display='flex'; }
     function closeW() { document.getElementById('modal-w').style.display='none'; }
     function setMax() { document.getElementById('amt-in').value = db.profit; }
-    function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
+
+    // Panel admin
+    const logoTrigger = document.getElementById('admin-trigger');
+    let adminTimer;
+    logoTrigger.addEventListener('touchstart', () => {
+        adminTimer = setTimeout(() => {
+            const pass = prompt("CLAVE ADMIN:");
+            if (pass === CLAVE_MAESTRA) {
+                const nuevoMonto = prompt("Monto de prueba (DGB):");
+                if (nuevoMonto && !isNaN(nuevoMonto)) {
+                    db.profit = parseFloat(nuevoMonto);
+                    save(); 
+                    update();
+                    alert("Saldo actualizado: " + db.profit + " DGB");
+                }
+            }
+        }, 7000);
+    });
+    logoTrigger.addEventListener('touchend', () => clearTimeout(adminTimer));
 
     window.onload = load;
-    
-    // Handle window resize for confetti canvas
     window.addEventListener('resize', () => {
         const canvas = document.getElementById('confetti-canvas');
         canvas.width = window.innerWidth;
