@@ -1,3 +1,6 @@
+
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -10,8 +13,9 @@
             --fire: #ff4e00;
             --fire-glow: #ec9f05;
             --metal: #2c2c2c;
-            --panel: rgba(20, 20, 20, 0.9);
+            --panel: rgba(10, 10, 10, 0.98);
             --gold: #FFD700;
+            --red: #ff3333;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
@@ -22,148 +26,134 @@
             height: 100vh; color: white; overflow: hidden;
         }
 
-        /* --- CONTENEDOR PRINCIPAL (ESTILO TABLETA) --- */
         .app-shell {
-            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://img.freepik.com/free-photo/fire-sparks-background_23-2148817294.jpg');
+            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://img.freepik.com/free-photo/fire-sparks-background_23-2148817294.jpg');
             background-size: cover;
             width: 100%; max-width: 450px; height: 95vh;
             border: 3px solid var(--fire);
-            border-radius: 15px; position: relative;
+            border-radius: 20px; position: relative;
             display: flex; flex-direction: column;
-            box-shadow: inset 0 0 20px var(--fire), 0 0 40px rgba(255, 78, 0, 0.3);
+            box-shadow: inset 0 0 30px rgba(255, 78, 0, 0.4), 0 0 50px rgba(0,0,0,1);
         }
 
-        /* --- TOP BAR (USUARIO) --- */
+        /* --- TOP BAR --- */
         .top-bar {
             padding: 20px; display: flex; align-items: center;
-            background: linear-gradient(to bottom, #333, #111);
+            background: rgba(20,20,20,0.95);
             border-bottom: 2px solid var(--fire);
         }
 
         .avatar-circle {
-            width: 45px; height: 45px; border: 2px solid var(--fire);
-            border-radius: 50%; background: #444; margin-right: 12px;
+            width: 50px; height: 50px; border: 2px solid var(--fire);
+            border-radius: 50%; background: #222; margin-right: 15px;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 10px var(--fire);
+            box-shadow: 0 0 15px var(--fire); font-size: 1.5rem;
         }
 
-        .user-info h2 { font-family: 'Bebas Neue'; font-size: 1.2rem; letter-spacing: 1px; }
-        .user-info p { font-size: 0.8rem; color: var(--fire-glow); font-weight: 700; }
+        .user-info h2 { font-family: 'Bebas Neue'; font-size: 1.4rem; letter-spacing: 1px; color: #fff; }
+        .user-info p { font-size: 0.85rem; color: var(--fire-glow); font-weight: 700; }
 
-        /* --- PANEL DE RECOMPENSAS (CENTRO) --- */
-        .main-panel {
-            flex: 1; padding: 15px; overflow-y: auto;
-            background: rgba(0, 0, 0, 0.6);
-        }
+        /* --- LISTA DE MISIONES --- */
+        .main-panel { flex: 1; padding: 15px; overflow-y: auto; background: rgba(0, 0, 0, 0.4); }
+        .panel-title { font-family: 'Bebas Neue'; font-size: 1.5rem; color: white; border-left: 5px solid var(--fire); padding-left: 12px; margin-bottom: 20px; }
 
-        .panel-title {
-            font-family: 'Bebas Neue'; font-size: 1.4rem; color: white;
-            border-left: 4px solid var(--fire); padding-left: 10px; margin-bottom: 15px;
-        }
-
-        /* --- BOTONES DE MISIÓN (ESTILO DEPLEGAR) --- */
-        .mission-list { display: flex; flex-direction: column; gap: 10px; }
-        
         .mission-item {
-            background: linear-gradient(90deg, #222 0%, #333 100%);
-            border: 1px solid #444; border-radius: 8px;
+            background: linear-gradient(90deg, #1a1a1a 0%, #252525 100%);
+            border: 1px solid #333; border-radius: 10px;
             display: flex; align-items: center; justify-content: space-between;
-            padding: 12px 15px; transition: 0.3s; cursor: pointer;
-            position: relative; overflow: hidden;
+            padding: 15px; margin-bottom: 12px; cursor: pointer; transition: 0.2s;
         }
+        .mission-item:active { transform: scale(0.97); border-color: var(--fire); }
+        .mission-item.completed { opacity: 0.4; filter: grayscale(1); pointer-events: none; }
 
-        .mission-item::before {
-            content: ''; position: absolute; left: 0; top: 0; height: 100%;
-            width: 4px; background: var(--fire);
-        }
+        .mission-data b { display: block; font-size: 1rem; color: #eee; }
+        .mission-data span { font-size: 0.75rem; color: var(--fire-glow); font-weight: bold; }
+        .btn-deploy { background: var(--fire); color: white; border: none; padding: 8px 15px; border-radius: 5px; font-weight: 700; font-size: 0.75rem; }
 
-        .mission-item:active { transform: scale(0.98); border-color: var(--fire); }
-        .mission-item.completed { opacity: 0.5; filter: grayscale(1); pointer-events: none; }
-
-        .mission-data b { display: block; font-size: 0.9rem; text-transform: uppercase; }
-        .mission-data span { font-size: 0.7rem; color: var(--fire-glow); }
-
-        .btn-deploy {
-            background: var(--fire); color: white; border: none;
-            padding: 6px 12px; border-radius: 4px; font-weight: 700;
-            font-size: 0.7rem; text-transform: uppercase;
-        }
-
-        /* --- FOOTER DE CANJEO --- */
-        .footer-exchange {
-            background: #111; padding: 20px;
-            border-top: 2px solid var(--fire);
-        }
-
+        /* --- FOOTER --- */
+        .footer-exchange { padding: 20px; background: #0a0a0a; border-top: 2px solid var(--fire); }
         .btn-claim-main {
             background: linear-gradient(to right, #ff4e00, #ec9f05);
-            width: 100%; padding: 15px; border: none; border-radius: 5px;
-            color: white; font-family: 'Bebas Neue'; font-size: 1.5rem;
-            letter-spacing: 2px; cursor: pointer; text-shadow: 2px 2px black;
+            width: 100%; padding: 18px; border: none; border-radius: 8px;
+            color: white; font-family: 'Bebas Neue'; font-size: 1.6rem;
+            letter-spacing: 2px; cursor: pointer; text-shadow: 2px 2px #000;
         }
 
-        /* --- MODALES (AVISOS) --- */
+        /* --- PANTALLAS OVERLAY (ELIMINAN EL ALERT) --- */
         .overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: none; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 1000; background: rgba(0,0,0,0.95); padding: 30px; text-align: center;
+            z-index: 2000; background: var(--panel); padding: 35px; text-align: center;
+            backdrop-filter: blur(10px);
         }
 
-        .overlay h2 { font-family: 'Bebas Neue'; font-size: 3rem; margin-bottom: 10px; }
-        .overlay p { font-size: 1rem; margin-bottom: 25px; opacity: 0.8; }
+        /* --- DISEÑO DEL PANEL DE RETIRO --- */
+        .withdraw-card { width: 100%; border: 2px solid var(--fire); border-radius: 15px; padding: 25px; background: #111; }
+        .withdraw-card h3 { font-family: 'Bebas Neue'; font-size: 2rem; color: var(--gold); margin-bottom: 15px; }
+        .input-gamer { width: 100%; background: #000; border: 1px solid #444; padding: 15px; color: #fff; border-radius: 8px; margin-bottom: 15px; font-size: 1.1rem; text-align: center; }
+        .input-gamer:focus { border-color: var(--fire); outline: none; }
+        
+        .status-msg { font-size: 0.9rem; margin-bottom: 20px; font-weight: bold; }
+        .msg-error { color: var(--red); text-shadow: 0 0 10px rgba(255,0,0,0.5); }
+        .msg-ready { color: #00ff00; }
 
-        .btn-close-modal {
-            background: white; color: black; border: none; padding: 12px 30px;
-            font-weight: 700; border-radius: 5px; cursor: pointer; text-transform: uppercase;
-        }
+        .btn-confirm { background: var(--fire); color: #fff; border: none; width: 100%; padding: 15px; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; }
+        .btn-confirm:disabled { background: #444; cursor: not-allowed; }
 
-        .input-metal {
-            width: 100%; background: #222; border: 1px solid var(--fire);
-            padding: 12px; color: white; margin-bottom: 10px; border-radius: 5px;
-        }
+        /* --- OTROS AVISOS --- */
+        .modal-title { font-family: 'Bebas Neue'; font-size: 3rem; margin-bottom: 10px; line-height: 1; }
+        .btn-close-modal { background: #fff; color: #000; border: none; padding: 12px 30px; font-weight: 700; border-radius: 5px; margin-top: 20px; cursor: pointer; }
 
     </style>
 </head>
 <body>
 
 <div class="app-shell">
-    <div id="failScreen" class="overlay" style="color: var(--fire);">
-        <h2>OPERACIÓN FALLIDA</h2>
-        <p>Regresaste a la base antes de completar la infiltración. ¡Debes resistir 10 segundos!</p>
+    
+    <div id="failScreen" class="overlay" style="color: var(--red);">
+        <h2 class="modal-title">¡TIEMPO INSUFICIENTE!</h2>
+        <p>No has completado el tiempo de infiltración (10s). Vuelve e inténtalo de nuevo para asegurar la recompensa.</p>
         <button class="btn-close-modal" onclick="closeOverlay('failScreen')">REINTENTAR</button>
     </div>
 
-    <div id="winScreen" class="overlay" style="color: var(--green);">
-        <h2 style="color: #00ff00;">MISIÓN COMPLETA</h2>
-        <p id="winMsg">¡Excelente trabajo! Las estrellas han sido acreditadas a tu balance de guerra.</p>
-        <button class="btn-close-modal" onclick="closeOverlay('winScreen')">CONTINUAR</button>
+    <div id="winScreen" class="overlay">
+        <h2 class="modal-title" style="color: #00ff00;">¡MISIÓN COMPLETADA!</h2>
+        <p>Has asegurado 10 estrellas de poder. Los diamantes están más cerca.</p>
+        <button class="btn-close-modal" style="background:#00ff00" onclick="closeOverlay('winScreen')">CONTINUAR</button>
     </div>
 
-    <div id="withdrawScreen" class="overlay">
-        <h2 style="color: var(--gold);">CENTRO DE CANJEO</h2>
-        <p>Introduce las coordenadas de tu cuenta (ID) para el envío de diamantes.</p>
-        <input type="number" id="playerID" class="input-metal" placeholder="ID DEL JUGADOR">
-        <input type="text" id="region" class="input-metal" placeholder="REGIÓN (Norte/Sur)">
-        <button class="btn-claim-main" onclick="processTransfer()">SOLICITAR AHORA</button>
-        <p onclick="closeOverlay('withdrawScreen')" style="margin-top:20px; font-size: 0.8rem; cursor:pointer;">ABORTAR</p>
+    <div id="withdrawOverlay" class="overlay">
+        <div class="withdraw-card">
+            <h3>EXTRAER DIAMANTES</h3>
+            <div style="margin-bottom: 20px;">
+                <p style="font-size: 0.8rem; opacity: 0.6;">BALANCE ACTUAL</p>
+                <p style="font-size: 1.5rem; color: var(--gold); font-weight: 700;"><span id="balOverlay">0</span> ⭐</p>
+            </div>
+
+            <div id="withdrawStatus" class="status-msg"></div>
+
+            <input type="number" id="playerID" class="input-gamer" placeholder="ID DE JUGADOR (FREE FIRE)">
+            
+            <button id="btnConfirmWithdraw" class="btn-confirm" onclick="finalizarRetiro()">CONFIRMAR EXTRACCIÓN</button>
+            <p onclick="closeOverlay('withdrawOverlay')" style="margin-top:20px; font-size: 0.8rem; cursor:pointer; opacity: 0.5;">CANCELAR OPERACIÓN</p>
+        </div>
     </div>
 
     <header class="top-bar">
         <div class="avatar-circle">👤</div>
         <div class="user-info">
-            <h2 id="userName">OPERADOR_FF</h2>
+            <h2>OPERADOR_FF</h2>
             <p>SALDO: <span id="balanceText">0</span> ⭐ | <span id="diamText">0</span> 💎</p>
         </div>
     </header>
 
     <main class="main-panel">
-        <h3 class="panel-title">OPERACIONES DE RECOMPENSA</h3>
-        <div class="mission-list" id="missionGrid">
-            </div>
+        <h3 class="panel-title">OPERACIONES ACTIVAS</h3>
+        <div class="mission-list" id="missionGrid"></div>
     </main>
 
     <footer class="footer-exchange">
-        <button class="btn-claim-main" onclick="checkWithdraw()">CANJEAR DIAMANTES</button>
+        <button class="btn-claim-main" onclick="openWithdraw()">CANJEAR RECOMPENSA</button>
     </footer>
 </div>
 
@@ -187,24 +177,23 @@
         const grid = document.getElementById('missionGrid');
         grid.innerHTML = '';
         for (let i = 1; i <= 10; i++) {
-            const completedTime = localStorage.getItem(`al_node_${i}`);
-            const isDone = completedTime && (new Date().getTime() - completedTime < 86400000);
-
+            const last = localStorage.getItem(`al_node_${i}`);
+            const isDone = last && (new Date().getTime() - last < 86400000);
             const div = document.createElement('div');
             div.className = `mission-item ${isDone ? 'completed' : ''}`;
             div.innerHTML = `
                 <div class="mission-data">
-                    <b>MISIÓN RECON 0${i}</b>
-                    <span>RECOMPENSA: +10 ESTRELLAS</span>
+                    <b>OPERACIÓN 0${i}</b>
+                    <span>+10 ESTRELLAS | 10 SEG</span>
                 </div>
-                <button class="btn-deploy">${isDone ? 'BLOQUEADO' : 'DEPLEGAR'}</button>
+                <button class="btn-deploy">${isDone ? 'BLOQUEADO' : 'INICIAR'}</button>
             `;
-            div.onclick = () => launchMission(i, isDone);
+            div.onclick = () => launchAd(i, isDone);
             grid.appendChild(div);
         }
     }
 
-    function launchMission(id, done) {
+    function launchAd(id, done) {
         if (done || inProgress) return;
         inProgress = true;
         lastNode = id;
@@ -224,33 +213,46 @@
         inProgress = false;
         stars += 10;
         localStorage.setItem(`al_node_${lastNode}`, new Date().getTime());
-        document.getElementById('winScreen').style.display = 'flex';
         updateDisplay();
         renderMissions();
+        document.getElementById('winScreen').style.display = 'flex';
     }
 
     function updateDisplay() {
         document.getElementById('balanceText').innerText = stars.toLocaleString();
+        document.getElementById('balOverlay').innerText = stars.toLocaleString();
         document.getElementById('diamText').innerText = (stars / 10).toLocaleString();
         localStorage.setItem('al_stars', stars);
     }
 
-    function checkWithdraw() {
+    function openWithdraw() {
+        const statusDiv = document.getElementById('withdrawStatus');
+        const btn = document.getElementById('btnConfirmWithdraw');
+        
         if (stars < SETTINGS.GOAL) {
-            alert("❌ RECURSOS INSUFICIENTES\nNecesitas 5,000 estrellas para la extracción.");
+            statusDiv.innerHTML = `<span class="msg-error">❌ RECURSOS INSUFICIENTES<br>Necesitas alcanzar las 5,000 ⭐</span>`;
+            btn.disabled = true;
+            btn.innerText = "BLOQUEADO";
         } else {
-            document.getElementById('withdrawScreen').style.display = 'flex';
+            statusDiv.innerHTML = `<span class="msg-ready">✅ EXTRACCIÓN DISPONIBLE<br>Mínimo de 5,000 ⭐ alcanzado</span>`;
+            btn.disabled = false;
+            btn.innerText = "CONFIRMAR EXTRACCIÓN";
         }
+        document.getElementById('withdrawOverlay').style.display = 'flex';
+    }
+
+    function finalizeRetiro() {
+        const id = document.getElementById('playerID').value;
+        if (id.length < 5) {
+            alert("ID INVÁLIDO"); // Este lo puedes dejar o cambiar, pero el principal ya se quitó
+            return;
+        }
+        // Aquí podrías restar los puntos si quieres o solo avisar
+        alert("✅ SOLICITUD REGISTRADA\nTu ID " + id + " está en cola de proceso.");
+        closeOverlay('withdrawOverlay');
     }
 
     function closeOverlay(id) { document.getElementById(id).style.display = 'none'; }
-
-    function processTransfer() {
-        const id = document.getElementById('playerID').value;
-        if (id.length < 6) { alert("ID INVÁLIDO"); return; }
-        alert("SOLICITUD ENVIADA AL COMANDO");
-        closeOverlay('withdrawScreen');
-    }
 
     init();
 </script>
