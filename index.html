@@ -3,311 +3,220 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aureum Rewards | Premium Access</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <title>Aureum Elite Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --ivory: #F9F7F2;
-            --bronze: #A67C52;
-            --bronze-light: #D9C5B2;
-            --charcoal: #2C2C2C;
-            --gold-gradient: linear-gradient(135deg, #A67C52 0%, #735238 100%);
-            --glass: rgba(255, 255, 255, 0.8);
+            --crema: #FDFBF7;
+            --bronce: #8E735B;
+            --oro: #D4AF37;
+            --negro: #1A1A1A;
+            --rojo: #C0392B;
+            --verde: #27AE60;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; }
 
-        body {
-            background-color: var(--ivory);
-            color: var(--charcoal);
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
+        body { background: #E0DDD5; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+
+        /* --- CARCASA --- */
+        .app-container {
+            background: var(--crema);
+            width: 100%; max-width: 400px; height: 90vh;
+            border-radius: 40px; border: 6px solid var(--negro);
+            position: relative; display: flex; flex-direction: column;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
         }
 
-        /* --- FRAME PROFESIONAL --- */
-        .viewport {
-            background: var(--ivory);
-            width: 100%;
-            max-width: 420px;
-            height: 92vh;
-            border-radius: 40px;
-            position: relative;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.12);
-            display: flex;
-            flex-direction: column;
-            border: 1px solid rgba(166, 124, 82, 0.2);
+        /* --- HEADER --- */
+        .header { padding: 40px 20px 20px; text-align: center; }
+        .balance-card { background: #FFF; padding: 25px; border-radius: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
+        .balance-stars { font-size: 2.5rem; font-weight: 700; color: var(--negro); }
+        .balance-sub { font-size: 0.7rem; letter-spacing: 2px; color: var(--bronce); margin-top: 5px; }
+
+        /* --- GRID DE NODOS --- */
+        .grid { flex: 1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 20px; overflow-y: auto; }
+        .node { 
+            background: #FFF; border: 1px solid #EEE; padding: 15px; border-radius: 20px; 
+            text-align: center; cursor: pointer; transition: 0.3s;
+        }
+        .node:active { transform: scale(0.95); }
+        .node.locked { opacity: 0.4; filter: grayscale(1); cursor: not-allowed; }
+        .node-name { font-size: 0.6rem; font-weight: 700; color: var(--bronce); display: block; }
+        .node-val { font-size: 0.8rem; font-weight: 700; }
+
+        /* --- BOTÓN RETIRO --- */
+        .footer { padding: 20px 30px 40px; }
+        .btn-withdraw { 
+            background: var(--negro); color: #FFF; width: 100%; padding: 20px; border: none;
+            border-radius: 20px; font-weight: 700; letter-spacing: 1px; cursor: pointer;
         }
 
-        /* --- DASHBOARD SUPERIOR --- */
-        .dashboard {
-            padding: 40px 30px 20px;
-            text-align: center;
+        /* --- PANTALLAS DE AVISO (OVERLAYS) --- */
+        .overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            padding: 40px; text-align: center; z-index: 1000; border-radius: 34px;
         }
 
-        .brand-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--charcoal);
-            margin-bottom: 30px;
+        .overlay-error { background: rgba(255, 255, 255, 0.98); color: var(--rojo); }
+        .overlay-success { background: rgba(253, 251, 247, 0.98); color: var(--verde); }
+        .overlay-withdraw { background: var(--crema); color: var(--negro); display: none; }
+
+        .overlay h2 { font-size: 1.8rem; margin-bottom: 15px; }
+        .overlay p { font-size: 0.9rem; line-height: 1.5; margin-bottom: 30px; }
+        .btn-close { 
+            background: var(--bronce); color: #FFF; padding: 15px 40px; border: none;
+            border-radius: 15px; font-weight: 700; cursor: pointer;
         }
 
-        .balance-card {
-            background: white;
-            padding: 25px;
-            border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-            border: 1px solid #F0EDE5;
+        /* --- INPUTS FORMULARIO --- */
+        .input-field { 
+            width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 12px; 
+            border: 1px solid #DDD; font-size: 1rem;
         }
 
-        .balance-title {
-            font-size: 0.7rem;
-            letter-spacing: 3px;
-            color: var(--bronze);
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .balance-value {
-            font-size: 2.2rem;
-            font-weight: 300;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .progress-container {
-            margin-top: 15px;
-            background: #EEE;
-            height: 4px;
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: var(--bronze);
-            width: 0%;
-            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* --- NODOS DE ACCESO (BOTONES) --- */
-        .nodes-grid {
-            flex: 1;
-            padding: 20px 30px;
-            overflow-y: auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .node-item {
-            background: white;
-            border: 1px solid #F0EDE5;
-            padding: 20px;
-            border-radius: 20px;
-            text-align: center;
-            transition: all 0.3s;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .node-item:active { transform: scale(0.96); }
-
-        .node-label {
-            font-size: 0.65rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            color: var(--soft-brown);
-        }
-
-        .node-value {
-            display: block;
-            font-size: 0.9rem;
-            margin-top: 5px;
-            font-weight: 600;
-        }
-
-        /* --- ESTADO DE CARGA / BLOQUEO --- */
-        .node-item.disabled {
-            opacity: 0.4;
-            filter: grayscale(1);
-            cursor: not-allowed;
-        }
-
-        /* --- ACTION CENTER --- */
-        .action-center {
-            padding: 30px;
-            background: white;
-            border-radius: 40px 40px 0 0;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.02);
-        }
-
-        .btn-premium {
-            background: var(--gold-gradient);
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 20px;
-            border-radius: 18px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: opacity 0.3s;
-        }
-
-        /* --- NOTIFICACIONES --- */
-        #notification {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--charcoal);
-            color: white;
-            padding: 15px 30px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            display: none;
-            z-index: 100;
-            white-space: nowrap;
-        }
     </style>
 </head>
 <body>
 
-    <div class="viewport">
-        <div id="notification">NOTIFICACIÓN</div>
-
-        <header class="dashboard">
-            <h1 class="brand-name">Aureum</h1>
-            <div class="balance-card">
-                <span class="balance-title">CURRENT BALANCE</span>
-                <div class="balance-value">
-                    <span id="starBalance">0</span>
-                    <span style="font-size: 1rem; color: var(--bronze);">★</span>
-                </div>
-                <div class="progress-container">
-                    <div class="progress-bar" id="progressBar"></div>
-                </div>
-                <div style="font-size: 0.6rem; margin-top: 10px; letter-spacing: 1px;">
-                    EQUIVALENT: <span id="diamondValue">0.00</span> DIAMONDS
-                </div>
-            </div>
-        </header>
-
-        <section class="nodes-grid" id="nodesGrid">
-            </section>
-
-        <footer class="action-center">
-            <button class="btn-premium" onclick="handleWithdraw()">EXCHANGE ASSETS</button>
-        </footer>
+<div class="app-container">
+    
+    <div id="errorOverlay" class="overlay overlay-error">
+        <h2>⚠️ ACCIÓN INVALIDA</h2>
+        <p>Has regresado demasiado pronto. Para validar la recompensa debes permanecer 10 segundos en el sitio del patrocinador.</p>
+        <button class="btn-close" onclick="cerrarOverlay('errorOverlay')">REINTENTAR</button>
     </div>
 
-    <script>
-        const CONFIG = {
-            ADS_URL: "https://www.google.com", // Reemplazar por link directo
-            REQUIRED_TIME: 10,
-            REWARD: 10,
-            GOAL: 5000
-        };
+    <div id="successOverlay" class="overlay overlay-success">
+        <h2 style="font-size: 3rem;">⭐</h2>
+        <h2>¡CONSEGUIDO!</h2>
+        <p>Has recibido 10 estrellas de oro en tu balance. Sigue acumulando para canjear tus diamantes.</p>
+        <button class="btn-close" style="background: var(--verde);" onclick="cerrarOverlay('successOverlay')">CONTINUAR</button>
+    </div>
 
-        let stars = parseInt(localStorage.getItem('aureum_stars')) || 0;
-        let isProcessing = false;
+    <div id="withdrawOverlay" class="overlay overlay-withdraw" style="display: none; justify-content: flex-start;">
+        <h2 style="margin-top: 40px; font-weight: 700;">TRANSFERENCIA</h2>
+        <p style="color: var(--bronce);">Ingresa tus datos de jugador para procesar el envío de diamantes.</p>
+        
+        <input type="number" id="playerID" class="input-field" placeholder="ID de Jugador Free Fire">
+        <input type="text" id="region" class="input-field" placeholder="Región (Norte / Sur)">
+        
+        <button class="btn-withdraw" style="margin-top: 20px;" onclick="enviarSolicitud()">SOLICITAR AHORA</button>
+        <p onclick="cerrarOverlay('withdrawOverlay')" style="margin-top: 20px; font-size: 0.7rem; cursor:pointer;">VOLVER AL DASHBOARD</p>
+    </div>
 
-        function init() {
-            renderNodes();
-            updateUI();
+    <header class="header">
+        <div class="balance-card">
+            <div class="balance-stars" id="starsTxt">0</div>
+            <div class="balance-sub">ESTRELLAS AUREUM</div>
+            <div style="font-size: 0.6rem; color: #AAA; margin-top: 10px;">10 ⭐ = 1 💎 | MÍN. RETIRO: 5,000 ⭐</div>
+        </div>
+    </header>
+
+    <div class="grid" id="nodeGrid">
+        </div>
+
+    <footer class="footer">
+        <button class="btn-withdraw" onclick="validarRetiro()">RETIRAR ACTIVOS</button>
+    </footer>
+
+</div>
+
+<script>
+    const CONFIG = {
+        AD_LINK: "https://www.google.com", // REEMPLAZA CON TU ANUNCIO
+        WAIT_TIME: 10,
+        MIN_STARS: 5000
+    };
+
+    let stars = parseInt(localStorage.getItem('stars_pro')) || 0;
+    let watching = false;
+    let activeNode = null;
+
+    function init() {
+        renderNodes();
+        updateUI();
+    }
+
+    function renderNodes() {
+        const grid = document.getElementById('nodeGrid');
+        grid.innerHTML = '';
+        for (let i = 1; i <= 10; i++) {
+            const last = localStorage.getItem(`node_pro_${i}`);
+            const isLocked = last && (new Date().getTime() - last < 86400000); // 24h
+
+            const div = document.createElement('div');
+            div.className = `node ${isLocked ? 'locked' : ''}`;
+            div.innerHTML = `<span class="node-name">NODO 0${i}</span><span class="node-val">${isLocked ? 'BLOQUEADO' : 'VISITAR'}</span>`;
+            div.onclick = () => startAd(i, isLocked);
+            grid.appendChild(div);
         }
+    }
 
-        function renderNodes() {
-            const grid = document.getElementById('nodesGrid');
-            for (let i = 1; i <= 10; i++) {
-                const node = document.createElement('div');
-                node.className = 'node-item';
-                node.id = `node-${i}`;
-                node.innerHTML = `
-                    <span class="node-label">NODE 0${i}</span>
-                    <span class="node-value">ACCESS</span>
-                `;
-                node.onclick = () => startNode(i);
-                grid.appendChild(node);
+    function startAd(id, locked) {
+        if (locked || watching) return;
+        
+        watching = true;
+        activeNode = id;
+        window.open(CONFIG.AD_LINK, '_blank');
+        
+        // Empezar cuenta interna
+        setTimeout(() => {
+            if (watching) {
+                concederPremio();
             }
+        }, CONFIG.WAIT_TIME * 1000);
+    }
+
+    // DETECTOR ANTI-TRAMPA (Focus)
+    window.onfocus = () => {
+        if (watching) {
+            // Si vuelve antes de que el timeout de concederPremio se ejecute
+            watching = false;
+            document.getElementById('errorOverlay').style.display = 'flex';
         }
+    };
 
-        function updateUI() {
-            document.getElementById('starBalance').innerText = stars.toLocaleString();
-            const diamonds = (stars / 10).toFixed(2);
-            document.getElementById('diamondValue').innerText = diamonds;
-            
-            const progress = (stars / CONFIG.GOAL) * 100;
-            document.getElementById('progressBar').style.width = Math.min(progress, 100) + "%";
-            localStorage.setItem('aureum_stars', stars);
+    function concederPremio() {
+        if (!watching) return;
+        watching = false;
+        stars += 10;
+        localStorage.setItem(`node_pro_${activeNode}`, new Date().getTime());
+        updateUI();
+        renderNodes();
+        document.getElementById('successOverlay').style.display = 'flex';
+    }
+
+    function updateUI() {
+        document.getElementById('starsTxt').innerText = stars.toLocaleString();
+        localStorage.setItem('stars_pro', stars);
+    }
+
+    function validarRetiro() {
+        if (stars < CONFIG.MIN_STARS) {
+            alert("⚠️ SALDO INSUFICIENTE\nNecesitas al menos 5,000 estrellas para realizar un retiro.");
+        } else {
+            document.getElementById('withdrawOverlay').style.display = 'flex';
         }
+    }
 
-        function startNode(index) {
-            if (isProcessing) return;
+    function cerrarOverlay(id) {
+        document.getElementById(id).style.display = 'none';
+    }
 
-            isProcessing = true;
-            window.open(CONFIG.ADS_URL, '_blank');
-            
-            const node = document.getElementById(`node-${index}`);
-            node.classList.add('disabled');
-            
-            let timeLeft = CONFIG.REQUIRED_TIME;
-            const timer = setInterval(() => {
-                timeLeft--;
-                node.querySelector('.node-value').innerText = `${timeLeft}S`;
-
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    node.querySelector('.node-value').innerText = 'COMPLETE';
-                    finalizeNode(node);
-                }
-            }, 1000);
+    function enviarSolicitud() {
+        const id = document.getElementById('playerID').value;
+        if (id.length < 5) {
+            alert("Por favor ingresa un ID válido.");
+            return;
         }
+        alert("✅ SOLICITUD REGISTRADA\nTu ID " + id + " ha sido enviado a revisión. Recibirás tus diamantes en un lapso de 24 a 48 horas.");
+        cerrarOverlay('withdrawOverlay');
+    }
 
-        // Sistema Anti-Trampa mejorado
-        window.onfocus = () => {
-            if (isProcessing) {
-                // Si el usuario regresa y hay un cronómetro activo, se invalida
-                location.reload(); // Reseteo total para evitar bypass
-            }
-        };
+    init();
+</script>
 
-        function finalizeNode(nodeElement) {
-            isProcessing = false;
-            stars += CONFIG.REWARD;
-            updateUI();
-            notify("ASSET SECURED");
-            setTimeout(() => {
-                nodeElement.classList.remove('disabled');
-                nodeElement.querySelector('.node-value').innerText = 'ACCESS';
-            }, 2000);
-        }
-
-        function notify(msg) {
-            const el = document.getElementById('notification');
-            el.innerText = msg;
-            el.style.display = "block";
-            setTimeout(() => el.style.display = "none", 2000);
-        }
-
-        function handleWithdraw() {
-            if (stars < CONFIG.GOAL) {
-                notify("INSUFFICIENT BALANCE");
-            } else {
-                notify("TRANSFER INITIATED");
-            }
-        }
-
-        init();
-    </script>
 </body>
 </html>
