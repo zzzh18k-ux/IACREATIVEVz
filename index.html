@@ -1,1 +1,265 @@
-.
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skins Rewards - Relajante</title>
+    <style>
+        /* --- ESTILOS: Colores Crema y Café (Relajante y Bonito) --- */
+        :root {
+            --bg-color: #FDFCF5; /* Crema muy claro */
+            --primary-color: #F5F1E6; /* Crema base */
+            --accent-color: #D2B48C; /* Café claro (Tan) */
+            --text-color: #5D4037; /* Café oscuro */
+            --button-bg: #8D6E63; /* Café medio */
+            --button-text: #FFFFFF;
+            --shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        /* --- CONTENEDOR PRINCIPAL (LA "CÁRCASA") --- */
+        .app-container {
+            background-color: var(--primary-color);
+            width: 100%;
+            max-width: 400px;
+            height: 90vh;
+            border-radius: 25px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 2px solid var(--accent-color);
+        }
+
+        /* --- CABECERA --- */
+        .header {
+            padding: 20px;
+            text-align: center;
+            background-color: var(--accent-color);
+            color: var(--text-color);
+        }
+        .header h1 { font-size: 1.2rem; font-weight: 600; }
+        .points-display { font-size: 2rem; font-weight: bold; margin-top: 10px; }
+        .points-label { font-size: 0.8rem; opacity: 0.8; }
+
+        /* --- CUERPO (ZONA DE TAREAS) --- */
+        .content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+        }
+
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            border: 1px solid #EAE0D0;
+        }
+
+        .card-title { font-weight: 600; font-size: 1rem; margin-bottom: 5px; }
+        .card-subtitle { font-size: 0.8rem; color: #888; margin-bottom: 15px; }
+
+        /* --- BOTONES --- */
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .btn-ad {
+            background-color: var(--button-bg);
+            color: var(--button-text);
+        }
+        .btn-ad:hover { background-color: #795548; }
+        .btn-ad:disabled { background-color: #BCAAA4; cursor: not-allowed; }
+
+        .btn-withdraw {
+            background-color: #A1887F;
+            color: white;
+            margin-top: auto; /* Empuja el botón al final */
+        }
+
+        /* --- MENSAJES DE ESTADO --- */
+        .status-msg {
+            font-size: 0.8rem;
+            text-align: center;
+            margin-top: 10px;
+            min-height: 1.2rem;
+        }
+        .cooldown { color: #D84315; font-weight: 600; }
+        .success { color: #2E7D32; }
+
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <div class="header">
+            <h1>Mis Recompensas FF</h1>
+            <div class="points-display" id="userPoints">0</div>
+            <div class="points-label">PUNTOS ACUMULADOS</div>
+        </div>
+
+        <div class="content">
+            
+            <div class="card">
+                <div class="card-title">💎 Gana Puntos Diarios</div>
+                <div class="card-subtitle">Mira un video corto y suma puntos para tus diamantes.</div>
+                
+                <button class="btn btn-ad" id="btnAd" onclick="verAnuncio()">
+                    Ver Video (+10 Puntos)
+                </button>
+                
+                <div class="status-msg" id="statusMsg"></div>
+            </div>
+
+            </div>
+
+        <div style="padding: 20px; border-top: 1px solid var(--accent-color);">
+            <button class="btn btn-withdraw" onclick="solicitarRetiro()">
+                Retirar Diamantes (Mín: 5000)
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        // === CONFIGURACIÓN DE LA APP ===
+        // 1. Pon aquí el link directo de tu red de anuncios (Monetag, Adsterra, etc.)
+        const LINK_DIRECTO_ANUNCIO = "https://www.google.com"; // <-- CAMBIA ESTO
+
+        // 2. Tiempo de espera en SEGUNDOS (ej: 60 para 1 minuto)
+        const TIEMPO_ESPERA_SEGUNDOS = 60; 
+        
+        // 3. Puntos que gana por anuncio
+        const PUNTOS_POR_ANUNCIO = 10;
+
+        // Variables de estado
+        let points = parseInt(localStorage.getItem('ff_points')) || 0;
+        let countdownInterval;
+
+        // Elementos del DOM
+        const pointsDisplay = document.getElementById('userPoints');
+        const btnAd = document.getElementById('btnAd');
+        const statusMsg = document.getElementById('statusMsg');
+
+        // Inicializar la App
+        actualizarInterfaz();
+        verificarCooldownAlCargar();
+
+        // --- LÓGICA PRINCIPAL ---
+
+        function actualizarInterfaz() {
+            pointsDisplay.innerText = points;
+            localStorage.setItem('ff_points', points);
+        }
+
+        function verAnuncio() {
+            // 1. Guardar la hora actual en LocalStorage (Leemos su hora)
+            const horaClic = new Date().getTime();
+            localStorage.setItem('ff_last_ad_time', horaClic);
+
+            // 2. Deshabilitar botón e iniciar cuenta regresiva
+            iniciarCooldown(TIEMPO_ESPERA_SEGUNDOS);
+
+            // 3. Abrir el anuncio en una pestaña nueva (Link directo)
+            // Usamos timeout para simular la "duración", el usuario debe volver.
+            // OJO: Los navegadores modernos bloquean popups si no es por clic directo.
+            window.open(LINK_DIRECTO_ANUNCIO, '_blank');
+            
+            statusMsg.innerHTML = "<span class='success'>¡Anuncio abierto! Espera a que termine el reloj para reclamar.</span>";
+        }
+
+        // Función que verifica si volvió rápido o si ya puede reclamar
+        function verificarCooldownAlCargar() {
+            const lastTime = localStorage.getItem('ff_last_ad_time');
+            if (lastTime) {
+                const ahora = new Date().getTime();
+                const diferenciaSegundos = Math.floor((ahora - lastTime) / 1000);
+
+                if (diferenciaSegundos < TIEMPO_ESPERA_SEGUNDOS) {
+                    const tiempoRestante = TIEMPO_ESPERA_SEGUNDOS - diferenciaSegundos;
+                    iniciarCooldown(tiempoRestante);
+                    statusMsg.innerHTML = "<span class='cooldown'>Volviste muy rápido. Espera el temporizador.</span>";
+                }
+            }
+        }
+
+        function iniciarCooldown(duracion) {
+            btnAd.disabled = true;
+            let tiempoRestante = duracion;
+
+            actualizarTextoBoton(tiempoRestante);
+
+            countdownInterval = setInterval(() => {
+                tiempoRestante--;
+                if (tiempoRestante <= 0) {
+                    clearInterval(countdownInterval);
+                    finalizarCooldown();
+                } else {
+                    actualizarTextoBoton(tiempoRestante);
+                }
+            }, 1000);
+        }
+
+        function actualizarTextoBoton(segundos) {
+            btnAd.innerText = `Espera ${segundos}s...`;
+        }
+
+        function finalizarCooldown() {
+            btnAd.disabled = false;
+            btnAd.innerText = `Ver Video (+${PUNTOS_POR_ANUNCIO} Puntos)`;
+            
+            // Verificamos si realmente esperó (seguridad básica leeyenda su hora de nuevo)
+            const lastTime = localStorage.getItem('ff_last_ad_time');
+            const ahora = new Date().getTime();
+            const diferenciaSegundos = Math.floor((ahora - lastTime) / 1000);
+
+            if (diferenciaSegundos >= TIEMPO_ESPERA_SEGUNDOS) {
+                // SÓLO SUMA PUNTOS SI ESPERÓ EL TIEMPO
+                points += PUNTOS_POR_ANUNCIO;
+                actualizarInterfaz();
+                statusMsg.innerHTML = "<span class='success'>¡+10 Puntos reclamados con éxito!</span>";
+                // Limpiamos la hora para que no reclame doble
+                localStorage.removeItem('ff_last_ad_time'); 
+            } else {
+                statusMsg.innerHTML = "<span class='cooldown'>Error al reclamar. Intenta ver el anuncio de nuevo.</span>";
+            }
+        }
+
+        function solicitarRetiro() {
+            if (points < 5000) {
+                alert(`Te faltan ${5000 - points} puntos para el mínimo de retiro (100 Diamantes).`);
+            } else {
+                alert("¡Felicidades! Tómale una captura a tus puntos y envíala por el grupo de Facebook junto con tu ID de Free Fire para procesar tu premio.");
+                // Aquí iría la lógica de Firebase en el futuro.
+            }
+        }
+
+    </script>
+</body>
+</html>
