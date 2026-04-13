@@ -3,142 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aureum Legends | Diamond Protocol</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <title>Aureum Legends | Diamond Reward Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
     <style>
         :root {
+            --fire: #ff4e00;
+            --fire-glow: #ec9f05;
+            --metal: #2c2c2c;
+            --panel: rgba(20, 20, 20, 0.9);
             --gold: #FFD700;
-            --dark-gold: #B8860B;
-            --bg: #0F0F0F;
-            --card: rgba(255, 255, 255, 0.05);
-            --accent: #E1B319;
-            --red: #FF4444;
-            --green: #00C851;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
 
         body { 
-            background: radial-gradient(circle, #2C2C2C 0%, #0F0F0F 100%);
+            background: #000 url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
             display: flex; justify-content: center; align-items: center; 
             height: 100vh; color: white; overflow: hidden;
         }
 
-        /* --- CARCASA GAMER --- */
+        /* --- CONTENEDOR PRINCIPAL (ESTILO TABLETA) --- */
         .app-shell {
-            background: url('https://www.transparenttextures.com/patterns/dark-matter.png'), var(--bg);
-            width: 100%; max-width: 410px; height: 90vh;
-            border-radius: 45px; border: 4px solid var(--accent);
-            position: relative; display: flex; flex-direction: column;
-            box-shadow: 0 0 50px rgba(225, 179, 25, 0.2);
-            overflow: hidden;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://img.freepik.com/free-photo/fire-sparks-background_23-2148817294.jpg');
+            background-size: cover;
+            width: 100%; max-width: 450px; height: 95vh;
+            border: 3px solid var(--fire);
+            border-radius: 15px; position: relative;
+            display: flex; flex-direction: column;
+            box-shadow: inset 0 0 20px var(--fire), 0 0 40px rgba(255, 78, 0, 0.3);
         }
 
-        /* --- HEADER DINÁMICO --- */
-        .header { padding: 40px 25px 20px; text-align: center; }
-        .brand { font-family: 'Bebas Neue', cursive; font-size: 2.5rem; letter-spacing: 3px; color: var(--gold); }
+        /* --- TOP BAR (USUARIO) --- */
+        .top-bar {
+            padding: 20px; display: flex; align-items: center;
+            background: linear-gradient(to bottom, #333, #111);
+            border-bottom: 2px solid var(--fire);
+        }
+
+        .avatar-circle {
+            width: 45px; height: 45px; border: 2px solid var(--fire);
+            border-radius: 50%; background: #444; margin-right: 12px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 10px var(--fire);
+        }
+
+        .user-info h2 { font-family: 'Bebas Neue'; font-size: 1.2rem; letter-spacing: 1px; }
+        .user-info p { font-size: 0.8rem; color: var(--fire-glow); font-weight: 700; }
+
+        /* --- PANEL DE RECOMPENSAS (CENTRO) --- */
+        .main-panel {
+            flex: 1; padding: 15px; overflow-y: auto;
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .panel-title {
+            font-family: 'Bebas Neue'; font-size: 1.4rem; color: white;
+            border-left: 4px solid var(--fire); padding-left: 10px; margin-bottom: 15px;
+        }
+
+        /* --- BOTONES DE MISIÓN (ESTILO DEPLEGAR) --- */
+        .mission-list { display: flex; flex-direction: column; gap: 10px; }
         
-        .stat-card {
-            background: var(--card); border: 1px solid rgba(255, 215, 0, 0.2);
-            padding: 20px; border-radius: 25px; margin-top: 15px;
-            backdrop-filter: blur(10px);
+        .mission-item {
+            background: linear-gradient(90deg, #222 0%, #333 100%);
+            border: 1px solid #444; border-radius: 8px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 15px; transition: 0.3s; cursor: pointer;
+            position: relative; overflow: hidden;
         }
-        .balance-label { font-size: 0.8rem; letter-spacing: 2px; opacity: 0.7; }
-        .balance-value { font-size: 3rem; font-weight: 700; text-shadow: 0 0 15px var(--gold); }
 
-        /* --- GRID DE MISIONES --- */
-        .mission-grid { flex: 1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 20px; overflow-y: auto; }
-        .mission-node {
-            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
-            border-radius: 20px; padding: 20px; text-align: center;
-            border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; cursor: pointer;
+        .mission-item::before {
+            content: ''; position: absolute; left: 0; top: 0; height: 100%;
+            width: 4px; background: var(--fire);
         }
-        .mission-node:active { transform: translateY(5px) scale(0.95); }
-        .mission-node.completed { opacity: 0.3; filter: grayscale(1); cursor: not-allowed; border: 1px solid transparent; }
-        
-        .node-id { font-size: 0.7rem; color: var(--gold); font-weight: bold; }
-        .node-status { display: block; font-size: 1rem; text-transform: uppercase; font-weight: 700; margin-top: 5px; }
 
-        /* --- OVERLAYS (AVISOS GRANDES) --- */
+        .mission-item:active { transform: scale(0.98); border-color: var(--fire); }
+        .mission-item.completed { opacity: 0.5; filter: grayscale(1); pointer-events: none; }
+
+        .mission-data b { display: block; font-size: 0.9rem; text-transform: uppercase; }
+        .mission-data span { font-size: 0.7rem; color: var(--fire-glow); }
+
+        .btn-deploy {
+            background: var(--fire); color: white; border: none;
+            padding: 6px 12px; border-radius: 4px; font-weight: 700;
+            font-size: 0.7rem; text-transform: uppercase;
+        }
+
+        /* --- FOOTER DE CANJEO --- */
+        .footer-exchange {
+            background: #111; padding: 20px;
+            border-top: 2px solid var(--fire);
+        }
+
+        .btn-claim-main {
+            background: linear-gradient(to right, #ff4e00, #ec9f05);
+            width: 100%; padding: 15px; border: none; border-radius: 5px;
+            color: white; font-family: 'Bebas Neue'; font-size: 1.5rem;
+            letter-spacing: 2px; cursor: pointer; text-shadow: 2px 2px black;
+        }
+
+        /* --- MODALES (AVISOS) --- */
         .overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: none; flex-direction: column; align-items: center; justify-content: center;
-            padding: 30px; text-align: center; z-index: 1000; backdrop-filter: blur(15px);
-            background: rgba(0,0,0,0.9); animation: zoomIn 0.3s ease-out;
+            z-index: 1000; background: rgba(0,0,0,0.95); padding: 30px; text-align: center;
         }
 
-        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .overlay h2 { font-family: 'Bebas Neue'; font-size: 3rem; margin-bottom: 10px; }
+        .overlay p { font-size: 1rem; margin-bottom: 25px; opacity: 0.8; }
 
-        .overlay h2 { font-family: 'Bebas Neue'; font-size: 3.5rem; line-height: 1; margin-bottom: 10px; }
-        .overlay-msg { font-size: 1.1rem; margin-bottom: 30px; opacity: 0.9; }
-
-        .btn-main {
-            background: var(--gold); color: black; border: none; padding: 18px 45px;
-            border-radius: 50px; font-weight: 700; font-size: 1rem; cursor: pointer;
-            text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+        .btn-close-modal {
+            background: white; color: black; border: none; padding: 12px 30px;
+            font-weight: 700; border-radius: 5px; cursor: pointer; text-transform: uppercase;
         }
 
-        /* --- FOOTER --- */
-        .footer { padding: 20px 30px 40px; }
-        .btn-withdraw {
-            width: 100%; background: transparent; border: 2px solid var(--gold);
-            color: var(--gold); padding: 18px; border-radius: 20px;
-            font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: 0.3s;
+        .input-metal {
+            width: 100%; background: #222; border: 1px solid var(--fire);
+            padding: 12px; color: white; margin-bottom: 10px; border-radius: 5px;
         }
-        .btn-withdraw:hover { background: var(--gold); color: black; }
 
-        /* --- FORMULARIO RETIRO --- */
-        .input-gamer {
-            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--gold);
-            padding: 15px; border-radius: 12px; color: white; font-size: 1.1rem; margin-bottom: 15px;
-        }
     </style>
 </head>
 <body>
 
 <div class="app-shell">
-
-    <div id="failScreen" class="overlay" style="color: var(--red);">
-        <h2>MISIÓN FALLIDA</h2>
-        <p class="overlay-msg">Abandonaste la zona de reclamo demasiado rápido. ¡Un guerrero nunca se rinde! Vuelve a intentarlo y mantente 10 segundos en la web.</p>
-        <button class="btn-main" style="background: var(--red); color: white;" onclick="closeOverlay('failScreen')">REINTENTAR</button>
+    <div id="failScreen" class="overlay" style="color: var(--fire);">
+        <h2>OPERACIÓN FALLIDA</h2>
+        <p>Regresaste a la base antes de completar la infiltración. ¡Debes resistir 10 segundos!</p>
+        <button class="btn-close-modal" onclick="closeOverlay('failScreen')">REINTENTAR</button>
     </div>
 
     <div id="winScreen" class="overlay" style="color: var(--green);">
-        <h2 id="winTitle">¡LOGRO DESBLOQUEADO!</h2>
-        <p class="overlay-msg" id="winMsg">¡Impresionante! Has recolectado 10 estrellas. Los diamantes están cada vez más cerca de tu cuenta.</p>
-        <button class="btn-main" style="background: var(--green); color: white;" onclick="closeOverlay('winScreen')">ACEPTAR</button>
+        <h2 style="color: #00ff00;">MISIÓN COMPLETA</h2>
+        <p id="winMsg">¡Excelente trabajo! Las estrellas han sido acreditadas a tu balance de guerra.</p>
+        <button class="btn-close-modal" onclick="closeOverlay('winScreen')">CONTINUAR</button>
     </div>
 
     <div id="withdrawScreen" class="overlay">
-        <h2 style="color: var(--gold);">PROTOCOL DE CANJE</h2>
-        <p class="overlay-msg">Ingresa tu ID de combate para transferir los diamantes recolectados.</p>
-        <input type="number" id="playerID" class="input-gamer" placeholder="ID DE JUGADOR (E.g. 1542369)">
-        <input type="text" id="region" class="input-gamer" placeholder="REGIÓN (E.g. EE.UU / SUR)">
-        <button class="btn-main" onclick="processTransfer()">SOLICITAR DIAMANTES</button>
-        <p onclick="closeOverlay('withdrawScreen')" style="margin-top: 20px; opacity: 0.5; cursor: pointer;">VOLVER AL MENÚ</p>
+        <h2 style="color: var(--gold);">CENTRO DE CANJEO</h2>
+        <p>Introduce las coordenadas de tu cuenta (ID) para el envío de diamantes.</p>
+        <input type="number" id="playerID" class="input-metal" placeholder="ID DEL JUGADOR">
+        <input type="text" id="region" class="input-metal" placeholder="REGIÓN (Norte/Sur)">
+        <button class="btn-claim-main" onclick="processTransfer()">SOLICITAR AHORA</button>
+        <p onclick="closeOverlay('withdrawScreen')" style="margin-top:20px; font-size: 0.8rem; cursor:pointer;">ABORTAR</p>
     </div>
 
-    <header class="header">
-        <h1 class="brand">AUREUM LEGENDS</h1>
-        <div class="stat-card">
-            <span class="balance-label">ESTRELLAS DE PODER</span>
-            <div class="balance-value" id="balanceText">0</div>
-            <div style="font-size: 0.7rem; color: var(--gold); margin-top: 5px;">EQUIVALE A: <span id="diamText">0</span> DIAMANTES 💎</div>
+    <header class="top-bar">
+        <div class="avatar-circle">👤</div>
+        <div class="user-info">
+            <h2 id="userName">OPERADOR_FF</h2>
+            <p>SALDO: <span id="balanceText">0</span> ⭐ | <span id="diamText">0</span> 💎</p>
         </div>
     </header>
 
-    <div class="mission-grid" id="missionGrid"></div>
+    <main class="main-panel">
+        <h3 class="panel-title">OPERACIONES DE RECOMPENSA</h3>
+        <div class="mission-list" id="missionGrid">
+            </div>
+    </main>
 
-    <footer class="footer">
-        <button class="btn-withdraw" onclick="checkWithdraw()">CANJEAR RECOMPENSA</button>
+    <footer class="footer-exchange">
+        <button class="btn-claim-main" onclick="checkWithdraw()">CANJEAR DIAMANTES</button>
     </footer>
-
 </div>
 
 <script>
     const SETTINGS = {
-        AD_LINK: "https://www.google.com", // PON TU LINK AQUÍ
+        AD_LINK: "https://www.google.com", 
         REQUIRED_TIME: 10,
         GOAL: 5000
     };
@@ -146,14 +177,6 @@
     let stars = parseInt(localStorage.getItem('al_stars')) || 0;
     let inProgress = false;
     let lastNode = null;
-
-    const phrases = [
-        "¡Eres una leyenda!",
-        "¡Casi lo logras!",
-        "¡Diamantes en camino!",
-        "¡Buen trabajo, recluta!",
-        "¡Esa skin será tuya!"
-    ];
 
     function init() {
         renderMissions();
@@ -168,10 +191,13 @@
             const isDone = completedTime && (new Date().getTime() - completedTime < 86400000);
 
             const div = document.createElement('div');
-            div.className = `mission-node ${isDone ? 'completed' : ''}`;
+            div.className = `mission-item ${isDone ? 'completed' : ''}`;
             div.innerHTML = `
-                <span class="node-id">MISIÓN 0${i}</span>
-                <span class="node-status">${isDone ? 'BLOQUEADO' : 'OBTENER'}</span>
+                <div class="mission-data">
+                    <b>MISIÓN RECON 0${i}</b>
+                    <span>RECOMPENSA: +10 ESTRELLAS</span>
+                </div>
+                <button class="btn-deploy">${isDone ? 'BLOQUEADO' : 'DEPLEGAR'}</button>
             `;
             div.onclick = () => launchMission(i, isDone);
             grid.appendChild(div);
@@ -180,15 +206,10 @@
 
     function launchMission(id, done) {
         if (done || inProgress) return;
-        
         inProgress = true;
         lastNode = id;
         window.open(SETTINGS.AD_LINK, '_blank');
-
-        // Lógica de tiempo
-        setTimeout(() => {
-            if (inProgress) grantReward();
-        }, SETTINGS.REQUIRED_TIME * 1000);
+        setTimeout(() => { if (inProgress) grantReward(); }, SETTINGS.REQUIRED_TIME * 1000);
     }
 
     window.onfocus = () => {
@@ -203,10 +224,7 @@
         inProgress = false;
         stars += 10;
         localStorage.setItem(`al_node_${lastNode}`, new Date().getTime());
-        
-        document.getElementById('winMsg').innerText = phrases[Math.floor(Math.random() * phrases.length)];
         document.getElementById('winScreen').style.display = 'flex';
-        
         updateDisplay();
         renderMissions();
     }
@@ -219,23 +237,18 @@
 
     function checkWithdraw() {
         if (stars < SETTINGS.GOAL) {
-            alert("❌ SALDO INSUFICIENTE\nSoldado, necesitas al menos 5,000 estrellas para activar el canje. ¡Sigue adelante!");
+            alert("❌ RECURSOS INSUFICIENTES\nNecesitas 5,000 estrellas para la extracción.");
         } else {
             document.getElementById('withdrawScreen').style.display = 'flex';
         }
     }
 
-    function closeOverlay(id) {
-        document.getElementById(id).style.display = 'none';
-    }
+    function closeOverlay(id) { document.getElementById(id).style.display = 'none'; }
 
     function processTransfer() {
         const id = document.getElementById('playerID').value;
-        if (id.length < 6) {
-            alert("¡ID NO RECONOCIDO! Ingresa un código de jugador válido.");
-            return;
-        }
-        alert("✅ SOLICITUD DE TRANSFERENCIA ACTIVA\nTu ID " + id + " ha sido puesto en cola. El comando Garena procesará tus diamantes en 24h.");
+        if (id.length < 6) { alert("ID INVÁLIDO"); return; }
+        alert("SOLICITUD ENVIADA AL COMANDO");
         closeOverlay('withdrawScreen');
     }
 
