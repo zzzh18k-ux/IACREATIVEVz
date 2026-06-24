@@ -7,6 +7,9 @@
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
+    <!-- SDK de Monetag -->
+    <script src='//libtl.com/sdk.js' data-zone='11195089' data-sdk='show_11195089'></script>
+    
     <style>
         * {
             margin: 0;
@@ -246,10 +249,8 @@
     </div>
     <div id="toastMsg" class="toast">📋 ¡Copiado!</div>
 
-    <!-- Monetag SDK se carga al final -->
-    <script src='//libtl.com/sdk.js' data-zone='11195089' data-sdk='show_11195089'></script>
-
     <script>
+        // ====== SISTEMA DE MONETAG ======
         // Control de frecuencia para anuncios
         let conversionCount = parseInt(localStorage.getItem('ocrConversionCount') || '0');
         let nextAdThreshold = parseInt(localStorage.getItem('ocrNextAdThreshold') || '0');
@@ -258,12 +259,60 @@
         function resetAdThreshold() {
             nextAdThreshold = Math.floor(Math.random() * 5) + 6; // 6 a 10
             localStorage.setItem('ocrNextAdThreshold', nextAdThreshold.toString());
+            console.log(`🎯 Próximo anuncio en: ${nextAdThreshold} conversiones`);
         }
 
         if (nextAdThreshold === 0) {
             resetAdThreshold();
         }
 
+        // Función para disparar anuncio de Monetag
+        function showMonetagAd(tipo = 'inicio') {
+            try {
+                if (typeof show_11195089 === 'function') {
+                    show_11195089();
+                    console.log(`📢 Anuncio Monetag disparado - Tipo: ${tipo}`);
+                } else if (window.monetag) {
+                    window.monetag.push({
+                        zoneId: '11195089',
+                        type: tipo === 'inicio' ? 'popunder' : 'interstitial'
+                    });
+                    console.log(`📢 Anuncio Monetag enviado - Tipo: ${tipo}`);
+                }
+            } catch (error) {
+                console.log('⏳ Anuncio en proceso...');
+            }
+        }
+
+        // Mostrar anuncio al cargar la app
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                showMonetagAd('inicio');
+                console.log('🚀 App iniciada - Anuncio de entrada disparado');
+            }, 1500);
+        });
+
+        // Verificar y mostrar anuncio cada 6-10 conversiones
+        async function checkAndShowAd() {
+            if (conversionCount >= nextAdThreshold) {
+                console.log(`✅ Umbral alcanzado (${conversionCount}/${nextAdThreshold}) - Mostrando anuncio`);
+                
+                // Pequeña pausa para no ser invasivo
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Disparar anuncio
+                showMonetagAd('conversion');
+                
+                // Resetear contadores
+                conversionCount = 0;
+                localStorage.setItem('ocrConversionCount', '0');
+                resetAdThreshold();
+            } else {
+                console.log(`📊 Progreso: ${conversionCount}/${nextAdThreshold} para próximo anuncio`);
+            }
+        }
+
+        // ====== FUNCIONALIDAD OCR ======
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
         const previewContainer = document.getElementById('previewContainer');
@@ -273,50 +322,6 @@
         const copyBtn = document.getElementById('copyButton');
         const toast = document.getElementById('toastMsg');
         const statusMessage = document.getElementById('statusMessage');
-
-        // Función para activar anuncio de forma sutil
-        function triggerMonetagAd() {
-            try {
-                // Recargar el script de Monetag para mostrar anuncio
-                const existingScript = document.querySelector('script[data-zone="11195089"]');
-                if (existingScript) {
-                    existingScript.remove();
-                }
-                
-                const newScript = document.createElement('script');
-                newScript.src = '//libtl.com/sdk.js';
-                newScript.setAttribute('data-zone', '11195089');
-                newScript.setAttribute('data-sdk', 'show_11195089');
-                document.body.appendChild(newScript);
-            } catch (error) {
-                console.log('Anuncio cargado');
-            }
-        }
-
-        // Mostrar anuncio al abrir la app (primera vez)
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                triggerMonetagAd();
-            }, 1000);
-        });
-
-        // Función para verificar si toca mostrar anuncio
-        async function checkAndShowAd() {
-            if (conversionCount >= nextAdThreshold) {
-                // Esperar un momento para no ser invasivo
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                
-                // Activar anuncio
-                triggerMonetagAd();
-                
-                // Resetear contadores
-                conversionCount = 0;
-                localStorage.setItem('ocrConversionCount', '0');
-                resetAdThreshold();
-                
-                console.log(`📊 Anuncio mostrado. Próximo en: ${nextAdThreshold} conversiones`);
-            }
-        }
 
         function showToast(msg, isError = false) {
             toast.textContent = msg || (isError ? '❌ Error' : '📋 ¡Copiado!');
@@ -361,7 +366,7 @@
             });
         }
 
-        // API gratuita de OCR.space (1500 peticiones/mes gratis)
+        // API gratuita de OCR.space
         async function extractTextWithOCRspace(base64Image) {
             const apiKey = 'K87489118088957';
             const formData = new FormData();
@@ -439,8 +444,6 @@
                     conversionCount++;
                     localStorage.setItem('ocrConversionCount', conversionCount.toString());
                     
-                    console.log(`📈 Conversión #${conversionCount} de ${nextAdThreshold} para próximo anuncio`);
-                    
                     // Verificar si toca mostrar anuncio
                     await checkAndShowAd();
                 }
@@ -470,6 +473,9 @@
             Telegram.WebApp.expand();
             Telegram.WebApp.ready();
         }
+
+        console.log('✅ Sistema listo - Zone: 11195089');
+        console.log(`📊 Estado actual: ${conversionCount}/${nextAdThreshold} para próximo anuncio`);
     </script>
 </body>
 </html>
