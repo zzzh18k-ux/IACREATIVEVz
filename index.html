@@ -250,7 +250,8 @@
     <div id="toastMsg" class="toast">📋 ¡Copiado!</div>
 
     <script>
-        // ====== SISTEMA DE MONETAG ======
+        // ====== SISTEMA DE MONETAG CON TODOS LOS FORMATOS ======
+        
         // Control de frecuencia para anuncios
         let conversionCount = parseInt(localStorage.getItem('ocrConversionCount') || '0');
         let nextAdThreshold = parseInt(localStorage.getItem('ocrNextAdThreshold') || '0');
@@ -266,42 +267,89 @@
             resetAdThreshold();
         }
 
-        // Función para disparar anuncio de Monetag
-        function showMonetagAd(tipo = 'inicio') {
+        // 1. ANUNCIO IN-APP INTERSTITIAL (configurado automáticamente)
+        function showInAppInterstitial() {
             try {
                 if (typeof show_11195089 === 'function') {
-                    show_11195089();
-                    console.log(`📢 Anuncio Monetag disparado - Tipo: ${tipo}`);
-                } else if (window.monetag) {
-                    window.monetag.push({
-                        zoneId: '11195089',
-                        type: tipo === 'inicio' ? 'popunder' : 'interstitial'
+                    show_11195089({
+                        type: 'inApp',
+                        inAppSettings: {
+                            frequency: 2,
+                            capping: 0.1,
+                            interval: 30,
+                            timeout: 5,
+                            everyPage: false
+                        }
                     });
-                    console.log(`📢 Anuncio Monetag enviado - Tipo: ${tipo}`);
+                    console.log('📱 In-App Interstitial disparado');
                 }
             } catch (error) {
-                console.log('⏳ Anuncio en proceso...');
+                console.log('⏳ In-App en proceso...');
             }
         }
 
-        // Mostrar anuncio al cargar la app
+        // 2. REWARDED POPUP (para conversiones)
+        function showRewardedPopup() {
+            try {
+                if (typeof show_11195089 === 'function') {
+                    show_11195089('pop')
+                        .then(() => {
+                            console.log('🎁 Usuario vio el anuncio rewarded completo');
+                        })
+                        .catch(e => {
+                            console.log('⚠️ Usuario cerró el anuncio o hubo error');
+                        });
+                    console.log('🎬 Rewarded Popup disparado');
+                }
+            } catch (error) {
+                console.log('⏳ Rewarded en proceso...');
+            }
+        }
+
+        // 3. REWARDED INTERSTITIAL (al entrar a la app)
+        function showRewardedInterstitial() {
+            try {
+                if (typeof show_11195089 === 'function') {
+                    show_11195089()
+                        .then(() => {
+                            console.log('✅ Usuario completó el anuncio');
+                        });
+                    console.log('🎯 Rewarded Interstitial disparado');
+                }
+            } catch (error) {
+                console.log('⏳ Interstitial en proceso...');
+            }
+        }
+
+        // Mostrar anuncio AL ENTRAR a la app
         window.addEventListener('load', () => {
             setTimeout(() => {
-                showMonetagAd('inicio');
-                console.log('🚀 App iniciada - Anuncio de entrada disparado');
+                console.log('🚀 App iniciada - Mostrando anuncio de entrada');
+                // Usar Rewarded Interstitial al entrar
+                showRewardedInterstitial();
+                
+                // También activar In-App Interstitial
+                setTimeout(() => {
+                    showInAppInterstitial();
+                }, 3000);
             }, 1500);
         });
 
         // Verificar y mostrar anuncio cada 6-10 conversiones
         async function checkAndShowAd() {
             if (conversionCount >= nextAdThreshold) {
-                console.log(`✅ Umbral alcanzado (${conversionCount}/${nextAdThreshold}) - Mostrando anuncio`);
+                console.log(`✅ Umbral alcanzado (${conversionCount}/${nextAdThreshold}) - Mostrando anuncios`);
                 
                 // Pequeña pausa para no ser invasivo
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 
-                // Disparar anuncio
-                showMonetagAd('conversion');
+                // Disparar Rewarded Popup en conversiones
+                showRewardedPopup();
+                
+                // También disparar In-App si aplica
+                setTimeout(() => {
+                    showInAppInterstitial();
+                }, 5000);
                 
                 // Resetear contadores
                 conversionCount = 0;
@@ -474,7 +522,8 @@
             Telegram.WebApp.ready();
         }
 
-        console.log('✅ Sistema listo - Zone: 11195089');
+        console.log('✅ Sistema Monetag completo - Zone: 11195089');
+        console.log('📱 Formatos activos: In-App + Rewarded Popup + Rewarded Interstitial');
         console.log(`📊 Estado actual: ${conversionCount}/${nextAdThreshold} para próximo anuncio`);
     </script>
 </body>
