@@ -7,9 +7,6 @@
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- SDK de Monetag -->
-    <script src='//libtl.com/sdk.js' data-zone='11195093' data-sdk='show_11195093'></script>
-    
     <style>
         * {
             margin: 0;
@@ -56,38 +53,6 @@
             color: #B45F2B;
             margin-top: 8px;
             font-size: 0.9rem;
-        }
-
-        /* Zona de anuncio sutil integrada */
-        .ad-container {
-            margin-bottom: 20px;
-            min-height: 60px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(135deg, #FFF8E7, #FFE8CC);
-            border: 1px solid #F0C78E;
-            border-radius: 16px;
-            padding: 8px;
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .ad-label {
-            font-size: 0.65rem;
-            color: #B8956A;
-            text-align: center;
-            margin-bottom: 2px;
         }
 
         .upload-area {
@@ -254,14 +219,6 @@
             <p>Sube una foto · texto en segundos</p>
         </div>
 
-        <!-- Contenedor para el anuncio de Monetag - Banner sutil -->
-        <div class="ad-container" id="monetagBanner">
-            <div>
-                <div class="ad-label">Publicidad</div>
-                <!-- Aquí se cargará el banner de Monetag -->
-            </div>
-        </div>
-
         <div class="upload-area" id="uploadArea">
             <div class="upload-icon">📸✨</div>
             <span>Toca para elegir imagen</span>
@@ -289,19 +246,22 @@
     </div>
     <div id="toastMsg" class="toast">📋 ¡Copiado!</div>
 
-    <script>
-        // Control de frecuencia para anuncios intersticiales (Pop-under)
-        let conversionCount = parseInt(localStorage.getItem('ocrConversionCount') || '0');
-        let nextInterstitialThreshold = parseInt(localStorage.getItem('ocrNextInterstitial') || '0');
+    <!-- Monetag SDK se carga al final -->
+    <script src='//libtl.com/sdk.js' data-zone='11195089' data-sdk='show_11195089'></script>
 
-        // Configurar umbral aleatorio entre 6-10 conversiones para intersticial
-        function resetInterstitialThreshold() {
-            nextInterstitialThreshold = Math.floor(Math.random() * 5) + 6; // 6 a 10
-            localStorage.setItem('ocrNextInterstitial', nextInterstitialThreshold.toString());
+    <script>
+        // Control de frecuencia para anuncios
+        let conversionCount = parseInt(localStorage.getItem('ocrConversionCount') || '0');
+        let nextAdThreshold = parseInt(localStorage.getItem('ocrNextAdThreshold') || '0');
+
+        // Configurar umbral aleatorio entre 6-10 conversiones
+        function resetAdThreshold() {
+            nextAdThreshold = Math.floor(Math.random() * 5) + 6; // 6 a 10
+            localStorage.setItem('ocrNextAdThreshold', nextAdThreshold.toString());
         }
 
-        if (nextInterstitialThreshold === 0) {
-            resetInterstitialThreshold();
+        if (nextAdThreshold === 0) {
+            resetAdThreshold();
         }
 
         const uploadArea = document.getElementById('uploadArea');
@@ -314,31 +274,47 @@
         const toast = document.getElementById('toastMsg');
         const statusMessage = document.getElementById('statusMessage');
 
-        // Función para cargar anuncio intersticial de forma sutil
-        async function showInterstitialIfNeeded() {
-            if (conversionCount >= nextInterstitialThreshold) {
-                try {
-                    // El SDK de Monetag se encargará de mostrar el intersticial
-                    // cuando detecte la conversión apropiada
-                    if (window.show_11195093) {
-                        // Forzar un pop-under o intersticial de forma controlada
-                        const adEvent = new CustomEvent('monetag-interstitial', {
-                            detail: { zone: '11195093', type: 'interstitial' }
-                        });
-                        window.dispatchEvent(adEvent);
-                    }
-                    
-                    // Esperar un momento para no ser invasivo
-                    await new Promise(resolve => setTimeout(resolve, 1500));
-                    
-                } catch (error) {
-                    console.log('Anuncio intersticial no disponible');
+        // Función para activar anuncio de forma sutil
+        function triggerMonetagAd() {
+            try {
+                // Recargar el script de Monetag para mostrar anuncio
+                const existingScript = document.querySelector('script[data-zone="11195089"]');
+                if (existingScript) {
+                    existingScript.remove();
                 }
+                
+                const newScript = document.createElement('script');
+                newScript.src = '//libtl.com/sdk.js';
+                newScript.setAttribute('data-zone', '11195089');
+                newScript.setAttribute('data-sdk', 'show_11195089');
+                document.body.appendChild(newScript);
+            } catch (error) {
+                console.log('Anuncio cargado');
+            }
+        }
+
+        // Mostrar anuncio al abrir la app (primera vez)
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                triggerMonetagAd();
+            }, 1000);
+        });
+
+        // Función para verificar si toca mostrar anuncio
+        async function checkAndShowAd() {
+            if (conversionCount >= nextAdThreshold) {
+                // Esperar un momento para no ser invasivo
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Activar anuncio
+                triggerMonetagAd();
                 
                 // Resetear contadores
                 conversionCount = 0;
                 localStorage.setItem('ocrConversionCount', '0');
-                resetInterstitialThreshold();
+                resetAdThreshold();
+                
+                console.log(`📊 Anuncio mostrado. Próximo en: ${nextAdThreshold} conversiones`);
             }
         }
 
@@ -463,8 +439,10 @@
                     conversionCount++;
                     localStorage.setItem('ocrConversionCount', conversionCount.toString());
                     
-                    // Mostrar intersticial cada 6-10 conversiones
-                    await showInterstitialIfNeeded();
+                    console.log(`📈 Conversión #${conversionCount} de ${nextAdThreshold} para próximo anuncio`);
+                    
+                    // Verificar si toca mostrar anuncio
+                    await checkAndShowAd();
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -492,10 +470,6 @@
             Telegram.WebApp.expand();
             Telegram.WebApp.ready();
         }
-
-        // Log para verificar que el SDK de Monetag se cargó
-        console.log('✅ Monetag SDK cargado - Zone: 11195093');
-        console.log(`📊 Próximo intersticial en: ${nextInterstitialThreshold - conversionCount} conversiones`);
     </script>
 </body>
 </html>
