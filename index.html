@@ -7,6 +7,9 @@
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
+    <!-- SDK de Monetag -->
+    <script src='//libtl.com/sdk.js' data-zone='11195093' data-sdk='show_11195093'></script>
+    
     <style>
         * {
             margin: 0;
@@ -53,6 +56,38 @@
             color: #B45F2B;
             margin-top: 8px;
             font-size: 0.9rem;
+        }
+
+        /* Zona de anuncio sutil integrada */
+        .ad-container {
+            margin-bottom: 20px;
+            min-height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #FFF8E7, #FFE8CC);
+            border: 1px solid #F0C78E;
+            border-radius: 16px;
+            padding: 8px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ad-label {
+            font-size: 0.65rem;
+            color: #B8956A;
+            text-align: center;
+            margin-bottom: 2px;
         }
 
         .upload-area {
@@ -219,6 +254,14 @@
             <p>Sube una foto · texto en segundos</p>
         </div>
 
+        <!-- Contenedor para el anuncio de Monetag - Banner sutil -->
+        <div class="ad-container" id="monetagBanner">
+            <div>
+                <div class="ad-label">Publicidad</div>
+                <!-- Aquí se cargará el banner de Monetag -->
+            </div>
+        </div>
+
         <div class="upload-area" id="uploadArea">
             <div class="upload-icon">📸✨</div>
             <span>Toca para elegir imagen</span>
@@ -247,6 +290,20 @@
     <div id="toastMsg" class="toast">📋 ¡Copiado!</div>
 
     <script>
+        // Control de frecuencia para anuncios intersticiales (Pop-under)
+        let conversionCount = parseInt(localStorage.getItem('ocrConversionCount') || '0');
+        let nextInterstitialThreshold = parseInt(localStorage.getItem('ocrNextInterstitial') || '0');
+
+        // Configurar umbral aleatorio entre 6-10 conversiones para intersticial
+        function resetInterstitialThreshold() {
+            nextInterstitialThreshold = Math.floor(Math.random() * 5) + 6; // 6 a 10
+            localStorage.setItem('ocrNextInterstitial', nextInterstitialThreshold.toString());
+        }
+
+        if (nextInterstitialThreshold === 0) {
+            resetInterstitialThreshold();
+        }
+
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
         const previewContainer = document.getElementById('previewContainer');
@@ -256,6 +313,34 @@
         const copyBtn = document.getElementById('copyButton');
         const toast = document.getElementById('toastMsg');
         const statusMessage = document.getElementById('statusMessage');
+
+        // Función para cargar anuncio intersticial de forma sutil
+        async function showInterstitialIfNeeded() {
+            if (conversionCount >= nextInterstitialThreshold) {
+                try {
+                    // El SDK de Monetag se encargará de mostrar el intersticial
+                    // cuando detecte la conversión apropiada
+                    if (window.show_11195093) {
+                        // Forzar un pop-under o intersticial de forma controlada
+                        const adEvent = new CustomEvent('monetag-interstitial', {
+                            detail: { zone: '11195093', type: 'interstitial' }
+                        });
+                        window.dispatchEvent(adEvent);
+                    }
+                    
+                    // Esperar un momento para no ser invasivo
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                } catch (error) {
+                    console.log('Anuncio intersticial no disponible');
+                }
+                
+                // Resetear contadores
+                conversionCount = 0;
+                localStorage.setItem('ocrConversionCount', '0');
+                resetInterstitialThreshold();
+            }
+        }
 
         function showToast(msg, isError = false) {
             toast.textContent = msg || (isError ? '❌ Error' : '📋 ¡Copiado!');
@@ -280,7 +365,6 @@
                     copyBtn.innerHTML = '📋 Copiar texto';
                 }, 2000);
             } catch (err) {
-                // fallback
                 const textarea = document.createElement('textarea');
                 textarea.value = text;
                 document.body.appendChild(textarea);
@@ -303,7 +387,7 @@
 
         // API gratuita de OCR.space (1500 peticiones/mes gratis)
         async function extractTextWithOCRspace(base64Image) {
-            const apiKey = 'K87489118088957'; // API key demo de OCR.space (pública y funcional)
+            const apiKey = 'K87489118088957';
             const formData = new FormData();
             formData.append('base64Image', `data:image/jpeg;base64,${base64Image}`);
             formData.append('language', 'spa');
@@ -330,24 +414,6 @@
                 return text.trim() || '😕 No se encontró texto en la imagen';
             }
             return '😕 No se pudo leer el texto';
-        }
-
-        // Función alternativa con API gratuita de ImageToText (si la primera falla)
-        async function extractTextWithImageToText(file) {
-            const formData = new FormData();
-            formData.append('image', file);
-            formData.append('language', 'spa');
-            
-            const response = await fetch('https://imagetotext.io/api/ocr', {
-                method: 'POST',
-                body: formData
-            });
-            
-            const data = await response.json();
-            if (data.text) {
-                return data.text.trim() || '😕 No hay texto reconocible';
-            }
-            throw new Error('No se pudo extraer texto');
         }
 
         uploadArea.addEventListener('click', () => {
@@ -392,6 +458,13 @@
                     statusMessage.textContent = '⚠️ Texto no encontrado';
                 } else {
                     statusMessage.textContent = '✅ ¡Texto listo!';
+                    
+                    // Incrementar contador de conversiones exitosas
+                    conversionCount++;
+                    localStorage.setItem('ocrConversionCount', conversionCount.toString());
+                    
+                    // Mostrar intersticial cada 6-10 conversiones
+                    await showInterstitialIfNeeded();
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -414,10 +487,15 @@
             }
         });
 
+        // Telegram WebApp
         if (window.Telegram && Telegram.WebApp) {
             Telegram.WebApp.expand();
             Telegram.WebApp.ready();
         }
+
+        // Log para verificar que el SDK de Monetag se cargó
+        console.log('✅ Monetag SDK cargado - Zone: 11195093');
+        console.log(`📊 Próximo intersticial en: ${nextInterstitialThreshold - conversionCount} conversiones`);
     </script>
 </body>
 </html>
